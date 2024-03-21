@@ -1,0 +1,92 @@
+ [
+  {
+    "name": "4_20",
+    "description": "4...20мА",
+    "approval": [
+      "non_hazard",
+      "Ex",
+      "Exd"
+    ]
+  },
+  {
+    "name": "0_10",
+    "description": "0...10В",
+    "approval": [
+      "non_hazard"
+    ],
+    "electrical": [
+      "PD",
+      "PPD",
+      "PM12",
+      "PZ",
+      "PK",
+      "PKSG"
+    ],
+    "display": "without_display"
+  },
+  {
+    "name": "04_2",
+    "description": "0,4...2В",
+    "approval": [
+      "non_hazard",
+      "Ex"
+    ],
+    "electrical": [
+      "PD",
+      "PPD",
+      "PM12",
+      "PZ",
+      "PK",
+      "PKSG"
+    ],
+    "display": "without_display"
+  },
+  {
+    "name": "0_2",
+    "description": "0...2В",
+    "approval": [
+      "non_hazard",
+      "Ex"
+    ],
+    "electrical": [
+      "PD",
+      "PPD",
+      "PM12",
+      "PZ",
+      "PK",
+      "PKSG"
+    ],
+    "display": "without_display"
+  },
+  {
+    "name": "4_20H",
+    "description": "4...20мА + HART",
+    "approval": [
+      "non_hazard",
+      "Ex",
+      "Exd"
+    ]
+  },
+  {
+    "name": "modbus",
+    "description": "Modbus RTU",
+    "approval": [
+      "non_hazard",
+      "Ex",
+      "Exd"
+    ],
+    "electrical": [
+      "PM12",
+      "PZ",
+      "PK",
+      "PKSG",
+      "FL_M20_1_5",
+      "FL_1_2NPT",
+      "SGM_M20_1_5",
+      "SGM_1_2NPT",
+      "PZ2",
+      "ALW",
+      "ALW2"
+    ]
+  }
+]

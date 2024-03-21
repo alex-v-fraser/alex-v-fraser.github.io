@@ -1,0 +1,61 @@
+[
+    {
+        "name": "aisi316",
+        "description": ""
+    },
+    {
+        "name": "hastelloy",
+        "description": "",
+        "thread": [
+            "P",
+            "GP",
+            "CM30_2",
+            "CG1",
+            "CG1_S38",
+            "CG1_2"
+        ]
+    },
+    {
+        "name": "au",
+        "description": "",
+        "thread": [
+            "G1_2"
+        ]
+    },
+    {
+        "name": "nickel",
+        "description": "",
+        "thread": [
+            "no"
+        ]
+
+    },
+    {
+        "name": "monel",
+        "description": "",
+        "thread": [
+            "no"
+        ]
+    },
+    {
+        "name": "titan",
+        "description": "",
+        "thread": [
+            "no"
+        ]
+    },
+    {
+        "name": "tantal",
+        "description": "",
+        "thread": [
+            "no"
+        ]
+    },
+    {
+        "name": "ptfe",
+        "description": "",
+        "thread": [
+            "no"
+        ]
+    }
+]

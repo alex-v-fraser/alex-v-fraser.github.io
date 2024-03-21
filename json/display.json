@@ -1,0 +1,36 @@
+[
+  {
+    "name": "with_display",
+    "description": "с местным индикатором",
+    "approval": [
+        "non_hazard",
+        "Ex"
+      ],
+    "electrical": [
+        "ALW",
+        "ALW2"
+    ],
+    "output": [
+        "4_20",
+        "4_20H",
+        "modbus"
+      ]
+  },
+  {
+    "name": "without_display",
+    "description":"без местного индикатора",
+    "electrical": [
+        "PD",
+        "PPD",
+        "PM12",
+        "PZ",
+        "PK",
+        "PKSG",
+        "FL_M20_1_5",
+        "FL_1_2NPT",
+        "SGM_M20_1_5",
+        "SGM_1_2NPT",
+        "PZ2"
+    ]
+  }
+]

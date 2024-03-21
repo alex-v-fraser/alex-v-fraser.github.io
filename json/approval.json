@@ -1,0 +1,51 @@
+[
+    {
+      "name": "non_hazard",
+      "electrical": [
+            "PD",
+            "PPD",
+            "PM12",
+            "PZ",
+            "PK",
+            "PKSG",
+            "ALW",
+            "ALW2"
+        ]
+    },
+    {
+        "name": "Ex",
+        "electrical": [
+            "PD",
+            "PPD",
+            "PM12",
+            "PZ",
+            "PK",
+            "PKSG",
+            "ALW",
+            "ALW2"
+        ],
+        "output": [
+            "4_20",
+            "04_2",
+            "0_2",
+            "4_20H",
+            "modbus"
+        ]
+    },
+    {
+        "name": "Exd",
+        "electrical": [
+            "FL_M20_1_5",
+            "FL_1_2NPT",
+            "SGM_M20_1_5",
+            "SGM_1_2NPT",
+            "PZ2"
+        ],
+       "output": [
+            "4_20",
+            "4_20H",
+            "modbus"
+        ],
+        "display": "without_display"
+     }
+  ]
