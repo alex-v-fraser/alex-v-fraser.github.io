@@ -135,7 +135,8 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
     let connection = data.has("thread") ? data.get("thread") : data.has("flange") ? data.get("flange") : data.has("hygienic") ? data.get("hygienic") : "";
     let material = $("input[name=material]:checked").val();
-    code = dev_type + approval + material + data.get("begin_range") + "..." + data.get("end_range") + data.get("units") + data.get("pressure_type") + "/" + data.get("electrical") + "/" + output + $("#" + connection).val();
+    console.log($("#"+data.get("electrical")).val());
+    code = dev_type + approval + material + data.get("begin_range") + "..." + data.get("end_range") + data.get("units") + data.get("pressure_type") + "/" + $("#"+data.get("electrical")).val() + "/" + output + $("#" + connection).val();
     if (data.get("cap-or-not") == "capillary"){
         code = code + "-K="+ data.get("capillary_length") + "м";
     }
