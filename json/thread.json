@@ -151,5 +151,108 @@
     "material": [
       "aisi316"
     ]
+  },
+  {
+    "name": "s_mazut_75",
+    "description": "Разделитель S-Mazut-75 с резьбовым присоединением M20x1.5",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 3000,
+    "range": 10,
+    "range_c": 40,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_mazut_100",
+    "description": "Разделитель S-Mazut-100 с резьбовым присоединением M20x1.5",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 2500,
+    "range": 5,
+    "range_c": 25,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_mazut_50_g1_2_m",
+    "description": "Разделитель S-Mazut50 с резьбовым присоединением G1/2",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 7000,
+    "range": 250,
+    "range_c": 600,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_mazut_75_g1_2_m",
+    "description": "Разделитель S-Mazut-75 с резьбовым присоединением G1/2",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 3000,
+    "range": 10,
+    "range_c": 40,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_mazut_100_g1_2_m",
+    "description": "Разделитель S-Mazut100 с резьбовым присоединением G1/2",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 2500,
+    "range": 5,
+    "range_c": 25,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_r_m30_2",
+    "description": "Разделитель S-R с лицевой мембраной и резьбовым присоединением M30x2 до 160С",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 7000,
+    "range": 250,
+    "material": [
+      "aisi316",
+      "hastelloy"
+    ]
+  },
+  {
+    "name": "s_r_m30_1_5",
+    "description": "Разделитель S-R с лицевой мембраной и резьбовым присоединением M30x1.5 до 160С",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 16000,
+    "range": 250,
+    "material": [
+      "aisi316",
+      "hastelloy"
+    ]
+  },
+  {
+    "name": "s_r2_m30_2",
+    "description": "Разделитель S-R2 с лицевой мембраной и резьбовым присоединением M30x2 до 260С",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 7000,
+    "range": 250,
+    "material": [
+      "aisi316",
+      "hastelloy"
+    ]
+  },
+  {
+    "name": "s_r2_m30_1_5",
+    "description": "Разделитель S-R2 с лицевой мембраной и резьбовым присоединением M30x1.5 до 260С",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 16000,
+    "range": 250,
+    "material": [
+      "aisi316",
+      "hastelloy"
+    ]
   }
 ]

@@ -13,14 +13,28 @@
       "CG1_S38",
       "CM20_1_5",
       "CG1_2",
-      "s-mazut"
+      "s_mazut_50",
+      "s_mazut_75",
+      "s_mazut_100",
+      "s_mazut_50_g1_2_m",
+      "s_mazut_75_g1_2_m",
+      "s_mazut_100_g1_2_m",
+      "s_r_m30_2",
+      "s_r_m30_1_5",
+      "s_r2_m30_2",
+      "s_r2_m30_1_5"
     ]
   },
   {
     "name": "capillary",
     "description": "Присоединение через капилляр",
     "thread": [
-      "s-mazut"
+      "s_mazut_50",
+      "s_mazut_75",
+      "s_mazut_100",
+      "s_mazut_50_g1_2_m",
+      "s_mazut_75_g1_2_m",
+      "s_mazut_100_g1_2_m"
     ]
   }
 ]
