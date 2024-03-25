@@ -1,24 +1,50 @@
 
-var thread_restr_lst = new Map();// ОГРАНИЧЕНИЯ РЕЗЬБ
-var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ
+var thread_restr_lst = new Map();   // ОГРАНИЧЕНИЯ THREAD
+var flange_restr_lst = new Map();   // ОГРАНИЧЕНИЯ FLANGE
+var hygienic_restr_lst = new Map(); // ОГРАНИЧЕНИЯ HYGIENIC
+var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
 var option_names = ["approval", "output", "electrical", "material", "thread"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , "cap-or-not", , "display"
-var low_press = -101;
-var hi_press = 100000;
-var min_range = 20.0;
+var connection_types = ["thread", "flange","hygienic"];
+var low_press = -101;       // начало диапазона избыт, кПа
+var hi_press = 100000;      // конец диапазона избыт, кПа
+var min_range = 2.5;        // мин ширина диапазона избыт, кПа
+var low_press_abs = 0;      // начало диапазона абс, кПа
+var hi_press_abs = 8000;    // конец диапазона абс, кПа
+var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
 
-
-async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ИЗ JSON
+async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
         const resp = await fetch("/json/"+ url +".json");
         return resp.json();
     }));
     return data;
 }
-fetchRestrictions().then((data) => {
+
+async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ДЛЯ connection_types
+    const data = await Promise.all(connection_types.map(async url => {
+        const resp = await fetch("/json/"+ url +".json");
+        return resp.json();
+    }));
+    return data;
+}
+
+fetchConnectRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕНИЯ ПО ПРИСОЕДИЕНИЯМ
+    for (let el in connection_types){
+        let arr = new Map();
+        data[el].forEach(obj => {
+            let dat = new Map(Object.entries(obj));
+            arr.set(obj["name"], dat);
+        });;
+        window[connection_types[el] + "_restr_lst"] = arr;
+    }
+}).catch(error => {console.log(error);
+})
+
+fetchRestrictions().then((data) => {///СОЗДАЕМ МАССИВ ОГРАНИЧЕНИЙ (ЭЛЕКТРИКА)
     let restr_conf_list = new Map([]);
     let restr_option_list = new Map([]);
     for (el in data){
-        for (let value of Object.values(data[el])){////// ПЕРЕБИРАЕМ ЛИСТЫ ОГРАНИЧЕНИЙ JSON
+        for (let value of Object.values(data[el])){
             let my_lst = new Map([]);
             for (let opt in option_names){
                 if (option_names[opt]!=option_names[el]){
@@ -33,16 +59,10 @@ fetchRestrictions().then((data) => {
         }
        restr_conf_list.set(option_names[el], restr_option_list);
     }
-
-    data[4].forEach(obj => {                    ////ИНДЕКС THREAD В МАССИВЕ option_names
-        let dat = new Map(Object.entries(obj));
-        thread_restr_lst.set(obj["name"], dat);
-      });;
     restr_conf_lst = restr_conf_list;
     console.log("Массив ограничений: ", restr_conf_lst);
-}).catch(error => {console.log(error);// один из запросов завершился с ошибкой
+}).catch(error => {console.log(error);
 })
-
 
 $(function(){        ///////////////ИЗМЕНЯЕМЫЕ ПАНЕЛИ
     $(".panel-left").resizable({
@@ -50,7 +70,6 @@ $(function(){        ///////////////ИЗМЕНЯЕМЫЕ ПАНЕЛИ
         resizeHeight: false
     })
 })
-
 
 $(function(){  /////  РАСКРЫТЬ-СКРЫТЬ СПИСОК ПРИ ЩЕЛЧКЕ НА ЗАГОЛОВОК
     var toDisplay = 0;
@@ -134,12 +153,13 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
     let output = out == "0_2" ? "0...2В/" : out == "04_2" ? "0,4...2В/" : out == "0_10" ? "0...10В/" : "";
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
     let connection = data.has("thread") ? data.get("thread") : data.has("flange") ? data.get("flange") : data.has("hygienic") ? data.get("hygienic") : "";
-    let material = $("input[name=material]:checked").val();
-    console.log($("#"+data.get("electrical")).val());
-    code = dev_type + approval + material + data.get("begin_range") + "..." + data.get("end_range") + data.get("units") + data.get("pressure_type") + "/" + $("#"+data.get("electrical")).val() + "/" + output + $("#" + connection).val();
     if (data.get("cap-or-not") == "capillary"){
-        code = code + "-K="+ data.get("capillary_length") + "м";
+        connection = $("#" + connection).val().split("-");
+        connection[1] = connection[1] + "K";
+        connection = connection.join("-") + "-K=" + data.get("capillary_length") + "м";
     }
+    let material = $("input[name=material]:checked").val();
+    code = dev_type + approval + material + (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" + $("#"+data.get("electrical")).val() + "/" + output + connection;
     document.getElementById("code").innerHTML = code;
 }
 
@@ -153,6 +173,14 @@ function disable_invalid_options(){
                     $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
             })
     }
+    //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
+    low_press = -101;       // начало диапазона избыт, кПа
+    hi_press = 100000;      // конец диапазона избыт, кПа
+    min_range = 2.5;        // мин ширина диапазона избыт, кПа
+    low_press_abs = 0;      // начало диапазона абс, кПа
+    hi_press_abs = 8000;    // конец диапазона абс, кПа
+    min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+    //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ (изменить проверяемые опции)
     for (let pair of full_conf.entries()){
         if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
             for (let opt in option_names){
@@ -180,13 +208,11 @@ function disable_invalid_options(){
         console.log("ОГРАНИЧИТЬ ДИАПАЗОН ПО ВЫБРАННОМУ ПРИСОЕДИНЕНИЮ ");
         low_press = thread_restr_lst.get(full_conf.get("thread")).get("begin_range_kpa");
         hi_press = thread_restr_lst.get(full_conf.get("thread")).get("end_range_kpa");
-        // min_range = thread_restr_lst.get(full_conf.get("thread")).get("range");
         min_range = typeof thread_restr_lst.get(full_conf.get("thread")).get("range_c") != 'undefined' ? thread_restr_lst.get(full_conf.get("thread")).get("range_c") : thread_restr_lst.get(full_conf.get("thread")).get("range");
-        document.getElementById("range_warning").style.display = "block";
-        document.getElementById("range_warning").innerHTML = "Выберите давление в диапазоне " + low_press+ "..." + hi_press + "кПа и минимальной шириной диапазона " + min_range + "кПа.";
-    }else{
-        document.getElementById("range_warning").style.display = "none";
-        document.getElementById("range_warning").innerHTML = "";
+        hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
+        min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
+        document.getElementById("range_warning1").innerHTML = low_press + "..." + hi_press + "кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
+        document.getElementById("range_warning2").innerHTML = low_press_abs + "..." + hi_press_abs + "кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
     }
 
     for (let entr of thread_restr_lst.entries()){   // ДЕКАТИВАЦИЯ THREAD ПО ДАВЛЕНИЮ и КАПИЛЛЯРУ
@@ -271,10 +297,13 @@ $(function (){
                 var $this = $(this.parentElement.parentElement.parentElement);
                 $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
                 $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-                //// ДОПИСАТЬ СНЯТИЕ ОГРАНИЧЕНИЯ ДАВЛЕНИЯ
-                hi_press = 100000;
-                low_press = -101;
-                min_range = 2.5;
+                //// СНИМАЕМ ОГРАНИЧЕНИЯ ДАВЛЕНИЯ при снятии выбора присоединения
+                low_press = -101;       // начало диапазона избыт, кПа
+                hi_press = 100000;      // конец диапазона избыт, кПа
+                min_range = 2.5;        // мин ширина диапазона избыт, кПа
+                low_press_abs = 0;      // начало диапазона абс, кПа
+                hi_press_abs = 8000;    // конец диапазона абс, кПа
+                min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
                 console.log("33");
             }
             if (this.name=="connection-type"){
@@ -338,7 +367,7 @@ $(function (){
     })
 })
 
-function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВАЕТ ДИАПАЗОН И ЕДИНИЦЫ ИЗМЕРЕНИЯ ПРИ ЗАПОЛНЕНИИ ВСЕХ ПОЛЕЙ
+function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВАЕТ ДИАПАЗОН ЕСЛИ ВСЕ ОК
     let begin_range = parseFloat(document.querySelector("#begin-range").value);
     let end_range = parseFloat(document.querySelector("#end-range").value);
     let units = document.querySelector("#pressure-unit-select").value;
@@ -346,11 +375,10 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
     if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range && begin_range>=low_press && end_range<=hi_press){
         let full_conf = get_full_config();
         if (!full_conf.has("thread")){
-            min_range = press_type == "ABS" ? 20: 2.5;
             console.log("ПРИСОЕДИНЕНИЕ НЕ ВЫБРАНО - ОГРАНИЧЕНИЕ, kPa: ", min_range);
         }
-        if (full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
-            console.log("ДАВЛЕНИЕ В НОРМЕ");
+        if (press_type != "ABS" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
+            console.log("ИЗБЫТОЧНОЕ ДАВЛЕНИЕ В НОРМЕ");
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
@@ -358,6 +386,18 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
             $("#material-select").slideDown("slow");
             $("#material-select").prev().addClass("active");
             disable_invalid_options();
+            return;
+        }
+        if (press_type == "ABS" && full_conf.get("begin_range_kpa")>=low_press_abs && full_conf.get("end_range_kpa")<=hi_press_abs && full_conf.get("range")>=min_range_abs){
+            console.log("АБСОЛЮТНОЕ ДАВЛЕНИЕ В НОРМЕ");
+            $("#range-select").prev().removeClass("active");
+            $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#range-select").prev().find(".color-mark-field").addClass("selected");
+            $("#range-select").slideUp("slow");
+            $("#material-select").slideDown("slow");
+            $("#material-select").prev().addClass("active");
+            disable_invalid_options();
+            return;
         }else{
             console.log("ДАВЛЕНИЕ НЕ В ДИАПАЗОНЕ!!!");
             $("#range-select").prev().find(".color-mark-field").removeClass("selected");
