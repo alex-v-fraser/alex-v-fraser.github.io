@@ -276,10 +276,10 @@
 					<input type="checkbox" name="thread" value="S-Mazut-50-G1/2M" id="s_mazut_50_g1_2_m"><label for="s_mazut_50_g1_2_m"><b>S-Mazut-50</b> - разделитель с резьбовым присоединением G1/2</label><br><div id="err_s_mazut_50_g1_2_m" style="display:none;">АХТУНГ!!!</div>
 					<input type="checkbox" name="thread" value="S-Mazut-75-G1/2M" id="s_mazut_75_g1_2_m"><label for="s_mazut_75_g1_2_m"><b>S-Mazut-75</b> - разделитель с резьбовым присоединением G1/2</label><br><div id="err_s_mazut_75_g1_2_m" style="display:none;">АХТУНГ!!!</div>
 					<input type="checkbox" name="thread" value="S-Mazut-100-G1/2M" id="s_mazut_100_g1_2_m"><label for="s_mazut_100_g1_2_m"><b>S-Mazut-100</b> - разделитель с резьбовым присоединением G1/2</label><br><div id="err_s_mazut_100_g1_2_m" style="display:none;">АХТУНГ!!!</div>
-					<input type="checkbox" name="thread" value="S-R-M30x2" id="s_r_m30_2"><label for="s_r_m30_2"><b>S-R-M30x2 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_s_r_m30_2" style="display:none;">АХТУНГ!!!</div>
-					<input type="checkbox" name="thread" value="S-R-M30x1,5" id="s_r_m30_1_5"><label for="s_r_m30_1_5"><b>S-R-M30x1.5 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1.5</label><br><div id="err_s_r_m30_1_5" style="display:none;">АХТУНГ!!!</div>
-					<input type="checkbox" name="thread" value="S-R2-M30x2" id="s_r2_m30_2"><label for="s_r2_m30_2"><b>S-R2-M30x2 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_s_r2_m30_2" style="display:none;">АХТУНГ!!!</div>
-					<input type="checkbox" name="thread" value="S-R2-M30x1,5" id="s_r2_m30_1_5"><label for="s_r2_m30_1_5"><b>S-R2-M30x1.5 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1.5</label><br><div id="err_s_r2_m30_1_5" style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="thread" value="S-R-CM30x2" id="s_r_m30_2"><label for="s_r_m30_2"><b>S-R-CM30x2 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_s_r_m30_2" style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="thread" value="S-R-CM30x1,5" id="s_r_m30_1_5"><label for="s_r_m30_1_5"><b>S-R-CM30x1.5 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1.5</label><br><div id="err_s_r_m30_1_5" style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="thread" value="S-R2-CM30x2" id="s_r2_m30_2"><label for="s_r2_m30_2"><b>S-R2-CM30x2 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_s_r2_m30_2" style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="thread" value="S-R2-CM30x1,5" id="s_r2_m30_1_5"><label for="s_r2_m30_1_5"><b>S-R2-CM30x1.5 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1.5</label><br><div id="err_s_r2_m30_1_5" style="display:none;">АХТУНГ!!!</div>
 					</fieldset>
 				</div>
 
@@ -297,12 +297,16 @@
 			</div>
 			<div class="option-to-select">
 				<div class="color-mark-field special" title="Set"></div>
-				<div class="option-to-select-header"><span>Специальные исполнения</span></div>
+				<div class="option-to-select-header"><span>Специальные исполнения (опционально)</span></div>
 			</div>
 			<div class="option-to-select-list" id="special-select" style="display: none;">
 				<fieldset id="special-select-field" name="special-select-field">
-					<input type="checkbox" name="special" value="spec1" id="spec1"><label for="spec1">В разработке</label><br><div id="err_spec1"  style="display:none;">АХТУНГ!!!</div>
-					<input type="checkbox" name="special" value="spec2" id="spec2"><label for="spec2">В разработке</label><br><div id="err_abs_spec2"  style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="special" value="0,16%" id="0_16" disabled><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа)</label><br><div id="err_0_16"  style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="special" value="H" id="hi_load" disabled><label for="hi_load" class="disabled"><b>H</b> - повышенная перегрузочная способность (поргешность 0,4%, выход 4..20мА)</label><br><div id="err_hi_load"  style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="special" value="Кислород" id="oxygen" disabled><label for="oxygen" class="disabled"><b>Кислород</b> - для измерения кислорода (только штуцеры M и G1/2)</label><br><div id="err_oxygen"  style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="special" value="TR" id="time_response" disabled><label for="time_response" class="disabled"><b>TR</b> - скорость реакции ниже 30мс (только 4..20мА, кроме ALW)</label><br><div id="err_time_response"  style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="special" value="(-20)" id="minus_20" disabled><label for="minus_20" class="disabled"><b>(-20)</b> - диапазон термокомпенсации -20...70°С</label><br><div id="err_minus_20"  style="display:none;">АХТУНГ!!!</div>
+					<input type="checkbox" name="special" value="CT" id="ct_spec" disabled><label for="ct_spec" class="disabled"><b>CT</b> - цифровая термокомпенсация (только абсолютное давление)</label><br><div id="err_ct_spec"  style="display:none;">АХТУНГ!!!</div>
 				</fieldset>
 			</div>
 		</div>
@@ -314,7 +318,7 @@
 		<!-- ЗДЕСЬ БУДЕТ КОД ЗАКАЗА И ОПИСАНИЕ ВЫБРАННЫХ ОПЦИЙ -->
 		<div class="panel-right">
 			ЗДЕСЬ БУДЕТ КОД ЗАКАЗА И ОПИСАНИЕ (в разработке!) ВЫБРАННЫХ ОПЦИЙ
-			<br><br><span id = "code"></span>
+			<br><br><span id = "code" style="font-weight: bold;"></span>
 		</div>
 
 	</div>
