@@ -147,19 +147,38 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
 
 function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И ОПИСАНИЯ ОПЦИЙ принимает full_config
     let code = "";
+    let special = "";
     let out = data.get("output");
     let appr = data.get("approval");
     let dev_type = out == "4_20" ? "PC-28/" : out == "4_20H" ? "PC-28.Smart/" : out == "modbus" ? "PC-28.Modbus/" : out == "0_10" ? "PC-28/" : "PC-28.B/";
     let output = out == "0_2" ? "0...2В/" : out == "04_2" ? "0,4...2В/" : out == "0_10" ? "0...10В/" : "";
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
-    let connection = data.has("thread") ? data.get("thread") : data.has("flange") ? data.get("flange") : data.has("hygienic") ? data.get("hygienic") : "";
-    if (data.get("cap-or-not") == "capillary"){
-        connection = $("#" + connection).val().split("-");
-        connection[1] = connection[1] + "K";
-        connection = connection.join("-") + "-K=" + data.get("capillary_length") + "м";
+    let connection = data.has("thread") ? $("input[name=thread]:checked").val() : data.has("flange") ? $("input[name=flange]:checked").val() : data.has("hygienic") ? $("input[name=hygienic]:checked").val() : "";
+    let material;
+    let s_material;
+    connection = connection.split("-");
+    if (connection[0]=="S"){
+        s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
+        connection[2] = s_material!="" ? connection[2] + s_material : connection[2];
     }
-    let material = $("input[name=material]:checked").val();
-    code = dev_type + approval + material + (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" + $("#"+data.get("electrical")).val() + "/" + output + connection;
+    if (data.get("cap-or-not") == "capillary"){
+        connection[1] = connection[1] + "K";
+        connection.push("K=" + data.get("capillary_length") + "м");
+    }
+    console.log(connection);
+    connection = connection.join("-");
+
+    if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
+        material = $("input[name=material]:checked").val();
+    }else{
+        material = "";
+    }
+    $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
+        if ($(this).is(":checked")){
+            special = special + $(this).val() + "/";
+        }
+    })
+    code = dev_type + approval + material + special + (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" + $("#"+data.get("electrical")).val() + "/" + output + connection;
     document.getElementById("code").innerHTML = code;
 }
 
@@ -168,11 +187,17 @@ function disable_invalid_options(){
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
     for (let opt in option_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
-            $("#"+ option_names[opt] + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
-            $("input[name="+ option_names[opt] +"]").each(function() {
-                    $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
-            })
+        $("#"+ option_names[opt] + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
+        $("input[name="+ option_names[opt] +"]").each(function() {
+            $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
+        })
     }
+
+    $("input[name=special]").each(function() {/// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ SPECIAL
+        $(this).prop('disabled', false);
+        $("label[for="+$(this).attr("id")+"]").removeClass('disabled');
+    })
+
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
     low_press = -101;       // начало диапазона избыт, кПа
     hi_press = 100000;      // конец диапазона избыт, кПа
@@ -180,6 +205,7 @@ function disable_invalid_options(){
     low_press_abs = 0;      // начало диапазона абс, кПа
     hi_press_abs = 8000;    // конец диапазона абс, кПа
     min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ (изменить проверяемые опции)
     for (let pair of full_conf.entries()){
         if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
@@ -241,7 +267,30 @@ function disable_invalid_options(){
             }
         }
     }
+    /// ПРОВЕРКА SPECIAL
+    if (typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked")){ //проверка 0,16
+        $("label[for=0_16]").addClass('disabled');
+        $("#0_16").prop('disabled', true);
+    }
+    if (full_conf.get("output") != "4_20" || $("#0_16").is(":checked")){ // проверка H
+        $("label[for=hi_load]").addClass('disabled');
+        $("#hi_load").prop('disabled', true);
+    }
+    if (!full_conf.has("thread") || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")){ // проверка Кислород
+        $("label[for=oxygen]").addClass('disabled');
+        $("#oxygen").prop('disabled', true);
+    }
+    if (full_conf.get("output") != "4_20" || typeof full_conf.get("electrical") == 'undefined' || full_conf.get("electrical") == "ALW" || full_conf.get("electrical") == "ALW2"){//проверка TR
+        $("label[for=time_response]").addClass('disabled');
+        $("#time_response").prop('disabled', true);
+    }
+    if (full_conf.get("pressure_type") != "ABS"){
+        $("label[for=ct_spec]").addClass('disabled');
+        $("#ct_spec").prop('disabled', true);
+    }
 
+
+    ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
     for (let x of full_conf.values()){
         if (typeof x === 'undefined'){
             check_flag = false;
@@ -280,7 +329,7 @@ function disable_invalid_options(){
 
 $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
-        if ($(this).is(':checked')) { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС
+        if ($(this).is(':checked') && this.name!="special") { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС (кроме special)
             $(this).siblings("input:checkbox").prop('checked', false);
             console.log("1");
         }
@@ -304,6 +353,8 @@ $(function (){
                 low_press_abs = 0;      // начало диапазона абс, кПа
                 hi_press_abs = 8000;    // конец диапазона абс, кПа
                 min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+                document.getElementById("range_warning1").innerHTML = low_press + "..." + hi_press + "кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
+                document.getElementById("range_warning2").innerHTML = low_press_abs + "..." + hi_press_abs + "кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
                 console.log("33");
             }
             if (this.name=="connection-type"){
@@ -317,11 +368,16 @@ $(function (){
 
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
             var $this = $(this.parentElement.parentElement.parentElement).prev();
-            $this.next("div.option-to-select-list").slideUp("slow")
             $this.removeClass("active");
-            $this.next(".option-to-select").addClass("active");
+            $this.next("div.option-to-select-list").slideUp("slow");
             $this.find(".color-mark-field").removeClass("unselected");
             $this.find(".color-mark-field").addClass("selected");
+            $("div#special-select").slideDown("Slow");
+            $("div#special-select").prev("div").addClass("active");
+
+            // $this.next("div").find(".option-to-select").addClass("active");
+            // $this.next("div").find(".option-to-select-list").slideDown("slow");
+
             disable_invalid_options();
             console.log("6");
             return;
