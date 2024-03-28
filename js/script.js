@@ -3,14 +3,16 @@ var thread_restr_lst = new Map();   // ОГРАНИЧЕНИЯ THREAD
 var flange_restr_lst = new Map();   // ОГРАНИЧЕНИЯ FLANGE
 var hygienic_restr_lst = new Map(); // ОГРАНИЧЕНИЯ HYGIENIC
 var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
-var option_names = ["approval", "output", "electrical", "material", "thread"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , "cap-or-not", , "display"
-var connection_types = ["thread", "flange","hygienic"];
+var option_names = ["approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , , "material", "thread", "cap-or-not", , "display"
+var connection_types = ["thread", "flange", "hygienic"];
 var low_press = -101;       // начало диапазона избыт, кПа
 var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
 var low_press_abs = 0;      // начало диапазона абс, кПа
 var hi_press_abs = 8000;    // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+
+/////////////////////////////////////////////////////////////////////////////////////////   В РАБОТУ СТРОКУ 297      //////////////////////////////////////////////////////////////////////////////
 
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
@@ -48,10 +50,8 @@ fetchRestrictions().then((data) => {///СОЗДАЕМ МАССИВ ОГРАНИ�
             let my_lst = new Map([]);
             for (let opt in option_names){
                 if (option_names[opt]!=option_names[el]){
-                    // console.log(value["name"], " - ", option_names[opt], " - ", value[option_names[opt]]);
-                    if (value.hasOwnProperty(option_names[opt])){//// УЗНАЁМ ОПРЕДЕЛЕНО ли свойство option option_names[opt] в позиции объекте из массива json
+                    if (value.hasOwnProperty(option_names[opt])){               //// УЗНАЁМ ОПРЕДЕЛЕНО ли свойство option option_names[opt] в позиции объекте из массива json
                         my_lst.set(option_names[opt], value[option_names[opt]]);
-                        // console.log(option_names[opt], value[option_names[opt]]);
                     }
                 }
             }
@@ -93,6 +93,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let end_range = parseFloat(document.querySelector("#end-range").value);
     let units = document.querySelector("#pressure-unit-select").value;
     let press_type = document.querySelector("#pressure-type").value;
+    let max_temp = document.querySelector("#mes-env-temp").value
     const koef = new Map([
         ["Па", 0.001],
         ["кПа", 1],
@@ -114,8 +115,14 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     if (!Number.isNaN(capillary_length)){
         full_conf.set("capillary_length", capillary_length);
     }
+    if (!Number.isNaN(max_temp)){
+        full_conf.set("max_temp", max_temp);
+    }
     if ($("input[name=cap-or-not]:checked").prop("id")=="direct"){
         full_conf.delete("capillary_length");
+    }
+    if ($("input[name=cap-or-not]:checked").prop("id")=="capillary"){
+        full_conf.delete("max_temp");
     }
     if (press_type!='not_selected' && units!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range){
         full_conf.set("begin_range", begin_range);
@@ -165,7 +172,6 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
         connection[1] = connection[1] + "K";
         connection.push("K=" + data.get("capillary_length") + "м");
     }
-    console.log(connection);
     connection = connection.join("-");
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
@@ -186,9 +192,10 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    for (let opt in option_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
-        $("#"+ option_names[opt] + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
-        $("input[name="+ option_names[opt] +"]").each(function() {
+    let opt_names = ["approval", "output", "electrical", "material", "cap-or-not", "thread"]; //ДОБАВИТЬ flange И hygienic когда они появятся
+    for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
+        $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
+        $("input[name="+ opt_name +"]").each(function() {
             $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
         })
     }
@@ -198,6 +205,10 @@ function disable_invalid_options(){
         $("label[for="+$(this).attr("id")+"]").removeClass('disabled');
     })
 
+    $("input[name=mes-env-temp]").prop('max', 300);// СНЯТЬ ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ
+    $("input[name=mes-env-temp]").prop('placeholder', "-40...300");
+    document.getElementById("radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до 300°C и нажмите \"OK\"";
+
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
     low_press = -101;       // начало диапазона избыт, кПа
     hi_press = 100000;      // конец диапазона избыт, кПа
@@ -206,7 +217,7 @@ function disable_invalid_options(){
     hi_press_abs = 8000;    // конец диапазона абс, кПа
     min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
 
-    //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ (изменить проверяемые опции)
+    //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
     for (let pair of full_conf.entries()){
         if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
             for (let opt in option_names){
@@ -230,45 +241,76 @@ function disable_invalid_options(){
         }
     }
 
-    if (full_conf.has("thread") && typeof full_conf.get("thread")!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD
-        console.log("ОГРАНИЧИТЬ ДИАПАЗОН ПО ВЫБРАННОМУ ПРИСОЕДИНЕНИЮ ");
-        low_press = thread_restr_lst.get(full_conf.get("thread")).get("begin_range_kpa");
-        hi_press = thread_restr_lst.get(full_conf.get("thread")).get("end_range_kpa");
-        min_range = typeof thread_restr_lst.get(full_conf.get("thread")).get("range_c") != 'undefined' ? thread_restr_lst.get(full_conf.get("thread")).get("range_c") : thread_restr_lst.get(full_conf.get("thread")).get("range");
-        hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
-        min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
-        document.getElementById("range_warning1").innerHTML = low_press + "..." + hi_press + "кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
-        document.getElementById("range_warning2").innerHTML = low_press_abs + "..." + hi_press_abs + "кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
+    for (let con_type of connection_types){
+        if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
+            low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
+            hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
+            min_range = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
+            hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
+            min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
+            document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
+            document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
+            $("input[name=material]").each(function() {
+                if (!window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("material").includes($(this).attr("id"))){
+                    $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                    $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                }
+            })
+            if (window[con_type + "_restr_lst"].get(full_conf.get(con_type)).has("cap-or-not") && window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("cap-or-not") == "direct"){//ОГРАНИЧЕНИЕ  cap-or-not для DIRECT ONLY
+                $("label[for=capillary]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ capillary
+                $("#capillary").prop('disabled', true);          //// ДЕАКТИВАЦИЯ capillary
+            }
+
+            let max_temp = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("max_temp");
+            if (typeof max_temp!='undefined'){
+                $("input[name=mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
+                $("input[name=mes-env-temp]").prop('placeholder', "-40..." + max_temp);
+                document.getElementById("radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
+            }
+        }
+
+        for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC ПО ДАВЛЕНИЮ, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
+            if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
+                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
+                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+            }
+            if (full_conf.get("cap-or-not") == 'capillary'){
+                if (entr[1].get("cap-or-not") !== 'undefined' && entr[1].get("cap-or-not") == 'direct'){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                }
+            }
+            if (full_conf.get("cap-or-not") == 'direct' && full_conf.has("max_temp") && !Number.isNaN(full_conf.get("max_temp"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
+                if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp")){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                }
+            }
+            if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-or-not") == 'direct'){
+                // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
+                if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                }
+            }
+            if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-or-not") == 'capillary'){
+                // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
+                if ((typeof entr[1].get("range_c") !== 'undefined' && full_conf.get("range")<entr[1].get("range_c")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                }
+            }
+            if (typeof full_conf.get("material")!=='undefined'){
+                if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                }
+            }
+        }
     }
 
-    for (let entr of thread_restr_lst.entries()){   // ДЕКАТИВАЦИЯ THREAD ПО ДАВЛЕНИЮ и КАПИЛЛЯРУ
-        if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
-            $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD
-            $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD
-        }
-        if (full_conf.get("cap-or-not") == 'capillary'){
-            if (entr[1].get("cap-or-not") !== 'undefined' && entr[1].get("cap-or-not") == 'direct'){
-                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD
-                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD
-            }
-        }
-        if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-or-not") == 'direct'){
-            // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-            if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
-                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD
-                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD
-            }
-        }
-        if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-or-not") == 'capillary'){
-            // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-            if ((typeof entr[1].get("range_c") !== 'undefined' && full_conf.get("range")<entr[1].get("range_c")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
-                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD
-                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD
-            }
-        }
-    }
     /// ПРОВЕРКА SPECIAL
-    if (typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked")){ //проверка 0,16
+    if (typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"){ //проверка 0,16
         $("label[for=0_16]").addClass('disabled');
         $("#0_16").prop('disabled', true);
     }
@@ -283,6 +325,10 @@ function disable_invalid_options(){
     if (full_conf.get("output") != "4_20" || typeof full_conf.get("electrical") == 'undefined' || full_conf.get("electrical") == "ALW" || full_conf.get("electrical") == "ALW2"){//проверка TR
         $("label[for=time_response]").addClass('disabled');
         $("#time_response").prop('disabled', true);
+    }
+    if (full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"){ //проверка (-20)
+        $("label[for=minus_20]").addClass('disabled');
+        $("#minus_20").prop('disabled', true);
     }
     if (full_conf.get("pressure_type") != "ABS"){
         $("label[for=ct_spec]").addClass('disabled');
@@ -341,6 +387,13 @@ $(function (){
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
+            if (this.name=="cap-or-not"){
+                document.getElementById("radiator-select").hidden = true;
+                document.getElementById("cap-length-span").hidden = true;
+                document.getElementById("radiator-select-err").hidden = true;
+                document.getElementById("cap-length-span-err").hidden = true;
+                $("input[name=mes-env-temp]").val("");
+            }
             console.log("3");
             if (this.name=="thread" || this.name=="flange" || this.name=="hygienic"){
                 var $this = $(this.parentElement.parentElement.parentElement);
@@ -353,8 +406,8 @@ $(function (){
                 low_press_abs = 0;      // начало диапазона абс, кПа
                 hi_press_abs = 8000;    // конец диапазона абс, кПа
                 min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
-                document.getElementById("range_warning1").innerHTML = low_press + "..." + hi_press + "кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
-                document.getElementById("range_warning2").innerHTML = low_press_abs + "..." + hi_press_abs + "кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
+                document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
+                document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
                 console.log("33");
             }
             if (this.name=="connection-type"){
@@ -374,23 +427,37 @@ $(function (){
             $this.find(".color-mark-field").addClass("selected");
             $("div#special-select").slideDown("Slow");
             $("div#special-select").prev("div").addClass("active");
-
-            // $this.next("div").find(".option-to-select").addClass("active");
-            // $this.next("div").find(".option-to-select-list").slideDown("slow");
-
             disable_invalid_options();
             console.log("6");
             return;
         }
 
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
+            document.getElementById("radiator-select").hidden = true;
             document.getElementById("cap-length-span").hidden = false;
+            document.getElementById("radiator-select-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
+            $("input[name=mes-env-temp]").val("");
+            disable_invalid_options();
             console.log("7");
             return;
         }
+
+        if (this.value=="direct") { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
+            document.getElementById("radiator-select").hidden = false;
+            document.getElementById("cap-length-span").hidden = true;
+            document.getElementById("cap-length-span-err").hidden = true;
+            var $this = $(this.parentElement.parentElement);
+            $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
+            $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
+            $("input[name=capillary-length]").val("");
+            disable_invalid_options();
+            console.log("12");
+            return;
+        }
+
         if (this.name=="connection-type") { //// ПОКАЗЫВАЕМ ВЫБОР ДОСТУПНЫХ РАЗМЕРОВ РЕЗЬБЫ ИЛИ ФЛАНЦА ИЛИ ГИГИЕНИЧЕСКОГО ПРИСОЕДИНЕНИЯ
             let target = $('#' + $(this).prop("id").slice(0,-5) + '-select');
             console.log("8");
@@ -430,7 +497,7 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
     let press_type = document.querySelector("#pressure-type").value;
     if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range && begin_range>=low_press && end_range<=hi_press){
         let full_conf = get_full_config();
-        if (!full_conf.has("thread")){
+        if (!full_conf.has("thread") || !full_conf.has("flange") || !full_conf.has("hygienic")){
             console.log("ПРИСОЕДИНЕНИЕ НЕ ВЫБРАНО - ОГРАНИЧЕНИЕ, kPa: ", min_range);
         }
         if (press_type != "ABS" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
@@ -486,6 +553,51 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
             $("#cap-or-not-select").slideToggle("slow");
             $("#range-select").slideToggle("slow");
             $("#range-select").prev().addClass("active");
+            disable_invalid_options();
+        }
+    })
+})
+
+
+$(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖАЕТ СЛЮДУЮЩУЮ ПРИ НАЖАТИИ НА КНОПКУ ОК при выборе РАДИАТОРА
+    $("#radiator-select-button-ok").click(function(){
+        let max_temp = parseInt(document.querySelector("#mes-env-temp").value);
+        let min = parseInt($("input[name=mes-env-temp]").prop('min'));
+        let max = parseInt($("input[name=mes-env-temp]").prop('max'));
+        console.log("max_temp: ", max_temp);
+        if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
+            document.getElementById("radiator-select-err").hidden = false;
+            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
+            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("selected");
+            return;
+        }else{
+            document.getElementById("radiator-select-err").hidden = true;
+            $("#cap-or-not-select").prev().removeClass("active");
+            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
+            $("#cap-or-not-select").slideToggle("slow");
+            $("#range-select").slideToggle("slow");
+            $("#range-select").prev().addClass("active");
+            disable_invalid_options();
+        }
+    })
+})
+
+$(function(){
+    $("#mes-env-temp").change(function(){
+        let max_temp = parseInt($(this).val());
+        let min = parseInt($("input[name=mes-env-temp]").prop('min'));
+        let max = parseInt($("input[name=mes-env-temp]").prop('max'));
+        console.log($(this).val());
+        if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
+            document.getElementById("radiator-select-err").hidden = false;
+            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
+            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("selected");
+            return;
+        }else{
+            document.getElementById("radiator-select-err").hidden = true;
+            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
             disable_invalid_options();
         }
     })
