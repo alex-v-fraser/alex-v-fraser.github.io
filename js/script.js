@@ -9,7 +9,7 @@ var low_press = -101;       // начало диапазона избыт, кП�
 var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
 var low_press_abs = 0;      // начало диапазона абс, кПа
-var hi_press_abs = 8000;    // конец диапазона абс, кПа
+var hi_press_abs = 10000;    // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
 
 /////////////////////////////////////////////////////////////////////////////////////////   В РАБОТУ СТРОКУ 297      //////////////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let end_range = parseFloat(document.querySelector("#end-range").value);
     let units = document.querySelector("#pressure-unit-select").value;
     let press_type = document.querySelector("#pressure-type").value;
-    let max_temp = document.querySelector("#mes-env-temp").value
+    let max_temp = parseInt(document.querySelector("#mes-env-temp").value);
     const koef = new Map([
         ["Па", 0.001],
         ["кПа", 1],
@@ -115,11 +115,13 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     if (!Number.isNaN(capillary_length)){
         full_conf.set("capillary_length", capillary_length);
     }
-    if (!Number.isNaN(max_temp)){
-        full_conf.set("max_temp", max_temp);
-    }
     if ($("input[name=cap-or-not]:checked").prop("id")=="direct"){
         full_conf.delete("capillary_length");
+        if (!Number.isNaN(max_temp)){
+            full_conf.set("max_temp", max_temp);
+        }else{
+            full_conf.set("max_temp");
+        }
     }
     if ($("input[name=cap-or-not]:checked").prop("id")=="capillary"){
         full_conf.delete("max_temp");
@@ -163,6 +165,59 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
     let connection = data.has("thread") ? $("input[name=thread]:checked").val() : data.has("flange") ? $("input[name=flange]:checked").val() : data.has("hygienic") ? $("input[name=hygienic]:checked").val() : "";
     let material;
     let s_material;
+    let main_range;
+    let range;
+    const main_ranges = [
+        [0, 100000, "0...100МПа"],
+        [0, 60000, "0...60МПа"],
+        [0, 30000, "0...30МПа"],
+        [0, 16000, "0...16МПа"],
+        [0, 10000, "0...10МПа"],
+        [0, 7000, "0...7МПа"],
+        [0, 2500, "0...2,5МПа"],
+        [0, 700, "0...0,7МПа"],
+        [-100, 150, "-100...150кПа"],
+        [-100, 700, "-100...700кПа"],
+        [0, 200, "0...200кПа"],
+        [0, 100, "0...100кПа"],
+        [-50, 50, "-50...50кПа"],
+        [0, 25, "0...25кПа"],
+        [-10, 10, "-10...10кПа"],
+        [-1.5, 7, "-1,5...7кПа"]
+    ];
+    const main_ranges_abs = [
+        [0, 130, "0...130кПаABS"],
+        [0, 700, "0...700кПаABS"],
+        [0, 2500, "0...2,5МПаABS"],
+        [0, 7000, "0...7МПаABS"],
+        [0, 10000, "0...10МПаABS"]
+    ];
+    main_range = "";
+    if (dev_type == "PC-28.Smart/" || dev_type == "PC-28.Modbus/"){
+        if (data.get("pressure_type")==""){
+            let min_main_range = [-200000, 200000, ""];
+            for (el of main_ranges){
+                if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                    if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
+                        min_main_range = el;
+                    }
+                }
+            }
+            main_range = min_main_range[2] + "/";
+        }
+        if (data.get("pressure_type")=="ABS"){
+            let min_main_range = [-200000, 200000, ""];
+            for (el of main_ranges_abs){
+                if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                    if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
+                        min_main_range = el;
+                    }
+                }
+            }
+            main_range = min_main_range[2] + "/";
+        }
+    }
+    range = dev_type!="PC-28.Modbus/" ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
     connection = connection.split("-");
     if (connection[0]=="S"){
         s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
@@ -184,7 +239,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
             special = special + $(this).val() + "/";
         }
     })
-    code = dev_type + approval + material + special + (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" + $("#"+data.get("electrical")).val() + "/" + output + connection;
+    code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
     document.getElementById("code").innerHTML = code;
 }
 
@@ -214,7 +269,7 @@ function disable_invalid_options(){
     hi_press = 100000;      // конец диапазона избыт, кПа
     min_range = 2.5;        // мин ширина диапазона избыт, кПа
     low_press_abs = 0;      // начало диапазона абс, кПа
-    hi_press_abs = 8000;    // конец диапазона абс, кПа
+    hi_press_abs = 10000;    // конец диапазона абс, кПа
     min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
 
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
@@ -330,7 +385,7 @@ function disable_invalid_options(){
         $("label[for=minus_20]").addClass('disabled');
         $("#minus_20").prop('disabled', true);
     }
-    if (full_conf.get("pressure_type") != "ABS"){
+    if (full_conf.get("pressure_type") != "ABS" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"){ // проверка CT
         $("label[for=ct_spec]").addClass('disabled');
         $("#ct_spec").prop('disabled', true);
     }
@@ -341,7 +396,7 @@ function disable_invalid_options(){
         if (typeof x === 'undefined'){
             check_flag = false;
             console.log("НЕПОЛНАЯ КОНФИГУРАЦИЯ!");
-            document.getElementById("code").innerHTML = "Для получения кода заказа необходимо выбрать все обязательные опции";
+            document.getElementById("code").innerHTML = "Для получения кода заказа необходимо выбрать все обязательные опции (красный флаг)";
             break;
         }
     }
@@ -404,7 +459,7 @@ $(function (){
                 hi_press = 100000;      // конец диапазона избыт, кПа
                 min_range = 2.5;        // мин ширина диапазона избыт, кПа
                 low_press_abs = 0;      // начало диапазона абс, кПа
-                hi_press_abs = 8000;    // конец диапазона абс, кПа
+                hi_press_abs = 10000;    // конец диапазона абс, кПа
                 min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
