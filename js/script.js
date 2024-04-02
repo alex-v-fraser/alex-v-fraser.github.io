@@ -161,7 +161,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }
     }else{
         full_conf.delete("cilinder_length");
-        console.log("УДАЛИТЬ длину тубуса из full_conf!");
     }
     return full_conf;
 }
@@ -236,7 +235,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
         connection[2] = s_material!="" ? connection[2] + s_material : connection[2];
     }
-    if (data.get("flange").slice(0,3) == "s_t"){
+    if (data.has("flange") && data.get("flange").slice(0,3) == "s_t"){
         connection.push("T=" + $("#" + data.get("flange") + "-cilinder-length").val() + "мм");
     }
     if (data.get("cap-or-not") == "capillary"){
@@ -354,8 +353,10 @@ function disable_invalid_options(){
                 $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
                 $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
             }
-            if (full_conf.get("cap-or-not") == 'capillary'){
-                if (entr[1].get("cap-or-not") !== 'undefined' && entr[1].get("cap-or-not") == 'direct'){
+            if (typeof full_conf.get("cap-or-not") != 'undefined'){
+                if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-or-not")){
+                    // console.log(entr[1]);
+                    // console.log(entr[0], "  ", entr[1].get("cap-or-not"), "  ", full_conf.get("cap-or-not"));
                     $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                     $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                 }
