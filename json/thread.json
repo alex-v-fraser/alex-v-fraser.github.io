@@ -53,6 +53,7 @@
     "name": "g1_4",
     "description": "Штуцер G1/4, отверстие d4мм",
     "cap-or-not": "direct",
+    "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 35000,
     "material": [
@@ -335,6 +336,7 @@
     "name": "m12_1",
     "description": "Штуцер M12x1",
     "cap-or-not": "direct",
+    "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 100000,
     "material": [
