@@ -16,7 +16,7 @@ var min_range_abs = 20.0;   // мин ширина диапазона абс, к
 
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
-        const resp = await fetch("/json/"+ url +".json");
+        const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
     return data;
@@ -24,7 +24,7 @@ async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГР�
 
 async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ДЛЯ connection_types
     const data = await Promise.all(connection_types.map(async url => {
-        const resp = await fetch("/json/"+ url +".json");
+        const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
     return data;
@@ -38,6 +38,7 @@ fetchConnectRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕ�
             arr.set(obj["name"], dat);
         });;
         window[connection_types[el] + "_restr_lst"] = arr;
+        // console.log(window[connection_types[el] + "_restr_lst"]);
     }
 }).catch(error => {console.log(error);
 })
@@ -151,10 +152,21 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     if ($("input[name=cap-or-not]:checked").prop("id")=="capillary" && !full_conf.has("capillary_length")){
         full_conf.set("capillary_length");
     }
+    if (typeof full_conf.get("flange")!='undefined' && full_conf.get("flange").slice(0,3)=="s_t"){
+        let t_length = parseInt($("#" + full_conf.get("flange") + "-cilinder-length").val());
+        if (!Number.isNaN(t_length)){
+            full_conf.set("cilinder_length", parseInt($("#" + full_conf.get("flange") + "-cilinder-length").val()));
+        }else{
+            full_conf.set("cilinder_length");
+        }
+    }else{
+        full_conf.delete("cilinder_length");
+        console.log("УДАЛИТЬ длину тубуса из full_conf!");
+    }
     return full_conf;
 }
 
-function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И ОПИСАНИЯ ОПЦИЙ принимает full_config
+function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - принимает full_config
     let code = "";
     let special = "";
     let out = data.get("output");
@@ -219,15 +231,28 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
     }
     range = dev_type!="PC-28.Modbus/" ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
     connection = connection.split("-");
+    console.log(connection);
     if (connection[0]=="S"){
         s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
         connection[2] = s_material!="" ? connection[2] + s_material : connection[2];
     }
+    if (data.get("flange").slice(0,3) == "s_t"){
+        connection.push("T=" + $("#" + data.get("flange") + "-cilinder-length").val() + "мм");
+    }
     if (data.get("cap-or-not") == "capillary"){
-        connection[1] = connection[1] + "K";
-        connection.push("K=" + data.get("capillary_length") + "м");
+        if ($("#rad_cap").is(':checked')){
+            connection[1] = connection[1] + "K";
+            connection.push("R-K=" + data.get("capillary_length") + "м");
+        }else{
+            connection[1] = connection[1] + "K";
+            connection.push("T-K=" + data.get("capillary_length") + "м");
+        }
+    }
+    if (data.get("cap-or-not") == "direct" && connection.length>1){
+        connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
     }
     connection = connection.join("-");
+    console.log(connection);
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
         material = $("input[name=material]:checked").val();
@@ -235,7 +260,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА И О�
         material = "";
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
-        if ($(this).is(":checked")){
+        if ($(this).is(":checked") && $(this).val()!="rad_cap"){
             special = special + $(this).val() + "/";
         }
     })
@@ -247,7 +272,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["approval", "output", "electrical", "material", "cap-or-not", "thread"]; //ДОБАВИТЬ flange И hygienic когда они появятся
+    let opt_names = ["approval", "output", "electrical", "material", "cap-or-not", "thread", "flange"]; //ДОБАВИТЬ hygienic когда они появятся
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -317,7 +342,7 @@ function disable_invalid_options(){
             }
 
             let max_temp = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("max_temp");
-            if (typeof max_temp!='undefined'){
+            if (typeof max_temp!='undefined' && !window[con_type + "_restr_lst"].has("radiator")){
                 $("input[name=mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                 $("input[name=mes-env-temp]").prop('placeholder', "-40..." + max_temp);
                 document.getElementById("radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
@@ -389,6 +414,10 @@ function disable_invalid_options(){
         $("label[for=ct_spec]").addClass('disabled');
         $("#ct_spec").prop('disabled', true);
     }
+    if (full_conf.get("cap-or-not") == "direct"){ // проверка rad_cap
+        $("label[for=rad_cap]").addClass('disabled');
+        $("#rad_cap").prop('disabled', true);
+    }
 
 
     ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
@@ -449,6 +478,12 @@ $(function (){
                 document.getElementById("cap-length-span-err").hidden = true;
                 $("input[name=mes-env-temp]").val("");
             }
+            if (this.name=="flange"){
+                $("#flange-select-field > span").each(function(){
+                    $(this).prop("hidden", true);
+                    $(this).find("select option[value='not_selected']").prop('selected', true);
+                })
+            }
             console.log("3");
             if (this.name=="thread" || this.name=="flange" || this.name=="hygienic"){
                 var $this = $(this.parentElement.parentElement.parentElement);
@@ -475,16 +510,36 @@ $(function (){
         }
 
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
-            var $this = $(this.parentElement.parentElement.parentElement).prev();
-            $this.removeClass("active");
-            $this.next("div.option-to-select-list").slideUp("slow");
-            $this.find(".color-mark-field").removeClass("unselected");
-            $this.find(".color-mark-field").addClass("selected");
-            $("div#special-select").slideDown("Slow");
-            $("div#special-select").prev("div").addClass("active");
-            disable_invalid_options();
-            console.log("6");
-            return;
+            if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100"){
+                let target = $(this).prop("id")  + "-cilinder-select";
+                $("#flange-select-field > span").each(function(){
+                    if ($(this).prop("id")!=target){
+                        document.getElementById($(this).prop("id")).hidden = true;
+                        $(this).find("select option[value='not_selected']").prop('selected', true);
+                        console.log('Установка длины тубуса как не выбрано при переключении на другой')
+                    }else{
+                        document.getElementById($(this).prop("id")).hidden = false;
+                    }
+                })
+                disable_invalid_options();
+                console.log("13");
+                return;
+            }else{
+                $("#flange-select-field > span").each(function(){
+                    $(this).prop("hidden", true);
+                    $(this).find("select option[value='not_selected']").prop('selected', true);
+                })
+                var $this = $(this.parentElement.parentElement.parentElement).prev();
+                $this.removeClass("active");
+                $this.next("div.option-to-select-list").slideUp("slow");
+                $this.find(".color-mark-field").removeClass("unselected");
+                $this.find(".color-mark-field").addClass("selected");
+                $("div#special-select").slideDown("Slow");
+                $("div#special-select").prev("div").addClass("active");
+                disable_invalid_options();
+                console.log("6");
+                return;
+            }
         }
 
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
@@ -654,6 +709,29 @@ $(function(){
             $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
             disable_invalid_options();
+        }
+    })
+})
+
+$(function(){
+    $("select[id*='cilinder-length']").change(function(){
+        if ($(this).val()!="not_selected"){
+            var $this = $(this.parentElement.parentElement.parentElement.parentElement).prev();
+            $this.removeClass("active");
+            $this.next("div.option-to-select-list").slideUp("slow");
+            $this.find(".color-mark-field").removeClass("unselected");
+            $this.find(".color-mark-field").addClass("selected");
+            $("div#special-select").slideDown("Slow");
+            $("div#special-select").prev("div").addClass("active");
+            disable_invalid_options();
+            console.log("14");
+            return;
+        }else{
+            var $this = $(this.parentElement.parentElement.parentElement.parentElement).prev();
+            $this.find(".color-mark-field").addClass("unselected");
+            $this.find(".color-mark-field").removeClass("selected");
+            disable_invalid_options();
+            console.log("15");
         }
     })
 })

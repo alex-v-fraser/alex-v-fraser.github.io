@@ -50,6 +50,16 @@
     ]
   },
   {
+    "name": "g1_4",
+    "description": "Штуцер G1/4, отверстие d4мм",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 35000,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
     "name": "1_2NPT",
     "description": "Штуцер 1/2NPT, отверстие G1/4",
     "cap-or-not": "direct",
@@ -247,6 +257,121 @@
     "material": [
       "aisi316",
       "hastelloy"
+    ]
+  },
+  {
+    "name": "s_compk_10mpa",
+    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-10МПа с резьбовым присоединением 1/2NPT",
+    "cap-or-not": "capillary",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 10000,
+    "range_c": 1000,
+    "max_temp": 180,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_compk_25mpa",
+    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-25МПа с резьбовым присоединением 1/2NPT",
+    "cap-or-not": "capillary",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 25000,
+    "range_c": 1000,
+    "max_temp": 180,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_compk_60mpa",
+    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-60МПа с резьбовым присоединением 1/2NPT",
+    "cap-or-not": "capillary",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 60000,
+    "range_c": 1000,
+    "max_temp": 180,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_cg1_1_2",
+    "description": "Разделитель с лицевой мембраной и резьбовым присоединением G1.1/2",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 10000,
+    "range": 100,
+    "max_temp": 150,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "s_compch_m20_1_5",
+    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-M20x1,5 с резьбовым присоединением M20x1,5",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 1600,
+    "range": 40,
+    "range_c": 100,
+    "max_temp": 100,
+    "material": [
+      "tantal"
+    ]
+  },
+  {
+    "name": "s_compch_g1_2",
+    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-G1/2 с резьбовым присоединением G1/2",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 1600,
+    "range": 40,
+    "range_c": 100,
+    "max_temp": 100,
+    "material": [
+      "tantal"
+    ]
+  },
+  {
+    "name": "m12_1",
+    "description": "Штуцер M12x1",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 100000,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "cg3_4_g317",
+    "description": "Штуцер G3/4 (тип G317) с лицевой мембраной",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 600,
+    "range": 40,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "cg3_4_g225",
+    "description": "Штуцер G3/4 (тип G225) с лицевой мембраной",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 600,
+    "range": 40,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "cm22_1_5",
+    "description": "Штуцер M22x1.5 с лицевой мембраной",
+    "cap-or-not": "direct",
+    "begin_range_kpa": -101,
+    "end_range_kpa": 2500,
+    "range": 600,
+    "material": [
+      "aisi316"
     ]
   }
 ]
