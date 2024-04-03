@@ -371,6 +371,7 @@
     "name": "cm22_1_5",
     "description": "Штуцер M22x1.5 с лицевой мембраной",
     "cap-or-not": "direct",
+    "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 2500,
     "range": 600,
