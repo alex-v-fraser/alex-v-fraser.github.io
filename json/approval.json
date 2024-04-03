@@ -1,6 +1,7 @@
 [
     {
       "name": "non_hazard",
+      "description": "Общепромышленное исполнение",
       "electrical": [
             "PD",
             "PPD",
@@ -14,6 +15,7 @@
     },
     {
         "name": "Ex",
+        "description": "Искробезопасное исполнение Ga/Gb Ex ia IIC T4/T5/T6 X; Ex ia IIIC T110⁰С Da X",
         "electrical": [
             "PD",
             "PPD",
@@ -34,6 +36,7 @@
     },
     {
         "name": "Exd",
+        "description": "Взрывонепроницаемая оболочка Ex d IIC T6/T5/Т4 G X; Ex tb IIIC T85°C/T100°C /T120°C Db X",
         "electrical": [
             "FL_M20_1_5",
             "FL_1_2NPT",

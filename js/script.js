@@ -1,10 +1,14 @@
-
+var device_restr_lst = new Map(); // ОГРАНИЧЕНИЯ DEVICE
+var approval_restr_lst = new Map(); // ОГРАНИЧЕНИЯ ВЗРЫВОБЕЗОПАСНОСТЬ
+var special_restr_lst = new Map(); // ОГРАНИЧЕНИЯ SPECIAL
+var electrical_restr_lst = new Map(); // ОГРАНИЧЕНИЯ ELECTRICAL
 var thread_restr_lst = new Map();   // ОГРАНИЧЕНИЯ THREAD
 var flange_restr_lst = new Map();   // ОГРАНИЧЕНИЯ FLANGE
 var hygienic_restr_lst = new Map(); // ОГРАНИЧЕНИЯ HYGIENIC
 var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
 var option_names = ["approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , , "material", "thread", "cap-or-not", , "display"
 var connection_types = ["thread", "flange", "hygienic"];
+var search_names = ["device", "approval", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
 var low_press = -101;       // начало диапазона избыт, кПа
 var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
@@ -12,7 +16,6 @@ var low_press_abs = 0;      // начало диапазона абс, кПа
 var hi_press_abs = 10000;    // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
 
-/////////////////////////////////////////////////////////////////////////////////////////   В РАБОТУ СТРОКУ 297      //////////////////////////////////////////////////////////////////////////////
 
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
@@ -23,7 +26,7 @@ async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГР�
 }
 
 async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ДЛЯ connection_types
-    const data = await Promise.all(connection_types.map(async url => {
+    const data = await Promise.all(search_names.map(async url => {
         const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
@@ -31,14 +34,14 @@ async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА 
 }
 
 fetchConnectRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕНИЯ ПО ПРИСОЕДИЕНИЯМ
-    for (let el in connection_types){
+    for (let el in search_names){
         let arr = new Map();
         data[el].forEach(obj => {
             let dat = new Map(Object.entries(obj));
             arr.set(obj["name"], dat);
         });;
-        window[connection_types[el] + "_restr_lst"] = arr;
-        // console.log(window[connection_types[el] + "_restr_lst"]);
+        window[search_names[el] + "_restr_lst"] = arr;
+        console.log(search_names[el] + "_restr_lst", window[search_names[el] + "_restr_lst"]);
     }
 }).catch(error => {console.log(error);
 })
@@ -72,6 +75,17 @@ $(function(){        ///////////////ИЗМЕНЯЕМЫЕ ПАНЕЛИ
     })
 })
 
+$(function(){         /////////// ИЗМЕНЯЕМАЯ ДЛИНА ПОЛЯ ВВОДА КОДА
+    $('#code').autoGrowInput({
+        minWidth: 200,
+        maxWidth: function(){return $('.code-input-container').width()-8; },
+        comfortZone: 5
+    })
+    $(window).resize(function(){
+        $('#code').trigger('autogrow');
+    })
+})
+
 $(function(){  /////  РАСКРЫТЬ-СКРЫТЬ СПИСОК ПРИ ЩЕЛЧКЕ НА ЗАГОЛОВОК
     var toDisplay = 0;
     $(".option-to-select").click(function(){
@@ -87,6 +101,77 @@ $(function(){  /////  РАСКРЫТЬ-СКРЫТЬ СПИСОК ПРИ ЩЕЛЧ
     .eq(toDisplay).addClass("active")
     .next().show();
 })
+
+function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИЕМ КОДА
+    try{
+        document.querySelector("table").remove();
+    }catch (err){console.log(err);}
+    let code = $("#code").val();
+    try{
+        code = code.split("/");
+    }catch (err){console.log(err);}
+    for (let i=0; i<code.length; i++){
+
+        if (typeof code[i+1]!='undefined'){
+            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && code[i+1].slice(0,4)=="2NPT") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="4") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-2)=="G3" && code[i+1].slice(0,1)=="4")){
+                code.splice(i, 2, code[i] + "/" + code[i+1]);
+            }
+        }
+    }
+    for (let i=0; i<code.length; i++){
+        if (code[i].toLowerCase().startsWith("s-")){
+            let temp = code[i].split("-");
+            code[i]= temp[0];
+            let x=i+1;
+            for (let j=1; j<temp.length; j++){
+                code.splice(x, 0, temp[j]);
+                x+=1;
+            }
+        }
+    }
+    console.log(code);
+    let full_description = new Map([]);
+    for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
+        console.log(code[i]);
+    }
+
+    if (code.length>3){
+        var myTableDiv = document.getElementById("codeDescription");
+        let table = document.createElement('table');
+        let thead = document.createElement('thead');
+        let tbody = document.createElement('tbody');
+        table.id = "mytable";
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        var tr = document.createElement('tr');
+        thead.appendChild(tr);
+        var th1 = document.createElement('th');
+        var th2 = document.createElement('th');
+        tr.appendChild(th1);
+        th1.appendChild(document.createTextNode("Обозначение"));
+        tr.appendChild(th2);
+        th2.appendChild(document.createTextNode("Расшифровка"));
+
+        for (let i=0; i<code.length; i++) {
+            tr = document.createElement('TR');
+            tbody.appendChild(tr);
+            for (var j = 0; j < 2; j++) {
+                var td = document.createElement('TD');
+                if (j==0){
+                    td.appendChild(document.createTextNode(code[i]));
+                    tr.appendChild(td);
+                }else{
+                    td.width = '420';
+                    td.appendChild(document.createTextNode("ОПИСАНИЕ"));
+                    tr.appendChild(td);
+                }
+            }
+        }
+        myTableDiv.appendChild(table);
+        document.getElementById("mytable").border= "1";
+        console.log("Таблица готова");
+    }
+}
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
     let capillary_length = parseInt(document.getElementById("capillary-length").value);
@@ -230,10 +315,11 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
     range = dev_type!="PC-28.Modbus/" ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
     connection = connection.split("-");
-    console.log(connection);
     if (connection[0]=="S"){
         s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
-        connection[2] = s_material!="" ? connection[2] + s_material : connection[2];
+        if (s_material!=""){
+            connection[2] = connection[2] + s_material;
+        }
     }
     if (data.has("flange") && data.get("flange").slice(0,3) == "s_t"){
         connection.push("T=" + $("#" + data.get("flange") + "-cilinder-length").val() + "мм");
@@ -251,7 +337,6 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
     }
     connection = connection.join("-");
-    console.log(connection);
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
         material = $("input[name=material]:checked").val();
@@ -264,7 +349,14 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         }
     })
     code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
-    document.getElementById("code").innerHTML = code;
+    // document.getElementById("code").innerHTML = code;
+    document.getElementById("code").value = code;
+    $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+        minWidth: 200,
+        maxWidth: function(){return $('.code-input-container').width()-8; },
+        comfortZone: 5
+    })
+    addDescription();
 }
 
 function disable_invalid_options(){
@@ -355,8 +447,6 @@ function disable_invalid_options(){
             }
             if (typeof full_conf.get("cap-or-not") != 'undefined'){
                 if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-or-not")){
-                    // console.log(entr[1]);
-                    // console.log(entr[0], "  ", entr[1].get("cap-or-not"), "  ", full_conf.get("cap-or-not"));
                     $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                     $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                 }
@@ -426,7 +516,10 @@ function disable_invalid_options(){
         if (typeof x === 'undefined'){
             check_flag = false;
             console.log("НЕПОЛНАЯ КОНФИГУРАЦИЯ!");
-            document.getElementById("code").innerHTML = "Для получения кода заказа необходимо выбрать все обязательные опции (красный флаг)";
+            document.getElementById("code").value = "";
+            try{
+                document.querySelector("table").remove();
+            }catch (err){console.log(err);}
             break;
         }
     }
@@ -517,7 +610,7 @@ $(function (){
                     if ($(this).prop("id")!=target){
                         document.getElementById($(this).prop("id")).hidden = true;
                         $(this).find("select option[value='not_selected']").prop('selected', true);
-                        console.log('Установка длины тубуса как не выбрано при переключении на другой')
+                        console.log('Установка длины тубуса как не выбрано при переключении на другой');
                     }else{
                         document.getElementById($(this).prop("id")).hidden = false;
                     }
@@ -609,10 +702,8 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
     if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range && begin_range>=low_press && end_range<=hi_press){
         let full_conf = get_full_config();
         if (!full_conf.has("thread") || !full_conf.has("flange") || !full_conf.has("hygienic")){
-            console.log("ПРИСОЕДИНЕНИЕ НЕ ВЫБРАНО - ОГРАНИЧЕНИЕ, kPa: ", min_range);
         }
         if (press_type != "ABS" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
-            console.log("ИЗБЫТОЧНОЕ ДАВЛЕНИЕ В НОРМЕ");
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
@@ -623,7 +714,6 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
             return;
         }
         if (press_type == "ABS" && full_conf.get("begin_range_kpa")>=low_press_abs && full_conf.get("end_range_kpa")<=hi_press_abs && full_conf.get("range")>=min_range_abs){
-            console.log("АБСОЛЮТНОЕ ДАВЛЕНИЕ В НОРМЕ");
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
@@ -633,7 +723,6 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
             disable_invalid_options();
             return;
         }else{
-            console.log("ДАВЛЕНИЕ НЕ В ДИАПАЗОНЕ!!!");
             $("#range-select").prev().find(".color-mark-field").removeClass("selected");
             $("#range-select").prev().find(".color-mark-field").addClass("unselected");
             disable_invalid_options();
@@ -675,7 +764,6 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
         let max_temp = parseInt(document.querySelector("#mes-env-temp").value);
         let min = parseInt($("input[name=mes-env-temp]").prop('min'));
         let max = parseInt($("input[name=mes-env-temp]").prop('max'));
-        console.log("max_temp: ", max_temp);
         if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
             document.getElementById("radiator-select-err").hidden = false;
             $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
@@ -699,7 +787,6 @@ $(function(){
         let max_temp = parseInt($(this).val());
         let min = parseInt($("input[name=mes-env-temp]").prop('min'));
         let max = parseInt($("input[name=mes-env-temp]").prop('max'));
-        console.log($(this).val());
         if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
             document.getElementById("radiator-select-err").hidden = false;
             $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
