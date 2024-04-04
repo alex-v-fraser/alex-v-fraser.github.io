@@ -8,7 +8,7 @@ var hygienic_restr_lst = new Map(); // ОГРАНИЧЕНИЯ HYGIENIC
 var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
 var option_names = ["approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , , "material", "thread", "cap-or-not", , "display"
 var connection_types = ["thread", "flange", "hygienic"];
-var search_names = ["device", "approval", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
+var search_names = ["device", "approval", "output", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
 var low_press = -101;       // начало диапазона избыт, кПа
 var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
@@ -132,7 +132,33 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     console.log(code);
     let full_description = new Map([]);
     for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
-        console.log(code[i]);
+        let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
+        let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
+        let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
+        if (condition1 && !condition2 && !condition3){
+            // console.log("Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+            full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+        }
+        if (condition1 && condition3){
+            // console.log("Основной диапазон измерения от ", code[i].split("...")[0], " до ", code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0], " ", code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+            // console.log("Установленный диапазон измерения от ", code[i+1].split("...")[0], " до ", code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0], " ", code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+            full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+            full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+        }
+
+        for (item of search_names){
+            for (el of window[item + "_restr_lst"].values()){
+                if (el.get("name")==code[i] || el.get("code_name")==code[i]){
+                    if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                        console.log(code[i], "ОПИСАНИЕ:", el.get("description") + " Выходной сигнал 4...20мА.");
+                        full_description.set(code[i], el.get("description") + " Выходной сигнал 4...20мА.");
+                    }else{
+                        console.log(code[i], "ОПИСАНИЕ:", el.get("description"));
+                        full_description.set(code[i], el.get("description"));
+                    }
+                }
+            }
+        }
     }
 
     if (code.length>3){
@@ -162,14 +188,13 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     tr.appendChild(td);
                 }else{
                     td.width = '420';
-                    td.appendChild(document.createTextNode("ОПИСАНИЕ"));
+                    td.appendChild(document.createTextNode(full_description.get(code[i])));
                     tr.appendChild(td);
                 }
             }
         }
         myTableDiv.appendChild(table);
         document.getElementById("mytable").border= "1";
-        console.log("Таблица готова");
     }
 }
 
@@ -339,7 +364,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     connection = connection.join("-");
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
-        material = $("input[name=material]:checked").val();
+        material = $("input[name=material]:checked").val()+"/";
     }else{
         material = "";
     }

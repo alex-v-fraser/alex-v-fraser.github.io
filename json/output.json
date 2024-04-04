@@ -1,7 +1,8 @@
  [
   {
     "name": "4_20",
-    "description": "4...20мА",
+    "code_name": "",
+    "description": "Выходной сигнал 4...20мА",
     "approval": [
       "non_hazard",
       "Ex",
@@ -10,7 +11,8 @@
   },
   {
     "name": "0_10",
-    "description": "0...10В",
+    "code_name": "0...10В",
+    "description": "Выходной сигнал 0...10В",
     "approval": [
       "non_hazard"
     ],
@@ -26,7 +28,8 @@
   },
   {
     "name": "04_2",
-    "description": "0,4...2В",
+    "code_name": "0,4...2В",
+    "description": "Выходной сигнал 0,4...2В",
     "approval": [
       "non_hazard",
       "Ex"
@@ -43,7 +46,8 @@
   },
   {
     "name": "0_2",
-    "description": "0...2В",
+    "code_name": "0...2В",
+    "description": "Выходной сигнал 0...2В",
     "approval": [
       "non_hazard",
       "Ex"
@@ -60,7 +64,8 @@
   },
   {
     "name": "4_20H",
-    "description": "4...20мА + HART",
+    "code_name": "",
+    "description": "Выходной сигнал 4...20мА + HART",
     "approval": [
       "non_hazard",
       "Ex",
@@ -69,7 +74,8 @@
   },
   {
     "name": "modbus",
-    "description": "Modbus RTU",
+    "code_name": "",
+    "description": "Выходной сигнал Modbus RTU",
     "approval": [
       "non_hazard",
       "Ex",
