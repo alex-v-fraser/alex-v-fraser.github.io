@@ -1,6 +1,7 @@
 [
  {
     "name": "s_p_dn50",
+    "code_name": "S-P-DN50PN40B",
     "description": "Разделитель фланцевый плоский S-P-DN50PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -15,6 +16,7 @@
   },
   {
     "name": "s_p_dn80",
+    "code_name": "S-P-DN80PN40B",
     "description": "Разделитель фланцевый плоский S-P-DN80PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -29,6 +31,7 @@
   },
   {
     "name": "s_p_dn100",
+    "code_name": "S-P-DN100PN40B",
     "description": "Разделитель фланцевый плоский S-P-DN100PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -43,6 +46,7 @@
   },
   {
     "name": "s_t_dn50",
+    "code_name": "S-T-DN50PN40B",
     "description": "Разделитель фланцевый цилиндрический S-T-DN50PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -57,6 +61,7 @@
   },
   {
     "name": "s_t_dn80",
+    "code_name": "S-T-DN80PN40B",
     "description": "Разделитель фланцевый цилиндрический S-T-DN80PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -71,6 +76,7 @@
   },
   {
     "name": "s_t_dn100",
+    "code_name": "S-T-DN100PN40B",
     "description": "Разделитель фланцевый цилиндрический S-T-DN100PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -85,6 +91,7 @@
   },
   {
     "name": "s_tk_wash_dn100",
+    "code_name": "S-TK-WASH-DN100PN40B",
     "description": "Разделитель фланцевый цилиндрический с дистанционным соединением со втроенной системой промывания мембраны S-TK-WASH-DN100PN40B",
     "cap-or-not": "capillary",
     "begin_range_kpa": -101,
@@ -97,6 +104,7 @@
   },
   {
     "name": "s_ch_dn50",
+    "code_name": "S-Ch-DN50PN40B",
     "description": "Разделитель фланцевый плоский химостойкий S-Ch-DN50PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -114,6 +122,7 @@
   },
   {
     "name": "s_ch_dn80",
+    "code_name": "S-Ch-DN80PN40B",
     "description": "Разделитель фланцевый плоский химостойкий S-Ch-DN80PN40B",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -131,6 +140,7 @@
   },
   {
     "name": "s_comp_d51",
+    "code_name": "S-Comp-d51",
     "description": "Разделитель фланцевый компактный с противофланцами S-Comp-d51 под сварку",
     "begin_range_kpa": -101,
     "end_range_kpa": 1600,
@@ -143,6 +153,7 @@
   },
   {
     "name": "s_compch-dn25",
+    "code_name": "S-CompCh-DN25PN16B",
     "description": "Разделитель фланцевый компактный химостойкий S-CompCh-DN25PN16B",
     "begin_range_kpa": -101,
     "end_range_kpa": 1600,

@@ -17,6 +17,11 @@ var hi_press_abs = 10000;    // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
 
 
+
+//////////////////////////////////////////////////////////                                 В РАБОТУ СТРОКУ 166                     //////////////////////////////////////////////////////////////////////
+
+
+
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
         const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
@@ -136,14 +141,24 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
         let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
         if (condition1 && !condition2 && !condition3){
-            // console.log("Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
-            full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+            if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
+                // console.log("Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+                full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
+            }else{
+                full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
+
+            }
         }
         if (condition1 && condition3){
             // console.log("Основной диапазон измерения от ", code[i].split("...")[0], " до ", code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0], " ", code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
             // console.log("Установленный диапазон измерения от ", code[i+1].split("...")[0], " до ", code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0], " ", code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
-            full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
-            full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
+            if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
+                full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
+                full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
+            }else{
+                full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
+                full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
+            }
         }
 
         for (item of search_names){
@@ -152,7 +167,11 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
                         console.log(code[i], "ОПИСАНИЕ:", el.get("description") + " Выходной сигнал 4...20мА.");
                         full_description.set(code[i], el.get("description") + " Выходной сигнал 4...20мА.");
-                    }else{
+                    }
+                    if(code[i].startsWith("S-")){//ЗДЕСЬ ДОБАВИТЬ КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+                        console.log();
+                    }
+                    else{
                         console.log(code[i], "ОПИСАНИЕ:", el.get("description"));
                         full_description.set(code[i], el.get("description"));
                     }
@@ -160,6 +179,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
+    console.log(full_description);
 
     if (code.length>3){
         var myTableDiv = document.getElementById("codeDescription");
@@ -193,7 +213,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
             }
         }
-        myTableDiv.appendChild(table);
+        myTableDiv.appendChild(table);                  // ТАБЛИЦА ГОТОВА
         document.getElementById("mytable").border= "1";
     }
 }
@@ -530,7 +550,7 @@ function disable_invalid_options(){
         $("label[for=ct_spec]").addClass('disabled');
         $("#ct_spec").prop('disabled', true);
     }
-    if (full_conf.get("cap-or-not") == "direct"){ // проверка rad_cap
+    if (full_conf.get("cap-or-not") == "direct" || (full_conf.get("cap-or-not") == "capillary" && (!full_conf.has("flange") || typeof full_conf.get("flange")=="undefined")) || (typeof full_conf.get("flange")!="undefined" && full_conf.get("flange").slice(0,4)!="s_p_" && full_conf.get("flange").slice(0,4)!="s_t_" && full_conf.get("flange").slice(0,4)!="s_ch")){ // проверка rad_cap
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }

@@ -1,11 +1,13 @@
 [
     {
         "name": "aisi316",
-        "description": ""
+        "code_name": "",
+        "description": "Сталь нержавеющая коррозионно-стойкая обыкновенная AISI316 (12X18H10T)."
     },
     {
         "name": "hastelloy",
-        "description": "",
+        "code_name": "Hastelloy",
+        "description": "Материал смачиваемых частей - сплав Hastelloy C276",
         "thread": [
             "P",
             "GP",
@@ -21,14 +23,16 @@
     },
     {
         "name": "au",
-        "description": "",
+        "code_name": "AU",
+        "description": "Материал смачиваемых частей - покрытие золотом.",
         "thread": [
             "G1_2"
         ]
     },
     {
         "name": "nickel",
-        "description": "",
+        "code_name": "Ni",
+        "description": "Материал мембраны и уплотнительного кольца - никель.",
         "thread": [
             "no"
         ]
@@ -36,28 +40,32 @@
     },
     {
         "name": "monel",
-        "description": "",
+        "code_name": "Monel",
+        "description": "Материал мембраны и уплотнительного кольца - монель.",
         "thread": [
             "no"
         ]
     },
     {
         "name": "titan",
-        "description": "",
+        "code_name": "Ti",
+        "description": "Материал мембраны и уплотнительного кольца - титан.",
         "thread": [
             "no"
         ]
     },
     {
         "name": "tantal",
-        "description": "",
+        "code_name": "Ta",
+        "description": "Материал мембраны и уплотнительного кольца - тантал.",
         "thread": [
             "no"
         ]
     },
     {
         "name": "ptfe",
-        "description": "",
+        "code_name": "PTFE",
+        "description": "Материал мембраны и уплотнительного кольца - сталь 316L(321), материал смачиваемыех частей - покрытие тефлоном (фторопласт-4).",
         "thread": [
             "no"
         ]
