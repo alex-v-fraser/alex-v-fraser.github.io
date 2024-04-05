@@ -364,7 +364,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     connection = connection.join("-");
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
-        material = $("input[name=material]:checked").val()+"/";
+        material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
     }else{
         material = "";
     }
