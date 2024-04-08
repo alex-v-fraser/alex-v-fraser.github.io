@@ -18,7 +18,6 @@ var min_range_abs = 20.0;   // мин ширина диапазона абс, к
 
 
 
-//////////////////////////////////////////////////////////                                 В РАБОТУ СТРОКУ 166                     //////////////////////////////////////////////////////////////////////
 
 
 
@@ -140,18 +139,16 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
         let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
         let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
+
         if (condition1 && !condition2 && !condition3){
             if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
-                // console.log("Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
                 full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
             }else{
                 full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
-
             }
         }
+
         if (condition1 && condition3){
-            // console.log("Основной диапазон измерения от ", code[i].split("...")[0], " до ", code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0], " ", code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
-            // console.log("Установленный диапазон измерения от ", code[i+1].split("...")[0], " до ", code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0], " ", code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]);
             if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
                 full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
                 full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
@@ -161,20 +158,68 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
 
+        console.log(code[i].slice(0,2));
+
+        if (code[i].slice(0,2) == "K="){
+            full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
+        }
+
+        if (code[i].slice(0,2) == "T="){
+            full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
+        }
+
+        if (code[i].toLowerCase()=="s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+            let temp_code_i1 = code[i+1];
+            let add_descr = " В сборе с разделителем.";
+            if (temp_code_i1.endsWith("K")){
+                add_descr += " Соединение разделителя через капилляр.";
+                temp_code_i1 = temp_code_i1.slice(0,-1);
+            }
+            if (temp_code_i1.endsWith("R") && temp_code_i1.length>1){
+                add_descr += " С радиатором для сред измерения до 200°С.";
+                temp_code_i1 = temp_code_i1.slice(0,-1);
+            }
+            if (temp_code_i1.endsWith("R2") && temp_code_i1.length>2){
+                add_descr += " С радиатором для сред измерения до 250°С.";
+                temp_code_i1 = temp_code_i1.slice(0,-2);
+            }
+            if (temp_code_i1.endsWith("R3") && temp_code_i1.length>2){
+                add_descr += " С радиатором для сред измерения до 310°С.";
+                temp_code_i1 = temp_code_i1.slice(0,-2);
+            }
+            console.log(add_descr);
+            for (item of search_names){
+                for (el of window[item + "_restr_lst"].values()){
+                    // console.log(el.get("code_name"));
+                    // console.log(code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
+
+                    if (el.get("code_name")==code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]){
+                        console.log(el.get("description") + add_descr);
+                        code.splice(i, 4, code[i]+ "-" + code[i+1]+ "-" + code[i+2] + "-" + code[i+3]);
+                        full_description.set(code[i], el.get("description") + add_descr);
+                    }
+                    if (el.get("code_name")==code[i]+ "-" + temp_code_i1 + "-" + code[i+2]){
+                        console.log(el.get("description") + add_descr);
+                        code.splice(i, 3, code[i]+ "-" + code[i+1]+ "-" + code[i+2]);
+                        full_description.set(code[i], el.get("description") + add_descr);
+                    }
+                    if (el.get("code_name")==code[i]+ "-" + temp_code_i1){
+                        console.log(el.get("description") + add_descr);
+                        code.splice(i, 2, code[i]+ "-" + code[i+1]);
+                        full_description.set(code[i], el.get("description") + add_descr);
+                    }
+                }
+            }
+        }
+
         for (item of search_names){
             for (el of window[item + "_restr_lst"].values()){
                 if (el.get("name")==code[i] || el.get("code_name")==code[i]){
                     if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                        console.log(code[i], "ОПИСАНИЕ:", el.get("description") + " Выходной сигнал 4...20мА.");
                         full_description.set(code[i], el.get("description") + " Выходной сигнал 4...20мА.");
+                        break;
                     }
-                    if(code[i].startsWith("S-")){//ЗДЕСЬ ДОБАВИТЬ КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
-                        console.log();
-                    }
-                    else{
-                        console.log(code[i], "ОПИСАНИЕ:", el.get("description"));
-                        full_description.set(code[i], el.get("description"));
-                    }
+                    full_description.set(code[i], el.get("description"));
                 }
             }
         }

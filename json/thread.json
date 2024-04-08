@@ -2,7 +2,7 @@
   {
     "name": "M",
     "code_name": "M",
-    "description": "Штуцер M20X1.5, отверстие d4мм",
+    "description": "Штуцер M20X1.5, отверстие d4мм.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -15,7 +15,7 @@
   {
     "name": "G1_2",
     "code_name": "G1/2",
-    "description": "Штуцер G1/2, отверстие d4мм",
+    "description": "Штуцер G1/2, отверстие d4мм.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -29,7 +29,7 @@
   {
     "name": "P",
     "code_name": "P",
-    "description": "Штуцер M20X1.5, отверстие d12мм",
+    "description": "Штуцер M20X1.5, отверстие d12мм.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -42,7 +42,7 @@
   {
     "name": "GP",
     "code_name": "GP",
-    "description": "Штуцер G1/2, отверстие d12мм",
+    "description": "Штуцер G1/2, отверстие d12мм.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -56,7 +56,7 @@
   {
     "name": "g1_4",
     "code_name": "G1/4",
-    "description": "Штуцер G1/4, отверстие d4мм",
+    "description": "Штуцер G1/4, отверстие d4мм.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -68,7 +68,7 @@
   {
     "name": "1_2NPT",
     "code_name": "1/2NPT",
-    "description": "Штуцер 1/2NPT, отверстие G1/4",
+    "description": "Штуцер 1/2NPT, отверстие G1/4.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -81,7 +81,7 @@
   {
     "name": "CM30_2",
     "code_name": "CM30x2",
-    "description": "Штуцер M30x2 с лицевой мембраной",
+    "description": "Штуцер M30x2 с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -95,7 +95,7 @@
   {
     "name": "CG1",
     "code_name": "CG1",
-    "description": "Штуцер G1 с лицевой мембраной",
+    "description": "Штуцер G1 с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -109,7 +109,7 @@
   {
     "name": "CG1_S38",
     "code_name": "CG1-S38",
-    "description": "Штуцер G1 с лицевой мембраной и конусным уплотнением",
+    "description": "Штуцер G1 с лицевой мембраной и конусным уплотнением.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": 0,
@@ -123,7 +123,7 @@
   {
     "name": "CM20_1_5",
     "code_name": "CM20x1,5",
-    "description": "Штуцер M20x1.5 с лицевой мембраной",
+    "description": "Штуцер M20x1.5 с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -136,7 +136,7 @@
   {
     "name": "CG1_2",
     "code_name": "CG1/2",
-    "description": "Штуцер G1/2 с лицевой мембраной",
+    "description": "Штуцер G1/2 с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -150,7 +150,7 @@
   {
     "name": "s_mazut_50",
     "code_name": "S-Mazut-50",
-    "description": "Разделитель S-Мазут с резьбовым присоединением M20x1.5",
+    "description": "Разделитель S-Мазут с резьбовым присоединением M20x1,5.",
     "max_temp": 150,
     "begin_range_kpa": -101,
     "end_range_kpa": 7000,
@@ -163,7 +163,7 @@
   {
     "name": "s_mazut_75",
     "code_name": "S-Mazut-75",
-    "description": "Разделитель S-Mazut-75 с резьбовым присоединением M20x1.5",
+    "description": "Разделитель S-Mazut-75 с резьбовым присоединением M20x1,5.",
     "max_temp": 150,
     "begin_range_kpa": -101,
     "end_range_kpa": 3000,
@@ -176,7 +176,7 @@
   {
     "name": "s_mazut_100",
     "code_name": "S-Mazut-100",
-    "description": "Разделитель S-Mazut-100 с резьбовым присоединением M20x1.5",
+    "description": "Разделитель S-Mazut-100 с резьбовым присоединением M20x1,5.",
     "max_temp": 150,
     "begin_range_kpa": -101,
     "end_range_kpa": 2500,
@@ -189,7 +189,7 @@
   {
     "name": "s_mazut_50_g1_2_m",
     "code_name": "S-Mazut-50-G1/2(M)",
-    "description": "Разделитель S-Mazut50 с резьбовым присоединением G1/2",
+    "description": "Разделитель S-Mazut-50 с резьбовым присоединением G1/2.",
     "max_temp": 150,
     "begin_range_kpa": -101,
     "end_range_kpa": 7000,
@@ -202,7 +202,7 @@
   {
     "name": "s_mazut_75_g1_2_m",
     "code_name": "S-Mazut-75-G1/2(M)",
-    "description": "Разделитель S-Mazut-75 с резьбовым присоединением G1/2",
+    "description": "Разделитель S-Mazut-75 с резьбовым присоединением G1/2.",
     "max_temp": 150,
     "begin_range_kpa": -101,
     "end_range_kpa": 3000,
@@ -215,7 +215,7 @@
   {
     "name": "s_mazut_100_g1_2_m",
     "code_name": "S-Mazut-100-G1/2(M)",
-    "description": "Разделитель S-Mazut100 с резьбовым присоединением G1/2",
+    "description": "Разделитель S-Mazut100 с резьбовым присоединением G1/2.",
     "max_temp": 150,
     "begin_range_kpa": -101,
     "end_range_kpa": 2500,
@@ -228,7 +228,7 @@
   {
     "name": "s_r_m30_2",
     "code_name": "S-R-CM30x2",
-    "description": "Разделитель S-R с лицевой мембраной и резьбовым присоединением M30x2 до 160°С",
+    "description": "Разделитель S-R с лицевой мембраной и резьбовым присоединением M30x2 до 160°С.",
     "cap-or-not": "direct",
     "max_temp": 160,
     "begin_range_kpa": -101,
@@ -242,7 +242,7 @@
   {
     "name": "s_r_m30_1_5",
     "code_name": "S-R-CM30x1,5",
-    "description": "Разделитель S-R с лицевой мембраной и резьбовым присоединением M30x1.5 до 160°С",
+    "description": "Разделитель S-R с лицевой мембраной и резьбовым присоединением M30x1,5 до 160°С.",
     "cap-or-not": "direct",
     "max_temp": 160,
     "begin_range_kpa": -101,
@@ -255,8 +255,8 @@
   },
   {
     "name": "s_r2_m30_2",
-    "code_name": "S-R-CM30x2",
-    "description": "Разделитель S-R2 с лицевой мембраной и резьбовым присоединением M30x2 до 260°С",
+    "code_name": "S-R2-CM30x2",
+    "description": "Разделитель S-R2 с лицевой мембраной и резьбовым присоединением M30x2 до 260°С.",
     "cap-or-not": "direct",
     "max_temp": 260,
     "begin_range_kpa": -101,
@@ -270,7 +270,7 @@
   {
     "name": "s_r2_m30_1_5",
     "code_name": "S-R2-CM30x1,5",
-    "description": "Разделитель S-R2 с лицевой мембраной и резьбовым присоединением M30x1.5 до 260°С",
+    "description": "Разделитель S-R2 с лицевой мембраной и резьбовым присоединением M30x1,5 до 260°С.",
     "cap-or-not": "direct",
     "max_temp": 260,
     "begin_range_kpa": -101,
@@ -283,8 +283,8 @@
   },
   {
     "name": "s_compk_10mpa",
-    "code_name": "S-CompK-10МПа",
-    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-10МПа с резьбовым присоединением 1/2NPT",
+    "code_name": "S-Comp-10МПа",
+    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-10МПа с резьбовым присоединением 1/2NPT.",
     "cap-or-not": "capillary",
     "begin_range_kpa": -101,
     "end_range_kpa": 10000,
@@ -296,8 +296,8 @@
   },
   {
     "name": "s_compk_25mpa",
-    "code_name": "S-CompK-25МПа",
-    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-25МПа с резьбовым присоединением 1/2NPT",
+    "code_name": "S-Comp-25МПа",
+    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-25МПа с резьбовым присоединением 1/2NPT.",
     "cap-or-not": "capillary",
     "begin_range_kpa": -101,
     "end_range_kpa": 25000,
@@ -309,8 +309,8 @@
   },
   {
     "name": "s_compk_60mpa",
-    "code_name": "S-CompK-60МПа",
-    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-60МПа с резьбовым присоединением 1/2NPT",
+    "code_name": "S-Comp-60МПа",
+    "description": "Разделитель фланцевый компактный с дистанционным соединением с противофланцами S-CompK-60МПа с резьбовым присоединением 1/2NPT.",
     "cap-or-not": "capillary",
     "begin_range_kpa": -101,
     "end_range_kpa": 60000,
@@ -323,7 +323,7 @@
   {
     "name": "s_cg1_1_2",
     "code_name": "S-CG1.1/2",
-    "description": "Разделитель с лицевой мембраной и резьбовым присоединением G1.1/2",
+    "description": "Разделитель с лицевой мембраной и резьбовым присоединением G1.1/2.",
     "cap-or-not": "direct",
     "begin_range_kpa": -101,
     "end_range_kpa": 10000,
@@ -336,7 +336,7 @@
   {
     "name": "s_compch_m20_1_5",
     "code_name": "S-CompCh-M20x1,5",
-    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-M20x1,5 с резьбовым присоединением M20x1,5",
+    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-M20x1,5 с резьбовым присоединением M20x1,5.",
     "begin_range_kpa": -101,
     "end_range_kpa": 1600,
     "range": 40,
@@ -349,7 +349,7 @@
   {
     "name": "s_compch_g1_2",
     "code_name": "S-CompCh-G1/2",
-    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-G1/2 с резьбовым присоединением G1/2",
+    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-G1/2 с резьбовым присоединением G1/2.",
     "begin_range_kpa": -101,
     "end_range_kpa": 1600,
     "range": 40,
@@ -362,7 +362,7 @@
   {
     "name": "m12_1",
     "code_name": "M12x1",
-    "description": "Штуцер M12x1",
+    "description": "Штуцер M12x1.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -374,7 +374,7 @@
   {
     "name": "cg3_4_g317",
     "code_name": "CG3/4(G317)",
-    "description": "Штуцер G3/4 (тип G317) с лицевой мембраной",
+    "description": "Штуцер G3/4 (тип G317) с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -387,7 +387,7 @@
   {
     "name": "cg3_4_g225",
     "code_name": "CG3/4(G225)",
-    "description": "Штуцер G3/4 (тип G225) с лицевой мембраной",
+    "description": "Штуцер G3/4 (тип G225) с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -400,7 +400,7 @@
   {
     "name": "cm22_1_5",
     "code_name": "CM22x1,5",
-    "description": "Штуцер M22x1.5 с лицевой мембраной",
+    "description": "Штуцер M22x1.5 с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,

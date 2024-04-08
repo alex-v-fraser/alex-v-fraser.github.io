@@ -33,7 +33,7 @@
   },
   {
     "name": "PM12",
-    "description": "Разъем M12X1, степень защиты IP65.",
+    "description": "Разъем M12x1, степень защиты IP65.",
     "display": "without_display",
     "approval": [
       "non_hazard",
@@ -42,7 +42,7 @@
   },
   {
     "name": "PZ",
-    "description": "Зажимная коробка из нерж.стали с сальником M20X1.5, степень зашиты IP66.",
+    "description": "Зажимная коробка из нерж.стали с сальником M20x1,5, степень зашиты IP66.",
     "display": "without_display",
     "approval": [
       "non_hazard",
@@ -98,7 +98,7 @@
   {
     "name": "FL_M20_1_5",
     "code_name": "FLM20x1,5",
-    "description": "C проводами длиной 1.8м и наружной резьбой M20X1.5 на корпусе.",
+    "description": "C проводами длиной 1.8м и наружной резьбой M20x1,5 на корпусе.",
     "display": "without_display",
     "approval": [
       "Exd"
@@ -126,7 +126,7 @@
   {
     "name": "SGM_M20_1_5",
     "code_name": "SGMM20x1,5",
-    "description": "C кабелем в PU оболочке длиной 3м и наружной резьбой M20x1.5 на корпусе.",
+    "description": "C кабелем в PU оболочке длиной 3м и наружной резьбой M20x1,5 на корпусе.",
     "display": "without_display",
     "approval": [
       "Exd"
@@ -153,7 +153,7 @@
   },
   {
     "name": "PZ2",
-    "description": "Зажимная коробка из нерж.стали с гнездом M20X1.5 под кабельный ввод, степень защиты IP66.",
+    "description": "Зажимная коробка из нерж.стали с гнездом M20x1,5 под кабельный ввод, степень защиты IP66.",
     "display": "without_display",
     "approval": [
       "Exd"
