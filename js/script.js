@@ -158,8 +158,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
 
-        console.log(code[i].slice(0,2));
-
         if (code[i].slice(0,2) == "K="){
             full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
         }
@@ -187,24 +185,21 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 add_descr += " С радиатором для сред измерения до 310°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
             }
-            console.log(add_descr);
+
             for (item of search_names){
                 for (el of window[item + "_restr_lst"].values()){
                     // console.log(el.get("code_name"));
                     // console.log(code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
 
                     if (el.get("code_name")==code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]){
-                        console.log(el.get("description") + add_descr);
                         code.splice(i, 4, code[i]+ "-" + code[i+1]+ "-" + code[i+2] + "-" + code[i+3]);
                         full_description.set(code[i], el.get("description") + add_descr);
                     }
                     if (el.get("code_name")==code[i]+ "-" + temp_code_i1 + "-" + code[i+2]){
-                        console.log(el.get("description") + add_descr);
                         code.splice(i, 3, code[i]+ "-" + code[i+1]+ "-" + code[i+2]);
                         full_description.set(code[i], el.get("description") + add_descr);
                     }
                     if (el.get("code_name")==code[i]+ "-" + temp_code_i1){
-                        console.log(el.get("description") + add_descr);
                         code.splice(i, 2, code[i]+ "-" + code[i+1]);
                         full_description.set(code[i], el.get("description") + add_descr);
                     }
