@@ -45,7 +45,7 @@ fetchConnectRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕ�
             arr.set(obj["name"], dat);
         });;
         window[search_names[el] + "_restr_lst"] = arr;
-        console.log(search_names[el] + "_restr_lst", window[search_names[el] + "_restr_lst"]);
+        // console.log(search_names[el] + "_restr_lst", window[search_names[el] + "_restr_lst"]);
     }
 }).catch(error => {console.log(error);
 })
@@ -187,21 +187,31 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
 
             for (item of search_names){
-                for (el of window[item + "_restr_lst"].values()){
-                    // console.log(el.get("code_name"));
-                    // console.log(code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
+                for (el of window[item + "_restr_lst"].values()){   //// ЗДЕСЬ КАКОЙ-ТО КОСЯК!!!! //////////
 
-                    if (el.get("code_name")==code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]){
-                        code.splice(i, 4, code[i]+ "-" + code[i+1]+ "-" + code[i+2] + "-" + code[i+3]);
+                    console.log("В коде: " + code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
+                    console.log("В jsone: " + el.get("code_name"));
+
+                    if (el.get("code_name") === code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]){
+                        code.splice(i, 4, code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
                         full_description.set(code[i], el.get("description") + add_descr);
+                        console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
+                        console.log(code);
+                        break;
                     }
-                    if (el.get("code_name")==code[i]+ "-" + temp_code_i1 + "-" + code[i+2]){
-                        code.splice(i, 3, code[i]+ "-" + code[i+1]+ "-" + code[i+2]);
+                    if (el.get("code_name") === code[i]+ "-" + temp_code_i1 + "-" + code[i+2]){
+                        code.splice(i, 3, code[i]+ "-" + temp_code_i1 + "-" + code[i+2]);
                         full_description.set(code[i], el.get("description") + add_descr);
+                        console.log("СРАБОТАЛО2: " + code[i], el.get("description") + add_descr);
+                        console.log(code);
+                        break;
                     }
-                    if (el.get("code_name")==code[i]+ "-" + temp_code_i1){
-                        code.splice(i, 2, code[i]+ "-" + code[i+1]);
+                    if (el.get("code_name") === code[i]+ "-" + temp_code_i1){
+                        code.splice(i, 2, code[i]+ "-" + temp_code_i1);
                         full_description.set(code[i], el.get("description") + add_descr);
+                        console.log("СРАБОТАЛО3: " + code[i], el.get("description") + add_descr);
+                        console.log(code);
+                        break;
                     }
                 }
             }
