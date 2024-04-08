@@ -186,32 +186,24 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 temp_code_i1 = temp_code_i1.slice(0,-2);
             }
 
-            for (item of search_names){
-                for (el of window[item + "_restr_lst"].values()){   //// ЗДЕСЬ КАКОЙ-ТО КОСЯК!!!! //////////
 
-                    console.log("В коде: " + code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
-                    console.log("В jsone: " + el.get("code_name"));
-
-                    if (el.get("code_name") === code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]){
-                        code.splice(i, 4, code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3]);
-                        full_description.set(code[i], el.get("description") + add_descr);
-                        console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
-                        console.log(code);
-                        break;
-                    }
-                    if (el.get("code_name") === code[i]+ "-" + temp_code_i1 + "-" + code[i+2]){
-                        code.splice(i, 3, code[i]+ "-" + temp_code_i1 + "-" + code[i+2]);
-                        full_description.set(code[i], el.get("description") + add_descr);
-                        console.log("СРАБОТАЛО2: " + code[i], el.get("description") + add_descr);
-                        console.log(code);
-                        break;
-                    }
-                    if (el.get("code_name") === code[i]+ "-" + temp_code_i1){
-                        code.splice(i, 2, code[i]+ "-" + temp_code_i1);
-                        full_description.set(code[i], el.get("description") + add_descr);
-                        console.log("СРАБОТАЛО3: " + code[i], el.get("description") + add_descr);
-                        console.log(code);
-                        break;
+            let temp_code_v1 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3];
+            let temp_code_v2 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2];
+            let temp_code_v3 = code[i]+ "-" + temp_code_i1;
+            let temp_codes =[temp_code_v1, temp_code_v2, temp_code_v3];
+            let repeat_cycle = true;
+            for (els of temp_codes){
+                for (item of search_names){
+                    for (el of window[item + "_restr_lst"].values()){
+                        if (repeat_cycle === true && el.get("code_name") === els){
+                            console.log(repeat_cycle);
+                            code.splice(i, 4, els);
+                            full_description.set(code[i], el.get("description") + add_descr);
+                            console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
+                            console.log(code);
+                            repeat_cycle = false;
+                            break;
+                        }
                     }
                 }
             }
