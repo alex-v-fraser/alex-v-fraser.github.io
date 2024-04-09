@@ -198,11 +198,9 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 for (item of search_names){
                     for (el of window[item + "_restr_lst"].values()){
                         if (repeat_cycle === true && el.get("code_name") === els){
-                            console.log(repeat_cycle);
                             code.splice(i, num_cut, els);
                             full_description.set(code[i], el.get("description") + add_descr);
-                            console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
-                            console.log(code);
+                            // console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
                             repeat_cycle = false;
                             break;
                         }
@@ -224,8 +222,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
-    console.log(full_description);
-    console.log(full_description.size == code.length);
+
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
         var myTableDiv = document.getElementById("codeDescription");
