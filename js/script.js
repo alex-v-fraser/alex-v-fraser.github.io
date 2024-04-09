@@ -192,12 +192,13 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             let temp_code_v3 = code[i]+ "-" + temp_code_i1;
             let temp_codes =[temp_code_v1, temp_code_v2, temp_code_v3];
             let repeat_cycle = true;
+            let num_cut = 4;
             for (els of temp_codes){
                 for (item of search_names){
                     for (el of window[item + "_restr_lst"].values()){
                         if (repeat_cycle === true && el.get("code_name") === els){
                             console.log(repeat_cycle);
-                            code.splice(i, 4, els);
+                            code.splice(i, num_cut, els);
                             full_description.set(code[i], el.get("description") + add_descr);
                             console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
                             console.log(code);
@@ -206,6 +207,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                         }
                     }
                 }
+                num_cut-=1;
             }
         }
 
