@@ -53,6 +53,13 @@
     "name": "PK",
     "description": "С кабелем и капилляром для связи с атмосферой длиной 3м, степень защиты IP67.",
     "display": "without_display",
+    "output": [
+      "4_20",
+      "0_10",
+      "04_2",
+      "0_2",
+      "modbus"
+    ],
     "approval": [
       "non_hazard",
       "Ex"

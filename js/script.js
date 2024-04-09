@@ -592,7 +592,7 @@ function disable_invalid_options(){
         $("label[for=ct_spec]").addClass('disabled');
         $("#ct_spec").prop('disabled', true);
     }
-    if (full_conf.get("cap-or-not") == "direct" || (full_conf.get("cap-or-not") == "capillary" && (!full_conf.has("flange") || typeof full_conf.get("flange")=="undefined")) || (typeof full_conf.get("flange")!="undefined" && full_conf.get("flange").slice(0,4)!="s_p_" && full_conf.get("flange").slice(0,4)!="s_t_" && full_conf.get("flange").slice(0,4)!="s_ch")){ // проверка rad_cap
+    if (full_conf.get("cap-or-not") == "direct" || ((full_conf.get("cap-or-not") == "capillary" || typeof full_conf.get("cap-or-not") == 'undefined') && (!full_conf.has("flange") || typeof full_conf.get("flange")=="undefined")) || (typeof full_conf.get("flange")!="undefined" && full_conf.get("flange").slice(0,4)!="s_p_" && full_conf.get("flange").slice(0,4)!="s_t_" && full_conf.get("flange").slice(0,4)!="s_ch")){ // проверка rad_cap
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }

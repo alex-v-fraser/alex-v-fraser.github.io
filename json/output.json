@@ -70,6 +70,20 @@
       "non_hazard",
       "Ex",
       "Exd"
+    ],
+    "electrical": [
+      "PD",
+      "PPD",
+      "PM12",
+      "PZ",
+      "PKSG",
+      "FL_M20_1_5",
+      "FL_1_2NPT",
+      "SGM_M20_1_5",
+      "SGM_1_2NPT",
+      "PZ2",
+      "ALW",
+      "ALW2"
     ]
   },
   {
