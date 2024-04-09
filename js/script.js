@@ -133,7 +133,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
-    console.log(code);
+
     let full_description = new Map([]);
     for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
         let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
@@ -250,7 +250,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     tr.appendChild(td);
                 }else{
                     td.width = '420';
-                    td.appendChild(document.createTextNode(full_description.get(code[i])));
+                    td.innerHTML = (full_description.get(code[i]));
                     tr.appendChild(td);
                 }
             }

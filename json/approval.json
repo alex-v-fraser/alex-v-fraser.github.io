@@ -15,7 +15,7 @@
     },
     {
         "name": "Ex",
-        "description": "Искробезопасное исполнение Ga/Gb Ex ia IIC T4/T5/T6 X; Ex ia IIIC T110⁰С Da X",
+        "description": "Искробезопасное исполнение.<br><a href='https://aplisens.ru/downloads/certificates/Сертификат%20Ех%20ДД%20до%2016.07.2024.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>",
         "electrical": [
             "PD",
             "PPD",
@@ -36,7 +36,7 @@
     },
     {
         "name": "Exd",
-        "description": "Взрывонепроницаемая оболочка Ex d IIC T6/T5/Т4 G X; Ex tb IIIC T85°C/T100°C /T120°C Db X",
+        "description": "Взрывонепроницаемая оболочка.<br><a href='https://aplisens.ru/downloads/certificates/Сертификат%20Ех%20ДД%20до%2016.07.2024.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>",
         "electrical": [
             "FL_M20_1_5",
             "FL_1_2NPT",
