@@ -224,8 +224,9 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
     }
     console.log(full_description);
-
-    if (code.length>3){
+    console.log(full_description.size == code.length);
+    if (code.length>2 && full_description.size == code.length){
+        document.getElementById("codeError").innerHTML = "";
         var myTableDiv = document.getElementById("codeDescription");
         let table = document.createElement('table');
         let thead = document.createElement('thead');
@@ -259,6 +260,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
         myTableDiv.appendChild(table);                  // ТАБЛИЦА ГОТОВА
         document.getElementById("mytable").border= "1";
+    }else{
+        document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
     }
 }
 
