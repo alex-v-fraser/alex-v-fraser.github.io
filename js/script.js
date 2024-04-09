@@ -110,7 +110,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     try{
         document.querySelector("table").remove();
     }catch (err){console.log(err);}
-    let code = $("#code").val();
+    let code = $("#code").val().replace(/ /g, '');  /// С УДАЛЕНИЕМ ПРОБЕЛОВ
+    document.getElementById("code").value = code;
     try{
         code = code.split("/");
     }catch (err){console.log(err);}
