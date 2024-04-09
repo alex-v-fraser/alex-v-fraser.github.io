@@ -113,7 +113,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     let code = $("#code").val().replace(/ /g, '');  /// С УДАЛЕНИЕМ ПРОБЕЛОВ
     document.getElementById("code").value = code;
     try{
-        code = code.split("/");
+        code = code.split("/").filter(Boolean);
     }catch (err){console.log(err);}
     for (let i=0; i<code.length; i++){
 
