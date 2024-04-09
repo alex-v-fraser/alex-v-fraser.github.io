@@ -170,23 +170,27 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         if (code[i].toLowerCase()=="s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
             let temp_code_i1 = code[i+1];
             let add_descr = " В сборе с разделителем.";
+            let add_letter = "";
             if (temp_code_i1.endsWith("K")){
                 add_descr += " Соединение разделителя через капилляр.";
                 temp_code_i1 = temp_code_i1.slice(0,-1);
+                add_letter = "K";
             }
             if (temp_code_i1.endsWith("R") && temp_code_i1.length>1){
                 add_descr += " С радиатором для сред измерения до 200°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-1);
+                add_letter = "R";
             }
             if (temp_code_i1.endsWith("R2") && temp_code_i1.length>2){
                 add_descr += " С радиатором для сред измерения до 250°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
+                add_letter = "R2";
             }
             if (temp_code_i1.endsWith("R3") && temp_code_i1.length>2){
                 add_descr += " С радиатором для сред измерения до 310°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
+                add_letter = "R3";
             }
-
 
             let temp_code_v1 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3];
             let temp_code_v2 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2];
@@ -199,8 +203,12 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     for (el of window[item + "_restr_lst"].values()){
                         if (repeat_cycle === true && el.get("code_name") === els){
                             code.splice(i, num_cut, els);
-                            full_description.set(code[i], el.get("description") + add_descr);
-                            // console.log("СРАБОТАЛО: " + code[i], el.get("description") + add_descr);
+                            let temp_desc = el.get("description") + add_descr;
+                            let arr = code[i].split("-");
+                            arr[1] = arr[1] + add_letter;
+                            code[i] = arr.join("-");
+                            full_description.set(code[i], temp_desc);
+                            // console.log("СРАБОТАЛО: " + code[i], temp_desc);
                             repeat_cycle = false;
                             break;
                         }
@@ -222,6 +230,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
+
+    console.log(full_description);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
