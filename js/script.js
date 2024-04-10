@@ -231,8 +231,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
     }
 
-    console.log(full_description);
-    console.log(code);
+    // console.log(full_description);
+    // console.log(code);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
@@ -443,10 +443,8 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"  || data.get("thread") == "G1_2"){
         material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
-        console.log(material);
     }else{
         material = "";
-        console.log(material);
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
         if ($(this).is(":checked") && $(this).val()!="rad_cap"){
@@ -660,6 +658,9 @@ $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
         if ($(this).is(':checked') && this.name!="special") { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС (кроме special)
             $(this).siblings("input:checkbox").prop('checked', false);
+            if (this.name=="cap-or-not"){
+                $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
+            }
             console.log("1");
         }
         else{
@@ -741,10 +742,6 @@ $(function (){
             }
         }
 
-        if (this.name=="cap-or-not"){
-            $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
-        }
-
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
             document.getElementById("radiator-select").hidden = true;
             document.getElementById("cap-length-span").hidden = false;
@@ -810,8 +807,7 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
     let press_type = document.querySelector("#pressure-type").value;
     if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range && begin_range>=low_press && end_range<=hi_press){
         let full_conf = get_full_config();
-        if (!full_conf.has("thread") || !full_conf.has("flange") || !full_conf.has("hygienic")){
-        }
+
         if (press_type != "ABS" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
