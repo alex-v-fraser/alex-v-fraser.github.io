@@ -415,9 +415,6 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
     range = (dev_type!="PC-28.Modbus/") ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
     range = (dev_type=="PC-28.Smart/" && range==main_range) ? "" : range;
-    console.log(range);
-    console.log(main_range);
-    console.log(main_range==range);
     connection = connection.split("-");
     if (connection[0]=="S"){
         s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
@@ -738,6 +735,10 @@ $(function (){
                 console.log("6");
                 return;
             }
+        }
+
+        if (this.name=="cap-or-not"){
+            $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
         }
 
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
