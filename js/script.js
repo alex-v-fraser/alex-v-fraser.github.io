@@ -8,7 +8,7 @@ var hygienic_restr_lst = new Map(); // ОГРАНИЧЕНИЯ HYGIENIC
 var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
 var option_names = ["approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , , "material", "thread", "cap-or-not", , "display"
 var connection_types = ["thread", "flange", "hygienic"];
-var search_names = ["device", "approval", "output", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
+var search_names = ["device", "approval", "output", "material", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
 var low_press = -101;       // начало диапазона избыт, кПа
 var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
@@ -172,22 +172,22 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             let add_descr = " В сборе с разделителем.";
             let add_letter = "";
             if (temp_code_i1.endsWith("K")){
-                add_descr += " Соединение разделителя через капилляр.";
+                add_descr += " K - cоединение разделителя через капилляр.";
                 temp_code_i1 = temp_code_i1.slice(0,-1);
                 add_letter = "K";
             }
             if (temp_code_i1.endsWith("R") && temp_code_i1.length>1){
-                add_descr += " С радиатором для сред измерения до 200°С.";
+                add_descr += " R - c радиатором для сред измерения до 200°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-1);
                 add_letter = "R";
             }
             if (temp_code_i1.endsWith("R2") && temp_code_i1.length>2){
-                add_descr += " С радиатором для сред измерения до 250°С.";
+                add_descr += " R2 - c радиатором для сред измерения до 250°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
                 add_letter = "R2";
             }
             if (temp_code_i1.endsWith("R3") && temp_code_i1.length>2){
-                add_descr += " С радиатором для сред измерения до 310°С.";
+                add_descr += " R3 - c радиатором для сред измерения до 310°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
                 add_letter = "R3";
             }
@@ -232,6 +232,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     }
 
     console.log(full_description);
+    console.log(code);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
@@ -435,17 +436,17 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         }
     }
 
-    console.log(connection);
-
     if (data.get("cap-or-not") == "direct" && typeof connection[1]!="undefined" && !connection[1].startsWith("R")){
         connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
     }
     connection = connection.join("-");
 
-    if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"){
+    if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"  || data.get("thread") == "G1_2"){
         material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
+        console.log(material);
     }else{
         material = "";
+        console.log(material);
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
         if ($(this).is(":checked") && $(this).val()!="rad_cap"){
