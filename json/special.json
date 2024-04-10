@@ -53,5 +53,15 @@
         "name": "T",
         "code_name": "T",
         "description": "Осевое выведение капилляра разделителя."
+    },
+    {
+        "name": "RU",
+        "code_name": "RU",
+        "description": "Страна производства: Россия."
+    },
+    {
+        "name": "PL",
+        "code_name": "PL",
+        "description": "Страна производства: Польша."
     }
 ]
