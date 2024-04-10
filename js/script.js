@@ -434,7 +434,10 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
             connection.push("T-K=" + data.get("capillary_length") + "м");
         }
     }
-    if (data.get("cap-or-not") == "direct" && typeof connection[1]!="undefined" && connection[1].startsWith("R")){
+
+    console.log(connection);
+
+    if (data.get("cap-or-not") == "direct" && typeof connection[1]!="undefined" && !connection[1].startsWith("R")){
         connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
     }
     connection = connection.join("-");
