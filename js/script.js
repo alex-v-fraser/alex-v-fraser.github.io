@@ -932,3 +932,22 @@ $(function(){
         }
     })
 })
+$(function(){
+    $(".main-dev").click(function(){
+        $(this.parentElement).slideUp("slow");
+        $(this).addClass("main-dev-selected");
+        $(this).siblings(".main-dev").removeClass("main-dev-selected");
+        console.log(this.innerText);
+        console.log($(".main-dev-selected div.prod-name").prop("innerText"));
+        $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
+        $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").addClass("active-panel-container");
+    })
+})
+$(function(){
+    $(".back-to-main-dev-select").click(function(){
+        $(".active-panel-container").slideUp("slow");
+        $("#main-dev-select").slideDown("slow");
+        $(".active-panel-container").removeClass("active-panel-container");
+        console.log(this);
+    })
+})

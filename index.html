@@ -81,7 +81,7 @@
 			text-align: center;
 			line-height: 3.5em;
 		}
-		.pc-panel-container {
+		.pc-28-panel-container {
 			display: flex;
 			flex-direction: row;
 			border: 1px solid silver;
@@ -118,12 +118,12 @@
 		.main-dev {
 			display: inline-block;
 			border: 2px solid #eee;
-			width: 200px;
-			height: 200px;
+			width: 250px;
+			height: 250px;
 			font-size: 20px;
 			font-weight: 500;
 			text-align: center;
-			padding-top: 8.5em;
+			padding-top: 11em;
 			vertical-align: bottom;
 			margin: 5px;
 			position: relative;
@@ -153,6 +153,10 @@
 		img {
 			max-width: 100%;
 			max-height: 100%;
+		}
+
+		.back-to-main-dev-select:hover {
+            background-color: #d3cece;
 		}
 
     </style>
@@ -186,10 +190,9 @@
 			<div class="prod-name" style="background:#FEC600;vertical-align:middle;">SG-25</div>
 		</div>
 	</div>
-	<h1>Преобразователь давления PC-28</h1>
-	<hr>
-	<h4>Пожалуйста выберите подходящий вариант:</h4>
-	<div class="pc-panel-container">
+	<h4 class="back-to-main-dev-select pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container sg-25-panel-container"  style="display:none; cursor: pointer;">Вернуться к выбору типа средства измерения</h4>
+	<h1 class="pc-28-panel-container" style="display:none;">Преобразователь давления PC-28</h1><br>
+	<div class="pc-28-panel-container" style="display:none;">
 		<div class="panel-left">
 		<div id="device-options">
 			<div  class="option-to-select">
