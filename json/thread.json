@@ -400,7 +400,7 @@
   {
     "name": "cm22_1_5",
     "code_name": "CM22x1,5",
-    "description": "Штуцер M22x1.5 с лицевой мембраной.",
+    "description": "Штуцер M22x1,5 с лицевой мембраной.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
