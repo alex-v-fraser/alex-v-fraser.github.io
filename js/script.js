@@ -295,6 +295,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let begin_range_kpa = begin_range*koef.get(units);
     let end_range_kpa = end_range*koef.get(units);
     let full_conf = new Map([]);
+    full_conf.set("main_dev", $(".main-dev-selected div.prod-name").prop("innerText"));
     let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
     for (let el of options){
         full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
@@ -937,8 +938,6 @@ $(function(){
         $(this.parentElement).slideUp("slow");
         $(this).addClass("main-dev-selected");
         $(this).siblings(".main-dev").removeClass("main-dev-selected");
-        console.log(this.innerText);
-        console.log($(".main-dev-selected div.prod-name").prop("innerText"));
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").addClass("active-panel-container");
     })
@@ -948,6 +947,5 @@ $(function(){
         $(".active-panel-container").slideUp("slow");
         $("#main-dev-select").slideDown("slow");
         $(".active-panel-container").removeClass("active-panel-container");
-        console.log(this);
     })
 })
