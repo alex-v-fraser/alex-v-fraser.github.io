@@ -940,6 +940,7 @@ $(function(){
         $(this).siblings(".main-dev").removeClass("main-dev-selected");
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").addClass("active-panel-container");
+        disable_invalid_options();
     })
 })
 $(function(){

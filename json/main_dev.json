@@ -1,0 +1,44 @@
+[
+    {
+        "name": "pc-28",
+        "code_name": "PC-28",
+        "output": [
+            "4_20",
+            "04_2",
+            "0_2",
+            "4_20H",
+            "modbus",
+            "0_10"
+        ],
+        "electrical": [
+            "PD",
+            "PPD",
+            "PM12",
+            "PZ",
+            "PK",
+            "PKSG",
+            "ALW",
+            "ALW2",
+            "FL_M20_1_5",
+            "FL_1_2NPT",
+            "SGM_M20_1_5",
+            "SGM_1_2NPT",
+            "PZ2"
+        ]
+    },
+    {
+        "name": "apc-2000",
+        "code_name": "APC-2000",
+        "output": [
+            "4_20H",
+            "0_20H",
+            "0_5H"
+        ],
+        "electrical": [
+            "ALW",
+            "ALE",
+            "PD",
+            "PZ"
+        ]
+    }
+]

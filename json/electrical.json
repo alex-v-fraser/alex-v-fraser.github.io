@@ -89,6 +89,19 @@
     ]
   },
   {
+    "name": "ALE",
+    "description": "Местный индикатор c возможностью настройки выходных сигналов 4...20, 0...20 или 0...5мА + HART.",
+    "display": "with_display",
+    "output": [
+      "4_20H",
+      "0_20H",
+      "0_5H"
+    ],
+    "approval": [
+      "non_hazard"
+    ]
+  },
+  {
     "name": "ALW2",
     "description": "Местный индикатор под углом 90° с разъемом DIN43650, степень защиты IP65.",
     "display": "with_display",
