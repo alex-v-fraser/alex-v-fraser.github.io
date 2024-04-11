@@ -600,11 +600,15 @@ function disable_invalid_options(){
         $("label[for=time_response]").addClass('disabled');
         $("#time_response").prop('disabled', true);
     }
-    if (full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"){ //проверка (-20)
+    if (full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-20)
         $("label[for=minus_20]").addClass('disabled');
         $("#minus_20").prop('disabled', true);
     }
-    if (full_conf.get("pressure_type") != "ABS" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"){ // проверка CT
+    if (full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-30)
+        $("label[for=minus_30]").addClass('disabled');
+        $("#minus_30").prop('disabled', true);
+    }
+    if (full_conf.get("pressure_type") != "ABS" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked")  || $("#minus_20").is(":checked")){ // проверка CT
         $("label[for=ct_spec]").addClass('disabled');
         $("#ct_spec").prop('disabled', true);
     }
