@@ -7,10 +7,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>NEW APLISENS CONFIG</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 	<script src="/js/jquery-resizable.js"></script>
 	<script src="/js/script.js" type="text/javascript"></script>
 	<script src="/js/jquery.auto-grow-input.js"></script>
+
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
 	<style type="text/css">
 		.option-to-select-header {
@@ -164,6 +167,9 @@
 </head>
 
 <body>
+	<div id="dialog-confirm" title="Вернуться к выбору типа средства измерения" style="display: none">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>"Выбранная конфгурация будет утеряна.<br>Продолжить?"</p>
+	</div>
 	<div style="display: inline-block; text-align: center;">
 		<div style="display: inline-block;"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
 		<h1>КОНФИГУРАТОР</h1>

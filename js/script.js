@@ -983,10 +983,32 @@ $(function(){
         disable_invalid_options();
     })
 })
-$(function(){
+
+$(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
     $(".back-to-main-dev-select").click(function(){
-        $(".active-panel-container").slideUp("slow");
-        $("#main-dev-select").slideDown("slow");
-        $(".active-panel-container").removeClass("active-panel-container");
+        $( "#dialog-confirm" ).dialog({
+            resizable: false,
+            height: "auto",
+            width: 600,
+            modal: true,
+            buttons: {
+                Продолжить: function() {
+                    $(".active-panel-container").slideUp("slow");
+                    $("#main-dev-select").slideDown("slow");
+                    $(".active-panel-container").removeClass("active-panel-container");
+                    $('body input:checkbox:checked').each(function(){
+                        $(this).trigger("click");
+                    });
+                    $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
+                    $("div.option-to-select.active").removeClass("active");
+                    $( this ).dialog( "close" );
+                    $("#approval-select").slideDown("slow");
+                },
+                Отмена: function() {
+                    $( this ).dialog( "close" );
+                    console.log($("div.option-to-select.active").next("div"));
+                }
+            }
+        })
     })
 })
