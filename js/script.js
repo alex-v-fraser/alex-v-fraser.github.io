@@ -300,7 +300,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     full_conf.set("main_dev", $(".main-dev-selected").prop("id").slice(9,));
     // console.log();  $(".main-dev-selected div.prod-name").prop("innerText")
     main_dev = $(".main-dev-selected").prop("id").slice(9,);
-    console.log(main_dev);
     let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
     for (let el of options){
         full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
@@ -362,6 +361,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let special = "";
     let out = data.get("output");
     let appr = data.get("approval");
+    let main_dev = data.get("main_dev").toUpperCase();
     let dev_type = out == "4_20" ? "PC-28/" : out == "4_20H" ? "PC-28.Smart/" : out == "modbus" ? "PC-28.Modbus/" : out == "0_10" ? "PC-28/" : "PC-28.B/";
     let output = out == "0_2" ? "0...2В/" : out == "04_2" ? "0,4...2В/" : out == "0_10" ? "0...10В/" : "";
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
@@ -396,7 +396,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         [0, 10000, "0...10МПаABS"]
     ];
     main_range = "";
-    if (dev_type == "PC-28.Smart/" || dev_type == "PC-28.Modbus/"){
+    if (dev_type == "PC-28.Smart/" || dev_type == "PC-28.Modbus/" || main_dev == "APC-2000"){
         if (data.get("pressure_type")==""){
             let min_main_range = [-200000, 200000, ""];
             for (el of main_ranges){
@@ -420,8 +420,28 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
             main_range = min_main_range[2] + "/";
         }
     }
+
+    if (main_dev == "APC-2000" && data.get("end_range_kpa")<=2.5 && data.get("pressure_type")==""){  /// ДОБАВИТЬ ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ HS
+        const main_hs_ranges = [
+            [-2.5, 2.5, "-2,5...2,5кПа"],
+            [-0.7, 0.7, "-0,7...0,7кПа"]
+        ]
+        let min_main_range = [-200000, 200000, "-200000...20000кПа"];
+        for (el of main_hs_ranges){
+            if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
+                    min_main_range = el;
+                }
+            }
+        }
+        main_range = min_main_range[2] + "/";
+        $("#hs").prop('checked', true);
+
+        console.log("ДОБАВИТЬ ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ HS!!!");
+    }
     range = (dev_type!="PC-28.Modbus/") ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
-    range = (dev_type=="PC-28.Smart/" && range==main_range) ? "" : range;
+    range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000") && range==main_range) ? "" : range;
+
     connection = connection.split("-");
     if (connection[0]=="S"){
         s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
@@ -457,7 +477,11 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
             special = special + $(this).val() + "/";
         }
     })
-    code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
+    if (main_dev!="APC-2000"){
+        code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
+    }else{
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection;
+    }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
     $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -492,7 +516,8 @@ function disable_invalid_options(){
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
     low_press = -101;       // начало диапазона избыт, кПа
     hi_press = 100000;      // конец диапазона избыт, кПа
-    min_range = 2.5;        // мин ширина диапазона избыт, кПа
+    min_range = main_dev=="apc-2000" ? 0.1 : 2.5;        // мин ширина диапазона избыт, кПа
+    document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
     low_press_abs = 0;      // начало диапазона абс, кПа
     hi_press_abs = 10000;    // конец диапазона абс, кПа
     min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
@@ -500,15 +525,11 @@ function disable_invalid_options(){
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
     for (let pair of full_conf.entries()){
         if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
-            console.log(pair[1]);
             for (let opt in option_names){
                 if (option_names[opt]!=pair[0]){             /// НЕ СРАВНИВАТЬ ОПЦИЮ САМУ С СОБОЙ
-                    console.log(pair[0], " - ", pair[1], " - ", option_names[opt]);
+                    // console.log(pair[0], " - ", pair[1], " - ", option_names[opt]);
                     let temp;
                     try {
-                        console.log(restr_conf_lst.get(pair[0]));
-                        console.log(restr_conf_lst.get(pair[0]).get(pair[1]));
-                        console.log(restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]));
                         temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
                     }
                     catch (err){
@@ -626,6 +647,15 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS"){ // проверка HS
+        $("label[for=hs]").addClass('disabled');
+        $("#hs").prop('disabled', true);
+    }
+    if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // проверка HS
+        $("label[for=hs]").addClass('disabled');
+        $("#hs").prop('checked', true);
+        $("#hs").prop('disabled', true);
+    }
 
 
     ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
@@ -706,7 +736,7 @@ $(function (){
                 //// СНИМАЕМ ОГРАНИЧЕНИЯ ДАВЛЕНИЯ при снятии выбора присоединения
                 low_press = -101;       // начало диапазона избыт, кПа
                 hi_press = 100000;      // конец диапазона избыт, кПа
-                min_range = 2.5;        // мин ширина диапазона избыт, кПа
+                min_range = main_dev=="apc-2000" ? 0.1 : 2.5;        // мин ширина диапазона избыт, кПа
                 low_press_abs = 0;      // начало диапазона абс, кПа
                 hi_press_abs = 10000;    // конец диапазона абс, кПа
                 min_range_abs = 20.0;   // мин ширина диапазона абс, кПа

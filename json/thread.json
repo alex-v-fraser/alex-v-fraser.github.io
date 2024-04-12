@@ -7,7 +7,6 @@
     "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 100000,
-    "range": 2,
     "material": [
       "aisi316"
     ]
@@ -20,7 +19,6 @@
     "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 100000,
-    "range": 2,
     "material": [
       "aisi316",
       "au"
@@ -34,7 +32,6 @@
     "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 35000,
-    "range": 2,
     "material": [
       "aisi316"
     ]
@@ -47,7 +44,6 @@
     "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 35000,
-    "range": 2,
     "material": [
       "aisi316",
       "hastelloy"
@@ -73,7 +69,6 @@
     "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 70000,
-    "range": 2,
     "material": [
       "aisi316"
     ]
