@@ -520,7 +520,8 @@ function disable_invalid_options(){
     document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
     low_press_abs = 0;      // начало диапазона абс, кПа
     hi_press_abs = 10000;    // конец диапазона абс, кПа
-    min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+    min_range_abs = main_dev=="apc-2000" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
+    document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
 
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
     for (let pair of full_conf.entries()){
@@ -739,7 +740,7 @@ $(function (){
                 min_range = main_dev=="apc-2000" ? 0.1 : 2.5;        // мин ширина диапазона избыт, кПа
                 low_press_abs = 0;      // начало диапазона абс, кПа
                 hi_press_abs = 10000;    // конец диапазона абс, кПа
-                min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+                min_range_abs = main_dev=="apc-2000" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
                 console.log("33");
