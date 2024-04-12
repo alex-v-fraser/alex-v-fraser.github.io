@@ -7,6 +7,9 @@
       "non_hazard",
       "Ex",
       "Exd"
+    ],
+    "main_dev": [
+      "PC-28"
     ]
   },
   {
@@ -24,7 +27,10 @@
       "PK",
       "PKSG"
     ],
-    "display": "without_display"
+    "display": "without_display",
+    "main_dev": [
+      "PC-28"
+    ]
   },
   {
     "name": "04_2",
@@ -42,7 +48,10 @@
       "PK",
       "PKSG"
     ],
-    "display": "without_display"
+    "display": "without_display",
+    "main_dev": [
+      "PC-28"
+    ]
   },
   {
     "name": "0_2",
@@ -60,7 +69,10 @@
       "PK",
       "PKSG"
     ],
-    "display": "without_display"
+    "display": "without_display",
+    "main_dev": [
+      "PC-28"
+    ]
   },
   {
     "name": "4_20H",
@@ -82,8 +94,13 @@
       "SGM_M20_1_5",
       "SGM_1_2NPT",
       "PZ2",
+      "APCALW",
       "ALW",
       "ALW2"
+    ],
+    "main_dev": [
+      "PC-28",
+      "APC-2000"
     ]
   },
   {
@@ -107,6 +124,9 @@
       "PZ2",
       "ALW",
       "ALW2"
+    ],
+    "main_dev": [
+      "PC-28"
     ]
   }
 ]

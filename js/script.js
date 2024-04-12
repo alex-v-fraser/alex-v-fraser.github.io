@@ -1,12 +1,14 @@
-var device_restr_lst = new Map(); // ОГРАНИЧЕНИЯ DEVICE
-var approval_restr_lst = new Map(); // ОГРАНИЧЕНИЯ ВЗРЫВОБЕЗОПАСНОСТЬ
-var special_restr_lst = new Map(); // ОГРАНИЧЕНИЯ SPECIAL
-var electrical_restr_lst = new Map(); // ОГРАНИЧЕНИЯ ELECTRICAL
-var thread_restr_lst = new Map();   // ОГРАНИЧЕНИЯ THREAD
-var flange_restr_lst = new Map();   // ОГРАНИЧЕНИЯ FLANGE
-var hygienic_restr_lst = new Map(); // ОГРАНИЧЕНИЯ HYGIENIC
+var main_dev = "";                      // ОСНОВНОЙ ДЕВАЙС
+var main_dev_restr_lst = new Map();     // ОГРАНИЧЕНИЯ ОСНОВНОЙ DEVICE
+var device_restr_lst = new Map();       // ОГРАНИЧЕНИЯ DEVICE
+var approval_restr_lst = new Map();     // ОГРАНИЧЕНИЯ ВЗРЫВОБЕЗОПАСНОСТЬ
+var special_restr_lst = new Map();      // ОГРАНИЧЕНИЯ SPECIAL
+var electrical_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ELECTRICAL
+var thread_restr_lst = new Map();       // ОГРАНИЧЕНИЯ THREAD
+var flange_restr_lst = new Map();       // ОГРАНИЧЕНИЯ FLANGE
+var hygienic_restr_lst = new Map();     // ОГРАНИЧЕНИЯ HYGIENIC
 var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
-var option_names = ["approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности , , "material", "thread", "cap-or-not", , "display"
+var option_names = ["main_dev", "approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности
 var connection_types = ["thread", "flange", "hygienic"];
 var search_names = ["device", "approval", "output", "material", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
 var low_press = -101;       // начало диапазона избыт, кПа
@@ -295,7 +297,10 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let begin_range_kpa = begin_range*koef.get(units);
     let end_range_kpa = end_range*koef.get(units);
     let full_conf = new Map([]);
-    full_conf.set("main_dev", $(".main-dev-selected div.prod-name").prop("innerText"));
+    full_conf.set("main_dev", $(".main-dev-selected").prop("id").slice(9,));
+    // console.log();  $(".main-dev-selected div.prod-name").prop("innerText")
+    main_dev = $(".main-dev-selected").prop("id").slice(9,);
+    console.log(main_dev);
     let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
     for (let el of options){
         full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
@@ -467,7 +472,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["approval", "output", "electrical", "material", "cap-or-not", "thread", "flange"]; //ДОБАВИТЬ hygienic когда они появятся
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "thread", "flange", "hygienic"]; //ДОБАВИТЬ hygienic когда они появятся
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -495,11 +500,15 @@ function disable_invalid_options(){
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
     for (let pair of full_conf.entries()){
         if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
+            console.log(pair[1]);
             for (let opt in option_names){
                 if (option_names[opt]!=pair[0]){             /// НЕ СРАВНИВАТЬ ОПЦИЮ САМУ С СОБОЙ
-                    // console.log(pair[0], " - ", pair[1], " - ", option_names[opt]);
+                    console.log(pair[0], " - ", pair[1], " - ", option_names[opt]);
                     let temp;
                     try {
+                        console.log(restr_conf_lst.get(pair[0]));
+                        console.log(restr_conf_lst.get(pair[0]).get(pair[1]));
+                        console.log(restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]));
                         temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
                     }
                     catch (err){

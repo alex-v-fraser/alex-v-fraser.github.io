@@ -35,7 +35,7 @@
             "0_5H"
         ],
         "electrical": [
-            "ALW",
+            "APCALW",
             "ALE",
             "PD",
             "PZ"
