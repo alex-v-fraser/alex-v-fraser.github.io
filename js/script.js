@@ -377,7 +377,9 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         [0, 16000, "0...16МПа"],
         [0, 10000, "0...10МПа"],
         [0, 7000, "0...7МПа"],
+        [-100, 7000, "-0,1...7МПа"],
         [0, 2500, "0...2,5МПа"],
+        [-100, 2500, "-0,1...2,5МПа"],
         [0, 700, "0...0,7МПа"],
         [-100, 150, "-100...150кПа"],
         [-100, 700, "-100...700кПа"],
@@ -421,7 +423,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         }
     }
 
-    if (main_dev == "APC-2000" && data.get("end_range_kpa")<=2.5 && data.get("pressure_type")==""){  /// ДОБАВИТЬ ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ HS
+    if (main_dev == "APC-2000" && data.get("end_range_kpa")<=2.5 && data.get("pressure_type")==""){
         const main_hs_ranges = [
             [-2.5, 2.5, "-2,5...2,5кПа"],
             [-0.7, 0.7, "-0,7...0,7кПа"]
@@ -436,8 +438,6 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         }
         main_range = min_main_range[2] + "/";
         $("#hs").prop('checked', true);
-
-        console.log("ДОБАВИТЬ ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ HS!!!");
     }
     range = (dev_type!="PC-28.Modbus/") ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
     range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000") && range==main_range) ? "" : range;
@@ -551,7 +551,16 @@ function disable_invalid_options(){
         if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
             low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
             hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
-            min_range = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
+            if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="capillary"){
+                min_range = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
+                console.log("min_range capillary ", min_range);
+            }
+            if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="direct"){
+                min_range = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") : min_range;
+                console.log("min_range direct ", min_range);
+            }
+
+
             hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
             min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
             document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
@@ -632,11 +641,11 @@ function disable_invalid_options(){
         $("label[for=time_response]").addClass('disabled');
         $("#time_response").prop('disabled', true);
     }
-    if (full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-20)
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-20)
         $("label[for=minus_20]").addClass('disabled');
         $("#minus_20").prop('disabled', true);
     }
-    if (full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-30)
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-30)
         $("label[for=minus_30]").addClass('disabled');
         $("#minus_30").prop('disabled', true);
     }
@@ -648,14 +657,24 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS"){ // проверка HS
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"){ // проверка HS
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('disabled', true);
+        $("#hs").prop('checked', false);
     }
-    if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // проверка HS
+    if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // принудительное включение HS для низких диапазонов
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('checked', true);
         $("#hs").prop('disabled', true);
+    }
+    if (full_conf.get("electrical")!="APCALW"){ // проверка специсполнения PD
+        $("label[for=spec_pd]").addClass('disabled');
+        $("#spec_pd").prop('disabled', true);
+        $("#spec_pd").prop('checked', false);
+        $("label[for=SN]").addClass('disabled');
+        $("#SN").prop('disabled', true);
+        $("#SN").prop('checked', false);
+
     }
 
 
@@ -999,6 +1018,18 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                     $('body input:checkbox:checked').each(function(){
                         $(this).trigger("click");
                     });
+                    document.getElementById("begin-range").value="";
+                    document.getElementById("end-range").value="";
+                    document.getElementById("pressure-unit-select").value="not_selected";
+                    document.getElementById("pressure-type").value="not_selected";
+                    $("div.color-mark-field").each(function(){
+                        $(this).removeClass("selected");
+                        $(this).addClass("unselected");
+                    })
+                    let arr = ["thread", "flange", "hygienic"];
+                    for (cons of arr){
+                        $("input[name="+ cons +"]:checked").prop("checked", false);
+                    }
                     $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
                     $("div.option-to-select.active").removeClass("active");
                     $( this ).dialog( "close" );
