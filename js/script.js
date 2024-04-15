@@ -77,6 +77,7 @@ fetchRestrictions().then((data) => {///СОЗДАЕМ МАССИВ ОГРАНИ�
 $(function(){        ///////////////ИЗМЕНЯЕМЫЕ ПАНЕЛИ
     $(".panel-left").resizable({
         handleSelector: ".splitter",
+        handles: "e",
         resizeHeight: false
     })
 })
@@ -625,7 +626,7 @@ function disable_invalid_options(){
     }
 
     /// ПРОВЕРКА SPECIAL
-    if (typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"){ //проверка 0,16
+    if (typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || typeof full_conf.get("output")=='undefined'){ //проверка 0,16
         $("label[for=0_16]").addClass('disabled');
         $("#0_16").prop('disabled', true);
     }
@@ -657,7 +658,7 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"){ // проверка HS
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"  || typeof full_conf.get("range")=='undefined'){ // проверка HS
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('disabled', true);
         $("#hs").prop('checked', false);
@@ -1026,7 +1027,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $(this).removeClass("selected");
                         $(this).addClass("unselected");
                     })
-                    let arr = ["thread", "flange", "hygienic"];
+                    let arr = ["thread", "flange", "hygienic", "special"];
                     for (cons of arr){
                         $("input[name="+ cons +"]:checked").prop("checked", false);
                     }

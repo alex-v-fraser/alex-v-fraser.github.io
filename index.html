@@ -8,7 +8,7 @@
 	<title>NEW APLISENS CONFIG</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-	<!-- <script src="/js/jquery-resizable.js"></script> -->
+	<script src="/js/jquery-resizable.js"></script>
 	<script src="/js/script.js" type="text/javascript"></script>
 	<script src="/js/jquery.auto-grow-input.js"></script>
 
@@ -16,6 +16,20 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 
 	<style type="text/css">
+
+		.ui-resizable-e {
+    		width: 14px !important;
+			cursor: col-resize !important;
+			right: -12px !important;
+			background: url(images/vsizegrip.png) center center no-repeat #a5a4a4 !important;
+		}
+
+		fieldset {
+			text-align: justify;
+			/* padding: 1em; */
+			/* font:80%/1 sans-serif; */
+		}
+
 		.option-to-select-header {
 			font-size: 1.1em;
 			font-weight: bold;
@@ -54,7 +68,9 @@
 			cursor: pointer;
 		}
 		input[type=checkbox]:hover + label:hover {
-			font-weight: bold;
+			text-decoration: underline #000000;
+			text-underline-offset: 0.2em;
+			/* font-weight: bold; */
 			cursor: pointer;
 		}
 		.unselected {
@@ -96,7 +112,7 @@
 			padding: 5px;
 			min-height: 200px;
 			min-width: 410px;
-			white-space: nowrap;
+			white-space: normal;
 			}
 		.splitter {
 			flex: 0 0 auto;
@@ -108,6 +124,7 @@
 		.panel-right {
 			flex: 1 1 auto;/* resizable */
 			padding: 10px;
+			margin-left: 10px;
 			width: 100%;
 			min-height: 200px;
 			min-width: 200px;
@@ -465,15 +482,15 @@
 						<input type="checkbox" name="special" value="CT" id="ct_spec" disabled><label for="ct_spec" class="disabled"><b>CT</b> - цифровая термокомпенсация -30...50°С (только абсолютное давление)</label><br><div id="err_ct_spec"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="rad_cap" id="rad_cap" disabled><label for="rad_cap" class="disabled"><b>R</b> - радиальное выведение капилляра разделителя</label><br><div id="err_rad_cap"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="HS" id="hs" disabled><label for="hs" class="disabled"><b>HS</b> - полисенсорный измерительный элемент</label><br><div id="err_hs"  style="display:none;">АХТУНГ!!!</div>
-						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (для APC-2000ALW)</label><br><div id="err_hs"  style="display:none;">АХТУНГ!!!</div>
-						<input type="checkbox" name="special" value="SN" id="SN" disabled><label for="SN" class="disabled"><b>SN</b> - Корпус индикатора APC-2000ALW из нержавеющей стали AISI316</label><br><div id="err_hs"  style="display:none;">АХТУНГ!!!</div>
+						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (для APC-2000ALW)</label><br><div id="err_spec_pd"  style="display:none;">АХТУНГ!!!</div>
+						<input type="checkbox" name="special" value="SN" id="SN" disabled><label for="SN" class="disabled"><b>SN</b> - Корпус индикатора APC-2000ALW из нержавеющей стали AISI316</label><br><div id="err_SN"  style="display:none;">АХТУНГ!!!</div>
 					</fieldset>
 				</div>
 			</div>
 		</div>
 
-		<div class="splitter">
-		</div>
+		<!-- <div class="splitter">
+		</div> -->
 
 		<!-- ЗДЕСЬ БУДЕТ КОД ЗАКАЗА И ОПИСАНИЕ ВЫБРАННЫХ ОПЦИЙ -->
 		<div class="panel-right">
