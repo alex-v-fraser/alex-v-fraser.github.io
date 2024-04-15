@@ -668,14 +668,39 @@ function disable_invalid_options(){
         $("#hs").prop('checked', true);
         $("#hs").prop('disabled', true);
     }
-    if (full_conf.get("electrical")!="APCALW"){ // проверка специсполнения PD
+    if (full_conf.get("electrical")!="APCALW"){ // проверка специсполнения PD, SN, -50..80, HART7
         $("label[for=spec_pd]").addClass('disabled');
         $("#spec_pd").prop('disabled', true);
         $("#spec_pd").prop('checked', false);
         $("label[for=SN]").addClass('disabled');
         $("#SN").prop('disabled', true);
         $("#SN").prop('checked', false);
-
+        $("label[for=minus_50]").addClass('disabled');
+        $("#minus_50").prop('disabled', true);
+        $("#minus_50").prop('checked', false);
+        $("label[for=hart7]").addClass('disabled');
+        $("#hart7").prop('disabled', true);
+        $("#hart7").prop('checked', false);
+    }
+    if (full_conf.get("electrical")!="APCALW" || full_conf.get("pressure_type")!="ABS"){ // проверка специсполнения IP67
+        $("label[for=spec_ip67]").addClass('disabled');
+        $("#spec_ip67").prop('disabled', true);
+        $("#spec_ip67").prop('checked', false);
+    }
+    if (full_conf.get("electrical")!="APCALW" || full_conf.get("range")<1.5){ // проверка специсполнения 0.05
+        $("label[for=0_05]").addClass('disabled');
+        $("#0_05").prop('disabled', true);
+        $("#0_05").prop('checked', false);
+    }
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && !(full_conf.get("electrical")=="PD" || full_conf.get("electrical")=="PZ")) || $("#minus_60").is(":checked")){ // проверка специсполнения -40
+        $("label[for=minus_40]").addClass('disabled');
+        $("#minus_40").prop('disabled', true);
+        $("#minus_40").prop('checked', false);
+    }
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("electrical")!="PZ") || $("#minus_40").is(":checked")){ // проверка специсполнения -60
+        $("label[for=minus_60]").addClass('disabled');
+        $("#minus_60").prop('disabled', true);
+        $("#minus_60").prop('checked', false);
     }
 
 
