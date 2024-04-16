@@ -225,7 +225,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             for (el of window[item + "_restr_lst"].values()){
                 if (el.get("name")==code[i] || el.get("code_name")==code[i]){
                     if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                        full_description.set(code[i], el.get("description") + " Выходной сигнал 4...20мА.");
+                        full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
                         break;
                     }
                     full_description.set(code[i], el.get("description"));
