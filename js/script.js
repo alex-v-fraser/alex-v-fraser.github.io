@@ -1031,41 +1031,49 @@ $(function(){
 
 $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
     $(".back-to-main-dev-select").click(function(){
-        $( "#dialog-confirm" ).dialog({
-            resizable: false,
-            height: "auto",
-            width: 600,
-            modal: true,
-            buttons: {
-                Продолжить: function() {
-                    $(".active-panel-container").slideUp("slow");
-                    $("#main-dev-select").slideDown("slow");
-                    $(".active-panel-container").removeClass("active-panel-container");
-                    $('body input:checkbox:checked').each(function(){
-                        $(this).trigger("click");
-                    });
-                    document.getElementById("begin-range").value="";
-                    document.getElementById("end-range").value="";
-                    document.getElementById("pressure-unit-select").value="not_selected";
-                    document.getElementById("pressure-type").value="not_selected";
-                    $("div.color-mark-field").each(function(){
-                        $(this).removeClass("selected");
-                        $(this).addClass("unselected");
-                    })
-                    let arr = ["thread", "flange", "hygienic", "special"];
-                    for (cons of arr){
-                        $("input[name="+ cons +"]:checked").prop("checked", false);
+        if ($("div.color-mark-field.selected").length>0){
+            $( "#dialog-confirm" ).dialog({
+                resizable: false,
+                height: "auto",
+                width: 600,
+                modal: true,
+                buttons: {
+                    Продолжить: function() {
+                        $(".active-panel-container").slideUp("slow");
+                        $("#main-dev-select").slideDown("slow");
+                        $(".active-panel-container").removeClass("active-panel-container");
+                        $('body input:checkbox:checked').each(function(){
+                            $(this).trigger("click");
+                        });
+                        document.getElementById("begin-range").value="";
+                        document.getElementById("end-range").value="";
+                        document.getElementById("pressure-unit-select").value="not_selected";
+                        document.getElementById("pressure-type").value="not_selected";
+                        $("div.color-mark-field").each(function(){
+                            $(this).removeClass("selected");
+                            $(this).addClass("unselected");
+                        })
+                        let arr = ["thread", "flange", "hygienic", "special"];
+                        for (cons of arr){
+                            $("input[name="+ cons +"]:checked").prop("checked", false);
+                        }
+                        $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
+                        $("div.option-to-select.active").removeClass("active");
+                        $( this ).dialog( "close" );
+                        $("#approval-select").slideDown("slow");
+                    },
+                    Отмена: function() {
+                        $( this ).dialog( "close" );
                     }
-                    $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
-                    $("div.option-to-select.active").removeClass("active");
-                    $( this ).dialog( "close" );
-                    $("#approval-select").slideDown("slow");
-                },
-                Отмена: function() {
-                    $( this ).dialog( "close" );
-                    console.log($("div.option-to-select.active").next("div"));
                 }
-            }
-        })
+            })
+        }else{
+            $(".active-panel-container").slideUp("slow");
+            $("#main-dev-select").slideDown("slow");
+            $(".active-panel-container").removeClass("active-panel-container");
+            $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
+            $("div.option-to-select.active").removeClass("active");
+            $("#approval-select").slideDown("slow");
+        }
     })
 })
