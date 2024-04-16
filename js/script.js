@@ -264,7 +264,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     td.appendChild(document.createTextNode(code[i]));
                     tr.appendChild(td);
                 }else{
-                    td.width = '420';
+                    td.width = '600';
                     td.innerHTML = (full_description.get(code[i]));
                     tr.appendChild(td);
                 }
@@ -364,7 +364,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let appr = data.get("approval");
     let main_dev = data.get("main_dev").toUpperCase();
     let dev_type = out == "4_20" ? "PC-28/" : out == "4_20H" ? "PC-28.Smart/" : out == "modbus" ? "PC-28.Modbus/" : out == "0_10" ? "PC-28/" : "PC-28.B/";
-    let output = out == "0_2" ? "0...2В/" : out == "04_2" ? "0,4...2В/" : out == "0_10" ? "0...10В/" : "";
+    let output = out == "0_2" ? "0...2В/" : out == "04_2" ? "0,4...2В/" : out == "0_10" ? "0...10В/" : $("#hart7").is(':checked') ? "Hart7/" : "";
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
     let connection = data.has("thread") ? $("input[name=thread]:checked").val() : data.has("flange") ? $("input[name=flange]:checked").val() : data.has("hygienic") ? $("input[name=hygienic]:checked").val() : "";
     let material;
@@ -474,7 +474,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         material = "";
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
-        if ($(this).is(":checked") && $(this).val()!="rad_cap"){
+        if ($(this).is(":checked") && $(this).val()!="rad_cap"  && $(this).val()!="Hart7"){
             special = special + $(this).val() + "/";
         }
     })
