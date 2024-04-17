@@ -892,6 +892,7 @@ $(function (){
             $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
             $this.next(".option-to-select").addClass("active");
             $this.next(".option-to-select").next().slideToggle("slow");
+            console.log($this.next("div"));
             disable_invalid_options();
             console.log("11");
         }
@@ -1027,12 +1028,22 @@ $(function(){
     })
 })
 $(function(){
-    $(".main-dev").click(function(){
+    $(".main-dev").click(function(){/// ПРИ ВЫБОРЕ ТИПА ПРИБОРА ОТОБРАЗИТЬ ТОЛЬКО НУЖНЫЕ option to select
         $(this.parentElement).slideUp("slow");
         $(this).addClass("main-dev-selected");
         $(this).siblings(".main-dev").removeClass("main-dev-selected");
-        $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").addClass("active-panel-container");
+        console.log($(".main-dev-selected").prop("id").slice(9,));
+        console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
+        $("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)).each(function(){
+            console.log(this);
+            $(this).prop("style", "display: block");
+            $(this).addClass("active-option-to-select");
+            $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
+        })
+        $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
+        $("#approval-select").slideDown("slow");
+        $("#approval-select").prev("div").addClass("active");
         disable_invalid_options();
     })
 })
@@ -1069,6 +1080,18 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $("div.option-to-select.active").removeClass("active");
                         $( this ).dialog( "close" );
                         $("#approval-select").slideDown("slow");
+
+                        $("div.option-to-select").each(function(){
+                            console.log(this);
+                            $(this).prop("style", "display:none");
+                        });
+                        $("div.option-to-select-list").each(function(){
+                            console.log(this);
+                            $(this).prop("style", "display:none");
+                        });
+
+                        $("div.active-option-to-select").removeClass("active-option-to-select");
+                        $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
                     },
                     Отмена: function() {
                         $( this ).dialog( "close" );
@@ -1082,6 +1105,18 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
             $("div.option-to-select.active").removeClass("active");
             $("#approval-select").slideDown("slow");
+
+            $("div.option-to-select").each(function(){
+                console.log(this);
+                $(this).prop("style", "display:none");
+            });
+            $("div.option-to-select-list").each(function(){
+                console.log(this);
+                $(this).prop("style", "display:none");
+            });
+
+            $("div.active-option-to-select").removeClass("active-option-to-select");
+            $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
         }
     })
 })

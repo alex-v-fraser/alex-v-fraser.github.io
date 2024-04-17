@@ -20,7 +20,7 @@
 		.ui-resizable-e {
     		width: 14px !important;
 			cursor: col-resize !important;
-			right: -12px !important;
+			right: -13px !important;
 			background: url(images/vsizegrip.png) center center no-repeat #a5a4a4 !important;
 		}
 
@@ -219,18 +219,18 @@
 	<h4 class="back-to-main-dev-select pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container sg-25-panel-container"  style="display:none; cursor: pointer;">Вернуться к выбору типа средства измерения</h4>
 	<h1 class="pc-28-panel-container" style="display:none;">Преобразователь давления PC-28<br></h1>
 	<h1 class="apc-2000-panel-container" style="display:none;">Преобразователь давления APC-2000<br></h1>
-	<h1 class="pr-28-panel-container" style="display:none;">Преобразователь давления PR-28<br></h1>
+	<h1 class="pr-28-panel-container" style="display:none;">Преобразователь давления PR-28 В РАЗРАБОТКЕ!<br></h1>
 	<h1 class="apr-2000-panel-container" style="display:none;">Преобразователь давления APR-2000<br></h1>
 	<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25<br></h1>
 
-	<div class="pc-28-panel-container apc-2000-panel-container" style="display:none;">
+	<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container" style="display:none;">
 		<div class="panel-left">
 			<div id="device-options">
-				<div  class="option-to-select">
+				<div  class="option-to-select pc-28 apc-2000 pr-28" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Тип взрывозащиты</span></div>
 				</div>
-				<div class="option-to-select-list" id="approval-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000 pr-28" id="approval-select" style="display: none;">
 					<fieldset id="approval-select-field" name="approval-select-field">
 						<input type="checkbox" name="approval" value="" id="non_hazard"><label for="non_hazard">Общепромышленное исполнение</label><br><div id="err_non_hazard"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="approval" value="Ex/" id="Ex"><label for="Ex">Искробезопасная электрическая цепь</label><br><div id="err_Ex"  style="display:none;">АХТУНГ!!!</div>
@@ -238,11 +238,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Выходной сигнал</span></div>
 				</div>
-				<div class="option-to-select-list" id="output-select"  style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000" id="output-select"  style="display: none;">
 					<fieldset id="output-select-field" name="output-select-field">
 						<input type="checkbox" name="output" value="PC-28/" id="4_20"><label for="4_20">4...20мА</label><br><div id="err_4_20"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="output" value="PC-28.Smart/" id="4_20H"><label for="4_20H">4...20мА + HART</label><br><div id="err_4_20H"  style="display:none;">АХТУНГ!!!</div>
@@ -253,11 +253,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000 pr-28" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Тип электрического присоединения</span></div>
 				</div>
-				<div class="option-to-select-list" id="electrical-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000 pr-28" id="electrical-select" style="display: none;">
 					<fieldset id="electrical-select-field" name="electrical-select-field">
 						<input type="checkbox" name="electrical" value="PD" id="PD"><label for="PD"><b>PD</b> IP65 разъем DIN43650</label><br><div id="err_PD"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="electrical" value="PPD" id="PPD"><label for="PPD"><b>PPD</b> IP65 разъем DIN43650 под пломбировку</label><br><div id="err_PPD"  style="display:none;">АХТУНГ!!!</div>
@@ -276,11 +276,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Присоединение к процессу</span></div>
 				</div>
-				<div class="option-to-select-list" id="cap-or-not-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000" id="cap-or-not-select" style="display: none;">
 					<fieldset id="cap-or-not-select-field" name="cap-or-not-select-field">
 						<input type="checkbox" name="cap-or-not" value="direct" id="direct"><label for="direct">Непосредственное.</label>
 						<span id="radiator-select" hidden>
@@ -299,11 +299,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Диапазон измерения</span></div>
 				</div>
-				<div class="option-to-select-list" id="range-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000" id="range-select" style="display: none;">
 					<fieldset class="range">
 						<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="begin-range" style="width: 4em" id="begin-range" required onchange="range_selected()">
 						<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="end-range" style="width: 4em" id="end-range" required onchange="range_selected()">
@@ -330,11 +330,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Материал смачиваемых частей</span></div>
 				</div>
-				<div class="option-to-select-list" id="material-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000" id="material-select" style="display: none;">
 					<fieldset id="material-select-field" name="material-select-field">
 						<input type="checkbox" name="material" value="" id="aisi316"><label for="aisi316">AISI316</label><br><div id="err_aisi316"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="material" value="AU" id="au"><label for="au">Золото</label><br><div id="err_au"  style="display:none;">АХТУНГ!!!</div>
@@ -347,11 +347,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Тип и размер присоединения</span></div>
 				</div>
-				<div class="option-to-select-list" id="connection-type-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000" id="connection-type-select" style="display: none;">
 					<fieldset id="connection-type-select-field" name="connection-type-select-field">
 						<input type="checkbox" name="connection-type" value="thread-list" id="thread-list"><label for="thread-list">Резьбовое</label><br>
 						<input type="checkbox" name="connection-type" value="flange-list" id="flange-list"><label for="flange-list">Фланцевое</label><br>
@@ -470,11 +470,11 @@
 						</fieldset>
 					</div>
 				</div>
-				<div class="option-to-select">
+				<div class="option-to-select pc-28 apc-2000" style="display: none;">
 					<div class="color-mark-field special" title="Set"></div>
 					<div class="option-to-select-header"><span>Специальные исполнения (опционально)</span></div>
 				</div>
-				<div class="option-to-select-list" id="special-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000" id="special-select" style="display: none;">
 					<fieldset id="special-select-field" name="special-select-field">
 						<input type="checkbox" name="special" value="0,16%" id="0_16" disabled><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа и аналоговый выход)</label><br><div id="err_0_16"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="0,05%" id="0_05" disabled><label for="0_05" class="disabled"><b>0,05%</b> - повышенная точность (только для APC-2000ALW)</label><br><div id="err_0_05"  style="display:none;">АХТУНГ!!!</div>
@@ -516,9 +516,7 @@
 		</div>
 
 	</div>
-	<div class="pr-28-panel-container apr-2000-panel-container" style="display:none;">
-	В РАЗРАБОТКЕ!!!
-	</div>
+
 
 	<div class="sg-25-panel-container" style="display:none;">
 	В РАЗРАБОТКЕ!!!
