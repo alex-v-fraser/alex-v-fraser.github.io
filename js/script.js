@@ -277,6 +277,14 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     }
 }
 
+$(document).ready(function(){
+    $("#code").keypress(function(e){
+      if(e.keyCode==13){
+        addDescription();
+      }
+    });
+});
+
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
     let capillary_length = parseInt(document.getElementById("capillary-length").value);
     let begin_range = parseFloat(document.querySelector("#begin-range").value);
