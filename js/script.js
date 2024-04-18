@@ -7,7 +7,7 @@ var electrical_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ELECTRICAL
 var thread_restr_lst = new Map();       // ОГРАНИЧЕНИЯ THREAD
 var flange_restr_lst = new Map();       // ОГРАНИЧЕНИЯ FLANGE
 var hygienic_restr_lst = new Map();     // ОГРАНИЧЕНИЯ HYGIENIC
-var restr_conf_lst; // МАССИВ ОГРАНИЧЕНИЙ из option_names
+var restr_conf_lst;                     // МАССИВ ОГРАНИЧЕНИЙ из option_names
 var option_names = ["main_dev", "approval", "output", "electrical"]; // НАЗВАНИЯ ОПЦИЙ для проверки доступности
 var connection_types = ["thread", "flange", "hygienic"];
 var search_names = ["device", "approval", "output", "material", "special", "electrical", "thread", "flange", "hygienic"]; ///ИМЕНА ДЛЯ ИЗВЛЕЧЕНИЯ ПОЛНОГО ОПИСАНИЯ из JSON
@@ -15,8 +15,11 @@ var low_press = -101;       // начало диапазона избыт, кП�
 var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
 var low_press_abs = 0;      // начало диапазона абс, кПа
-var hi_press_abs = 10000;    // конец диапазона абс, кПа
+var hi_press_abs = 10000;   // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+var low_press_diff = -2500; // начало диапазона перепад, кПа
+var hi_press_diff = 2500;   // конец диапазона перепад, кПа
+var min_range_diff = 1.6;   // мин ширина диапазона перепад, кПа
 
 
 
@@ -292,6 +295,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let units = document.querySelector("#pressure-unit-select").value;
     let press_type = document.querySelector("#pressure-type").value;
     let max_temp = parseInt(document.querySelector("#mes-env-temp").value);
+    let max_static = $("input[name=max-static]:checked").val();
     const koef = new Map([
         ["Па", 0.001],
         ["кПа", 1],
@@ -306,9 +310,14 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let begin_range_kpa = begin_range*koef.get(units);
     let end_range_kpa = end_range*koef.get(units);
     let full_conf = new Map([]);
-    full_conf.set("main_dev", $(".main-dev-selected").prop("id").slice(9,));
-    // console.log();  $(".main-dev-selected div.prod-name").prop("innerText")
     main_dev = $(".main-dev-selected").prop("id").slice(9,);
+    full_conf.set("main_dev", main_dev);
+    if (main_dev=="pr-28" || main_dev=="apr-2000"){
+        full_conf.set("max-static", max_static);
+    }else{
+        full_conf.delete("max-static");
+    }
+    // console.log();  $(".main-dev-selected div.prod-name").prop("innerText")
     let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
     for (let el of options){
         full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
@@ -505,7 +514,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "thread", "flange", "hygienic"]; //ДОБАВИТЬ hygienic когда они появятся
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "thread", "flange", "hygienic", "max-static"]; //ДОБАВИТЬ hygienic когда они появятся
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -523,14 +532,39 @@ function disable_invalid_options(){
     document.getElementById("radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до 300°C и нажмите \"OK\"";
 
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
-    low_press = -101;       // начало диапазона избыт, кПа
-    hi_press = 100000;      // конец диапазона избыт, кПа
-    min_range = main_dev=="apc-2000" ? 0.1 : 2.5;        // мин ширина диапазона избыт, кПа
-    document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
-    low_press_abs = 0;      // начало диапазона абс, кПа
-    hi_press_abs = 10000;    // конец диапазона абс, кПа
+    low_press = -101;                               // начало диапазона избыт, кПа
+    hi_press = 100000;                              // конец диапазона избыт, кПа
+    min_range = main_dev=="apc-2000" ? 0.1 : 2.5;   // мин ширина диапазона избыт, кПа
+    low_press_abs = 0;                              // начало диапазона абс, кПа
+    hi_press_abs = 10000;                           // конец диапазона абс, кПа
     min_range_abs = main_dev=="apc-2000" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
-    document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
+    low_press_diff = -2500;                         // начало диапазона перепад, кПа
+    hi_press_diff = 2500;                           // конец диапазона перепад, кПа
+    min_range_diff = 1.6;                           // мин ширина диапазона перепад, кПа
+    if (full_conf.get("main_dev")=='pc-28' || full_conf.get("main_dev")=='apc-2000'){
+        document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
+        document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
+        document.querySelectorAll("#pressure-type option").forEach(opt => {
+            if (opt.value == "diff") {
+                opt.disabled = true;
+            }else{
+                opt.disabled = false;
+            }
+        })
+    }
+    if (full_conf.get("main_dev")=='pr-28' || full_conf.get("main_dev")=='apr-2000'){
+        document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
+        document.getElementById("range_warning2").innerHTML = "";
+        document.getElementById("pressure-type").value="diff";
+        document.querySelectorAll("#pressure-type option").forEach(opt => {
+            if (opt.value != "diff") {
+                opt.disabled = true;
+            }else{
+                opt.disabled = false;
+            }
+        })
+    }
+
 
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
     for (let pair of full_conf.entries()){
@@ -556,6 +590,23 @@ function disable_invalid_options(){
         }
     }
 
+    // ПРОВЕРКА MAX-STATIC
+    if (full_conf.get("main_dev")=='pr-28' || full_conf.get("main_dev")=='apr-2000'){
+        if (full_conf.get("range")>1600){
+            $("input[name=max-static]").each(function(){
+                if (($(this).val()!="4")){
+                    $(this).prop('disabled', true);
+                    $("label[for="+$(this).prop('id')+"]").addClass('disabled');
+                }
+            })
+        }
+        if (full_conf.get("max-static")!="4"){
+            low_press_diff = -1600;
+            hi_press_diff = 1600;
+            document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
+        }
+    }
+
     for (let con_type of connection_types){
         if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
             low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
@@ -569,11 +620,21 @@ function disable_invalid_options(){
                 console.log("min_range direct ", min_range);
             }
 
-
             hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
             min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
-            document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
-            document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
+
+            min_range_diff = min_range_abs;  // ОГРАНИЧЕНИЕ МИНИМАЛЬНОЙ ШИРИНЫ ПЕРЕПАДА????????????????????????
+            hi_press_diff = hi_press_abs;    // ОГРАНИЧЕНИЕ МАКСИМАЛЬНОГО ДАВЛЕНИЯ ПЕРЕПАДА????????????????????
+            low_press_diff = -hi_press_diff;
+
+            if (full_conf.get("main_dev")=='pc-28' || full_conf.get("main_dev")=='apc-2000'){
+                document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
+                document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
+            }
+            if (full_conf.get("main_dev")=='pr-28' || full_conf.get("main_dev")=='apr-2000'){
+                document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
+                document.getElementById("range_warning2").innerHTML = "";
+            }
             $("input[name=material]").each(function() {
                 if (!window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("material").includes($(this).attr("id"))){
                     $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
@@ -886,13 +947,16 @@ $(function (){
         else{
             document.getElementById("cap-length-span-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
+            let num = $("body .active-option-to-select").index($(".active")) + 1;
+            let next_expand = $("body .active-option-to-select").eq(num);
             $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
             $this.prev(".option-to-select").removeClass("active");
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
-            $this.next(".option-to-select").addClass("active");
-            $this.next(".option-to-select").next().slideToggle("slow");
-            console.log($this.next("div"));
+            next_expand.addClass("active");
+            next_expand.next().slideToggle("slow");
+            // $this.next(".option-to-select").addClass("active");
+            // $this.next(".option-to-select").next().slideToggle("slow");
             disable_invalid_options();
             console.log("11");
         }
@@ -907,7 +971,7 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
     if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range && begin_range>=low_press && end_range<=hi_press){
         let full_conf = get_full_config();
 
-        if (press_type != "ABS" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
+        if (press_type == "" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
@@ -924,6 +988,19 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
             $("#range-select").slideUp("slow");
             $("#material-select").slideDown("slow");
             $("#material-select").prev().addClass("active");
+            disable_invalid_options();
+            return;
+        }
+        if(press_type == "diff" && full_conf.get("begin_range_kpa")>=low_press_diff && full_conf.get("end_range_kpa")<=hi_press_diff && full_conf.get("range")>=min_range_diff){
+            console.log("ДОБАВИТЬ ПРОВЕРКУ ДИАПАЗОНА ПЕРЕПАДА ДАВЛЕНИя");
+            $("#range-select").prev().removeClass("active");
+            $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#range-select").prev().find(".color-mark-field").addClass("selected");
+            $("#range-select").slideUp("slow");
+            let num = $("body .active-option-to-select").index($(".active")) + 1;
+            let next_expand = $("body .active-option-to-select").eq(num);
+            next_expand.addClass("active");
+            next_expand.next().slideToggle("slow");
             disable_invalid_options();
             return;
         }else{
@@ -1036,7 +1113,6 @@ $(function(){
         console.log($(".main-dev-selected").prop("id").slice(9,));
         console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
         $("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)).each(function(){
-            console.log(this);
             $(this).prop("style", "display: block");
             $(this).addClass("active-option-to-select");
             $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
@@ -1107,11 +1183,9 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             $("#approval-select").slideDown("slow");
 
             $("div.option-to-select").each(function(){
-                console.log(this);
                 $(this).prop("style", "display:none");
             });
             $("div.option-to-select-list").each(function(){
-                console.log(this);
                 $(this).prop("style", "display:none");
             });
 
