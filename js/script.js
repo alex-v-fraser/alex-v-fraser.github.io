@@ -711,11 +711,11 @@ function disable_invalid_options(){
         $("label[for=time_response]").addClass('disabled');
         $("#time_response").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-20)
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-20)
         $("label[for=minus_20]").addClass('disabled');
         $("#minus_20").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-30)
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-30)
         $("label[for=minus_30]").addClass('disabled');
         $("#minus_30").prop('disabled', true);
     }
@@ -970,37 +970,33 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
     let press_type = document.querySelector("#pressure-type").value;
     if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range && begin_range>=low_press && end_range<=hi_press){
         let full_conf = get_full_config();
+        let num = $("body .active-option-to-select").index($(".active")) + 1;
+        let next_expand = $("body .active-option-to-select").eq(num);
 
         if (press_type == "" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
+            next_expand.addClass("active").next().slideToggle("slow");
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
             $("#range-select").slideUp("slow");
-            $("#material-select").slideDown("slow");
-            $("#material-select").prev().addClass("active");
             disable_invalid_options();
             return;
         }
         if (press_type == "ABS" && full_conf.get("begin_range_kpa")>=low_press_abs && full_conf.get("end_range_kpa")<=hi_press_abs && full_conf.get("range")>=min_range_abs){
+            next_expand.addClass("active").next().slideToggle("slow");
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
             $("#range-select").slideUp("slow");
-            $("#material-select").slideDown("slow");
-            $("#material-select").prev().addClass("active");
             disable_invalid_options();
             return;
         }
         if(press_type == "diff" && full_conf.get("begin_range_kpa")>=low_press_diff && full_conf.get("end_range_kpa")<=hi_press_diff && full_conf.get("range")>=min_range_diff){
-            console.log("ДОБАВИТЬ ПРОВЕРКУ ДИАПАЗОНА ПЕРЕПАДА ДАВЛЕНИя");
+            next_expand.addClass("active").next().slideToggle("slow");
             $("#range-select").prev().removeClass("active");
             $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#range-select").prev().find(".color-mark-field").addClass("selected");
             $("#range-select").slideUp("slow");
-            let num = $("body .active-option-to-select").index($(".active")) + 1;
-            let next_expand = $("body .active-option-to-select").eq(num);
-            next_expand.addClass("active");
-            next_expand.next().slideToggle("slow");
             disable_invalid_options();
             return;
         }else{
@@ -1118,7 +1114,7 @@ $(function(){
             $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
         })
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
-        $("#approval-select").slideDown("slow");
+        setTimeout(() => {  $("#approval-select").slideDown("slow"); }, 300);
         $("#approval-select").prev("div").addClass("active");
         disable_invalid_options();
     })
@@ -1155,7 +1151,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
                         $("div.option-to-select.active").removeClass("active");
                         $( this ).dialog( "close" );
-                        $("#approval-select").slideDown("slow");
+                        $("#approval-select").slideUp("slow");
 
                         $("div.option-to-select").each(function(){
                             console.log(this);
@@ -1180,7 +1176,9 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             $(".active-panel-container").removeClass("active-panel-container");
             $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
             $("div.option-to-select.active").removeClass("active");
-            $("#approval-select").slideDown("slow");
+            $("#approval-select").slideUp("slow");
+            document.getElementById("pressure-type").value="not_selected";
+
 
             $("div.option-to-select").each(function(){
                 $(this).prop("style", "display:none");
