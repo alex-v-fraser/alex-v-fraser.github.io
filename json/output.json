@@ -9,7 +9,8 @@
       "Exd"
     ],
     "main_dev": [
-      "PC-28"
+      "PC-28",
+      "PR-28"
     ]
   },
   {
@@ -29,7 +30,8 @@
     ],
     "display": "without_display",
     "main_dev": [
-      "PC-28"
+      "PC-28",
+      "PR-28"
     ]
   },
   {
@@ -50,7 +52,8 @@
     ],
     "display": "without_display",
     "main_dev": [
-      "PC-28"
+      "PC-28",
+      "PR-28"
     ]
   },
   {
@@ -71,7 +74,8 @@
     ],
     "display": "without_display",
     "main_dev": [
-      "PC-28"
+      "PC-28",
+      "PR-28"
     ]
   },
   {
@@ -100,7 +104,9 @@
     ],
     "main_dev": [
       "PC-28",
-      "APC-2000"
+      "APC-2000",
+      "PR-28",
+      "APR-2000"
     ]
   },
   {
@@ -126,7 +132,8 @@
       "ALW2"
     ],
     "main_dev": [
-      "PC-28"
+      "PC-28",
+      "PR-28"
     ]
   }
 ]
