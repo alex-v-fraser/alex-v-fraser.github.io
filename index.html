@@ -109,7 +109,7 @@
 			width: 41%;
 			padding: 5px;
 			min-height: 200px;
-			min-width: 410px;
+			min-width: 415px;
 			white-space: normal;
 			}
 		/* .splitter {
@@ -298,19 +298,19 @@
 				<div class="option-to-select-list pc-28 apc-2000" id="cap-or-not-select" style="display: none;">
 					<fieldset id="cap-or-not-select-field" name="cap-or-not-select-field">
 						<input type="checkbox" name="cap-or-not" value="direct" id="direct"><label for="direct">Непосредственное.</label>
-						<span id="radiator-select" hidden>
-							<label for="mes-env-temp">Температура среды не более, °С:</label>
-							<input type="number" name="mes-env-temp" style="width: 5em" id="mes-env-temp" min="-40" max="300" placeholder="-40...300">
-							<input type="button" id="radiator-select-button-ok" value="ОК">
+						<span id="cap-or-not-radiator-select" hidden>
+							<label for="cap-or-not-mes-env-temp">Температура среды не более, °С:</label>
+							<input type="number" name="cap-or-not-mes-env-temp" style="width: 5em" id="cap-or-not-mes-env-temp" min="-40" max="300" placeholder="-40...300">
+							<input type="button" id="cap-or-not-radiator-select-button-ok" value="ОК">
 						</span>
-						<span style="font-size: 85%;" id="radiator-select-err" hidden><br/>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<span style="font-size: 85%;" id="cap-or-not-radiator-select-err" hidden><br/>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
 						<input type="checkbox" name="cap-or-not" value="capillary" id="capillary"><label for="capillary">Дистанционное.</label>
-						<span id="cap-length-span" hidden>
+						<span id="cap-or-not-length-span" hidden>
 							<label for="capillary-length">Длина капилляра, м:</label>
 							<input type="number" name="capillary-length" style="width: 4em" id="capillary-length" min="1" max="9" placeholder="1-9">
 							<input type="button" id="capillary-length-button-ok" value="ОК">
 						</span><br>
-						<span style="font-size: 85%;" id="cap-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
+						<span style="font-size: 85%;" id="cap-or-not-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
 					</fieldset>
 				</div>
 
@@ -360,6 +360,52 @@
 						<input type="checkbox" name="material" value="Ti" id="titan"><label for="titan">Титан</label><br><div id="err_titan"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="material" value="Ta" id="tantal"><label for="tantal">Тантал</label><br><div id="err_tantal"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="material" value="PTFE" id="ptfe"><label for="ptfe">Фторопласт-4 (политетрафторэтилен)</label><br><div id="err_ptfe"  style="display:none;">АХТУНГ!!!</div>
+					</fieldset>
+				</div>
+
+				<div class="option-to-select pr-28 apr-2000" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Присоединение (➕)</span><span  style="font-size: 70%;"> (сторона высокого давления)</span></div>
+				</div>
+				<div class="option-to-select-list pr-28 apr-2000" id="cap-plus-select" style="display: none;">
+					<fieldset id="cap-cap-plus-select-field" name="cap-plus-select-field">
+						<input type="checkbox" name="cap-plus" value="direct" id="direct-cap-plus"><label for="direct-cap-plus">Непосредственное.</label>
+						<span id="cap-plus-radiator-select" hidden>
+							<label for="cap-plus-mes-env-temp">Температура среды не более, °С:</label>
+							<input type="number" name="cap-plus-mes-env-temp" style="width: 5em" id="cap-plus-mes-env-temp" min="-40" max="300" placeholder="-40...300">
+							<input type="button" id="cap-plus-radiator-select-button-ok" value="ОК">
+						</span>
+						<span style="font-size: 85%;" id="cap-plus-radiator-select-err" hidden><br/>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<input type="checkbox" name="cap-plus" value="capillary" id="capillary-cap-plus"><label for="capillary-cap-plus">Дистанционное.</label>
+						<span id="cap-plus-length-span" hidden>
+							<label for="capillary-length-cap-plus">Длина капилляра, м:</label>
+							<input type="number" name="capillary-length-cap-plus" style="width: 4em" id="capillary-length-cap-plus" min="1" max="9" placeholder="1-9">
+							<input type="button" id="capillary-length-cap-plus-button-ok" value="ОК">
+						</span><br>
+						<span style="font-size: 85%;" id="capillary-length-cap-plus-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
+					</fieldset>
+				</div>
+
+				<div class="option-to-select pr-28 apr-2000" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Присоединение (➖)</span><span  style="font-size: 70%;"> (сторона низкого давления)</span></div>
+				</div>
+				<div class="option-to-select-list pr-28 apr-2000" id="cap-minus-select" style="display: none;">
+					<fieldset id="cap-cap-minus-select-field" name="cap-minus-select-field">
+						<input type="checkbox" name="cap-minus" value="direct" id="direct-cap-minus"><label for="direct-cap-minus">Непосредственное.</label>
+						<span id="cap-minus-radiator-select" hidden>
+							<label for="cap-minus-mes-env-temp">Температура среды не более, °С:</label>
+							<input type="number" name="cap-minus-mes-env-temp" style="width: 5em" id="cap-minus-mes-env-temp" min="-40" max="300" placeholder="-40...300">
+							<input type="button" id="cap-minus-radiator-select-button-ok" value="ОК">
+						</span>
+						<span style="font-size: 85%;" id="cap-minus-radiator-select-err" hidden><br/>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<input type="checkbox" name="cap-minus" value="capillary" id="capillary-cap-minus"><label for="capillary-cap-minus">Дистанционное.</label>
+						<span id="cap-minus-length-span" hidden>
+							<label for="capillary-length-cap-minus">Длина капилляра, м:</label>
+							<input type="number" name="capillary-length-cap-minus" style="width: 4em" id="capillary-length-cap-minus" min="1" max="9" placeholder="1-9">
+							<input type="button" id="capillary-length-cap-minus-button-ok" value="ОК">
+						</span><br>
+						<span style="font-size: 85%;" id="capillary-length-cap-minus-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
 					</fieldset>
 				</div>
 

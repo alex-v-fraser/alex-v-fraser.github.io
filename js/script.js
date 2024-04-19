@@ -294,7 +294,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let end_range = parseFloat(document.querySelector("#end-range").value);
     let units = document.querySelector("#pressure-unit-select").value;
     let press_type = document.querySelector("#pressure-type").value;
-    let max_temp = parseInt(document.querySelector("#mes-env-temp").value);
+    let max_temp = parseInt(document.querySelector("#cap-or-not-mes-env-temp").value);
     let max_static = $("input[name=max-static]:checked").val();
     const koef = new Map([
         ["Па", 0.001],
@@ -527,9 +527,9 @@ function disable_invalid_options(){
         $("label[for="+$(this).attr("id")+"]").removeClass('disabled');
     })
 
-    $("input[name=mes-env-temp]").prop('max', 300);// СНЯТЬ ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ
-    $("input[name=mes-env-temp]").prop('placeholder', "-40...300");
-    document.getElementById("radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до 300°C и нажмите \"OK\"";
+    $("input[name=cap-or-not-mes-env-temp]").prop('max', 300);// СНЯТЬ ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ
+    $("input[name=cap-or-not-mes-env-temp]").prop('placeholder', "-40...300");
+    document.getElementById("cap-or-not-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до 300°C и нажмите \"OK\"";
 
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
     low_press = -101;                               // начало диапазона избыт, кПа
@@ -648,9 +648,9 @@ function disable_invalid_options(){
 
             let max_temp = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("max_temp");
             if (typeof max_temp!='undefined' && !window[con_type + "_restr_lst"].has("radiator")){
-                $("input[name=mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
-                $("input[name=mes-env-temp]").prop('placeholder', "-40..." + max_temp);
-                document.getElementById("radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
+                $("input[name=cap-or-not-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
+                $("input[name=cap-or-not-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
+                document.getElementById("cap-or-not-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
             }
         }
 
@@ -830,12 +830,12 @@ $(function (){
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-            if (this.name=="cap-or-not"){
-                document.getElementById("radiator-select").hidden = true;
-                document.getElementById("cap-length-span").hidden = true;
-                document.getElementById("radiator-select-err").hidden = true;
-                document.getElementById("cap-length-span-err").hidden = true;
-                $("input[name=mes-env-temp]").val("");
+            if (this.name=="cap-or-not" || this.name=="cap-plus" || this.name=="cap-minus"){
+                document.getElementById(this.name + "-radiator-select").hidden = true;
+                document.getElementById(this.name + "-length-span").hidden = true;
+                document.getElementById(this.name + "-radiator-select-err").hidden = true;
+                document.getElementById(this.name + "-length-span-err").hidden = true;
+                $("input[name=" + this.name + "-mes-env-temp]]").val("");
             }
             if (this.name=="flange"){
                 $("#flange-select-field > span").each(function(){
@@ -902,22 +902,22 @@ $(function (){
         }
 
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
-            document.getElementById("radiator-select").hidden = true;
-            document.getElementById("cap-length-span").hidden = false;
-            document.getElementById("radiator-select-err").hidden = true;
+            document.getElementById("cap-or-not-radiator-select").hidden = true;
+            document.getElementById("cap-or-not-length-span").hidden = false;
+            document.getElementById("cap-or-not-radiator-select-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-            $("input[name=mes-env-temp]").val("");
+            $("input[name=cap-or-not-mes-env-temp]").val("");
             disable_invalid_options();
             console.log("7");
             return;
         }
 
         if (this.value=="direct") { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
-            document.getElementById("radiator-select").hidden = false;
-            document.getElementById("cap-length-span").hidden = true;
-            document.getElementById("cap-length-span-err").hidden = true;
+            document.getElementById("cap-or-not-radiator-select").hidden = false;
+            document.getElementById("cap-or-not-length-span").hidden = true;
+            document.getElementById("cap-or-not-length-span-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
@@ -945,7 +945,7 @@ $(function (){
             }
         }
         else{
-            document.getElementById("cap-length-span-err").hidden = true;
+            document.getElementById("cap-or-not-length-span-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
             let num = $("body .active-option-to-select").index($(".active")) + 1;
             let next_expand = $("body .active-option-to-select").eq(num);
@@ -1017,13 +1017,13 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
     $("#capillary-length-button-ok").click(function(){
         let capillary_length = parseInt(document.getElementById("capillary-length").value);
         if (Number.isNaN(capillary_length)){
-            document.getElementById("cap-length-span-err").hidden = false;
+            document.getElementById("cap-or-not-length-span-err").hidden = false;
             return;
         }if (capillary_length < 1 || capillary_length > 9){
-            document.getElementById("cap-length-span-err").hidden = false;
+            document.getElementById("cap-or-not-length-span-err").hidden = false;
             return;
         }else{
-            document.getElementById("cap-length-span-err").hidden = true;
+            document.getElementById("cap-or-not-length-span-err").hidden = true;
             $("#cap-or-not-select").prev().removeClass("active");
             $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
@@ -1037,17 +1037,17 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
 
 
 $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖАЕТ СЛЮДУЮЩУЮ ПРИ НАЖАТИИ НА КНОПКУ ОК при выборе РАДИАТОРА
-    $("#radiator-select-button-ok").click(function(){
-        let max_temp = parseInt(document.querySelector("#mes-env-temp").value);
-        let min = parseInt($("input[name=mes-env-temp]").prop('min'));
-        let max = parseInt($("input[name=mes-env-temp]").prop('max'));
+    $("#cap-or-not-radiator-select-button-ok").click(function(){
+        let max_temp = parseInt(document.querySelector("#cap-or-not-mes-env-temp").value);
+        let min = parseInt($("input[name=cap-or-not-mes-env-temp]").prop('min'));
+        let max = parseInt($("input[name=cap-or-not-mes-env-temp]").prop('max'));
         if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
-            document.getElementById("radiator-select-err").hidden = false;
+            document.getElementById("cap-or-not-radiator-select-err").hidden = false;
             $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
             $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("selected");
             return;
         }else{
-            document.getElementById("radiator-select-err").hidden = true;
+            document.getElementById("cap-or-not-radiator-select-err").hidden = true;
             $("#cap-or-not-select").prev().removeClass("active");
             $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
             $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
@@ -1060,19 +1060,20 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
 })
 
 $(function(){
-    $("#mes-env-temp").change(function(){
+    $("input[name*=mes-env-temp]").change(function(){
         let max_temp = parseInt($(this).val());
-        let min = parseInt($("input[name=mes-env-temp]").prop('min'));
-        let max = parseInt($("input[name=mes-env-temp]").prop('max'));
+        let temp_name = this.name.slice(0,-13);
+        let min = parseInt($("input[name="+ temp_name +"-mes-env-temp]").prop('min'));
+        let max = parseInt($("input[name="+ temp_name +"-mes-env-temp]").prop('max'));
         if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
-            document.getElementById("radiator-select-err").hidden = false;
-            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
-            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("selected");
+            document.getElementById(temp_name +"-radiator-select-err").hidden = false;
+            $("#"+ temp_name +"-select").prev().find(".color-mark-field").addClass("unselected");
+            $("#"+ temp_name +"-select").prev().find(".color-mark-field").removeClass("selected");
             return;
         }else{
-            document.getElementById("radiator-select-err").hidden = true;
-            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
-            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
+            document.getElementById(temp_name +"-radiator-select-err").hidden = true;
+            $("#"+ temp_name +"-select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#"+ temp_name +"-select").prev().find(".color-mark-field").addClass("selected");
             disable_invalid_options();
         }
     })
