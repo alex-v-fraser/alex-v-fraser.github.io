@@ -386,34 +386,11 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select pr-28 apr-2000" style="display:none;">
+				<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
-					<div class="option-to-select-header"><span>Присоединение (➖)</span><span  style="font-size: 70%;"> (сторона низкого давления)</span></div>
+					<div class="option-to-select-header"><span>Тип и размер присоединения</span><span id="con_header_plus" hidden> (➕)</span></div>
 				</div>
-				<div class="option-to-select-list pr-28 apr-2000" id="cap-minus-select" style="display: none;">
-					<fieldset id="cap-minus-select-field" name="cap-minus-select-field">
-						<input type="checkbox" name="cap-minus" value="direct" id="direct-cap-minus"><label for="direct-cap-minus">Непосредственное.</label>
-						<span id="cap-minus-radiator-select" hidden>
-							<label for="cap-minus-mes-env-temp">Температура среды не более, °С:</label>
-							<input type="number" name="cap-minus-mes-env-temp" style="width: 5em" id="cap-minus-mes-env-temp" min="-40" max="300" placeholder="-40...300">
-							<input type="button" id="cap-minus-radiator-select-button-ok" value="ОК">
-						</span>
-						<span style="font-size: 85%;" id="cap-minus-radiator-select-err" hidden><br/>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
-						<input type="checkbox" name="cap-minus" value="capillary" id="capillary-cap-minus"><label for="capillary-cap-minus">Дистанционное.</label>
-						<span id="cap-minus-length-span" hidden>
-							<label for="cap-minus-capillary-length">Длина капилляра, м:</label>
-							<input type="number" name="cap-minus-capillary-length" style="width: 4em" id="cap-minus-capillary-length" min="1" max="9" placeholder="1-9">
-							<input type="button" id="cap-minus-capillary-length-button-ok" value="ОК">
-						</span><br>
-						<span style="font-size: 85%;" id="cap-minus-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
-					</fieldset>
-				</div>
-
-				<div class="option-to-select pc-28 apc-2000" style="display:none;">
-					<div class="color-mark-field unselected" title="Set"></div>
-					<div class="option-to-select-header"><span>Тип и размер присоединения</span></div>
-				</div>
-				<div class="option-to-select-list pc-28 apc-2000" id="connection-type-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="connection-type-select" style="display: none;">
 					<fieldset id="connection-type-select-field" name="connection-type-select-field">
 						<input type="checkbox" name="connection-type" value="thread-list" id="thread-list"><label for="thread-list">Резьбовое</label><br>
 						<input type="checkbox" name="connection-type" value="flange-list" id="flange-list"><label for="flange-list">Фланцевое</label><br>
@@ -422,45 +399,47 @@
 
 					<div class="thread-flange-hygienic" id="thread-select" style="display: none;">
 						<fieldset id="thread-select-field">
-							<input type="checkbox" name="thread" value="M" id="M"><label for="M"><b>M</b> - штуцер M20x1,5, отверстие Ø4</label><br><div id="err_M" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="G1/2" id="G1_2"><label for="G1_2"><b>G1/2</b> - штуцер G1/2, отверстие Ø4</label><br><div id="err_G1_2" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="P" id="P"><label for="P"><b>P</b> - штуцер M20x1,5, отверстие Ø12</label><br><div id="err_P" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="GP" id="GP"><label for="GP"><b>GP</b> - штуцер G1/2, отверстие Ø12</label><br><div id="err_GP" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="1/2NPT" id="1_2NPT"><label for="1_2NPT"><b>1/2NPT</b> - штуцер 1/2NPT, отверстие G1/4</label><br><div id="err_1_2NPT" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="G1/4" id="g1_4"><label for="g1_4"><b>G1/4</b> - штуцер G1/4, отверстие Ø4</label><br><div id="err_g1_4" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="M12x1" id="m12_1"><label for="m12_1"><b>M12x1</b> - штуцер M12x1</label><br><div id="err_m12_1" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CG3/4(G317)" id="cg3_4_g317"><label for="cg3_4_g317"><b>CG3/4(G317)</b> - штуцер G3/4 тип G317 с лицевой мембраной</label><br><div id="err_cg3_4_g317" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CG3/4(G225)" id="cg3_4_g225"><label for="cg3_4_g225"><b>CG3/4(G225)</b> - штуцер G3/4 тип G225 с лицевой мембраной</label><br><div id="err_cg3_4_g225" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CM22x1,5" id="cm22_1_5"><label for="cm22_1_5"><b>CM22x1,5</b> - штуцер M22x1,5 с лицевой мембраной</label><br><div id="err_cm22_1_5" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CM30x2" id="CM30_2"><label for="CM30_2"><b>CM30x2</b> - штуцер M30x2 с лицевой мембраной</label><br><div id="err_CM30_2" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CG1" id="CG1"><label for="CG1"><b>CG1</b> - штуцер G1 с лицевой мембраной</label><br><div id="err_CG1" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CG1-S38" id="CG1_S38"><label for="CG1_S38"><b>CG1-S38</b> - штуцер G1 с лицевой мембраной и конусным уплотнением</label><br><div id="err_CG1_S38" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CM20x1,5" id="CM20_1_5"><label for="CM20_1_5"><b>CM20x1,5</b> - штуцер M20x1,5 с лицевой мембраной</label><br><div id="err_CM20_1_5" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="CG1/2" id="CG1_2"><label for="CG1_2"><b>CG1/2</b> - штуцер G1/2 с лицевой мембраной</label><br><div id="err_CG1_2" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Mazut-50" id="s_mazut_50"><label for="s_mazut_50"><b>S-Мазут-50</b> - разделитель с мембраной Ø50 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><br><div id="err_s_mazut_50" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Mazut-75" id="s_mazut_75"><label for="s_mazut_75"><b>S-Mazut-75</b> - разделитель с мембраной Ø75 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><br><div id="err_s_mazut_75" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Mazut-100" id="s_mazut_100"><label for="s_mazut_100"><b>S-Mazut-100</b> - разделитель с мембраной Ø100 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><br><div id="err_s_mazut_100" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Mazut-50-G1/2(M)" id="s_mazut_50_g1_2_m"><label for="s_mazut_50_g1_2_m"><b>S-Mazut-50-G1/2(M)</b> - разделитель с мембраной Ø50 для горячих сред, штуцер G1/2, отверстие Ø12</label><br><div id="err_s_mazut_50_g1_2_m" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Mazut-75-G1/2(M)" id="s_mazut_75_g1_2_m"><label for="s_mazut_75_g1_2_m"><b>S-Mazut-75-G1/2(M)</b> - разделитель с мембраной Ø75 для горячих сред, штуцер G1/2, отверстие Ø12</label><br><div id="err_s_mazut_75_g1_2_m" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Mazut-100-G1/2(M)" id="s_mazut_100_g1_2_m"><label for="s_mazut_100_g1_2_m"><b>S-Mazut-100-G1/2(M)</b> - разделитель с мембраной Ø100 для горячих сред, штуцер G1/2, отверстие Ø12</label><br><div id="err_s_mazut_100_g1_2_m" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-R-CM30x2" id="s_r_m30_2"><label for="s_r_m30_2"><b>S-R-CM30x2 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_s_r_m30_2" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-R-CM30x1,5" id="s_r_m30_1_5"><label for="s_r_m30_1_5"><b>S-R-CM30x1,5 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5</label><br><div id="err_s_r_m30_1_5" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-R2-CM30x2" id="s_r2_m30_2"><label for="s_r2_m30_2"><b>S-R2-CM30x2 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_s_r2_m30_2" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-R2-CM30x1,5" id="s_r2_m30_1_5"><label for="s_r2_m30_1_5"><b>S-R2-CM30x1,5 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5</label><br><div id="err_s_r2_m30_1_5" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Comp-10МПа" id="s_compk_10mpa"><label for="s_compk_10mpa"><b>S-CompK-10МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 10 МПа</label><br><div id="err_s_compk_10mpa" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Comp-25МПа" id="s_compk_25mpa"><label for="s_compk_25mpa"><b>S-CompK-25МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 25 МПа</label><br><div id="err_s_compk_25mpa" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-Comp-60МПа" id="s_compk_60mpa"><label for="s_compk_60mpa"><b>S-CompK-60МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 60 МПа</label><br><div id="err_s_compk_60mpa" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-CG1.1/2" id="s_cg1_1_2"><label for="s_cg1_1_2"><b>S-CG1 1/2</b> - разделитель с лицевой мембраной и резьбовым присоединением G1 1/2</label><br><div id="err_s_cg1_1_2" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-CompCh-M20x1,5" id="s_compch_m20_1_5"><label for="s_compch_m20_1_5"><b>S-CompCh-M20x1,5</b> - разделитель фланцевый с танталовой мембраной, штуцер M20x1,5(M)</label><br><div id="err_s_compch_m20_1_5" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="thread" value="S-CompCh-G1/2" id="s_compch_g1_2"><label for="s_compch_g1_2"><b>S-CompCh-G1/2</b> - разделитель фланцевый с танталовой мембраной, штуцер G1/2(M)</label><br><div id="err_s_compch_g1_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="M" id="M"><label for="M"><b>M</b> - штуцер M20x1,5, отверстие Ø4<br></label><div id="err_M" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="G1/2" id="G1_2"><label for="G1_2"><b>G1/2</b> - штуцер G1/2, отверстие Ø4<br></label><div id="err_G1_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="P" id="P"><label for="P"><b>P</b> - штуцер M20x1,5, отверстие Ø12 (Ø9 для PR, APR)<br></label><div id="err_P" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="1/4NPT(F)" id="1_4npt_f"><label for="1_4npt_f"><b>1/4NPT(F)</b> - штуцер с внутренней резьбой 1/4NPT<br></label><div id="err_1_4npt_f" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="GP" id="GP"><label for="GP"><b>GP</b> - штуцер G1/2, отверстие Ø12<br></label><div id="err_GP" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="1/2NPT" id="1_2NPT"><label for="1_2NPT"><b>1/2NPT</b> - штуцер 1/2NPT, отверстие G1/4<br></label><div id="err_1_2NPT" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="G1/4" id="g1_4"><label for="g1_4"><b>G1/4</b> - штуцер G1/4, отверстие Ø4<br></label><div id="err_g1_4" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="M12x1" id="m12_1"><label for="m12_1"><b>M12x1</b> - штуцер M12x1<br></label><div id="err_m12_1" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CG3/4(G317)" id="cg3_4_g317"><label for="cg3_4_g317"><b>CG3/4(G317)</b> - штуцер G3/4 тип G317 с лицевой мембраной<br></label><div id="err_cg3_4_g317" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CG3/4(G225)" id="cg3_4_g225"><label for="cg3_4_g225"><b>CG3/4(G225)</b> - штуцер G3/4 тип G225 с лицевой мембраной<br></label><div id="err_cg3_4_g225" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CM22x1,5" id="cm22_1_5"><label for="cm22_1_5"><b>CM22x1,5</b> - штуцер M22x1,5 с лицевой мембраной<br></label><div id="err_cm22_1_5" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CM30x2" id="CM30_2"><label for="CM30_2"><b>CM30x2</b> - штуцер M30x2 с лицевой мембраной<br></label><div id="err_CM30_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CG1" id="CG1"><label for="CG1"><b>CG1</b> - штуцер G1 с лицевой мембраной<br></label><div id="err_CG1" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CG1-S38" id="CG1_S38"><label for="CG1_S38"><b>CG1-S38</b> - штуцер G1 с лицевой мембраной и конусным уплотнением<br></label><div id="err_CG1_S38" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CM20x1,5" id="CM20_1_5"><label for="CM20_1_5"><b>CM20x1,5</b> - штуцер M20x1,5 с лицевой мембраной<br></label><div id="err_CM20_1_5" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="CG1/2" id="CG1_2"><label for="CG1_2"><b>CG1/2</b> - штуцер G1/2 с лицевой мембраной<br></label><div id="err_CG1_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Mazut-50" id="s_mazut_50"><label for="s_mazut_50"><b>S-Мазут-50</b> - разделитель с мембраной Ø50 для горячих сред, штуцер M20x1,5, отверстие Ø12<br></label><div id="err_s_mazut_50" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Mazut-75" id="s_mazut_75"><label for="s_mazut_75"><b>S-Mazut-75</b> - разделитель с мембраной Ø75 для горячих сред, штуцер M20x1,5, отверстие Ø12<br></label><div id="err_s_mazut_75" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Mazut-100" id="s_mazut_100"><label for="s_mazut_100"><b>S-Mazut-100</b> - разделитель с мембраной Ø100 для горячих сред, штуцер M20x1,5, отверстие Ø12<br></label><div id="err_s_mazut_100" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Mazut-50-G1/2(M)" id="s_mazut_50_g1_2_m"><label for="s_mazut_50_g1_2_m"><b>S-Mazut-50-G1/2(M)</b> - разделитель с мембраной Ø50 для горячих сред, штуцер G1/2, отверстие Ø12<br></label><div id="err_s_mazut_50_g1_2_m" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Mazut-75-G1/2(M)" id="s_mazut_75_g1_2_m"><label for="s_mazut_75_g1_2_m"><b>S-Mazut-75-G1/2(M)</b> - разделитель с мембраной Ø75 для горячих сред, штуцер G1/2, отверстие Ø12<br></label><div id="err_s_mazut_75_g1_2_m" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Mazut-100-G1/2(M)" id="s_mazut_100_g1_2_m"><label for="s_mazut_100_g1_2_m"><b>S-Mazut-100-G1/2(M)</b> - разделитель с мембраной Ø100 для горячих сред, штуцер G1/2, отверстие Ø12<br></label><div id="err_s_mazut_100_g1_2_m" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-R-CM30x2" id="s_r_m30_2"><label for="s_r_m30_2"><b>S-R-CM30x2 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2<br></label><div id="err_s_r_m30_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-R-CM30x1,5" id="s_r_m30_1_5"><label for="s_r_m30_1_5"><b>S-R-CM30x1,5 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5<br></label><div id="err_s_r_m30_1_5" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-R2-CM30x2" id="s_r2_m30_2"><label for="s_r2_m30_2"><b>S-R2-CM30x2 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2<br></label><div id="err_s_r2_m30_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-R2-CM30x1,5" id="s_r2_m30_1_5"><label for="s_r2_m30_1_5"><b>S-R2-CM30x1,5 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5<br></label><div id="err_s_r2_m30_1_5" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Comp-10МПа" id="s_compk_10mpa"><label for="s_compk_10mpa"><b>S-CompK-10МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 10 МПа<br></label><div id="err_s_compk_10mpa" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Comp-25МПа" id="s_compk_25mpa"><label for="s_compk_25mpa"><b>S-CompK-25МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 25 МПа<br></label><div id="err_s_compk_25mpa" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-Comp-60МПа" id="s_compk_60mpa"><label for="s_compk_60mpa"><b>S-CompK-60МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 60 МПа<br></label><div id="err_s_compk_60mpa" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-CG1.1/2" id="s_cg1_1_2"><label for="s_cg1_1_2"><b>S-CG1 1/2</b> - разделитель с лицевой мембраной и резьбовым присоединением G1 1/2<br></label><div id="err_s_cg1_1_2" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-CompCh-M20x1,5" id="s_compch_m20_1_5"><label for="s_compch_m20_1_5"><b>S-CompCh-M20x1,5</b> - разделитель фланцевый с танталовой мембраной, штуцер M20x1,5(M)<br></label><div id="err_s_compch_m20_1_5" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="thread" value="S-CompCh-G1/2" id="s_compch_g1_2"><label for="s_compch_g1_2"><b>S-CompCh-G1/2</b> - разделитель фланцевый с танталовой мембраной, штуцер G1/2(M)<br></label><div id="err_s_compch_g1_2" style="display:none;">АХТУНГ!!!</div>
 						</fieldset>
 					</div>
 
 					<div class="thread-flange-hygienic" id="flange-select" style="display: none;">
 						<fieldset id="flange-select-field">
-							<input type="checkbox" name="flange" value="S-P-DN50PN40B" id="s_p_dn50"><label for="s_p_dn50"><b>S-P DN50PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_s_p_dn50" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="flange" value="S-P-DN80PN40B" id="s_p_dn80"><label for="s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_s_p_dn80" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="flange" value="S-P-DN100PN40B" id="s_p_dn100"><label for="s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_s_p_dn100" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="C" id="c-pr"><label for="c-pr"><b>C</b> - фланец для монтажа 3-х или 5-и ходового вентильного блока<br></label><div id="err_c-pr" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-P-DN50PN40B" id="s_p_dn50"><label for="s_p_dn50"><b>S-P DN50PN40B</b> - разделитель фланцевый плоский<br></label><div id="err_s_p_dn50" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-P-DN80PN40B" id="s_p_dn80"><label for="s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский<br></label><div id="err_s_p_dn80" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-P-DN100PN40B" id="s_p_dn100"><label for="s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский<br></label><div id="err_s_p_dn100" style="display:none;">АХТУНГ!!!</div>
 							<input type="checkbox" name="flange" value="S-T-DN50PN40B" id="s_t_dn50"><label for="s_t_dn50"><b>S-T DN50PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_s_t_dn50" style="display:none;"><br/>АХТУНГ!!!</div>
 							<span id="s_t_dn50-cilinder-select" hidden><br/><br/>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
 								<select name="s_t_dn50-cilinder-length" id="s_t_dn50-cilinder-length">
@@ -501,10 +480,10 @@
 									<option value="200">200</option>
 								</select><br>
 							</span><br>
-							<input type="checkbox" name="flange" value="S-Ch-DN50PN40B" id="s_ch_dn50"><label for="s_ch_dn50"><b>S-Ch DN50PN40B</b> - разделитель фланцевый плоский химостойкий</label><br><div id="err_s_ch_dn50" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="flange" value="S-Ch-DN80PN40B" id="s_ch_dn80"><label for="s_ch_dn80"><b>S-Ch DN80PN40B</b> - разделитель фланцевый плоский химостойкий</label><br><div id="err_s_ch_dn80" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="flange" value="S-Comp-d51" id="s_comp_d51"><label for="s_comp_d51"><b>S-Comp d51</b> - разделитель фланцевый компактный с противофланцами под сварку</label><br><div id="err_s_comp_d51" style="display:none;">АХТУНГ!!!</div>
-							<input type="checkbox" name="flange" value="S-CompCh-DN25PN16B" id="s_compch-dn25"><label for="s_compch-dn25"><b>S-CompCh DN25PN16B</b> - разделитель фланцевый компактный с танталовой мембраной</label><br><div id="err_s_compch-dn25" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-Ch-DN50PN40B" id="s_ch_dn50"><label for="s_ch_dn50"><b>S-Ch DN50PN40B</b> - разделитель фланцевый плоский химостойкий<br></label><div id="err_s_ch_dn50" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-Ch-DN80PN40B" id="s_ch_dn80"><label for="s_ch_dn80"><b>S-Ch DN80PN40B</b> - разделитель фланцевый плоский химостойкий<br></label><div id="err_s_ch_dn80" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-Comp-d51" id="s_comp_d51"><label for="s_comp_d51"><b>S-Comp d51</b> - разделитель фланцевый компактный с противофланцами под сварку<br></label><div id="err_s_comp_d51" style="display:none;">АХТУНГ!!!</div>
+							<input type="checkbox" name="flange" value="S-CompCh-DN25PN16B" id="s_compch-dn25"><label for="s_compch-dn25"><b>S-CompCh DN25PN16B</b> - разделитель фланцевый компактный с танталовой мембраной<br></label><div id="err_s_compch-dn25" style="display:none;">АХТУНГ!!!</div>
 						</fieldset>
 					</div>
 
@@ -532,6 +511,30 @@
 						</fieldset>
 					</div>
 				</div>
+
+				<div class="option-to-select pr-28 apr-2000" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Присоединение (➖)</span><span  style="font-size: 70%;"> (сторона низкого давления)</span></div>
+				</div>
+				<div class="option-to-select-list pr-28 apr-2000" id="cap-minus-select" style="display: none;">
+					<fieldset id="cap-minus-select-field" name="cap-minus-select-field">
+						<input type="checkbox" name="cap-minus" value="direct" id="direct-cap-minus"><label for="direct-cap-minus">Непосредственное.</label>
+						<span id="cap-minus-radiator-select" hidden>
+							<label for="cap-minus-mes-env-temp">Температура среды не более, °С:</label>
+							<input type="number" name="cap-minus-mes-env-temp" style="width: 5em" id="cap-minus-mes-env-temp" min="-40" max="300" placeholder="-40...300">
+							<input type="button" id="cap-minus-radiator-select-button-ok" value="ОК">
+						</span>
+						<span style="font-size: 85%;" id="cap-minus-radiator-select-err" hidden><br/>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<input type="checkbox" name="cap-minus" value="capillary" id="capillary-cap-minus"><label for="capillary-cap-minus">Дистанционное.</label>
+						<span id="cap-minus-length-span" hidden>
+							<label for="cap-minus-capillary-length">Длина капилляра, м:</label>
+							<input type="number" name="cap-minus-capillary-length" style="width: 4em" id="cap-minus-capillary-length" min="1" max="9" placeholder="1-9">
+							<input type="button" id="cap-minus-capillary-length-button-ok" value="ОК">
+						</span><br>
+						<span style="font-size: 85%;" id="cap-minus-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
+					</fieldset>
+				</div>
+
 				<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000" style="display: none;">
 					<div class="color-mark-field special" title="Set"></div>
 					<div class="option-to-select-header"><span>Специальные исполнения (опционально)</span></div>

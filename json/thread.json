@@ -27,7 +27,7 @@
   {
     "name": "P",
     "code_name": "P",
-    "description": "Штуцер M20x1,5, отверстие Ø12.",
+    "description": "Штуцер M20x1,5, отверстие Ø12 (Ø9 для PR, APR).",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
@@ -396,6 +396,19 @@
     "name": "cm22_1_5",
     "code_name": "CM22x1,5",
     "description": "Штуцер M22x1,5 с лицевой мембраной.",
+    "cap-or-not": "direct",
+    "max_temp": 120,
+    "begin_range_kpa": -101,
+    "end_range_kpa": 2500,
+    "range": 600,
+    "material": [
+      "aisi316"
+    ]
+  },
+  {
+    "name": "1_4npt_f",
+    "code_name": "1/4NPT(F)",
+    "description": "Штуцер с внутренней резьбой 1/4NPT.",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,

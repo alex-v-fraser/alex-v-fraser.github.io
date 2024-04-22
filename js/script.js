@@ -605,6 +605,29 @@ function disable_invalid_options(){
             hi_press_diff = 1600;
             document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
         }
+        $("input[name=thread]").each(function(){
+            if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){
+                $(this).prop('hidden', false);
+                $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+            }else{
+                $(this).prop('hidden', true);
+                $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+            }
+        })
+        $("#c-pr").prop('hidden', false);
+        $("label[for=c-pr]").prop('hidden', false);
+    }else{
+        $("input[name=thread]").each(function(){
+            if (this.value=="1/4NPT(F)"){
+                $(this).prop('hidden', true);
+                $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+            }else{
+                $(this).prop('hidden', false);
+                $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+            }
+        })
+        $("#c-pr").prop('hidden', true);
+        $("label[for=c-pr]").prop('hidden', true);
     }
 
     for (let con_type of connection_types){
@@ -884,6 +907,8 @@ $(function (){
                 console.log("13");
                 return;
             }else{
+                let num = $("body .active-option-to-select").index($(".active")) + 1;
+                let next_expand = $("body .active-option-to-select").eq(num);
                 $("#flange-select-field > span").each(function(){
                     $(this).prop("hidden", true);
                     $(this).find("select option[value='not_selected']").prop('selected', true);
@@ -893,8 +918,8 @@ $(function (){
                 $this.next("div.option-to-select-list").slideUp("slow");
                 $this.find(".color-mark-field").removeClass("unselected");
                 $this.find(".color-mark-field").addClass("selected");
-                $("div#special-select").slideDown("Slow");
-                $("div#special-select").prev("div").addClass("active");
+                next_expand.addClass("active");
+                next_expand.next().slideToggle("slow");
                 disable_invalid_options();
                 console.log("6");
                 return;
@@ -903,7 +928,6 @@ $(function (){
 
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
-            console.log(target_name);
             document.getElementById(target_name + "radiator-select").hidden = true;
             document.getElementById(target_name + "length-span").hidden = false;
             document.getElementById(target_name + "radiator-select-err").hidden = true;
@@ -1116,8 +1140,13 @@ $(function(){
         $(this).addClass("main-dev-selected");
         $(this).siblings(".main-dev").removeClass("main-dev-selected");
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").addClass("active-panel-container");
-        console.log($(".main-dev-selected").prop("id").slice(9,));
-        console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
+        // console.log($(".main-dev-selected").prop("id").slice(9,));
+        if ($(".main-dev-selected").prop("id").slice(9,)=="pr-28"){
+            $("#con_header_plus").prop("hidden", false);
+        }else{
+            $("#con_header_plus").prop("hidden", true);
+        }
+        // console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
         $("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)).each(function(){
             $(this).prop("style", "display: block");
             $(this).addClass("active-option-to-select");
@@ -1164,11 +1193,9 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $("#approval-select").slideUp("slow");
 
                         $("div.option-to-select").each(function(){
-                            console.log(this);
                             $(this).prop("style", "display:none");
                         });
                         $("div.option-to-select-list").each(function(){
-                            console.log(this);
                             $(this).prop("style", "display:none");
                         });
 
