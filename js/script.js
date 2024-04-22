@@ -982,8 +982,6 @@ $(function (){
             $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
             next_expand.addClass("active");
             next_expand.next().slideToggle("slow");
-            // $this.next(".option-to-select").addClass("active");
-            // $this.next(".option-to-select").next().slideToggle("slow");
             disable_invalid_options();
             console.log("11");
         }
