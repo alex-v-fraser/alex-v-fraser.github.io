@@ -289,7 +289,7 @@ $(document).ready(function(){
 });
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
-    let capillary_length = parseInt(document.getElementById("capillary-length").value);
+    let capillary_length = parseInt(document.getElementById("cap-or-not-capillary-length").value);
     let begin_range = parseFloat(document.querySelector("#begin-range").value);
     let end_range = parseFloat(document.querySelector("#end-range").value);
     let units = document.querySelector("#pressure-unit-select").value;
@@ -835,7 +835,7 @@ $(function (){
                 document.getElementById(this.name + "-length-span").hidden = true;
                 document.getElementById(this.name + "-radiator-select-err").hidden = true;
                 document.getElementById(this.name + "-length-span-err").hidden = true;
-                $("input[name=" + this.name + "-mes-env-temp]]").val("");
+                $("input[name=" + this.name + "-mes-env-temp]").val("");
             }
             if (this.name=="flange"){
                 $("#flange-select-field > span").each(function(){
@@ -902,26 +902,29 @@ $(function (){
         }
 
         if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
-            document.getElementById("cap-or-not-radiator-select").hidden = true;
-            document.getElementById("cap-or-not-length-span").hidden = false;
-            document.getElementById("cap-or-not-radiator-select-err").hidden = true;
+            let target_name = $(this.parentElement).prop("id").slice(0,-12);
+            console.log(target_name);
+            document.getElementById(target_name + "radiator-select").hidden = true;
+            document.getElementById(target_name + "length-span").hidden = false;
+            document.getElementById(target_name + "radiator-select-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-            $("input[name=cap-or-not-mes-env-temp]").val("");
+            $("input[name=" + target_name + "mes-env-temp]").val("");
             disable_invalid_options();
             console.log("7");
             return;
         }
 
         if (this.value=="direct") { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
-            document.getElementById("cap-or-not-radiator-select").hidden = false;
-            document.getElementById("cap-or-not-length-span").hidden = true;
-            document.getElementById("cap-or-not-length-span-err").hidden = true;
+            let target_name = $(this.parentElement).prop("id").slice(0,-12);
+            document.getElementById(target_name + "radiator-select").hidden = false;
+            document.getElementById(target_name + "length-span").hidden = true;
+            document.getElementById(target_name + "length-span-err").hidden = true;
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-            $("input[name=capillary-length]").val("");
+            $("input[name=" + target_name + "capillary-length]").val("");
             disable_invalid_options();
             console.log("12");
             return;
@@ -1014,22 +1017,25 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
 
 
 $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖАЕТ СЛЮДУЮЩУЮ ПРИ НАЖАТИИ НА КНОПКУ ОК ПРИ ВВОДЕ ДЛИНЫ КАПИЛЛЯРА
-    $("#capillary-length-button-ok").click(function(){
-        let capillary_length = parseInt(document.getElementById("capillary-length").value);
+    $("input[id*=capillary-length-button-ok]").click(function(){
+        let num = $("body .active-option-to-select").index($(".active")) + 1;
+        let next_expand = $("body .active-option-to-select").eq(num);
+        let target_name = $(this).prop("id").slice(0,-26);
+        let capillary_length = parseInt(document.getElementById(target_name + "capillary-length").value);
         if (Number.isNaN(capillary_length)){
-            document.getElementById("cap-or-not-length-span-err").hidden = false;
+            document.getElementById(target_name + "length-span-err").hidden = false;
             return;
         }if (capillary_length < 1 || capillary_length > 9){
-            document.getElementById("cap-or-not-length-span-err").hidden = false;
+            document.getElementById(target_name + "length-span-err").hidden = false;
             return;
         }else{
-            document.getElementById("cap-or-not-length-span-err").hidden = true;
-            $("#cap-or-not-select").prev().removeClass("active");
-            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
-            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
-            $("#cap-or-not-select").slideToggle("slow");
-            $("#range-select").slideToggle("slow");
-            $("#range-select").prev().addClass("active");
+            document.getElementById(target_name + "length-span-err").hidden = true;
+            $("#" + target_name + "select").prev().removeClass("active");
+            $("#" + target_name + "select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#" + target_name + "select").prev().find(".color-mark-field").addClass("selected");
+            $("#" + target_name + "select").slideToggle("slow");
+            next_expand.addClass("active");
+            next_expand.next().slideToggle("slow");
             disable_invalid_options();
         }
     })
@@ -1037,23 +1043,26 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
 
 
 $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖАЕТ СЛЮДУЮЩУЮ ПРИ НАЖАТИИ НА КНОПКУ ОК при выборе РАДИАТОРА
-    $("#cap-or-not-radiator-select-button-ok").click(function(){
-        let max_temp = parseInt(document.querySelector("#cap-or-not-mes-env-temp").value);
-        let min = parseInt($("input[name=cap-or-not-mes-env-temp]").prop('min'));
-        let max = parseInt($("input[name=cap-or-not-mes-env-temp]").prop('max'));
+    $("input[id*=radiator-select-button-ok]").click(function(){
+        let num = $("body .active-option-to-select").index($(".active")) + 1;
+        let next_expand = $("body .active-option-to-select").eq(num);
+        let target_name = $(this).prop("id").slice(0,-25);
+        let max_temp = parseInt(document.querySelector("#" + target_name + "mes-env-temp").value);
+        let min = parseInt($("input[name=" + target_name + "mes-env-temp]").prop('min'));
+        let max = parseInt($("input[name=" + target_name + "mes-env-temp]").prop('max'));
         if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
-            document.getElementById("cap-or-not-radiator-select-err").hidden = false;
-            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("unselected");
-            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("selected");
+            document.getElementById(target_name + "radiator-select-err").hidden = false;
+            $("#" + target_name + "select").prev().find(".color-mark-field").addClass("unselected");
+            $("#" + target_name + "select").prev().find(".color-mark-field").removeClass("selected");
             return;
         }else{
-            document.getElementById("cap-or-not-radiator-select-err").hidden = true;
-            $("#cap-or-not-select").prev().removeClass("active");
-            $("#cap-or-not-select").prev().find(".color-mark-field").removeClass("unselected");
-            $("#cap-or-not-select").prev().find(".color-mark-field").addClass("selected");
-            $("#cap-or-not-select").slideToggle("slow");
-            $("#range-select").slideToggle("slow");
-            $("#range-select").prev().addClass("active");
+            document.getElementById(target_name + "radiator-select-err").hidden = true;
+            $("#" + target_name + "select").prev().removeClass("active");
+            $("#" + target_name + "select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#" + target_name + "select").prev().find(".color-mark-field").addClass("selected");
+            $("#" + target_name + "select").slideToggle("slow");
+            next_expand.addClass("active");
+            next_expand.next().slideToggle("slow");
             disable_invalid_options();
         }
     })
