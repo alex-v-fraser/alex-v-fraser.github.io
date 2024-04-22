@@ -843,11 +843,18 @@ $(function (){
             if (this.name=="cap-or-not"){
                 $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
             }
+            if (this.name=="cap-minus"){
+                $(".minus-thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
+            }
             console.log("1");
         }
         else{
             if ($("#connection-type-select input:checkbox:checked").length==0){/// ЕСЛИ НЕ ВЫБРАНО тип и размер - скрыть список thread-flange-hygienic
                 $('.thread-flange-hygienic').hide(0);
+                console.log("2");
+            }
+            if ($("#minus-connection-type-select input:checkbox:checked").length==0){/// ЕСЛИ НЕ ВЫБРАНО тип и размер - скрыть список thread-flange-hygienic
+                $('.minus-thread-flange-hygienic').hide(0);
                 console.log("2");
             }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
@@ -954,19 +961,22 @@ $(function (){
             return;
         }
 
-        if (this.name=="connection-type") { //// ПОКАЗЫВАЕМ ВЫБОР ДОСТУПНЫХ РАЗМЕРОВ РЕЗЬБЫ ИЛИ ФЛАНЦА ИЛИ ГИГИЕНИЧЕСКОГО ПРИСОЕДИНЕНИЯ
+        if (this.name=="connection-type" || this.name=="minus-connection-type") { //// ПОКАЗЫВАЕМ ВЫБОР ДОСТУПНЫХ РАЗМЕРОВ РЕЗЬБЫ ИЛИ ФЛАНЦА ИЛИ ГИГИЕНИЧЕСКОГО ПРИСОЕДИНЕНИЯ
             let target = $('#' + $(this).prop("id").slice(0,-5) + '-select');
             console.log("8");
+            let add_name= this.name.slice(0,-15);
+            console.log(add_name);
+            console.log(target);
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-            $(".thread-flange-hygienic").find("input:checkbox:checked").prop('checked', false);
+            $("." + add_name + "thread-flange-hygienic").find("input:checkbox:checked").prop('checked', false);
             disable_invalid_options();
-            if ($("#connection-type-select input:checkbox:checked").length==0){
-                $('.thread-flange-hygienic').hide(0);
+            if ($("#" + add_name + "connection-type-select input:checkbox:checked").length==0){
+                $('.' + add_name + 'thread-flange-hygienic').hide(0);
                 console.log("9");
             }else{
-                $('.thread-flange-hygienic').not(target).hide(0);
+                $('.' + add_name + 'thread-flange-hygienic').not(target).hide(0);
                 target.fadeIn(500);
                 console.log("10");
             }
