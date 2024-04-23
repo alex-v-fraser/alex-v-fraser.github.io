@@ -413,7 +413,6 @@
     "max_temp": 120,
     "begin_range_kpa": -101,
     "end_range_kpa": 2500,
-    "range": 600,
     "material": [
       "aisi316"
     ]
