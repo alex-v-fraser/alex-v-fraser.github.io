@@ -322,8 +322,8 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         full_conf.set("max-static", max_static);
         full_conf.set("cap-plus", $("input[name=cap-plus]:checked").val());
         full_conf.set("cap-minus", $("input[name=cap-minus]:checked").val());
-        full_conf.set("capillary_length_plus", capillary_length_plus);
-        full_conf.set("capillary_length_minus", capillary_length_minus);
+        full_conf.set("capillary_length_plus");
+        full_conf.set("capillary_length_minus");
         options.push("minus-connection-type");
         for (let i = options.length - 1; i >= 0; i--) {
             if (options[i] == "cap-or-not") {
@@ -866,7 +866,6 @@ function disable_invalid_options(){
                     console.log("112");
                 }
                 if (typeof full_conf.get("cap-plus") != 'undefined'){
-                    console.log("113");
                     if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
