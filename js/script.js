@@ -562,7 +562,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "cap-plus", "cap-minus", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic", "max-static"]; //ДОБАВИТЬ hygienic когда они появятся
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "cap-plus", "cap-minus", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic", "max-static", "connection-type", "minus-connection-type"]; //ДОБАВИТЬ hygienic когда они появятся
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -768,6 +768,7 @@ function disable_invalid_options(){
                 for (let plmin of ["","minus-"]){
                     $("label[for="+ plmin + els +"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ штуцера
                     $("#" + plmin + els).prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                    $("#" + plmin + els).prop("checked", false);
                 }
             }
             low_press_diff = -1600;
@@ -778,6 +779,7 @@ function disable_invalid_options(){
             for (let plmin of ["","minus-"]){
                 $("label[for="+ plmin + "c-pr]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ штуцера
                 $("#" + plmin + "c-pr").prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                $("#" + plmin + "c-pr").prop("checked", false);
             }
 
         }
@@ -789,10 +791,6 @@ function disable_invalid_options(){
             if (!$("#capillary-cap-plus").is(":checked")){$("#capillary-cap-plus").trigger("click");}
             if (!$("#capillary-cap-minus").is(":checked")){$("#capillary-cap-minus").trigger("click");}
         }
-        if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="32" || full_conf.get("max-static")=="41"  || full_conf.get("max-static")=="70")){/// ЕСЛИ MAX-STATIC равно 32,41,70 - откл все, кроме "С"
-            console.log("ОТКЛЮЧИТЬ ВСЕ, кроме типа \"С\"");
-        }
-
 
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
@@ -954,6 +952,27 @@ function disable_invalid_options(){
                         console.log("121");
                     }
                 }
+                if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="32" || full_conf.get("max-static")=="41"  || full_conf.get("max-static")=="70")){/// ЕСЛИ MAX-STATIC равно 32,41,70 - откл все, кроме "С"
+
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    console.log("ОТКЛЮЧАЕМ ВСЕ, КРОМЕ типа \"С\"");
+
+                    for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью отметить ТИП С      ////////////////////////////////
+                        $("label[for=" + plmin + "thread-list]").addClass('disabled');
+                        $("#" + plmin + "thread-list").prop('disabled', true);
+                        $("label[for=" + plmin + "flange-list]").addClass('disabled');
+                        $("#" + plmin + "flange-list").prop('disabled', true);
+                        $("label[for=" + plmin + "hygienic-list]").addClass('disabled');
+                        $("#" + plmin + "hygienic-list").prop('disabled', true);
+                        $("#" + plmin + "flange-list").prop('checked', true);
+                        $("#" + plmin + "c-pr").prop('checked', true);
+                        $('#' + plmin + 'flange-select').prop('style', "display=block");
+                        console.log($('#' + plmin + 'flange-select'));
+                    }
+                }
             }
         }
     }
@@ -1086,12 +1105,25 @@ $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
         if ($(this).is(':checked') && this.name!="special") { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС (кроме special)
             $(this).siblings("input:checkbox").prop('checked', false);
-            if (this.name=="cap-or-not"){
+            if (this.name=="cap-or-not" || this.name=="cap-plus"){
+                console.log($("#connection-type-select").find("input:checkbox:checked"));
                 $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
+                // $("#connection-type-select").find("input:checkbox:checked").prop('checked', false);
             }
             if (this.name=="cap-minus"){
+                console.log($("#minus-connection-type-select").find("input:checkbox:checked"));
                 $(".minus-thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
+                // $("#minus-connection-type-select").find("input:checkbox:checked").prop('checked', false);
             }
+            // if ($(this).prop('id')=="c-pr" || $(this).prop('id')=="minus-c-pr" || $(this).prop('id')=="P" || $(this).prop('id')=="minus-P"){// ОТМЕЧАЕМ P или C на плюсе и минусе
+            //     if ($(this).prop('id').startsWith("minus-")){
+            //         $("#" + $(this).prop('id').slice(6,)).prop("checked", true);
+            //         console.log($("#" + $(this).prop('id').slice(6,)));
+            //     }else{
+            //         $("#minus-" + $(this).prop('id')).prop("checked", true);
+            //         console.log($("#minus-" + $(this).prop('id')));
+            //     }
+            // }
             console.log("1");
         }
         else{
@@ -1213,8 +1245,6 @@ $(function (){
             let target = $('#' + $(this).prop("id").slice(0,-5) + '-select');
             console.log("8");
             let add_name= this.name.slice(0,-15);
-            console.log(add_name);
-            console.log(target);
             var $this = $(this.parentElement.parentElement);
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
