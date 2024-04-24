@@ -172,7 +172,7 @@
     "end_range_kpa": 42000,
     "range": 1,
     "range_c": 1,
-    "max_temp": 100,
+    "max_temp": 120,
     "material": [
       "aisi316",
       "hastelloy"
