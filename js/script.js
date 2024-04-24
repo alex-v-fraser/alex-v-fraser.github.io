@@ -739,7 +739,7 @@ function disable_invalid_options(){
     }
 
 
-/////////////////// ПРОВЕРКА PR и APR //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////// ПРОВЕРКА PR и APR /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){
 
@@ -781,8 +781,16 @@ function disable_invalid_options(){
             }
 
         }
-        if ($("input[name=max-static]:checked").length>0 && full_conf.get("max-static")!="10"){/// ЕСЛИ MAX-STATIC равно 10 деактивация непосредственного присоединения
-
+        if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="10" || full_conf.get("max-static")=="25")){/// ЕСЛИ MAX-STATIC равно 10 или 25  - деактивация непосредственного присоединения
+            $("label[for=direct-cap-plus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ непосредственное присоединение
+            $("#direct-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ непосредственных присоединений
+            $("label[for=direct-cap-minus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ непосредственное присоединение
+            $("#direct-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ непосредственных присоединений
+            if (!$("#capillary-cap-plus").is(":checked")){$("#capillary-cap-plus").trigger("click");}
+            if (!$("#capillary-cap-minus").is(":checked")){$("#capillary-cap-minus").trigger("click");}
+        }
+        if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="32" || full_conf.get("max-static")=="41"  || full_conf.get("max-static")=="70")){/// ЕСЛИ MAX-STATIC равно 32,41,70 - откл все, кроме "С"
+            console.log("ОТКЛЮЧИТЬ ВСЕ, кроме типа \"С\"");
         }
 
 
@@ -833,12 +841,12 @@ function disable_invalid_options(){
                 // low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
                 // hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="capillary"){
-                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range");
+                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
                     console.log("min_range capillary ", min_range);
                     console.log("107");
                 }
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="direct"){
-                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range") : min_range;
+                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") : min_range;
                     console.log("min_range direct ", min_range);
                     console.log("108");
                 }
@@ -848,19 +856,19 @@ function disable_invalid_options(){
                 document.getElementById("range_warning2").innerHTML = "";
 
                 $("input[name=material]").each(function() {
-                    if (!window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("material").includes($(this).attr("id"))){
+                    if (!window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("material").includes($(this).attr("id"))){
                         $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
                         $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
                         console.log("109");
                     }
                 })
-                if (window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).has("cap-or-not") && window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("cap-or-not") == "direct"){//ОГРАНИЧЕНИЕ  cap-or-not для DIRECT ONLY
+                if (window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).has("cap-or-not") && window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("cap-or-not") == "direct"){//ОГРАНИЧЕНИЕ  cap-or-not для DIRECT ONLY
                     $("label[for=capillary-cap-minus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ capillary
                     $("#capillary-cap-minus").prop('disabled', true);          //// ДЕАКТИВАЦИЯ capillary
                     console.log("110");
                 }
 
-                let max_temp = window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("max_temp");
+                let max_temp = window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("max_temp");
                 if (typeof max_temp!='undefined' && !window[con_type + "_restr_lst"].has("radiator")){
                     $("input[name=cap-minus-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                     $("input[name=cap-minus-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
