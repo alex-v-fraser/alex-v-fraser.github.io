@@ -641,34 +641,9 @@ function disable_invalid_options(){
         }
     }
 
-    // ПРОВЕРКА MAX-STATIC
-    if (full_conf.get("main_dev")=='pr-28' || full_conf.get("main_dev")=='apr-2000'){
-        if (full_conf.get("range")>1600){
-            $("input[name=max-static]").each(function(){
-                if (($(this).val()!="4")){
-                    $(this).prop('disabled', true);
-                    $("label[for="+$(this).prop('id')+"]").addClass('disabled');
-                }
-            })
-        }
-        if (full_conf.get("max-static")!="4"){
-            low_press_diff = -1600;
-            hi_press_diff = 1600;
-            document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
-        }
-        $("input[name=thread]").each(function(){
-            if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){
-                $(this).prop('hidden', false);
-                $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
-            }else{
-                $(this).prop('hidden', true);
-                $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
-            }
-        })
-        $("#c-pr").prop('hidden', false);
-        $("label[for=c-pr]").prop('hidden', false);
-    }else{
-        $("input[name=thread]").each(function(){
+
+    if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// РАБОТАЕТ!!! НЕ ТРОГАТЬ!!!
+        $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
             if (this.value=="1/4NPT(F)"){
                 $(this).prop('hidden', true);
                 $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
@@ -679,9 +654,6 @@ function disable_invalid_options(){
         })
         $("#c-pr").prop('hidden', true);
         $("label[for=c-pr]").prop('hidden', true);
-    }
-
-    if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// РАБОТАЕТ!!! НЕ ТРОГАТЬ!!!
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
@@ -697,10 +669,6 @@ function disable_invalid_options(){
 
                 hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
                 min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
-
-                min_range_diff = min_range_abs;  // ОГРАНИЧЕНИЕ МИНИМАЛЬНОЙ ШИРИНЫ ПЕРЕПАДА????????????????????????
-                hi_press_diff = hi_press_abs;    // ОГРАНИЧЕНИЕ МАКСИМАЛЬНОГО ДАВЛЕНИЯ ПЕРЕПАДА????????????????????
-                low_press_diff = -hi_press_diff;
 
                 if (full_conf.get("main_dev")=='pc-28' || full_conf.get("main_dev")=='apc-2000'){
                     document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
@@ -774,6 +742,50 @@ function disable_invalid_options(){
 /////////////////// ПРОВЕРКА PR и APR //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){
+
+        $("input[name=thread]").each(function(){
+            if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
+                $(this).prop('hidden', false);
+                $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+            }else{
+                $(this).prop('hidden', true);
+                $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+            }
+        })
+        $("#c-pr").prop('hidden', false);
+        $("label[for=c-pr]").prop('hidden', false);
+
+        if (full_conf.get("range")>1600){       // деактивация MAX-STATIC по выбранному диапазону
+            $("input[name=max-static]").each(function(){
+                if (($(this).val()!="4")){
+                    $(this).prop('disabled', true);
+                    $("label[for="+$(this).prop('id')+"]").addClass('disabled');
+                }
+            })
+        }
+        if ($("input[name=max-static]:checked").length>0 && full_conf.get("max-static")!="4"){// ОГРАНИЧЕНИЕ ДИАПАЗОНА и деактивация P и 1/4NPT елси MAX-STATIC не равно 4
+            for (let els of ["1_4npt_f", "P"]){
+                for (let plmin of ["","minus-"]){
+                    $("label[for="+ plmin + els +"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ штуцера
+                    $("#" + plmin + els).prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                }
+            }
+            low_press_diff = -1600;
+            hi_press_diff = 1600;
+            document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
+        }
+        if (full_conf.get("max-static")=="4" || full_conf.get("max-static")=="10"){//ЕСЛИ MAX-STATIC равно 4 или 10 - откл. фланец С
+            for (let plmin of ["","minus-"]){
+                $("label[for="+ plmin + "c-pr]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ штуцера
+                $("#" + plmin + "c-pr").prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            }
+
+        }
+        if ($("input[name=max-static]:checked").length>0 && full_conf.get("max-static")!="10"){/// ЕСЛИ MAX-STATIC равно 10 деактивация непосредственного присоединения
+
+        }
+
+
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 console.log("100");
@@ -971,15 +983,20 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"  || typeof full_conf.get("range")=='undefined'){ // проверка HS
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"  || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT"))){ // проверка HS
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('disabled', true);
         $("#hs").prop('checked', false);
     }
-    if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // принудительное включение HS для низких диапазонов
+    if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('checked', true);
         $("#hs").prop('disabled', true);
+        for (let cons of ["M", "G1_2", "g1_4", "m12_1"]){
+            $("label[for=" + cons + "]").addClass('disabled');
+            $("#" + cons).prop('disabled', true);
+        }
+
     }
     if (full_conf.get("electrical")!="APCALW"){ // проверка специсполнения PD, SN, -50..80, HART7
         $("label[for=spec_pd]").addClass('disabled');
