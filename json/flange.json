@@ -175,7 +175,8 @@
     "max_temp": 120,
     "material": [
       "aisi316",
-      "hastelloy"
+      "hastelloy",
+      "tantal"
     ]
   }
 ]

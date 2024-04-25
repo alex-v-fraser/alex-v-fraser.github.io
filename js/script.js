@@ -422,6 +422,130 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     return full_conf;
 }
 
+function CorPSelected(c_or_p){ /////////////////////////////////////////////// ОДНОВРЕМЕННЫЙ ВЫБОР тип С или P ///////////////////////////////////////////////////////////
+
+    let full_conf = get_full_config();
+    let connect_1 = c_or_p.startsWith("minus-") ? c_or_p.slice(6,) : c_or_p;
+    if (full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000"){
+        if ($("#" + c_or_p).is(":checked")){
+            for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью отметить ТИП С, отключить другие      ////////////////////////////////
+                for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                    $("input[name=" + plmin + cons + "]").each(function(){
+                        $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                        $(this).prop('disabled', true);                                     //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    })
+                    $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+                }
+                if (connect_1=="c-pr"){
+                    $("#" + plmin + "flange-list").prop('checked', true);
+                    $("#" + plmin + "thread-list").prop('checked', false);
+                    $("#" + plmin + "c-pr").prop('checked', true);
+                    $("#" + plmin + "c-pr").prop('disabled', false);
+                    $('#' + plmin + 'flange-select').prop('style', "display=block");
+                    $("label[for="+ plmin +"c-pr]").removeClass('disabled');
+                    $("label[for="+ plmin +"flange-list]").removeClass('disabled');
+                }
+                if (connect_1=="P"){
+                    $("#" + plmin + "thread-list").prop('checked', true);
+                    $("#" + plmin + "flange-list").prop('checked', false);
+                    $("#" + plmin + "P").prop('checked', true);
+                    $("#" + plmin + "P").prop('disabled', false);
+                    $('#' + plmin + 'thread-select').prop('style', "display=block");
+                    $("label[for="+ plmin +"P]").removeClass('disabled');
+                    $("label[for="+ plmin +"thread-list]").removeClass('disabled');
+                }
+            }
+            $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+            $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+            $("#direct-cap-plus").prop('checked', true).prop('disabled', true);
+            $("#direct-cap-minus").prop('checked', true).prop('disabled', true);
+            $("#capillary-cap-plus").prop('checked', false).prop('disabled', true);
+            $("#capillary-cap-minus").prop('checked', false).prop('disabled', true);
+            $("label[for=capillary-cap-plus]").addClass('disabled');
+            $("label[for=capillary-cap-minus]").addClass('disabled');
+            $("input[name=material]").each(function(){
+                if (connect_1=="c-pr" && (!($(this).prop("id")=="aisi316" || $(this).prop("id")=="hastelloy" || $(this).prop("id")=="tantal"))){///ДЕАКТИВАЦИЯ МАТЕРИАЛОВ ДЛЯ типа С
+                    $(this).prop("disabled", true);
+                    $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+                }
+                if (connect_1=="P" && (!($(this).prop("id")=="aisi316"))){///ДЕАКТИВАЦИЯ МАТЕРИАЛОВ ДЛЯ типа P
+                    $(this).prop("disabled", true);
+                    $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+                }
+            })
+            let num = $("body .active-option-to-select").index($(".active")) + 1;
+            let next_expand = $("body .active-option-to-select").eq(num);
+            var $this = $(document.getElementById(c_or_p).parentElement.parentElement.parentElement).prev();
+            $this.removeClass("active");
+            $this.next("div.option-to-select-list").slideUp("slow");
+            $this.find(".color-mark-field").removeClass("unselected");
+            $this.find(".color-mark-field").addClass("selected");
+            // next_expand.addClass("active");
+            // next_expand.next().slideToggle("slow");
+            disable_invalid_options();
+        }else{
+            for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью снять отметки, все активировтаь
+                for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                    $("input[name=" + plmin + cons + "]").each(function(){
+                        $("label[for="+ $(this).prop("id") +"]").removeClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                        $(this).prop('disabled', false);                                    //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    })
+                    $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                }
+                if (connect_1=="c-pr"){
+                    // $("#" + plmin + "flange-list").prop('checked', true);
+                    $("#" + plmin + "c-pr").prop('checked', false);
+                    $("#" + plmin + "c-pr").prop('disabled', false);
+                    // $('#' + plmin + 'flange-select').prop('style', "display=block");
+                    $("label[for="+ plmin +"c-pr]").removeClass('disabled');
+                    $("label[for="+ plmin +"flange-list]").removeClass('disabled');
+                }
+                if (connect_1=="P"){
+                    // $("#" + plmin + "thread-list").prop('checked', true);
+                    $("#" + plmin + "P").prop('checked', false);
+                    $("#" + plmin + "P").prop('disabled', false);
+                    // $('#' + plmin + 'thread-select').prop('style', "display=block");
+                    $("label[for="+ plmin +"P]").removeClass('disabled');
+                    $("label[for="+ plmin +"thread-list]").removeClass('disabled');
+                }
+            }
+            $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
+            $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
+            $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
+            $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
+            $("label[for=capillary-cap-plus]").removeClass('disabled');
+            $("label[for=capillary-cap-minus]").removeClass('disabled');
+        }
+        document.getElementById("cap-plus-length-span-err").hidden = true;
+        document.getElementById("cap-plus-length-span").hidden = true;
+        document.getElementById("cap-minus-length-span-err").hidden = true;
+        document.getElementById("cap-minus-length-span").hidden = true;
+
+        console.log("c_or_p worked");
+        disable_invalid_options();
+
+    }else{
+        let add_n = c_or_p.startsWith("minus") ? "minus-" : "";
+        let num = $("body .active-option-to-select").index($(".active")) + 1;
+        let next_expand = $("body .active-option-to-select").eq(num);
+        $("#" + add_n + "flange-select-field > span").each(function(){
+            $(this).prop("hidden", true);
+            $(this).find("select option[value='not_selected']").prop('selected', true);
+        })
+        var $this = $(document.getElementById(c_or_p).parentElement.parentElement.parentElement).prev();
+        $this.removeClass("active");
+        $this.next("div.option-to-select-list").slideUp("slow");
+        $this.find(".color-mark-field").removeClass("unselected");
+        $this.find(".color-mark-field").addClass("selected");
+        next_expand.addClass("active");
+        next_expand.next().slideToggle("slow");
+        disable_invalid_options();
+        console.log("CorP ELSE worked");
+    }
+}
+
 function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - принимает full_config
     let code = "";
     let special = "";
@@ -562,12 +686,24 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "cap-plus", "cap-minus", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic", "max-static", "connection-type", "minus-connection-type"]; //ДОБАВИТЬ hygienic когда они появятся
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "max-static"]; //ДОБАВИТЬ hygienic когда они появятся
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
             $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
         })
+    }
+
+    let condition4 = (full_conf.has("thread") && (full_conf.get("thread")=='P' || full_conf.get("thread")=='minus-P')) || (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
+    console.log(condition4);
+    if ((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false){ //ТОЛЬКО ДЛЯ С или P присоединений
+        let opt_names2 = ["cap-plus", "cap-minus", , "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
+        for (let opt_name of opt_names2){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
+            $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
+            $("input[name="+ opt_name +"]").each(function() {
+                $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
+            })
+        }
     }
 
     $("input[name=special]").each(function() {/// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ SPECIAL
@@ -790,21 +926,20 @@ function disable_invalid_options(){
             $("#direct-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ непосредственных присоединений
             if (!$("#capillary-cap-plus").is(":checked")){$("#capillary-cap-plus").trigger("click");}
             if (!$("#capillary-cap-minus").is(":checked")){$("#capillary-cap-minus").trigger("click");}
+            $("#capillary-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
+            $("#capillary-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
         }
 
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
-                console.log("100");
                 // low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
                 // hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
-                    console.log("101");
                     console.log("min_range capillary ", min_range);
                 }
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="direct"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") : min_range;
-                    console.log("102");
                     console.log("min_range direct ", min_range);
                 }
 
@@ -816,13 +951,11 @@ function disable_invalid_options(){
                     if (!window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("material").includes($(this).attr("id"))){
                         $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
                         $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
-                        console.log("103");
                     }
                 })
                 if (window[con_type + "_restr_lst"].get(full_conf.get(con_type)).has("cap-or-not") && window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("cap-or-not") == "direct"){//ОГРАНИЧЕНИЕ  cap-or-not для DIRECT ONLY
                     $("label[for=capillary-cap-plus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ capillary
                     $("#capillary-cap-plus").prop('disabled', true);          //// ДЕАКТИВАЦИЯ capillary
-                    console.log("104");
                 }
 
                 let max_temp = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("max_temp");
@@ -830,23 +963,19 @@ function disable_invalid_options(){
                     $("input[name=cap-plus-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                     $("input[name=cap-plus-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
                     document.getElementById("cap-plus-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
-                    console.log("105");
                 }
             }
 
             if (full_conf.has("minus-" + con_type) && typeof full_conf.get("minus-" + con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
-                console.log("106");
                 // low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
                 // hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
                     console.log("min_range capillary ", min_range);
-                    console.log("107");
                 }
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="direct"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") : min_range;
                     console.log("min_range direct ", min_range);
-                    console.log("108");
                 }
 
                 low_press_diff = -hi_press_diff;
@@ -857,13 +986,11 @@ function disable_invalid_options(){
                     if (!window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("material").includes($(this).attr("id"))){
                         $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
                         $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
-                        console.log("109");
                     }
                 })
                 if (window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).has("cap-or-not") && window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("cap-or-not") == "direct"){//ОГРАНИЧЕНИЕ  cap-or-not для DIRECT ONLY
                     $("label[for=capillary-cap-minus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ capillary
                     $("#capillary-cap-minus").prop('disabled', true);          //// ДЕАКТИВАЦИЯ capillary
-                    console.log("110");
                 }
 
                 let max_temp = window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("max_temp");
@@ -871,7 +998,6 @@ function disable_invalid_options(){
                     $("input[name=cap-minus-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                     $("input[name=cap-minus-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
                     document.getElementById("cap-minus-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
-                    console.log("111");
                 }
             }
 
@@ -881,34 +1007,29 @@ function disable_invalid_options(){
                     $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                     $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
                     $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    console.log("112");
                 }
                 if (typeof full_conf.get("cap-plus") != 'undefined'){
                     if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("114");
                     }
                 }
                 if (typeof full_conf.get("cap-minus") != 'undefined'){
                     if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-minus")){
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("115");
                     }
                 }
                 if (full_conf.get("cap-plus") == 'direct' && full_conf.has("max_temp_plus") && !Number.isNaN(full_conf.get("max_temp_plus"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
                     if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp_plus")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("116");
                     }
                 }
                 if (full_conf.get("cap-minus") == 'direct' && full_conf.has("max_temp_minus") && !Number.isNaN(full_conf.get("max_temp_minus"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
                     if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp_minus")){
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("117");
                     }
                 }
                 if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-plus") == 'direct'){
@@ -916,7 +1037,6 @@ function disable_invalid_options(){
                     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("118");
                     }
                 }
                 if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-minus") == 'direct'){
@@ -924,7 +1044,6 @@ function disable_invalid_options(){
                     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("118");
                     }
                 }
                 if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-plus") == 'capillary'){
@@ -932,7 +1051,6 @@ function disable_invalid_options(){
                     if (typeof entr[1].get("range_c") !== 'undefined' && full_conf.get("range")<entr[1].get("range_c")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("119");
                     }
                 }
                 if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-minus") == 'capillary'){
@@ -940,7 +1058,6 @@ function disable_invalid_options(){
                     if (typeof entr[1].get("range_c") !== 'undefined' && full_conf.get("range")<entr[1].get("range_c")){
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("120");
                     }
                 }
                 if (typeof full_conf.get("material")!=='undefined'){
@@ -949,32 +1066,45 @@ function disable_invalid_options(){
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        console.log("121");
-                    }
-                }
-                if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="32" || full_conf.get("max-static")=="41"  || full_conf.get("max-static")=="70")){/// ЕСЛИ MAX-STATIC равно 32,41,70 - откл все, кроме "С"
-
-                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                    $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    console.log("ОТКЛЮЧАЕМ ВСЕ, КРОМЕ типа \"С\"");
-
-                    for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью отметить ТИП С      ////////////////////////////////
-                        $("label[for=" + plmin + "thread-list]").addClass('disabled');
-                        $("#" + plmin + "thread-list").prop('disabled', true);
-                        $("label[for=" + plmin + "flange-list]").addClass('disabled');
-                        $("#" + plmin + "flange-list").prop('disabled', true);
-                        $("label[for=" + plmin + "hygienic-list]").addClass('disabled');
-                        $("#" + plmin + "hygienic-list").prop('disabled', true);
-                        $("#" + plmin + "flange-list").prop('checked', true);
-                        $("#" + plmin + "c-pr").prop('checked', true);
-                        $('#' + plmin + 'flange-select').prop('style', "display=block");
-                        console.log($('#' + plmin + 'flange-select'));
                     }
                 }
             }
         }
+    }
+
+    if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="32" || full_conf.get("max-static")=="41"  || full_conf.get("max-static")=="70")){/// ЕСЛИ MAX-STATIC равно 32,41,70 - откл все, кроме "С"
+        for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью отметить ТИП С, отключить другие      ////////////////////////////////
+            for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                $("input[name=" + plmin + cons + "]").each(function(){
+                    $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $(this).prop('disabled', true);                                     //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                })
+                $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+            }
+            $("#" + plmin + "flange-list").prop('checked', true);
+            $("#" + plmin + "c-pr").prop('checked', true);
+            $('#' + plmin + 'flange-select').prop('style', "display=block");
+            $("label[for="+ plmin +"c-pr]").removeClass('disabled');
+            $("label[for="+ plmin +"flange-list]").removeClass('disabled');
+        }
+        $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        $("#direct-cap-plus").prop('checked', true).prop('disabled', true);
+        $("#capillary-cap-plus").prop('checked', false).prop('disabled', true);
+        $("label[for=capillary-cap-plus]").addClass('disabled');
+        $("#direct-cap-minus").prop('checked', true).prop('disabled', true);
+        $("#capillary-cap-minus").prop('checked', false).prop('disabled', true);
+        $("label[for=capillary-cap-minus]").addClass('disabled');
+        $("input[name=material]").each(function(){///ДЕАКТИВАЦИЯ МАТЕРИАЛОВ ДЛЯ типа С
+            if (!($(this).prop("id")=="aisi316" || $(this).prop("id")=="hastelloy" || $(this).prop("id")=="tantal")){
+                $(this).prop("disabled", true);
+                $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+            }
+        })
+        document.getElementById("cap-plus-length-span-err").hidden = true;
+        document.getElementById("cap-plus-length-span").hidden = true;
+        document.getElementById("cap-minus-length-span-err").hidden = true;
+        document.getElementById("cap-minus-length-span").hidden = true;
     }
 
     /// ПРОВЕРКА SPECIAL
@@ -1016,7 +1146,7 @@ function disable_invalid_options(){
         $("#hs").prop('checked', false);
     }
     if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
-        $("label[for=hs]").addClass('disabled');
+        // $("label[for=hs]").addClass('disabled');
         $("#hs").prop('checked', true);
         $("#hs").prop('disabled', true);
         for (let cons of ["M", "G1_2", "g1_4", "m12_1"]){
@@ -1106,24 +1236,46 @@ $(function (){
         if ($(this).is(':checked') && this.name!="special") { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС (кроме special)
             $(this).siblings("input:checkbox").prop('checked', false);
             if (this.name=="cap-or-not" || this.name=="cap-plus"){
-                console.log($("#connection-type-select").find("input:checkbox:checked"));
                 $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
                 // $("#connection-type-select").find("input:checkbox:checked").prop('checked', false);
             }
             if (this.name=="cap-minus"){
-                console.log($("#minus-connection-type-select").find("input:checkbox:checked"));
                 $(".minus-thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
                 // $("#minus-connection-type-select").find("input:checkbox:checked").prop('checked', false);
             }
-            // if ($(this).prop('id')=="c-pr" || $(this).prop('id')=="minus-c-pr" || $(this).prop('id')=="P" || $(this).prop('id')=="minus-P"){// ОТМЕЧАЕМ P или C на плюсе и минусе
-            //     if ($(this).prop('id').startsWith("minus-")){
-            //         $("#" + $(this).prop('id').slice(6,)).prop("checked", true);
-            //         console.log($("#" + $(this).prop('id').slice(6,)));
-            //     }else{
-            //         $("#minus-" + $(this).prop('id')).prop("checked", true);
-            //         console.log($("#minus-" + $(this).prop('id')));
-            //     }
-            // }
+            if (this.name=="max-static"){
+
+                for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ
+                    for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                        $("input[name=" + plmin + cons + "]").each(function(){
+                            // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+                            $(this).prop('checked', false);
+                        })
+                        $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    }
+                    $("#" + plmin + "flange-list").prop('checked', false);
+                    $('#' + plmin + 'flange-select').prop('style', "display=none");
+                    // $("label[for="+ plmin +"c-pr]").removeClass('disabled');
+                    // $("label[for="+ plmin +"flange-list]").removeClass('disabled');
+                }
+
+                var $this = $(this.parentElement.parentElement);
+                let num = $("body .active-option-to-select").index($(".active")) + 1;
+                let next_expand = $("body .active-option-to-select").eq(num);
+                $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
+                $this.prev(".option-to-select").removeClass("active");
+                $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
+                $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
+                next_expand.addClass("active");
+                next_expand.next().slideToggle("slow");
+                console.log("max-static checked");
+                disable_invalid_options();
+                return;
+            }
+            if ($(this).prop("id")=="P" || $(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-P" || $(this).prop("id")=="minus-c-pr"){
+                CorPSelected($(this).prop("id"));
+                return;
+            }
             console.log("1");
         }
         else{
@@ -1150,6 +1302,32 @@ $(function (){
                     $(this).prop("hidden", true);
                     $(this).find("select option[value='not_selected']").prop('selected', true);
                 })
+            }
+            if (this.name=="max-static"){
+                for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки MAX-STATIC
+                    for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                        $("input[name=" + plmin + cons + "]").each(function(){
+                            // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+                            $(this).prop('checked', false);
+                        })
+                        $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    }
+                    $("#" + plmin + "flange-list").prop('checked', false);
+                    $('#' + plmin + 'flange-select').prop('style', "display=none");
+                    // $("label[for="+ plmin +"c-pr]").removeClass('disabled');
+                    // $("label[for="+ plmin +"flange-list]").removeClass('disabled');
+                }
+                $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
+                $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
+                $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
+                $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
+                console.log("max-static unchecked");
+            }
+            if ($(this).prop("id")=="P" || $(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-P" || $(this).prop("id")=="minus-c-pr"){
+                CorPSelected($(this).prop("id"));
+                return;
             }
             console.log("3");
             if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic"){
