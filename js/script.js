@@ -424,9 +424,9 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
 
 function CorPSelected(c_or_p){ /////////////////////////////////////////////// ОДНОВРЕМЕННЫЙ ВЫБОР тип С или P ///////////////////////////////////////////////////////////
 
-    let full_conf = get_full_config();
+    let full_configure = get_full_config();
     let connect_1 = c_or_p.startsWith("minus-") ? c_or_p.slice(6,) : c_or_p;
-    if (full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000"){
+    if (full_configure.get("main_dev")=="pr-28" || full_configure.get("main_dev")=="apr-2000"){
         if ($("#" + c_or_p).is(":checked")){
             for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью отметить ТИП С, отключить другие      ////////////////////////////////
                 for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
@@ -474,7 +474,7 @@ function CorPSelected(c_or_p){ /////////////////////////////////////////////// �
                 }
             })
             let num = $("body .active-option-to-select").index($(".active")) + 1;
-            let next_expand = $("body .active-option-to-select").eq(num);
+            // let next_expand = $("body .active-option-to-select").eq(num);
             var $this = $(document.getElementById(c_or_p).parentElement.parentElement.parentElement).prev();
             $this.removeClass("active");
             $this.next("div.option-to-select-list").slideUp("slow");
@@ -483,6 +483,7 @@ function CorPSelected(c_or_p){ /////////////////////////////////////////////// �
             // next_expand.addClass("active");
             // next_expand.next().slideToggle("slow");
             disable_invalid_options();
+            return;
         }else{
             for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью снять отметки, все активировтаь
                 for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
@@ -525,6 +526,7 @@ function CorPSelected(c_or_p){ /////////////////////////////////////////////// �
 
         console.log("c_or_p worked");
         disable_invalid_options();
+        return;
 
     }else{
         let add_n = c_or_p.startsWith("minus") ? "minus-" : "";
@@ -543,6 +545,7 @@ function CorPSelected(c_or_p){ /////////////////////////////////////////////// �
         next_expand.next().slideToggle("slow");
         disable_invalid_options();
         console.log("CorP ELSE worked");
+        return;
     }
 }
 
@@ -919,7 +922,7 @@ function disable_invalid_options(){
             }
 
         }
-        if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="10" || full_conf.get("max-static")=="25")){/// ЕСЛИ MAX-STATIC равно 10 или 25  - деактивация непосредственного присоединения
+        if ($("input[name=max-static]:checked").length>0 && (full_conf.get("max-static")=="10")){/// ЕСЛИ MAX-STATIC равно 10  - деактивация непосредственного присоединения
             $("label[for=direct-cap-plus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ непосредственное присоединение
             $("#direct-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ непосредственных присоединений
             $("label[for=direct-cap-minus]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ непосредственное присоединение
@@ -1254,10 +1257,12 @@ $(function (){
                         $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                     }
                     $("#" + plmin + "flange-list").prop('checked', false);
-                    $('#' + plmin + 'flange-select').prop('style', "display=none");
+                    // $('#' + plmin + 'flange-select').prop('style', "display=none");
                     // $("label[for="+ plmin +"c-pr]").removeClass('disabled');
                     // $("label[for="+ plmin +"flange-list]").removeClass('disabled');
                 }
+                $('.thread-flange-hygienic').hide(0);
+                $('.minus-thread-flange-hygienic').hide(0);
 
                 var $this = $(this.parentElement.parentElement);
                 let num = $("body .active-option-to-select").index($(".active")) + 1;
@@ -1313,10 +1318,12 @@ $(function (){
                         $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                     }
                     $("#" + plmin + "flange-list").prop('checked', false);
-                    $('#' + plmin + 'flange-select').prop('style', "display=none");
+
                     // $("label[for="+ plmin +"c-pr]").removeClass('disabled');
                     // $("label[for="+ plmin +"flange-list]").removeClass('disabled');
                 }
+                $('.thread-flange-hygienic').hide(0);
+                $('.minus-thread-flange-hygienic').hide(0);
                 $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
@@ -1405,7 +1412,7 @@ $(function (){
             return;
         }
 
-        if (this.value=="direct") { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
+        if (this.value=="direct" && !$("#25-max-static").is(":checked")) { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
             document.getElementById(target_name + "radiator-select").hidden = false;
             document.getElementById(target_name + "length-span").hidden = true;
@@ -1417,6 +1424,12 @@ $(function (){
             disable_invalid_options();
             console.log("12");
             return;
+        }
+        if (this.value=="direct" && $("#25-max-static").is(":checked")){
+            if ($("#c-pr").prop("checked", false)){
+                $("#c-pr").trigger("click");
+            }
+            console.log("ВКЛЮЧИТЬ ТИП С!!!!!!!!!!!!!!!!")
         }
 
         if (this.name=="connection-type" || this.name=="minus-connection-type") { //// ПОКАЗЫВАЕМ ВЫБОР ДОСТУПНЫХ РАЗМЕРОВ РЕЗЬБЫ ИЛИ ФЛАНЦА ИЛИ ГИГИЕНИЧЕСКОГО ПРИСОЕДИНЕНИЯ
