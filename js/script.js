@@ -422,12 +422,12 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     return full_conf;
 }
 
-function CorPSelected(c_or_p){ /////////////////////////////////////////////// ОДНОВРЕМЕННЫЙ ВЫБОР тип С или P ///////////////////////////////////////////////////////////
+function CorPSelected(c_or_p, state){ /////////////////////////////////////////////// ОДНОВРЕМЕННЫЙ ВЫБОР тип С или P ///////////////////////////////////////////////////////////
 
     let full_configure = get_full_config();
     let connect_1 = c_or_p.startsWith("minus-") ? c_or_p.slice(6,) : c_or_p;
     if (full_configure.get("main_dev")=="pr-28" || full_configure.get("main_dev")=="apr-2000"){
-        if ($("#" + c_or_p).is(":checked")){
+        if (state==true){
             for (let plmin of ["","minus-"]){////////присоединения плюс и минус полностью отметить ТИП С, отключить другие      ////////////////////////////////
                 for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
                     $("input[name=" + plmin + cons + "]").each(function(){
@@ -457,8 +457,8 @@ function CorPSelected(c_or_p){ /////////////////////////////////////////////// �
             }
             $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
             $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
-            $("#direct-cap-plus").prop('checked', true).prop('disabled', true);
-            $("#direct-cap-minus").prop('checked', true).prop('disabled', true);
+            $("#direct-cap-plus").prop('checked', true); //.prop('disabled', true);
+            $("#direct-cap-minus").prop('checked', true); //.prop('disabled', true);
             $("#capillary-cap-plus").prop('checked', false).prop('disabled', true);
             $("#capillary-cap-minus").prop('checked', false).prop('disabled', true);
             $("label[for=capillary-cap-plus]").addClass('disabled');
@@ -699,7 +699,7 @@ function disable_invalid_options(){
 
     let condition4 = (full_conf.has("thread") && (full_conf.get("thread")=='P' || full_conf.get("thread")=='minus-P')) || (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
     console.log(condition4);
-    if ((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false){ //ТОЛЬКО ДЛЯ С или P присоединений
+    if (((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false) || (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apc-2000")){ //ТОЛЬКО ДЛЯ С или P присоединений
         let opt_names2 = ["cap-plus", "cap-minus", , "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
         for (let opt_name of opt_names2){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
             $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
@@ -877,6 +877,27 @@ function disable_invalid_options(){
         }
     }
 
+    $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
+        if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
+            if ($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW"){
+                $(this).prop('hidden', false);
+                $("label[for=" + $(this).prop("id") + "]").prop('hidden', false);
+            }else{
+                $(this).prop('hidden', true);
+                $("label[for=" + $(this).prop("id") + "]").prop('hidden', true);
+            }
+        }
+
+        if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
+            if (!($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW")){
+                $(this).prop('hidden', false);
+                $("label[for=" + $(this).prop("id") + "]").prop('hidden', false);
+            }else{
+                $(this).prop('hidden', true);
+                $("label[for=" + $(this).prop("id") + "]").prop('hidden', true);
+            }
+        }
+    })
 
 /////////////////// ПРОВЕРКА PR и APR /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1263,6 +1284,12 @@ $(function (){
                 }
                 $('.thread-flange-hygienic').hide(0);
                 $('.minus-thread-flange-hygienic').hide(0);
+                $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
+                $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
+                $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
+                $("#capillary-cap-minus").prop('checked', false).prop('disabled', false)
 
                 var $this = $(this.parentElement.parentElement);
                 let num = $("body .active-option-to-select").index($(".active")) + 1;
@@ -1278,7 +1305,7 @@ $(function (){
                 return;
             }
             if ($(this).prop("id")=="P" || $(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-P" || $(this).prop("id")=="minus-c-pr"){
-                CorPSelected($(this).prop("id"));
+                CorPSelected($(this).prop("id"), true);
                 return;
             }
             console.log("1");
@@ -1301,6 +1328,28 @@ $(function (){
                 document.getElementById(this.name + "-radiator-select-err").hidden = true;
                 document.getElementById(this.name + "-length-span-err").hidden = true;
                 $("input[name=" + this.name + "-mes-env-temp]").val("");
+                console.log("ВСТАВИТЬ СНЯТИЕ ВЫБОРА ПРИСОЕДИНЕНИЯ");
+                if ($("#c-pr").prop("checked", true)){$("#c-pr").trigger("click");}
+                if ($("#P").prop("checked", true)){$("#P").trigger("click");}
+
+                for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки кап или директ
+                    for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                        $("input[name=" + plmin + cons + "]").each(function(){
+                            // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+                            $(this).prop('checked', false);
+                        })
+                        $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    }
+                    $("#" + plmin + "flange-list").prop('checked', false);
+                }
+                $('.thread-flange-hygienic').hide(0);
+                $('.minus-thread-flange-hygienic').hide(0);
+                $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
+                $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
+                $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
+                $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
             }
             if (this.name=="flange"){
                 $("#flange-select-field > span").each(function(){
@@ -1333,7 +1382,7 @@ $(function (){
                 console.log("max-static unchecked");
             }
             if ($(this).prop("id")=="P" || $(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-P" || $(this).prop("id")=="minus-c-pr"){
-                CorPSelected($(this).prop("id"));
+                CorPSelected($(this).prop("id"), false);
                 return;
             }
             console.log("3");
@@ -1426,10 +1475,12 @@ $(function (){
             return;
         }
         if (this.value=="direct" && $("#25-max-static").is(":checked")){
-            if ($("#c-pr").prop("checked", false)){
-                $("#c-pr").trigger("click");
-            }
-            console.log("ВКЛЮЧИТЬ ТИП С!!!!!!!!!!!!!!!!")
+            let target_name = $(this.parentElement).prop("id").slice(0,-12);
+            document.getElementById(target_name + "length-span").hidden = true;
+            document.getElementById(target_name + "length-span-err").hidden = true;
+            console.log("ВКЛЮЧИТЬ ТИП С!!!!!!!!!!!!!!!!");
+            if ($("#c-pr").prop("checked", false)){CorPSelected("c-pr", true);}
+
         }
 
         if (this.name=="connection-type" || this.name=="minus-connection-type") { //// ПОКАЗЫВАЕМ ВЫБОР ДОСТУПНЫХ РАЗМЕРОВ РЕЗЬБЫ ИЛИ ФЛАНЦА ИЛИ ГИГИЕНИЧЕСКОГО ПРИСОЕДИНЕНИЯ
@@ -1638,7 +1689,7 @@ $(function(){
 
 $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
     $(".back-to-main-dev-select").click(function(){
-        if ($("div.color-mark-field.selected").length>0){
+        if ($("div.color-mark-field.selected").length>0 || $('body input:checkbox:checked').length>0){
             $( "#dialog-confirm" ).dialog({
                 resizable: false,
                 height: "auto",
@@ -1649,8 +1700,15 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $(".active-panel-container").slideUp("slow");
                         $("#main-dev-select").slideDown("slow");
                         $(".active-panel-container").removeClass("active-panel-container");
+                        $('.thread-flange-hygienic').hide(0);
+                        $('.minus-thread-flange-hygienic').hide(0);
                         $('body input:checkbox:checked').each(function(){
-                            $(this).trigger("click");
+                            // console.log("CHECKED: " + $(this).prop("id"));
+                            $(this).prop("checked", false);
+                        });
+                        $('body input:checkbox:disabled').each(function(){
+                            // console.log("disabled: " + $(this).prop("id"));
+                            $(this).prop("disabled", false);
                         });
                         for (ids of ["cap-or-not-capillary-length", "cap-plus-capillary-length", "cap-minus-capillary-length", "begin-range", "end-range"]){
                             document.getElementById(ids).value="";
@@ -1661,10 +1719,6 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                             $(this).removeClass("selected");
                             $(this).addClass("unselected");
                         })
-                        let arr = ["thread", "flange", "hygienic", "special"];
-                        for (cons of arr){
-                            $("input[name="+ cons +"]:checked").prop("checked", false);
-                        }
                         $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
                         $("div.option-to-select.active").removeClass("active");
                         $( this ).dialog( "close" );
