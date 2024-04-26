@@ -168,6 +168,7 @@
     "name": "c-pr",
     "code_name": "C",
     "description": "Фланец для монтажа 3-х или 5-и ходового вентильного блока.",
+    "cap-or-not": "direct",
     "begin_range_kpa": -101,
     "end_range_kpa": 42000,
     "range": 1,
