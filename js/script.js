@@ -781,7 +781,7 @@ function disable_invalid_options(){
     }
 
 
-    if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// РАБОТАЕТ!!! НЕ ТРОГАТЬ!!!
+    if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// ПРОВЕРКА PC и APC
         $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
             if (this.value=="1/4NPT(F)"){
                 $(this).prop('hidden', true);
@@ -899,9 +899,7 @@ function disable_invalid_options(){
         }
     })
 
-/////////////////// ПРОВЕРКА PR и APR /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){
+    if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){   /// ПРОВЕРКА PR и APR
 
         $("input[name=thread]").each(function(){
             if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
@@ -1026,7 +1024,8 @@ function disable_invalid_options(){
             }
 
             for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC ПО ДАВЛЕНИЮ, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
-                if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
+                // console.log("max static kPa: "+ parseInt(full_conf.get("max-static"))*1000);
+                if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || (typeof full_conf.get("max-static")!='undefined' && parseInt(full_conf.get("max-static"))*1000>entr[1].get("end_range_kpa"))){
                     $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
                     $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                     $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
