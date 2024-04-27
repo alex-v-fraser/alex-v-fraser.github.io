@@ -151,7 +151,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
                 full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
             }else{
-                full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
+                full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
             }
         }
 
@@ -160,8 +160,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
                 full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
             }else{
-                full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
-                full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " избыточного давления.");
+                full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
             }
         }
 
@@ -299,7 +299,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let max_temp = parseInt(document.querySelector("#cap-or-not-mes-env-temp").value);
     let max_temp_plus = parseInt(document.querySelector("#cap-plus-mes-env-temp").value);
     let max_temp_minus = parseInt(document.querySelector("#cap-minus-mes-env-temp").value);
-    let max_static = $("input[name=max-static]:checked").val();
+    let max_static = parseInt($("input[name=max-static]:checked").val());
     const koef = new Map([
         ["Па", 0.001],
         ["кПа", 1],
@@ -320,10 +320,12 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
     if (main_dev=="pr-28" || main_dev=="apr-2000"){
         full_conf.set("max-static", max_static);
-        full_conf.set("cap-plus", $("input[name=cap-plus]:checked").val());
-        full_conf.set("cap-minus", $("input[name=cap-minus]:checked").val());
-        full_conf.set("capillary_length_plus");
-        full_conf.set("capillary_length_minus");
+        if (!(max_static==32 || max_static==41 || max_static==70)){
+            full_conf.set("cap-plus", $("input[name=cap-plus]:checked").val());
+            full_conf.set("cap-minus", $("input[name=cap-minus]:checked").val());
+            full_conf.set("capillary_length_plus");
+            full_conf.set("capillary_length_minus");
+        }
         options.push("minus-connection-type");
         for (let i = options.length - 1; i >= 0; i--) {
             if (options[i] == "cap-or-not") {
@@ -418,6 +420,22 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }
     }else{
         full_conf.delete("cilinder_length");
+    }
+    if (typeof full_conf.get("minus-flange")!='undefined' && full_conf.get("minus-flange").slice(0,9)=="minus-s_t"){
+        let t_length = parseInt($("#" + full_conf.get("minus-flange") + "-cilinder-length").val());
+        if (!Number.isNaN(t_length)){
+            full_conf.set("minus_cilinder_length", parseInt($("#" + full_conf.get("minus-flange") + "-cilinder-length").val()));
+        }else{
+            full_conf.set("minus_cilinder_length");
+        }
+    }else{
+        full_conf.delete("minus-cilinder_length");
+    }
+    if ((full_conf.has("minus-thread") && full_conf.get("minus-thread")=="minus-P") || (full_conf.has("minus-flange") && full_conf.get("minus-flange")=="minus-c-pr")){
+        full_conf.delete("max_temp_plus");
+        full_conf.delete("max_temp_minus");
+        full_conf.delete("capillary_length_plus");
+        full_conf.delete("capillary_length_minus");
     }
     return full_conf;
 }
@@ -555,10 +573,17 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let out = data.get("output");
     let appr = data.get("approval");
     let main_dev = data.get("main_dev").toUpperCase();
-    let dev_type = out == "4_20" ? "PC-28/" : out == "4_20H" ? "PC-28.Smart/" : out == "modbus" ? "PC-28.Modbus/" : out == "0_10" ? "PC-28/" : "PC-28.B/";
+    let dev_type;
+    if (main_dev=="PC-28"){
+        dev_type = out == "4_20" ? "PC-28/" : out == "4_20H" ? "PC-28.Smart/" : out == "modbus" ? "PC-28.Modbus/" : out == "0_10" ? "PC-28/" : "PC-28.B/";
+    }
+    if (main_dev=="PR-28"){
+        dev_type = out == "4_20" ? "PR-28/" : out == "4_20H" ? "PR-28.Smart/" : out == "modbus" ? "PR-28.Modbus/" : out == "0_10" ? "PR-28/" : "PR-28.B/";
+    }
     let output = out == "0_2" ? "0...2В/" : out == "04_2" ? "0,4...2В/" : out == "0_10" ? "0...10В/" : $("#hart7").is(':checked') ? "Hart7/" : "";
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
     let connection = data.has("thread") ? $("input[name=thread]:checked").val() : data.has("flange") ? $("input[name=flange]:checked").val() : data.has("hygienic") ? $("input[name=hygienic]:checked").val() : "";
+    let minus_connection = data.has("minus-thread") ? $("input[name=minus-thread]:checked").val() : data.has("minus-flange") ? $("input[name=minus-flange]:checked").val() : data.has("minus-hygienic") ? $("input[name=minus-hygienic]:checked").val() : "";
     let material;
     let s_material;
     let main_range;
@@ -590,6 +615,16 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         [0, 7000, "0...7МПаABS"],
         [0, 10000, "0...10МПаABS"]
     ];
+    const main_ranges_diff = [
+        [0, 7000, "0...7МПа"],
+        [0, 1600, "0...1,6МПа"],
+        [0, 250, "0...250кПа"],
+        [0, 100, "0...100кПа"],
+        [0, 25, "0...25кПа"],
+        [-10, 10, "-10...10кПа"],
+        [-0.5, 7, "-0,5...7кПа"]
+        [-50, 50, "-50...50кПа"],
+    ];
     main_range = "";
     if (dev_type == "PC-28.Smart/" || dev_type == "PC-28.Modbus/" || main_dev == "APC-2000"){
         if (data.get("pressure_type")==""){
@@ -616,7 +651,19 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         }
     }
 
-    if (main_dev == "APC-2000" && data.get("end_range_kpa")<=2.5 && data.get("pressure_type")==""){
+    if (dev_type == "PR-28.Smart/" || dev_type == "PR-28.Modbus/" || main_dev == "APR-2000"){
+        let min_main_range = [-200000, 200000, ""];
+        for (el of main_ranges_diff){
+            if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
+                    min_main_range = el;
+                }
+            }
+        }
+        main_range = min_main_range[2] + "/";
+    }
+
+    if ((main_dev == "APC-2000" && data.get("end_range_kpa")<=2.5 && data.get("pressure_type")=="") || (main_dev == "APR-2000" && data.get("end_range_kpa")<=2.5)){
         const main_hs_ranges = [
             [-2.5, 2.5, "-2,5...2,5кПа"],
             [-0.7, 0.7, "-0,7...0,7кПа"]
@@ -632,8 +679,9 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         main_range = min_main_range[2] + "/";
         $("#hs").prop('checked', true);
     }
-    range = (dev_type!="PC-28.Modbus/") ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
-    range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000") && range==main_range) ? "" : range;
+    range = (!(dev_type=="PC-28.Modbus/" || dev_type=="PR-28.Modbus/")) ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
+    range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
+    range = (main_dev == "APR-2000" || main_dev == "PR-28") ? range.slice(0,-5) + "/" : range;
 
     connection = connection.split("-");
     if (connection[0]=="S"){
@@ -670,10 +718,17 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
             special = special + $(this).val() + "/";
         }
     })
-    if (main_dev!="APC-2000"){
+    if (main_dev=="PC-28"){
+        console.log("code1");
         code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
-    }else{
+    }
+    if (main_dev=="APC-2000"){
+        console.log("code2");
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection;
+    }
+    if (main_dev=="PR-28"){
+        console.log("code PR-28");
+        code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
     }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
@@ -1709,8 +1764,11 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                             // console.log("disabled: " + $(this).prop("id"));
                             $(this).prop("disabled", false);
                         });
-                        for (ids of ["cap-or-not-capillary-length", "cap-plus-capillary-length", "cap-minus-capillary-length", "begin-range", "end-range"]){
+                        for (let ids of ["cap-or-not-capillary-length", "cap-plus-capillary-length", "cap-minus-capillary-length", "begin-range", "end-range", "cap-or-not-mes-env-temp", "cap-plus-mes-env-temp", "cap-minus-mes-env-temp"]){
                             document.getElementById(ids).value="";
+                        }
+                        for (let ids of ["cap-or-not-radiator-select", "cap-plus-radiator-select", "cap-minus-radiator-select", "cap-or-not-length-span", "cap-plus-length-span", "cap-minus-length-span", "cap-or-not-radiator-select-err", "cap-plus-radiator-select-err", "cap-minus-radiator-select-err", "cap-or-not-length-span-err", "cap-plus-length-span-err", "cap-minus-length-span-err"]){
+                            $("#" + ids).hide(0);
                         }
                         document.getElementById("pressure-unit-select").value="not_selected";
                         document.getElementById("pressure-type").value="not_selected";
