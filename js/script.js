@@ -1767,23 +1767,34 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
 
 function MaxStaticChecked(){
 
-    for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ
-        for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
-            $("input[name=" + plmin + cons + "]").each(function(){
-                $(this).prop('checked', false);
-            })
-            $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-        }
-        $("#" + plmin + "flange-list").prop('checked', false);
+    if (($("input[name=max-static]:checked").val()=="25" && $("input#c-pr").is(":checked")) || ($("input[name=max-static]:checked").val()=="4" && $("input#minus-P").is(":checked"))){
+        console.log("НЕ СНИМАТЬ ОТМЕТКУ ПРИСОЕДИНЕНИЯ!");
+        document.getElementById("cap-plus-length-span-err").hidden = true;
+        document.getElementById("cap-plus-length-span").hidden = true;
+        document.getElementById("cap-minus-length-span-err").hidden = true;
+        document.getElementById("cap-minus-length-span").hidden = true;
     }
-    $('.thread-flange-hygienic').hide(0);
-    $('.minus-thread-flange-hygienic').hide(0);
-    $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-    $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-    $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
-    $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
-    $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
-    $("#capillary-cap-minus").prop('checked', false).prop('disabled', false)
+    else{
+        for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ
+            for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                $("input[name=" + plmin + cons + "]").each(function(){
+                    $(this).prop('checked', false);
+                })
+                $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            }
+            $("#" + plmin + "flange-list").prop('checked', false);
+        }
+
+        $('.thread-flange-hygienic').hide(0);
+        $('.minus-thread-flange-hygienic').hide(0);
+        $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
+        $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
+        $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
+        $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
+
+    }
 
     var $this = $("#max-static-select");
     let num = $("body .active-option-to-select").index($(".active")) + 1;
