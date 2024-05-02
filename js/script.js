@@ -401,12 +401,10 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         full_conf.delete("end_range_kpa");
     }
 
-    if (full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="pr-28"){
-        console.log("connection-type: ", $("input[name=connection-type]:checked").prop("id"));
-        console.log("minus-connection-type: ", $("input[name=minus-connection-type]:checked").prop("id"));
-        full_conf.set("connection-type", $("input[name=connection-type]:checked").prop("id"));
-        full_conf.set("minus-connection-type", $("input[name=minus-connection-type]:checked").prop("id"));
-    }
+    // if (full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="pr-28"){
+    //     full_conf.set("connection-type", $("input[name=connection-type]:checked").prop("id"));
+    //     full_conf.set("minus-connection-type", $("input[name=minus-connection-type]:checked").prop("id"));
+    // }
 
 
 
@@ -1449,7 +1447,7 @@ $(function (){
             }
         }
 
-        if (this.value=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
+        if ($(this).val()=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
             document.getElementById(target_name + "radiator-select").hidden = true;
             document.getElementById(target_name + "length-span").hidden = false;
@@ -1463,7 +1461,7 @@ $(function (){
             return;
         }
 
-        if (this.value=="direct" && !$("#25-max-static").is(":checked")) { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
+        if ($(this).val()=="direct" && !$("#25-max-static").is(":checked")) { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
             document.getElementById(target_name + "radiator-select").hidden = false;
             document.getElementById(target_name + "length-span").hidden = true;
@@ -1476,7 +1474,7 @@ $(function (){
             console.log("12");
             return;
         }
-        if (this.value=="direct" && $("#25-max-static").is(":checked")){
+        if ($(this).val()=="direct" && $("#25-max-static").is(":checked")){
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
             document.getElementById(target_name + "length-span").hidden = true;
             document.getElementById(target_name + "length-span-err").hidden = true;
