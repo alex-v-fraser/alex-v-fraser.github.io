@@ -622,8 +622,8 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         [0, 100, "0...100кПа"],
         [0, 25, "0...25кПа"],
         [-10, 10, "-10...10кПа"],
-        [-0.5, 7, "-0,5...7кПа"]
-        [-50, 50, "-50...50кПа"],
+        [-0.5, 7.0, "-0,5...7кПа"],
+        [-50, 50, "-50...50кПа"]
     ];
     main_range = "";
     if (dev_type == "PC-28.Smart/" || dev_type == "PC-28.Modbus/" || main_dev == "APC-2000"){
@@ -653,7 +653,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 
     if (dev_type == "PR-28.Smart/" || dev_type == "PR-28.Modbus/" || main_dev == "APR-2000"){
         let min_main_range = [-200000, 200000, ""];
-        for (el of main_ranges_diff){
+        for (let el of main_ranges_diff){
             if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
                 if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
                     min_main_range = el;
