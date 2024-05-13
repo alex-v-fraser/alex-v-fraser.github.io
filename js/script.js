@@ -761,19 +761,20 @@ function disable_invalid_options(){
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
-            $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
+            $(this).prop('disabled', false);                                                   /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
         })
     }
 
     let condition4 = (full_conf.has("thread") && (full_conf.get("thread")=='P' || full_conf.get("thread")=='minus-P')) || (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
     console.log(condition4);
     if (((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false) || (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apc-2000")){ //ТОЛЬКО ДЛЯ С или P присоединений
-        let opt_names2 = ["cap-plus", "cap-minus", , "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
+        let opt_names2 = ["cap-plus", "cap-minus", "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
         for (let opt_name of opt_names2){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
             $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
             $("input[name="+ opt_name +"]").each(function() {
                 $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
             })
+            console.log("АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ");
         }
     }
 
@@ -1767,7 +1768,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
 
 function MaxStaticChecked(){
 
-    if (($("input[name=max-static]:checked").val()=="25" && $("input#c-pr").is(":checked")) || ($("input[name=max-static]:checked").val()=="4" && $("input#minus-P").is(":checked"))){
+    if (($("input[name=max-static]:checked").val()=="25" && $("input#minus-c-pr").is(":checked")) || ($("input[name=max-static]:checked").val()=="4" && $("input#minus-P").is(":checked"))){
         console.log("НЕ СНИМАТЬ ОТМЕТКУ ПРИСОЕДИНЕНИЯ!");
         document.getElementById("cap-plus-length-span-err").hidden = true;
         document.getElementById("cap-plus-length-span").hidden = true;
@@ -1817,8 +1818,10 @@ function MaxStaticChecked(){
                 })
                 $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
             }
-            $("#" + plmin + "flange-list").prop('checked', true).prop('disabled', false);
-            $("#" + plmin + "c-pr").prop('checked', true).prop('disabled', false);
+        }
+        for (let plmin of ["","minus-"]){
+            $('input#' + plmin + 'flange-list').prop('checked', true).prop('disabled', true);
+            $('input#' + plmin + 'c-pr').prop('checked', true).prop('disabled', false);
             $('#' + plmin + 'flange-select').prop('style', "display=block");
             $("label[for="+ plmin +"c-pr]").removeClass('disabled');
             $("label[for="+ plmin +"flange-list]").removeClass('disabled');
