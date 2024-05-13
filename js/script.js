@@ -25,7 +25,6 @@ var min_range_diff = 1.6;   // мин ширина диапазона переп
 
 
 
-
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
         const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
