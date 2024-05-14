@@ -585,6 +585,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let out = data.get("output");
     let appr = data.get("approval");
     let main_dev = data.get("main_dev").toUpperCase();
+    let max_static = data.get("max-static");
     let dev_type;
     if (main_dev=="PC-28"){
         dev_type = out == "4_20" ? "PC-28/" : out == "4_20H" ? "PC-28.Smart/" : out == "modbus" ? "PC-28.Modbus/" : out == "0_10" ? "PC-28/" : "PC-28.B/";
@@ -693,7 +694,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
     range = (!(dev_type=="PC-28.Modbus/" || dev_type=="PR-28.Modbus/")) ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
     range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
-    range = (main_dev == "APR-2000" || main_dev == "PR-28") ? range.slice(0,-5) + "/" : range;
+    range = ((main_dev == "APR-2000" || main_dev == "PR-28") && range!="") ? range.slice(0,-5) + "/" : range;
 
     connection = connection.split("-");
     if (connection[0]=="S"){
@@ -738,9 +739,13 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         console.log("code2");
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection;
     }
-    if (main_dev=="PR-28"){
+    if (main_dev=="PR-28" && (connection=="P" || connection=="C")){
         console.log("code PR-28");
-        code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
+        max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
+        console.log(connection);
+        console.log(max_static);
+        connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
+        code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
     }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
@@ -773,7 +778,6 @@ function disable_invalid_options(){
             $("input[name="+ opt_name +"]").each(function() {
                 $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
             })
-            console.log("АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ");
         }
     }
 
