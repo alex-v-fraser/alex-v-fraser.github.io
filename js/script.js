@@ -129,7 +129,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
     }
     for (let i=0; i<code.length; i++){
-        if (code[i].toLowerCase().startsWith("s-")){
+        if (code[i].toLowerCase().startsWith("s-") || code[i].startsWith("(+)") || code[i].startsWith("(-)")){
             let temp = code[i].split("-");
             code[i]= temp[0];
             let x=i+1;
@@ -139,6 +139,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
+    console.log(code);
 
     let full_description = new Map([]);
     for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
@@ -172,9 +173,24 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
         }
 
-        if (code[i].toLowerCase()=="s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
-            let temp_code_i1 = code[i+1];
+        console.log(code[i]);
+
+        if (code[i].toLowerCase()=="s" || code[i].toLowerCase()=="(+)s" || code[i].toLowerCase()=="(-)s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+            let plus_minus = "";
             let add_descr = " В сборе с разделителем.";
+            if (code[i].toLowerCase()=="(+)s"){
+                code[i]=code[i].slice(3,);
+                plus_minus = "(+)";
+                add_descr = " В сборе с разделителем, соединенным с камерой высокого давления.";
+                console.log(code[i]);
+            }
+            if (code[i].toLowerCase()=="(-)s"){
+                code[i]=code[i].slice(3,);
+                plus_minus = "(-)";
+                add_descr = " В сборе с разделителем, соединенным с камерой низкого давления.";
+                console.log(code[i]);
+            }
+            let temp_code_i1 = code[i+1];
             let add_letter = "";
             if (temp_code_i1.endsWith("K")){
                 add_descr += " K - cоединение разделителя через капилляр.";
@@ -221,6 +237,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
                 num_cut-=1;
             }
+            code[i] = plus_minus + code[i];
         }
 
         for (item of search_names){
@@ -236,8 +253,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
     }
 
-    // console.log(full_description);
-    // console.log(code);
+    console.log(full_description);
+    console.log(code);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
@@ -696,30 +713,82 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
     range = ((main_dev == "APR-2000" || main_dev == "PR-28") && range!="") ? range.slice(0,-5) + "/" : range;
 
-    connection = connection.split("-");
-    if (connection[0]=="S"){
-        s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
-        if (s_material!=""){
-            connection[2] = connection[2] + s_material;
+    if (((main_dev=="PR-28" || main_dev=="APR-2000") && (connection=="P" || connection=="C")) || !(main_dev=="PR-28" || main_dev=="APR-2000")){///КОРРЕКТИРОВКА CONNECTION для PC, APC, PR/C/P, APR/C/P,
+        connection = connection.split("-");
+        if (connection[0]=="S"){
+            s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
+            if (s_material!=""){
+                connection[2] = connection[2] + s_material;
+            }
         }
-    }
-    if (data.has("flange") && data.get("flange").slice(0,3) == "s_t"){
-        connection.push("T=" + $("#" + data.get("flange") + "-cilinder-length").val() + "мм");
-    }
-    if (data.get("cap-or-not") == "capillary"){
-        if ($("#rad_cap").is(':checked')){
-            connection[1] = connection[1] + "K";
-            connection.push("R-K=" + data.get("capillary_length") + "м");
-        }else{
-            connection[1] = connection[1] + "K";
-            connection.push("T-K=" + data.get("capillary_length") + "м");
+        if (data.has("flange") && data.get("flange").slice(0,3) == "s_t"){
+            connection.push("T=" + $("#" + data.get("flange") + "-cilinder-length").val() + "мм");
         }
+        if (data.get("cap-or-not") == "capillary"){
+            if ($("#rad_cap").is(':checked')){
+                connection[1] = connection[1] + "K";
+                connection.push("R-K=" + data.get("capillary_length") + "м");
+            }else{
+                connection[1] = connection[1] + "K";
+                connection.push("T-K=" + data.get("capillary_length") + "м");
+            }
+        }
+        if (data.get("cap-or-not") == "direct" && typeof connection[1]!="undefined" && !connection[1].startsWith("R")){
+            connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
+        }
+        connection = connection.join("-");
     }
 
-    if (data.get("cap-or-not") == "direct" && typeof connection[1]!="undefined" && !connection[1].startsWith("R")){
-        connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
+    if ((main_dev=="PR-28" || main_dev=="APR-2000") && !(connection=="P" || connection=="C" || connection=="C7/16")){///КОРРЕКТИРОВКА CONNECTION для PR и APR кроме C/P
+        console.log(connection);
+        console.log(minus_connection);
+        connection = connection.split("-");
+        minus_connection = minus_connection.split("-");
+        if (connection[0]=="S"){
+            s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
+            if (s_material!=""){
+                connection[2] = connection[2] + s_material;
+            }
+        }
+        if (minus_connection[0]=="S"){
+            s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
+            if (s_material!=""){
+                minus_connection[2] = minus_connection[2] + s_material;
+            }
+        }
+        if (data.has("flange") && data.get("flange").slice(0,3) == "s_t"){
+            connection.push("T=" + $("#" + data.get("flange") + "-cilinder-length").val() + "мм");
+        }
+        if (data.has("minus-flange") && data.get("minus-flange").slice(0,9) == "minus-s_t"){
+            minus_connection.push("T=" + $("#" + data.get("minus-flange") + "-cilinder-length").val() + "мм");
+        }
+        if (data.get("cap-plus") == "capillary"){
+            if ($("#rad_cap").is(':checked')){
+                connection[1] = connection[1] + "K";
+                connection.push("R-K=" + data.get("capillary_length_plus") + "м");
+            }else{
+                connection[1] = connection[1] + "K";
+                connection.push("T-K=" + data.get("capillary_length_plus") + "м");
+            }
+        }
+        if (data.get("cap-minus") == "capillary"){
+            if ($("#rad_cap").is(':checked')){
+                minus_connection[1] = minus_connection[1] + "K";
+                minus_connection.push("R-K=" + data.get("capillary_length_minus") + "м");
+            }else{
+                minus_connection[1] = minus_connection[1] + "K";
+                minus_connection.push("T-K=" + data.get("capillary_length_minus") + "м");
+            }
+        }
+        if (data.get("cap-plus") == "direct" && typeof connection[1]!="undefined" && !connection[1].startsWith("R")){
+            connection[1] = (data.get("max_temp_plus")>150 && data.get("max_temp_plus")<=200) ? connection[1] + "R" : (data.get("max_temp_plus")>200 && data.get("max_temp_plus")<=250) ? connection[1] + "R2" : (data.get("max_temp_plus")>250 && data.get("max_temp_plus")<310) ? connection[1] + "R3" : connection[1];
+        }
+        if (data.get("cap-minus") == "direct" && typeof minus_connection[1]!="undefined" && !minus_connection[1].startsWith("R")){
+            minus_connection[1] = (data.get("max_temp_minus")>150 && data.get("max_temp_minus")<=200) ? minus_connection[1] + "R" : (data.get("max_temp_minus")>200 && data.get("max_temp_minus")<=250) ? minus_connection[1] + "R2" : (data.get("max_temp_minus")>250 && data.get("max_temp_minus")<310) ? minus_connection[1] + "R3" : minus_connection[1];
+        }
+        connection = connection.join("-");
+        minus_connection = minus_connection.join("-");
     }
-    connection = connection.join("-");
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"  || data.get("thread") == "G1_2"){
         material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
