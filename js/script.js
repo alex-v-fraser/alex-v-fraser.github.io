@@ -740,12 +740,16 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection;
     }
     if (main_dev=="PR-28" && (connection=="P" || connection=="C")){
-        console.log("code PR-28");
+        console.log("code PR-28 или С или P");
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         console.log(connection);
         console.log(max_static);
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
         code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
+    }
+    if (main_dev=="PR-28" && !(connection=="P" || connection=="C")){
+        console.log("code PR-28 КРОМЕ С и КРОМЕ P");
+        code =  dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + "(+)" + connection + "/(-)" + minus_connection;
     }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
@@ -1333,27 +1337,31 @@ $(function (){
                 document.getElementById(this.name + "-length-span-err").hidden = true;
                 $("input[name=" + this.name + "-mes-env-temp]").val("");
                 console.log("ВСТАВИТЬ СНЯТИЕ ВЫБОРА ПРИСОЕДИНЕНИЯ");
-                if ($("#c-pr").prop("checked", true)){$("#c-pr").trigger("click");}
-                if ($("#P").prop("checked", true)){$("#P").trigger("click");}
+                // if ($("#c-pr").prop("checked", true)){$("#c-pr").trigger("click");}
+                // if ($("#P").prop("checked", true)){$("#P").trigger("click");}
 
-                for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки кап или директ
-                    for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
-                        $("input[name=" + plmin + cons + "]").each(function(){
-                            // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
-                            $(this).prop('checked', false);
-                        })
-                        $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-                    }
-                    $("#" + plmin + "flange-list").prop('checked', false);
+                let plminn = "";
+                if (this.name=="cap-minus"){ ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки кап или директ
+                    plminn = "minus-";
+                    $('.minus-thread-flange-hygienic').hide(0);
+                    $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
+                    $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
+                }else{
+                    plminn = "";
+                    $('.thread-flange-hygienic').hide(0);
+                    $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
+                    $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
                 }
-                $('.thread-flange-hygienic').hide(0);
-                $('.minus-thread-flange-hygienic').hide(0);
-                $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-                $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-                $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
-                $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
-                $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
-                $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
+                for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+                    $("input[name=" + plminn + cons + "]").each(function(){
+                        // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+                        $(this).prop('checked', false);
+                    })
+                    $("#"+ plminn + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                }
+                $("#" + plminn + "flange-list").prop('checked', false);
             }
             if (this.name=="flange"){
                 $("#flange-select-field > span").each(function(){
