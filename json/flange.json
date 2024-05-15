@@ -2,7 +2,7 @@
  {
     "name": "s_p_dn50",
     "code_name": "S-P-DN50PN40B",
-    "description": "Разделитель фланцевый плоский S-P-DN50PN40B.",
+    "description": "Разделитель фланцевый плоский S-P DN50 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 10,
@@ -17,7 +17,7 @@
   {
     "name": "s_p_dn80",
     "code_name": "S-P-DN80PN40B",
-    "description": "Разделитель фланцевый плоский S-P-DN80PN40B.",
+    "description": "Разделитель фланцевый плоский S-P DN80 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 10,
@@ -32,7 +32,7 @@
   {
     "name": "s_p_dn100",
     "code_name": "S-P-DN100PN40B",
-    "description": "Разделитель фланцевый плоский S-P-DN100PN40B.",
+    "description": "Разделитель фланцевый плоский S-P DN100 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 10,
@@ -47,7 +47,7 @@
   {
     "name": "s_t_dn50",
     "code_name": "S-T-DN50PN40B",
-    "description": "Разделитель фланцевый цилиндрический S-T-DN50PN40B.",
+    "description": "Разделитель фланцевый цилиндрический S-T DN50 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 100,
@@ -62,7 +62,7 @@
   {
     "name": "s_t_dn80",
     "code_name": "S-T-DN80PN40B",
-    "description": "Разделитель фланцевый цилиндрический S-T-DN80PN40B.",
+    "description": "Разделитель фланцевый цилиндрический S-T DN80 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 10,
@@ -77,7 +77,7 @@
   {
     "name": "s_t_dn100",
     "code_name": "S-T-DN100PN40B",
-    "description": "Разделитель фланцевый цилиндрический S-T-DN100PN40B.",
+    "description": "Разделитель фланцевый цилиндрический S-T DN100 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 10,
@@ -92,7 +92,7 @@
   {
     "name": "s_tk_wash_dn100",
     "code_name": "S-T-WASH-DN100PN40B",
-    "description": "Разделитель фланцевый цилиндрический с дистанционным соединением со втроенной системой промывания мембраны S-TK-WASH-DN100PN40B.",
+    "description": "Разделитель фланцевый цилиндрический S-T-WASH DN100 PN40 тип B с дистанционным соединением со втроенной системой промывания мембраны.",
     "cap-or-not": "capillary",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
@@ -105,7 +105,7 @@
   {
     "name": "s_ch_dn50",
     "code_name": "S-Ch-DN50PN40B",
-    "description": "Разделитель фланцевый плоский химостойкий S-Ch-DN50PN40B.",
+    "description": "Разделитель фланцевый плоский химостойкий S-Ch DN50 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 40,
@@ -123,7 +123,7 @@
   {
     "name": "s_ch_dn80",
     "code_name": "S-Ch-DN80PN40B",
-    "description": "Разделитель фланцевый плоский химостойкий S-Ch-DN80PN40B.",
+    "description": "Разделитель фланцевый плоский химостойкий S-Ch DN80 PN40 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 4000,
     "range": 10,
@@ -154,7 +154,7 @@
   {
     "name": "s_compch-dn25",
     "code_name": "S-CompCh-DN25PN16B",
-    "description": "Разделитель фланцевый компактный химостойкий S-CompCh-DN25PN16B.",
+    "description": "Разделитель фланцевый компактный химостойкий S-CompCh DN25 PN16 тип B.",
     "begin_range_kpa": -101,
     "end_range_kpa": 1600,
     "range": 40,
