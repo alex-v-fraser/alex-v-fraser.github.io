@@ -280,6 +280,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             i-=1;
         }
     }
+    console.log(full_description);
+    console.log(code);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
