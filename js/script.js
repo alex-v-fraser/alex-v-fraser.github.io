@@ -260,15 +260,11 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
     }
 
-    console.log(full_description);
-    console.log(code);
     for (let i=0; i<=code.length; i++) {
         if (typeof code[i]!="undefined" && code[i].startsWith("(+)") && typeof code[i+1]!="undefined" && !code[i+1].startsWith("(-)")){
             console.log("соединяем код и описание");
             let temp_code = code[i] + "-" + code[i+1];
-            console.log(temp_code);
             let temp_descr = full_description.get(code[i])+ "<br>" + full_description.get(code[i+1]);
-            console.log(temp_descr);
             full_description.delete(code[i]);
             full_description.delete(code[i+1]);
             full_description.set(temp_code, temp_descr);
@@ -278,9 +274,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         if (typeof code[i]!="undefined" && code[i].startsWith("(-)") && typeof code[i+1]!="undefined"){
             console.log("соединяем код и описание минус");
             let temp_code = code[i] + "-" + code[i+1];
-            console.log(temp_code);
             let temp_descr = full_description.get(code[i])+ "<br>" + full_description.get(code[i+1]);
-            console.log(temp_descr);
             full_description.delete(code[i]);
             full_description.delete(code[i+1]);
             full_description.set(temp_code, temp_descr);
@@ -288,8 +282,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             i-=1;
         }
     }
-    console.log(full_description);
-    console.log(code);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
