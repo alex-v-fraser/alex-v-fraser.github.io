@@ -843,6 +843,16 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         console.log("code PR-28 КРОМЕ С и КРОМЕ P");
         code =  dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + "(+)" + connection + "/(-)" + minus_connection;
     }
+    if (main_dev=="APR-2000" && (connection=="P" || connection=="C")){
+        console.log("code APR-2000  или С или P");
+        max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
+        connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + max_static + main_range + range + output + connection;
+    }
+    if (main_dev=="APR-2000" && !(connection=="P" || connection=="C" || connection=="C7/16")){
+        console.log("code APR-2000 КРОМЕ С и КРОМЕ P");
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + "/(-)" + minus_connection;
+    }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
     $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
