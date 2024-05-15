@@ -108,5 +108,15 @@
         "name": "hart7",
         "code_name": "Hart7",
         "description": "Протокол обмена данными HART версии 7."
+    },
+    {
+        "name": "(+)",
+        "code_name": "(+)",
+        "description": "Вход для высокого давления."
+    },
+    {
+        "name": "(-)",
+        "code_name": "(-)",
+        "description": "Вход для низкого давления."
     }
 ]

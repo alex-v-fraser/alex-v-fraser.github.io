@@ -137,15 +137,21 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 code.splice(x, 0, temp[j]);
                 x+=1;
             }
+            if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
+                code.splice(i, 2, "(-)", code[i+1].slice(1,));
+            }
+            if (code[i]=="(+)S"){
+                code.splice(i, 1, "(+)", "S");
+            }
         }
     }
-    console.log(code);
 
     let full_description = new Map([]);
     for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
         let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
         let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
         let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
+        var plus_minus = "";
 
         if (condition1 && !condition2 && !condition3){
             if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
@@ -173,42 +179,36 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
         }
 
-        console.log(code[i]);
 
-        if (code[i].toLowerCase()=="s" || code[i].toLowerCase()=="(+)s" || code[i].toLowerCase()=="(-)s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
-            let plus_minus = "";
-            let add_descr = " В сборе с разделителем.";
-            if (code[i].toLowerCase()=="(+)s"){
-                code[i]=code[i].slice(3,);
+        if (code[i].toLowerCase()=="s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+            let add_descr = "<br>В сборе с разделителем.";
+            if (code[i-1]=="(+)"){
                 plus_minus = "(+)";
-                add_descr = " В сборе с разделителем, соединенным с камерой высокого давления.";
-                console.log(code[i]);
+                add_descr = "<br>В сборе с разделителем, соединенным с камерой высокого давления.";
             }
-            if (code[i].toLowerCase()=="(-)s"){
-                code[i]=code[i].slice(3,);
+            if (code[i-1]=="(-)"){
                 plus_minus = "(-)";
-                add_descr = " В сборе с разделителем, соединенным с камерой низкого давления.";
-                console.log(code[i]);
+                add_descr = "<br>В сборе с разделителем, соединенным с камерой низкого давления.";
             }
             let temp_code_i1 = code[i+1];
             let add_letter = "";
             if (temp_code_i1.endsWith("K")){
-                add_descr += " K - cоединение разделителя через капилляр.";
+                add_descr += "<br>K - cоединение разделителя через капилляр.";
                 temp_code_i1 = temp_code_i1.slice(0,-1);
                 add_letter = "K";
             }
             if (temp_code_i1.endsWith("R") && temp_code_i1.length>1){
-                add_descr += " R - c радиатором для сред измерения до 200°С.";
+                add_descr += "<br>R - c радиатором для сред измерения до 200°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-1);
                 add_letter = "R";
             }
             if (temp_code_i1.endsWith("R2") && temp_code_i1.length>2){
-                add_descr += " R2 - c радиатором для сред измерения до 250°С.";
+                add_descr += "<br>R2 - c радиатором для сред измерения до 250°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
                 add_letter = "R2";
             }
             if (temp_code_i1.endsWith("R3") && temp_code_i1.length>2){
-                add_descr += " R3 - c радиатором для сред измерения до 310°С.";
+                add_descr += "<br>R3 - c радиатором для сред измерения до 310°С.";
                 temp_code_i1 = temp_code_i1.slice(0,-2);
                 add_letter = "R3";
             }
@@ -228,7 +228,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                             let arr = code[i].split("-");
                             arr[1] = arr[1] + add_letter;
                             code[i] = arr.join("-");
-                            full_description.set(code[i], temp_desc);
+                            full_description.set(plus_minus + code[i], temp_desc);
                             // console.log("СРАБОТАЛО: " + code[i], temp_desc);
                             repeat_cycle = false;
                             break;
@@ -237,7 +237,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
                 num_cut-=1;
             }
-            code[i] = plus_minus + code[i];
+            code[i]=plus_minus + code[i];
         }
 
         for (item of search_names){
@@ -252,9 +252,16 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
+    if (full_description.has("(+)")){full_description.delete("(+)")}
+    if (full_description.has("(-)")){full_description.delete("(-)")}
+    for (let i=0; i<=code.length; i++){
+        if (code[i]=="(+)" || code[i]=="(-)"){
+            code.splice(i,1);
+        }
+    }
 
-    console.log(full_description);
-    console.log(code);
+    // console.log(full_description);
+    // console.log(code);
 
     if (code.length>2 && full_description.size == code.length){
         document.getElementById("codeError").innerHTML = "";
