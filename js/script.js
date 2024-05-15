@@ -229,7 +229,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                             arr[1] = arr[1] + add_letter;
                             code[i] = arr.join("-");
                             full_description.set(plus_minus + code[i], temp_desc);
-                            console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
+                            // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
                             repeat_cycle = false;
                             break;
                         }
@@ -262,7 +262,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
 
     for (let i=0; i<=code.length; i++) {
         if (typeof code[i]!="undefined" && code[i].startsWith("(+)") && typeof code[i+1]!="undefined" && !code[i+1].startsWith("(-)")){
-            console.log("соединяем код и описание");
             let temp_code = code[i] + "-" + code[i+1];
             let temp_descr = full_description.get(code[i])+ "<br>" + full_description.get(code[i+1]);
             full_description.delete(code[i]);
@@ -272,7 +271,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             i-=1;
         }
         if (typeof code[i]!="undefined" && code[i].startsWith("(-)") && typeof code[i+1]!="undefined"){
-            console.log("соединяем код и описание минус");
             let temp_code = code[i] + "-" + code[i+1];
             let temp_descr = full_description.get(code[i])+ "<br>" + full_description.get(code[i+1]);
             full_description.delete(code[i]);
