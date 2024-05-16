@@ -265,16 +265,15 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             let temp_code = code[i] + "-" + code[i+1];
             let temp_descr = full_description.get(code[i])+ "<br>" + full_description.get(code[i+1]);
             full_description.delete(code[i]);
-            // full_description.delete(code[i+1]);
-            // let temp_code2 = full_description.get(code[i+1]);
             full_description.set(temp_code, temp_descr);
-            code.splice(i, 2, temp_code);
-            i-=1;
-            if (code.includes(code[i+1])){
-                console.log("пропустить удаление");
+            if (code.filter(x => x === code[i+1]).length>1){
+                console.log("Пропустить удаление ", code[i+1]);
             }else{
+                console.log("УДАЛЯЕМ ", code[i+1]);
                 full_description.delete(code[i+1]);
             }
+            code.splice(i, 2, temp_code);
+            i-=1;
         }
         if (typeof code[i]!="undefined" && code[i].startsWith("(-)") && typeof code[i+1]!="undefined"){
             let temp_code = code[i] + "-" + code[i+1];
