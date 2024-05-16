@@ -283,7 +283,7 @@
     "cap-or-not": "capillary",
     "begin_range_kpa": -101,
     "end_range_kpa": 10000,
-    "range_c": 1000,
+    "range_c": 16,
     "max_temp": 180,
     "material": [
       "aisi316"
