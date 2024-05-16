@@ -685,7 +685,10 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         [0, 25, "0...25кПа"],
         [-10, 10, "-10...10кПа"],
         [-0.5, 7.0, "-0,5...7кПа"],
-        [-50, 50, "-50...50кПа"]
+        [-16, 16, "-16...16кПа"],
+        [-50, 50, "-50...50кПа"],
+        [-160, 200, "-160...200кПа"],
+        [-160, 1600, "-160...1600кПа"]
     ];
     main_range = "";
     if (dev_type == "PC-28.Smart/" || dev_type == "PC-28.Modbus/" || main_dev == "APC-2000"){
@@ -715,8 +718,12 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 
     if (dev_type == "PR-28.Smart/" || dev_type == "PR-28.Modbus/" || main_dev == "APR-2000"){
         let min_main_range = [-200000, 200000, ""];
+        let begin = data.get("begin_range_kpa");
+        if (data.get("cap-minus")=="capillary"){
+            begin = -data.get("end_range_kpa");
+        }
         for (let el of main_ranges_diff){
-            if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+            if (begin>=el[0] && data.get("end_range_kpa")<=el[1]){
                 if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
                     min_main_range = el;
                 }
@@ -742,8 +749,11 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         $("#hs").prop('checked', true);
     }
     range = (!(dev_type=="PC-28.Modbus/" || dev_type=="PR-28.Modbus/")) ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
-    range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
+    console.log("range1: " + range);
     range = ((main_dev == "APR-2000" || main_dev == "PR-28") && range!="") ? range.slice(0,-5) + "/" : range;
+    console.log("range2: " + range);
+    range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
+    console.log("range3: " + range);
 
     if (((main_dev=="PR-28" || main_dev=="APR-2000") && (connection=="P" || connection=="C")) || !(main_dev=="PR-28" || main_dev=="APR-2000")){///КОРРЕКТИРОВКА CONNECTION для PC, APC, PR/C/P, APR/C/P,
         connection = connection.split("-");
@@ -1327,7 +1337,6 @@ function disable_invalid_options(){
             $("label[for=" + cons + "]").addClass('disabled');
             $("#" + cons).prop('disabled', true);
         }
-
     }
     if (full_conf.get("electrical")!="APCALW"){ // проверка специсполнения PD, SN, -50..80, HART7
         $("label[for=spec_pd]").addClass('disabled');
@@ -1409,14 +1418,6 @@ $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
         if ($(this).is(':checked') && this.name!="special") { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС (кроме special)
             $(this).siblings("input:checkbox").prop('checked', false);
-            if (this.name=="cap-or-not" || this.name=="cap-plus"){
-                $(".thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
-                // $("#connection-type-select").find("input:checkbox:checked").prop('checked', false);
-            }
-            if (this.name=="cap-minus"){
-                $(".minus-thread-flange-hygienic").find("input:checkbox:checked").trigger('click');
-                // $("#minus-connection-type-select").find("input:checkbox:checked").prop('checked', false);
-            }
             if (this.name=="max-static"){
                 MaxStaticChecked();
                 return;
@@ -1445,32 +1446,18 @@ $(function (){
                 document.getElementById(this.name + "-radiator-select-err").hidden = true;
                 document.getElementById(this.name + "-length-span-err").hidden = true;
                 $("input[name=" + this.name + "-mes-env-temp]").val("");
-                console.log("ВСТАВИТЬ СНЯТИЕ ВЫБОРА ПРИСОЕДИНЕНИЯ");
-                // if ($("#c-pr").prop("checked", true)){$("#c-pr").trigger("click");}
-                // if ($("#P").prop("checked", true)){$("#P").trigger("click");}
-
-                let plminn = "";
-                if (this.name=="cap-minus"){ ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки кап или директ
-                    plminn = "minus-";
-                    $('.minus-thread-flange-hygienic').hide(0);
-                    $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                console.log("СНЯТИЕ ВЫБОРА ПРИСОЕДИНЕНИЯ");
+                let data;
+                if (this.name=="cap-minus"){
                     $("#direct-cap-minus").prop('checked', false).prop('disabled', false);
                     $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
+                    data="minus";
                 }else{
-                    plminn = "";
-                    $('.thread-flange-hygienic').hide(0);
-                    $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                     $("#capillary-cap-plus").prop('checked', false).prop('disabled', false);
                     $("#direct-cap-plus").prop('checked', false).prop('disabled', false);
+                    data="";
                 }
-                for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
-                    $("input[name=" + plminn + cons + "]").each(function(){
-                        // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
-                        $(this).prop('checked', false);
-                    })
-                    $("#"+ plminn + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-                }
-                $("#" + plminn + "flange-list").prop('checked', false);
+                uncheckAllConnections(data);
             }
             if (this.name=="flange"){
                 $("#flange-select-field > span").each(function(){
@@ -1570,6 +1557,9 @@ $(function (){
 
         if ($(this).val()=="capillary") { // ПОКАЗЫВАЕМ ВЫБОР ДЛИНЫ КАПИЛЛЯРА
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
+            let data = $(this.parentElement).prop("id").slice(4,-13);
+            data = data =="minus" ? "minus" : "";
+            uncheckAllConnections(data);
             document.getElementById(target_name + "radiator-select").hidden = true;
             document.getElementById(target_name + "length-span").hidden = false;
             document.getElementById(target_name + "radiator-select-err").hidden = true;
@@ -1584,6 +1574,9 @@ $(function (){
 
         if ($(this).val()=="direct" && !$("#25-max-static").is(":checked")) { // ПОКАЗЫВАЕМ ВЫБОР РАДИАТОРА
             let target_name = $(this.parentElement).prop("id").slice(0,-12);
+            let data = $(this.parentElement).prop("id").slice(4,-13);
+            data = data =="minus" ? "minus" : "";
+            uncheckAllConnections(data);
             document.getElementById(target_name + "radiator-select").hidden = false;
             document.getElementById(target_name + "length-span").hidden = true;
             document.getElementById(target_name + "length-span-err").hidden = true;
@@ -1967,4 +1960,26 @@ function MaxStaticChecked(){
     }
 
     disable_invalid_options();
+}
+
+function uncheckAllConnections(plmin){////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки кап или директ
+    if (plmin=="minus"){
+        plminn = "minus-";
+        $('.minus-thread-flange-hygienic').hide(0);
+        $("#cap-minus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+
+    }else{
+        plminn = "";
+        $('.thread-flange-hygienic').hide(0);
+        $("#cap-plus-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+
+    }
+    for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
+        $("input[name=" + plminn + cons + "]").each(function(){
+            // $("label[for="+ $(this).prop("id") +"]").addClass('disabled');
+            $(this).prop('checked', false);
+        })
+        $("#"+ plminn + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
+    $("#" + plminn + "flange-list").prop('checked', false);
 }
