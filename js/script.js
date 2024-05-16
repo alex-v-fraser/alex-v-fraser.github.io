@@ -725,7 +725,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         main_range = min_main_range[2] + "/";
     }
 
-    if ((main_dev == "APC-2000" && data.get("end_range_kpa")<=2.5 && data.get("pressure_type")=="") || (main_dev == "APR-2000" && data.get("end_range_kpa")<=2.5)){
+    if ((main_dev == "APC-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5) && data.get("pressure_type")=="") || (main_dev == "APR-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5))){
         const main_hs_ranges = [
             [-2.5, 2.5, "-2,5...2,5кПа"],
             [-0.7, 0.7, "-0,7...0,7кПа"]
@@ -1282,11 +1282,11 @@ function disable_invalid_options(){
 
 
     /// ПРОВЕРКА SPECIAL
-    if (typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || typeof full_conf.get("output")=='undefined'){ //проверка 0,16
+    if (full_conf.get("main_dev") != "pc-28" || typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || typeof full_conf.get("output")=='undefined'){ //проверка 0,16
         $("label[for=0_16]").addClass('disabled');
         $("#0_16").prop('disabled', true);
     }
-    if (full_conf.get("output") != "4_20" || $("#0_16").is(":checked")){ // проверка H
+    if (full_conf.get("main_dev") != "pc-28" || full_conf.get("output") != "4_20" || $("#0_16").is(":checked")){ // проверка H
         $("label[for=hi_load]").addClass('disabled');
         $("#hi_load").prop('disabled', true);
     }
@@ -1294,7 +1294,7 @@ function disable_invalid_options(){
         $("label[for=oxygen]").addClass('disabled');
         $("#oxygen").prop('disabled', true);
     }
-    if (full_conf.get("output") != "4_20" || typeof full_conf.get("electrical") == 'undefined' || full_conf.get("electrical") == "ALW" || full_conf.get("electrical") == "ALW2"){//проверка TR
+    if (full_conf.get("main_dev") != "pc-28" || full_conf.get("output") != "4_20" || typeof full_conf.get("electrical") == 'undefined' || full_conf.get("electrical") == "ALW" || full_conf.get("electrical") == "ALW2"){//проверка TR
         $("label[for=time_response]").addClass('disabled');
         $("#time_response").prop('disabled', true);
     }
@@ -1319,7 +1319,7 @@ function disable_invalid_options(){
         $("#hs").prop('disabled', true);
         $("#hs").prop('checked', false);
     }
-    if (full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")<=2.5 && full_conf.get("pressure_type")==""){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
+    if ((main_dev == "APC-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5) && data.get("pressure_type")=="") || (main_dev == "APR-2000" && ((data.get("end_range_kpa")<=2.5 || data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
         // $("label[for=hs]").addClass('disabled');
         $("#hs").prop('checked', true);
         $("#hs").prop('disabled', true);
