@@ -247,6 +247,10 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                         full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
                         break;
                     }
+                    if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                        full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                        break;
+                    }
                     full_description.set(code[i], el.get("description"));
                 }
             }
@@ -284,6 +288,11 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             code.splice(i, 2, temp_code);
             i-=1;
         }
+        // if (typeof code[i]!="undefined" && (code[i].startsWith("S-")||code[i].startsWith("(-)S-")) && !(code[i].endsWith("-DC") || code[i].endsWith("-SF"))){
+        //     full_description.set(code[i], full_description.get(code[i]) + "<br>Метрологический комплект заполнен манометрической жидкостью с диапазоном рабочих температур: -50...180°С и НЕ ПРЕДНАЗНАЧЕННОЙ ДЛЯ ВАКУУМА!");
+        //     console.log(code[i]);
+        //     console.log('добавляем в описание заправку АК');
+        // }
     }
     console.log(full_description);
     console.log(code);
@@ -719,7 +728,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
 
     if (dev_type == "PR-28.Smart/" || dev_type == "PR-28.Modbus/" || main_dev == "APR-2000"){
-        let min_main_range = [-200000, 200000, ""];
+        let min_main_range = [-160, 1600, "-160...1600кПа"];
         let begin = data.get("begin_range_kpa");
         if (data.get("cap-minus")=="capillary"){
             begin = -data.get("end_range_kpa");
@@ -734,7 +743,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         main_range = min_main_range[2] + "/";
     }
 
-    if ((main_dev == "APC-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5) && data.get("pressure_type")=="") || (main_dev == "APR-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5))){
+    if ((main_dev == "APC-2000" && (data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5 && data.get("pressure_type")=="" && typeof data.get("thread")!='undefined' && (data.get("thread")=="P" || data.get("thread")=="GP" || data.get("thread")=="1_2NPT") ) || (main_dev == "APR-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5))){
         const main_hs_ranges = [
             [-2.5, 2.5, "-2,5...2,5кПа"],
             [-0.7, 0.7, "-0,7...0,7кПа"]
@@ -751,11 +760,11 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         $("#hs").prop('checked', true);
     }
     range = (!(dev_type=="PC-28.Modbus/" || dev_type=="PR-28.Modbus/")) ? (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/" : "";
-    console.log("range1: " + range);
+    // console.log("range1: " + range);
     range = ((main_dev == "APR-2000" || main_dev == "PR-28") && range!="") ? range.slice(0,-5) + "/" : range;
-    console.log("range2: " + range);
+    // console.log("range2: " + range);
     range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
-    console.log("range3: " + range);
+    // console.log("range3: " + range);
 
     if (((main_dev=="PR-28" || main_dev=="APR-2000") && (connection=="P" || connection=="C")) || !(main_dev=="PR-28" || main_dev=="APR-2000")){///КОРРЕКТИРОВКА CONNECTION для PC, APC, PR/C/P, APR/C/P,
         connection = connection.split("-");
@@ -844,33 +853,40 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
             special = special + $(this).val() + "/";
         }
     })
+    let fluid = "";
+    if (connection.startsWith("S-") || connection.startsWith("(+)S-") || (typeof minus_connection!='undefined' && minus_connection.startsWith("(-)S-"))){
+        fluid = "-" + $("input[name=fluid]:checked").val();
+        console.log("Добавляем жижу в код: " + fluid);
+    }
+
+
     if (main_dev=="PC-28"){
         console.log("code1");
-        code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
+        code = dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection + fluid;
     }
     if (main_dev=="APC-2000"){
         console.log("code2");
-        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection;
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection + fluid;
     }
     if (main_dev=="PR-28" && (connection=="P" || connection=="C")){
         console.log("code PR-28 или С или P");
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
-        code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
+        code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection + fluid;
     }
     if (main_dev=="PR-28" && !(connection=="P" || connection=="C" || connection=="C7/16")){
         console.log("code PR-28 КРОМЕ С и КРОМЕ P");
-        code =  dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + "(+)" + connection + "/(-)" + minus_connection;
+        code =  dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + "(+)" + connection + "/(-)" + minus_connection + fluid;
     }
     if (main_dev=="APR-2000" && (connection=="P" || connection=="C")){
         console.log("code APR-2000  или С или P");
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
-        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + max_static + main_range + range + output + connection;
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + max_static + main_range + range + output + connection + fluid;
     }
     if (main_dev=="APR-2000" && !(connection=="P" || connection=="C" || connection=="C7/16")){
         console.log("code APR-2000 КРОМЕ С и КРОМЕ P");
-        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + "/(-)" + minus_connection;
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + "/(-)" + minus_connection + fluid;
     }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
