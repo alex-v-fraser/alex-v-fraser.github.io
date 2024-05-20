@@ -381,7 +381,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             }
         }
     }else{
-        console.log(options);
         full_conf.delete("max-static");
         full_conf.delete("cap-plus");
         full_conf.delete("cap-minus");
@@ -449,14 +448,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         full_conf.delete("end_range_kpa");
     }
 
-    // if (full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="pr-28"){
-    //     full_conf.set("connection-type", $("input[name=connection-type]:checked").prop("id"));
-    //     full_conf.set("minus-connection-type", $("input[name=minus-connection-type]:checked").prop("id"));
-    // }
-
-
-
-
     if (typeof full_conf.get("connection-type")!=='undefined'){
         full_conf.set(full_conf.get("connection-type").slice(0,-5), $("input[name ="+ full_conf.get("connection-type").slice(0,-5) +"]:checked").prop("id"));
         full_conf.delete("connection-type");
@@ -494,6 +485,17 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         full_conf.delete("capillary_length_plus");
         full_conf.delete("capillary_length_minus");
     }
+
+    if ($("#fluid-select-div").hasClass("active-option-to-select")){
+        if ($("input[name=fluid]").is("checked").length==0){
+            full_conf.set("fluid");
+        }else{
+            full_conf.set("fluid", $("input[name=fluid]:checked").val());
+        }
+    }else{
+        full_conf.delete("fluid");
+    }
+
     return full_conf;
 }
 
@@ -884,7 +886,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "max-static"]; //ДОБАВИТЬ hygienic когда они появятся
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "max-static"];
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -975,6 +977,28 @@ function disable_invalid_options(){
         }
     }
 
+    //СКРЫТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ и снять ее выбор
+    let fluid_on = (full_conf.has("thread") && typeof full_conf.get("thread")!="undefined" && full_conf.get("thread").startsWith("s_")) || (full_conf.has("flange") && typeof full_conf.get("flange")!='undefined' && full_conf.get("flange").startsWith("s_")) || (full_conf.has("hygienic") && typeof full_conf.get("hygienic")!='undefined' && full_conf.get("hygienic").startsWith("s_")) || (full_conf.has("minus-thread") && typeof full_conf.get("minus-thread")!='undefined' && full_conf.get("minus-thread").startsWith("minus-s_")) || (full_conf.has("minus-flange") && typeof full_conf.get("minus-flange")!='undefined' && full_conf.get("minus-flange").startsWith("minus-s_")) || (full_conf.has("minus-hygienic") && typeof full_conf.get("minus-hygienic")!='undefined' && full_conf.get("minus-hygienic").startsWith("minus-s_"));
+    if (fluid_on===false){
+        console.log("DISABLE INVALID OPTIONS скрыть выбор манометрической жидкости");
+        $("div.option-to-select.fluid-select-div").each(function(){
+            $(this).prop("style", "display: none").removeClass("active-option-to-select");
+            $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+        });
+        $("input[name=fluid]").each(function(){
+            $(this).prop('checked', false);
+        })
+        $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }else{    ///ПРОВЕРКА МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
+        console.log();
+        if ((typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<0 && full_conf.get("pressure_type")=="") || (typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<100 && full_conf.get("pressure_type")=="ABS") || (typeof full_conf.get("max_temp")!='undefined' && full_conf.get("max_temp")>180)  || (typeof full_conf.get("max_temp_plus")!='undefined' && full_conf.get("max_temp_plus")>180)  || (typeof full_conf.get("max_temp_minus")!='undefined' && full_conf.get("max_temp_minus")>180)){
+            $("label[for=ak20]").addClass('disabled');
+            $("#ak20").prop('disabled', true);
+        }else{
+            $("label[for=ak20]").removeClass('disabled');
+            $("#ak20").prop('disabled', false);
+        }
+    }
 
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// ПРОВЕРКА PC и APC
         $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
@@ -1149,8 +1173,6 @@ function disable_invalid_options(){
 
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
-                // low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
-                // hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
                     console.log("min_range capillary ", min_range);
@@ -1184,8 +1206,6 @@ function disable_invalid_options(){
             }
 
             if (full_conf.has("minus-" + con_type) && typeof full_conf.get("minus-" + con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
-                // low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
-                // hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
                     console.log("min_range capillary ", min_range);
@@ -1289,6 +1309,7 @@ function disable_invalid_options(){
             }
         }
     }
+
 
 
     /// ПРОВЕРКА SPECIAL
@@ -1475,9 +1496,6 @@ $(function (){
                         $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                     }
                     $("#" + plmin + "flange-list").prop('checked', false);
-
-                    // $("label[for="+ plmin +"c-pr]").removeClass('disabled');
-                    // $("label[for="+ plmin +"flange-list]").removeClass('disabled');
                 }
                 $('.thread-flange-hygienic').hide(0);
                 $('.minus-thread-flange-hygienic').hide(0);
@@ -1495,6 +1513,18 @@ $(function (){
             }
             console.log("3");
             if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic"){
+                ///СКРЫТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ при ОТМЕНЕ ПРИСОЕДИНЕНИЯ
+                if ($(this).prop('id').startsWith('s_') || $(this).prop('id').startsWith('minus-s_')){
+                    console.log("скрыть выбор манометрической жидкости при отмене");
+                    $("div.option-to-select.fluid-select-div").each(function(){
+                        $(this).prop("style", "display: none").removeClass("active-option-to-select");
+                        $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+                    });
+                    $("input[name=fluid]").each(function(){
+                        $(this).prop('checked', false);
+                    })
+                    $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                }
                 var $this = $(this.parentElement.parentElement.parentElement);
                 $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
                 $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
@@ -1513,6 +1543,14 @@ $(function (){
                 $("input[name="+ $(this).prop("id").slice(0,-5) +"]:checked").prop('checked', false);
                 $('.' + this.name.slice(0,-15) + 'thread-flange-hygienic').hide(0);
                 console.log("4");
+                $("div.option-to-select.fluid-select-div").each(function(){
+                    $(this).prop("style", "display: none").removeClass("active-option-to-select");
+                    $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+                });
+                $("input[name=fluid]").each(function(){
+                    $(this).prop('checked', false);
+                })
+                $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
             }
             disable_invalid_options();
             console.log("5");
@@ -1520,6 +1558,24 @@ $(function (){
         }
 
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
+            /// ПОКАЗАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
+            if ($(this).prop('id').startsWith('s_') || $(this).prop('id').startsWith('minus-s_')){
+                console.log("ПОКАЗАТЬ выбор манометрической жидкости при выборе");
+                $("div.option-to-select.fluid-select-div").each(function(){
+                    $(this).prop("style", "display: block").addClass("active-option-to-select");
+                    $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
+                });
+            }else{
+                console.log("СКРЫТЬ выбор манометрической жидкости при выборе");
+                $("div.option-to-select.fluid-select-div").each(function(){
+                    $(this).prop("style", "display: none").removeClass("active-option-to-select");
+                    $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+                });
+                $("input[name=fluid]").each(function(){
+                    $(this).prop('checked', false);
+                })
+                $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            }
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
             if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
                 let target = $(this).prop("id")  + "-cilinder-select";
