@@ -1633,6 +1633,7 @@ $(function (){
             let data = $(this.parentElement).prop("id").slice(4,-13);
             data = data =="minus" ? "minus" : "";
             uncheckAllConnections(data);
+            console.log(target_name);
             document.getElementById(target_name + "radiator-select").hidden = false;
             document.getElementById(target_name + "length-span").hidden = true;
             document.getElementById(target_name + "length-span-err").hidden = true;
@@ -1884,7 +1885,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                             document.getElementById(ids).value="";
                         }
                         for (let ids of ["cap-or-not-radiator-select", "cap-plus-radiator-select", "cap-minus-radiator-select", "cap-or-not-length-span", "cap-plus-length-span", "cap-minus-length-span", "cap-or-not-radiator-select-err", "cap-plus-radiator-select-err", "cap-minus-radiator-select-err", "cap-or-not-length-span-err", "cap-plus-length-span-err", "cap-minus-length-span-err"]){
-                            $("#" + ids).hide(0);
+                            document.getElementById(ids).hidden = true;
                         }
                         document.getElementById("pressure-unit-select").value="not_selected";
                         document.getElementById("pressure-type").value="not_selected";
