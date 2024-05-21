@@ -123,13 +123,13 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     for (let i=0; i<code.length; i++){
 
         if (typeof code[i+1]!='undefined'){
-            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && code[i+1].slice(0,4)=="2NPT") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="4") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-2)=="G3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16")){
+            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="4") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-2)=="G3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16")){
                 code.splice(i, 2, code[i] + "/" + code[i+1]);
             }
         }
     }
     for (let i=0; i<code.length; i++){
-        if (code[i].toLowerCase().startsWith("s-") || code[i].startsWith("(+)") || code[i].startsWith("(-)")){
+        if (code[i].toLowerCase().startsWith("s-") || (code[i].startsWith("(+)") && code[i]!="P") || (code[i].startsWith("(-)") && code[i]!="P")){
             let temp = code[i].split("-");
             code[i]= temp[0];
             let x=i+1;
@@ -140,11 +140,12 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
                 code.splice(i, 2, "(-)", code[i+1].slice(1,));
             }
-            if (code[i]=="(+)S"){
-                code.splice(i, 1, "(+)", "S");
+            if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)"){
+                code.splice(i, 1, "(+)", code[i].slice(3,));
             }
         }
     }
+    console.log(code);
 
     let full_description = new Map([]);
     for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
@@ -179,18 +180,17 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
         }
 
-
-        if (code[i].toLowerCase()=="s"){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+        if (code[i].toLowerCase()=="s" || (typeof code[i-1]!='undefined' && (code[i-1]=="(-)") && (code[i]=="P" || code[i]=="1/4NPT(F)"))  || (typeof code[i-1]!='undefined' && (code[i-1]=="(+)") && (code[i]=="P" || code[i]=="1/4NPT(F)"))){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
             let add_descr = "<br>В сборе с разделителем.";
             if (code[i-1]=="(+)"){
                 plus_minus = "(+)";
-                add_descr = "<br>В сборе с разделителем, соединенным с камерой высокого давления.";
+                add_descr = "<br>Со стороны высокого давления.";
             }
             if (code[i-1]=="(-)"){
                 plus_minus = "(-)";
-                add_descr = "<br>В сборе с разделителем, соединенным с камерой низкого давления.";
+                add_descr = "<br>Со стороны низкого давления.";
             }
-            let temp_code_i1 = code[i+1];
+            let temp_code_i1 = typeof (code[i+1])!='undefined' ? code[i+1] : "";
             let add_letter = "";
             if (temp_code_i1.endsWith("K")){
                 add_descr += "<br>Соединение разделителя через капилляр.";
@@ -217,19 +217,48 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             let temp_code_v2 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2];
             let temp_code_v3 = code[i]+ "-" + temp_code_i1;
             let temp_codes =[temp_code_v1, temp_code_v2, temp_code_v3];
+            console.log(code[i-1]);
+            console.log(code[i]);
+            if  ((code[i-1]=="(+)" && code[i]=="P") || (code[i-1]=="(-)" && code[i]=="P")){
+                // temp_codes=["P"];
+                for (el of window["thread_restr_lst"].values()){
+                    if (el.get("code_name")==code[i]){
+                        let temp_desc = el.get("description") + add_descr;
+                        full_description.set(plus_minus + code[i], temp_desc);
+                        console.log("228 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                        break;
+                    }
+                }
+            }
+            if ((code[i-1]=="(+)" && code[i]=="1/4NPT(F)") || (code[i-1]=="(-)" && code[i]=="1/4NPT(F)")){
+                // temp_codes=["1/4NPT(F)"];
+                for (el of window["thread_restr_lst"].values()){
+                    if (el.get("code_name")==code[i]){
+                        let temp_desc = el.get("description") + add_descr;
+                        full_description.set(plus_minus + code[i], temp_desc);
+                        console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                        break;
+                    }
+                }
+            }
+            console.log(temp_codes);
             let repeat_cycle = true;
             let num_cut = 4;
             for (els of temp_codes){
+                if (els.endsWith("-")){els=els.slice(0,-1)};
+                console.log(els);
                 for (item of search_names){
                     for (el of window[item + "_restr_lst"].values()){
                         if (repeat_cycle === true && el.get("code_name") === els){
                             code.splice(i, num_cut, els);
                             let temp_desc = el.get("description") + add_descr;
                             let arr = code[i].split("-");
-                            arr[1] = arr[1] + add_letter;
+                            if (typeof arr[1]!='undefined'){
+                                arr[1] = arr[1] + add_letter;
+                            }
                             code[i] = arr.join("-");
                             full_description.set(plus_minus + code[i], temp_desc);
-                            // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
+                            console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
                             repeat_cycle = false;
                             break;
                         }
@@ -238,6 +267,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 num_cut-=1;
             }
             code[i]=plus_minus + code[i];
+            console.log(code[i]);
+            console.log(code);
         }
 
         for (item of search_names){
@@ -265,7 +296,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     }
 
     for (let i=0; i<=code.length; i++) {
-        if (typeof code[i]!="undefined" && code[i].startsWith("(+)") && typeof code[i+1]!="undefined" && !code[i+1].startsWith("(-)")){
+        if (typeof code[i]!="undefined" && code[i].startsWith("(+)") && typeof code[i+1]!="undefined" && !code[i+1].startsWith("(-)") && !(code[i+1]=="P" || code[i+1]=="1/4NPT(F)")){
             let temp_code = code[i] + "-" + code[i+1];
             let temp_descr = full_description.get(code[i])+ "<br>" + full_description.get(code[i+1]);
             full_description.delete(code[i]);
@@ -508,7 +539,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     return full_conf;
 }
 
-function CorPSelected(c_or_p, state){ /////////////////////////////////////////////// ОДНОВРЕМЕННЫЙ ВЫБОР тип С или P ///////////////////////////////////////////////////////////
+function CorPSelected(c_or_p, state){ /////////////////////////////////////////////// ОДНОВРЕМЕННЫЙ ВЫБОР тип С  ///////////////////////////////////////////////////////////
 
     let full_configure = get_full_config();
     let connect_1 = c_or_p.startsWith("minus-") ? c_or_p.slice(6,) : c_or_p;
@@ -766,7 +797,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     range = ((dev_type=="PC-28.Smart/" || main_dev == "APC-2000" || main_dev == "APR-2000" || dev_type == "PR-28.Smart/") && range==main_range) ? "" : range;
     // console.log("range3: " + range);
 
-    if (((main_dev=="PR-28" || main_dev=="APR-2000") && (connection=="P" || connection=="C")) || !(main_dev=="PR-28" || main_dev=="APR-2000")){///КОРРЕКТИРОВКА CONNECTION для PC, APC, PR/C/P, APR/C/P,
+    if (((main_dev=="PR-28" || main_dev=="APR-2000") && ((connection=="P" && minus_connection=="P") || connection=="C")) || !(main_dev=="PR-28" || main_dev=="APR-2000")){///КОРРЕКТИРОВКА CONNECTION для PC, APC, PR/C/P, APR/C/P,
         connection = connection.split("-");
         if (connection[0]=="S"){
             s_material = $("input[name=material]:checked").val() == "" ? "" : "-" + $("input[name=material]:checked").val();
@@ -792,7 +823,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         connection = connection.join("-");
     }
 
-    if ((main_dev=="PR-28" || main_dev=="APR-2000") && !(connection=="P" || connection=="C" || connection=="C7/16")){///КОРРЕКТИРОВКА CONNECTION для PR и APR кроме C/P
+    if ((main_dev=="PR-28" || main_dev=="APR-2000") && !((connection=="P" && minus_connection=="P") || connection=="C" || connection=="C7/16")){///КОРРЕКТИРОВКА CONNECTION для PR и APR кроме C/P
         console.log(connection);
         console.log(minus_connection);
         connection = connection.split("-");
@@ -854,10 +885,17 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         }
     })
     let fluid = "";
-    if (connection.startsWith("S-") || connection.startsWith("(+)S-") || (typeof minus_connection!='undefined' && minus_connection.startsWith("(-)S-"))){
+    let plus_fluid = "";
+    let minus_fluid = "";
+    if (connection.startsWith("S-") || connection.startsWith("(+)S-") || (typeof minus_connection!='undefined' && minus_connection.startsWith("S-"))){
         fluid = "-" + $("input[name=fluid]:checked").val();
         console.log("Добавляем жижу в код: " + fluid);
     }
+    console.log(connection);
+    console.log(minus_connection);
+    plus_fluid = (connection.startsWith("S-") && !minus_connection.startsWith("S-")) ? fluid : "";
+    minus_fluid = minus_connection.startsWith("S-") ? fluid : "";
+
 
 
     if (main_dev=="PC-28"){
@@ -868,25 +906,25 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         console.log("code2");
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + connection + fluid;
     }
-    if (main_dev=="PR-28" && (connection=="P" || connection=="C")){
+    if (main_dev=="PR-28" && ((connection=="P" && minus_connection=="P") || connection=="C")){
         console.log("code PR-28 или С или P");
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
-        code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection + fluid;
+        code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
     }
-    if (main_dev=="PR-28" && !(connection=="P" || connection=="C" || connection=="C7/16")){
+    if (main_dev=="PR-28" && !((connection=="P" && minus_connection=="P") || connection=="C" || connection=="C7/16")){
         console.log("code PR-28 КРОМЕ С и КРОМЕ P");
-        code =  dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + "(+)" + connection + "/(-)" + minus_connection + fluid;
+        code =  dev_type + approval + material + special + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + "(+)" + connection + plus_fluid + "/(-)" + minus_connection + minus_fluid;
     }
-    if (main_dev=="APR-2000" && (connection=="P" || connection=="C")){
+    if (main_dev=="APR-2000" && ((connection=="P" && minus_connection=="P") || connection=="C")){
         console.log("code APR-2000  или С или P");
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
-        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + max_static + main_range + range + output + connection + fluid;
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + max_static + main_range + range + output + connection;
     }
-    if (main_dev=="APR-2000" && !(connection=="P" || connection=="C" || connection=="C7/16")){
+    if (main_dev=="APR-2000" && !((connection=="P" && minus_connection=="P") || connection=="C" || connection=="C7/16")){
         console.log("code APR-2000 КРОМЕ С и КРОМЕ P");
-        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + "/(-)" + minus_connection + fluid;
+        code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + plus_fluid + "/(-)" + minus_connection + minus_fluid;
     }
     // document.getElementById("code").innerHTML = code;
     document.getElementById("code").value = code;
@@ -1459,7 +1497,7 @@ $(function (){
                 MaxStaticChecked();
                 return;
             }
-            if ($(this).prop("id")=="P" || $(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-P" || $(this).prop("id")=="minus-c-pr"){
+            if ($(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-c-pr"){ //$(this).prop("id")=="P" ||  || $(this).prop("id")=="minus-P"
                 CorPSelected($(this).prop("id"), true);
                 return;
             }
@@ -1523,7 +1561,7 @@ $(function (){
                 $("#capillary-cap-minus").prop('checked', false).prop('disabled', false);
                 console.log("max-static unchecked");
             }
-            if ($(this).prop("id")=="P" || $(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-P" || $(this).prop("id")=="minus-c-pr"){
+            if ($(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-c-pr"){//$(this).prop("id")=="P" || $(this).prop("id")=="minus-P" ||
                 CorPSelected($(this).prop("id"), false);
                 return;
             }
@@ -1582,15 +1620,25 @@ $(function (){
                     $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
                 });
             }else{
-                console.log("СКРЫТЬ выбор манометрической жидкости при выборе");
-                $("div.option-to-select.fluid-select-div").each(function(){
-                    $(this).prop("style", "display: none").removeClass("active-option-to-select");
-                    $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
-                });
-                $("input[name=fluid]").each(function(){
-                    $(this).prop('checked', false);
-                })
-                $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                let condition = true;
+                for (let plmin of ["","minus-"]){          //////// Ищем отмеченные разделители
+                    for (let cons of ["thread", "flange", "hygienic"]){
+                        if (typeof $("input[name=" + plmin + cons + "]:checked").prop("id")!='undefined' && $("input[name=" + plmin + cons + "]:checked").prop("id").startsWith(plmin + "s_")){
+                            condition = false;
+                        }
+                    }
+                }
+                if(condition===true){
+                    console.log("СКРЫТЬ выбор манометрической жидкости при выборе если нет других выбранных разделителей");
+                    $("div.option-to-select.fluid-select-div").each(function(){
+                        $(this).prop("style", "display: none").removeClass("active-option-to-select");
+                        $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+                    });
+                    $("input[name=fluid]").each(function(){
+                        $(this).prop('checked', false);
+                    })
+                    $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                }
             }
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
             if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
