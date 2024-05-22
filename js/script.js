@@ -158,7 +158,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
                 full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
             }else{
-                full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                let units = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                full_description.set(code[i], "Диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + ".");
             }
         }
 
@@ -167,8 +168,10 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
                 full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + " абсолютного давления.");
             }else{
-                full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
-                full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                let units_0 = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                let units = code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                full_description.set(code[i], "Основной диапазон измерения от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units_0 + ".");
+                full_description.set(code[i+1], "Установленный диапазон измерения от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + ".");
             }
         }
 
