@@ -11,7 +11,8 @@
     "range_c_apc": 100,
     "radiator": [],
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
@@ -26,7 +27,8 @@
     "range_c_apc": 100,
     "radiator": [],
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
@@ -41,7 +43,8 @@
     "range_c_apc": 100,
     "radiator": [],
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
@@ -56,7 +59,8 @@
     "range_c_apc": 600,
     "radiator": [],
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
@@ -71,7 +75,8 @@
     "range_c_apc": 600,
     "radiator": [],
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
@@ -86,7 +91,8 @@
     "range_c_apc": 600,
     "radiator": [],
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
