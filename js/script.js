@@ -145,7 +145,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
-    console.log(code);
+    // console.log(code);
 
     let full_description = new Map([]);
     for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
@@ -217,15 +217,15 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             let temp_code_v2 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2];
             let temp_code_v3 = code[i]+ "-" + temp_code_i1;
             let temp_codes =[temp_code_v1, temp_code_v2, temp_code_v3];
-            console.log(code[i-1]);
-            console.log(code[i]);
+            // console.log(code[i-1]);
+            // console.log(code[i]);
             if  ((code[i-1]=="(+)" && code[i]=="P") || (code[i-1]=="(-)" && code[i]=="P")){
                 // temp_codes=["P"];
                 for (el of window["thread_restr_lst"].values()){
                     if (el.get("code_name")==code[i]){
                         let temp_desc = el.get("description") + add_descr;
                         full_description.set(plus_minus + code[i], temp_desc);
-                        console.log("228 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                        // console.log("228 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
                         break;
                     }
                 }
@@ -236,17 +236,17 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     if (el.get("code_name")==code[i]){
                         let temp_desc = el.get("description") + add_descr;
                         full_description.set(plus_minus + code[i], temp_desc);
-                        console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                        // console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
                         break;
                     }
                 }
             }
-            console.log(temp_codes);
+            // console.log(temp_codes);
             let repeat_cycle = true;
             let num_cut = 4;
             for (els of temp_codes){
                 if (els.endsWith("-")){els=els.slice(0,-1)};
-                console.log(els);
+                // console.log(els);
                 for (item of search_names){
                     for (el of window[item + "_restr_lst"].values()){
                         if (repeat_cycle === true && el.get("code_name") === els){
@@ -258,7 +258,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                             }
                             code[i] = arr.join("-");
                             full_description.set(plus_minus + code[i], temp_desc);
-                            console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
+                            // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
                             repeat_cycle = false;
                             break;
                         }
@@ -267,8 +267,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 num_cut-=1;
             }
             code[i]=plus_minus + code[i];
-            console.log(code[i]);
-            console.log(code);
+            // console.log(code[i]);
+            // console.log(code);
         }
 
         for (item of search_names){
@@ -302,9 +302,9 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             full_description.delete(code[i]);
             full_description.set(temp_code, temp_descr);
             if (code.filter(x => x === code[i+1]).length>1){
-                console.log("Пропустить удаление ", code[i+1]);
+                // console.log("Пропустить удаление ", code[i+1]);
             }else{
-                console.log("УДАЛЯЕМ ", code[i+1]);
+                // console.log("УДАЛЯЕМ ", code[i+1]);
                 full_description.delete(code[i+1]);
             }
             code.splice(i, 2, temp_code);
@@ -824,8 +824,8 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
 
     if ((main_dev=="PR-28" || main_dev=="APR-2000") && !((connection=="P" && minus_connection=="P") || connection=="C" || connection=="C7/16")){///КОРРЕКТИРОВКА CONNECTION для PR и APR кроме C/P
-        console.log(connection);
-        console.log(minus_connection);
+        // console.log(connection);
+        // console.log(minus_connection);
         connection = connection.split("-");
         minus_connection = minus_connection.split("-");
         if (connection[0]=="S"){
@@ -889,10 +889,10 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let minus_fluid = "";
     if (connection.startsWith("S-") || connection.startsWith("(+)S-") || (typeof minus_connection!='undefined' && minus_connection.startsWith("S-"))){
         fluid = "-" + $("input[name=fluid]:checked").val();
-        console.log("Добавляем жижу в код: " + fluid);
+        // console.log("Добавляем жижу в код: " + fluid);
     }
-    console.log(connection);
-    console.log(minus_connection);
+    // console.log(connection);
+    // console.log(minus_connection);
     plus_fluid = (connection.startsWith("S-") && !minus_connection.startsWith("S-")) ? fluid : "";
     minus_fluid = minus_connection.startsWith("S-") ? fluid : "";
 
@@ -949,7 +949,7 @@ function disable_invalid_options(){
     }
 
     let condition4 = (full_conf.has("thread") && (full_conf.get("thread")=='P' || full_conf.get("thread")=='minus-P')) || (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
-    console.log(condition4);
+    // console.log(condition4);
     if (((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false) || (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apc-2000")){ //ТОЛЬКО ДЛЯ С или P присоединений
         let opt_names2 = ["cap-plus", "cap-minus", "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
         for (let opt_name of opt_names2){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
@@ -1034,7 +1034,7 @@ function disable_invalid_options(){
     //СКРЫТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ и снять ее выбор
     let fluid_on = (full_conf.has("thread") && typeof full_conf.get("thread")!="undefined" && full_conf.get("thread").startsWith("s_")) || (full_conf.has("flange") && typeof full_conf.get("flange")!='undefined' && full_conf.get("flange").startsWith("s_")) || (full_conf.has("hygienic") && typeof full_conf.get("hygienic")!='undefined' && full_conf.get("hygienic").startsWith("s_")) || (full_conf.has("minus-thread") && typeof full_conf.get("minus-thread")!='undefined' && full_conf.get("minus-thread").startsWith("minus-s_")) || (full_conf.has("minus-flange") && typeof full_conf.get("minus-flange")!='undefined' && full_conf.get("minus-flange").startsWith("minus-s_")) || (full_conf.has("minus-hygienic") && typeof full_conf.get("minus-hygienic")!='undefined' && full_conf.get("minus-hygienic").startsWith("minus-s_"));
     if (fluid_on===false){
-        console.log("DISABLE INVALID OPTIONS скрыть выбор манометрической жидкости");
+        // console.log("DISABLE INVALID OPTIONS скрыть выбор манометрической жидкости");
         $("div.option-to-select.fluid-select-div").each(function(){
             $(this).prop("style", "display: none").removeClass("active-option-to-select");
             $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
@@ -1044,7 +1044,6 @@ function disable_invalid_options(){
         })
         $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
     }else{    ///ПРОВЕРКА МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
-        console.log();
         if ((typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<0 && full_conf.get("pressure_type")=="") || (typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<100 && full_conf.get("pressure_type")=="ABS") || (typeof full_conf.get("max_temp")!='undefined' && full_conf.get("max_temp")>180)  || (typeof full_conf.get("max_temp_plus")!='undefined' && full_conf.get("max_temp_plus")>180)  || (typeof full_conf.get("max_temp_minus")!='undefined' && full_conf.get("max_temp_minus")>180)){
             $("label[for=ak20]").addClass('disabled');
             $("#ak20").prop('disabled', true);
@@ -1614,7 +1613,7 @@ $(function (){
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
             /// ПОКАЗАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
             if ($(this).prop('id').startsWith('s_') || $(this).prop('id').startsWith('minus-s_')){
-                console.log("ПОКАЗАТЬ выбор манометрической жидкости при выборе");
+                // console.log("ПОКАЗАТЬ выбор манометрической жидкости при выборе");
                 $("div.option-to-select.fluid-select-div").each(function(){
                     $(this).prop("style", "display: block").addClass("active-option-to-select");
                     $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
@@ -1629,7 +1628,7 @@ $(function (){
                     }
                 }
                 if(condition===true){
-                    console.log("СКРЫТЬ выбор манометрической жидкости при выборе если нет других выбранных разделителей");
+                    // console.log("СКРЫТЬ выбор манометрической жидкости при выборе если нет других выбранных разделителей");
                     $("div.option-to-select.fluid-select-div").each(function(){
                         $(this).prop("style", "display: none").removeClass("active-option-to-select");
                         $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
@@ -1647,7 +1646,7 @@ $(function (){
                     if ($(this).prop("id")!=target){
                         document.getElementById($(this).prop("id")).hidden = true;
                         $(this).find("select option[value='not_selected']").prop('selected', true);
-                        console.log('Установка длины тубуса как не выбрано при переключении на другой');
+                        // console.log('Установка длины тубуса как не выбрано при переключении на другой');
                     }else{
                         document.getElementById($(this).prop("id")).hidden = false;
                     }
@@ -1697,7 +1696,7 @@ $(function (){
             let data = $(this.parentElement).prop("id").slice(4,-13);
             data = data =="minus" ? "minus" : "";
             uncheckAllConnections(data);
-            console.log(target_name);
+            // console.log(target_name);
             document.getElementById(target_name + "radiator-select").hidden = false;
             document.getElementById(target_name + "length-span").hidden = true;
             document.getElementById(target_name + "length-span-err").hidden = true;
@@ -1905,9 +1904,25 @@ $(function(){
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").addClass("active-panel-container");
         // console.log($(".main-dev-selected").prop("id").slice(9,));
         if ($(".main-dev-selected").prop("id").slice(9,)=="pr-28"){
-            $("#con_header_plus").prop("hidden", false);
+            for (let cons of ["minus-thread", "minus-flange", "minus-hygienic"]){
+                $("input[name="+cons+"]").each(function(){
+                    if ($(this).prop("id").startsWith("minus-s_")){
+                        $(this).prop("hidden", true);
+                        $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+                    }
+                })
+            }
+            // $("#con_header_plus").prop("hidden", false);
         }else{
-            $("#con_header_plus").prop("hidden", true);
+            for (let cons of ["minus-thread", "minus-flange", "minus-hygienic"]){
+                $("input[name="+cons+"]").each(function(){
+                    if ($(this).prop("id").startsWith("minus-s_")){
+                        $(this).prop("hidden", false);
+                        $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+                    }
+                })
+            }
+            // $("#con_header_plus").prop("hidden", true);
         }
         // console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
         $("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)).each(function(){
@@ -2003,7 +2018,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
 function MaxStaticChecked(){
 
     if (($("input[name=max-static]:checked").val()=="25" && $("input#minus-c-pr").is(":checked")) || ($("input[name=max-static]:checked").val()=="4" && $("input#minus-P").is(":checked"))){
-        console.log("НЕ СНИМАТЬ ОТМЕТКУ ПРИСОЕДИНЕНИЯ!");
+        // console.log("НЕ СНИМАТЬ ОТМЕТКУ ПРИСОЕДИНЕНИЯ!");
         document.getElementById("cap-plus-length-span-err").hidden = true;
         document.getElementById("cap-plus-length-span").hidden = true;
         document.getElementById("cap-minus-length-span-err").hidden = true;
