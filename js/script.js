@@ -927,6 +927,9 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
     if (main_dev=="APR-2000" && !((connection=="P" && minus_connection=="P") || connection=="C" || connection=="C7/16")){
         console.log("code APR-2000 КРОМЕ С и КРОМЕ P");
+        if (data.get("cap-plus")=="capillary" && data.get("cap-minus")=="capillary"){
+            main_dev="APR-2200";
+        }
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + plus_fluid + "/(-)" + minus_connection + minus_fluid;
     }
     // document.getElementById("code").innerHTML = code;
