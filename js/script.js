@@ -1019,6 +1019,7 @@ function disable_invalid_options(){
 
     //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
     for (let pair of full_conf.entries()){
+        let num = 100;
         if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
             for (let opt in option_names){
                 if (option_names[opt]!=pair[0]){             /// НЕ СРАВНИВАТЬ ОПЦИЮ САМУ С СОБОЙ
@@ -1026,7 +1027,6 @@ function disable_invalid_options(){
                     let temp;
                     try {
                         temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
-                        console.log(temp);
                     }
                     catch (err){
                         console.log(err);
@@ -1035,9 +1035,10 @@ function disable_invalid_options(){
                         if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
                             $("label[for="+$(this).attr("id")+"]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ
                             $(this).prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
-                            document.getElementById("err_" + $(this).attr("id")).innerHTML += "<br>&emsp;&emsp;&emsp;" + $("label[for="+pair[1]+"]").text();
+                            document.getElementById("err_" + $(this).attr("id")).innerHTML += `<br>&emsp;&emsp;&emsp;<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
                             console.log($("#err_" + $(this).attr("id")));
                             console.log(pair[1], "  ", $("label[for="+pair[1]+"]").text());
+                            num+=1;
                         }
                     })
                 }
@@ -2129,5 +2130,29 @@ $(function(){
     $(document).on("click", "label.disabled", function(){
         $("#err_" + $(this).prop('for')).prop("style", "display:block");
         console.log($(this).prop('for'));
+    })
+})
+
+$(function(){
+    $(document).on("click", "input[name='err_cancel']", function(){
+        let check_state = $(this).is(":checked");
+        // $("#err_" + $(this).prop('for')).prop("style", "display:block");
+        console.log($(this).prop('id').slice(0,-14));
+        $("input#" + $(this).prop('id').slice(0,-14)).prop("checked", check_state);
+        var $this = $(this).prop('id').slice(0,-14);
+        var $this_checked_length = $("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]:checked").length;
+        console.log($("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]"));
+        console.log($("input#" + $(this).prop('id').slice(0,-14)).prop("name"));
+        var $this_select_field = $("#"+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"-select-field");
+        console.log($("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]").prev(".option-to-select"));
+        console.log($this_checked_length);
+        if ($this_checked_length == 0){
+            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            console.log(check_state);
+        }else{
+            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+            console.log(check_state);
+        }
+        disable_invalid_options();
     })
 })
