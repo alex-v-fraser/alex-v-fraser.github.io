@@ -943,6 +943,9 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 }
 
 function disable_invalid_options(){
+    $("div[id^='err_']").each(function(){
+        $(this).prop("style", "display:none");
+    })
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
@@ -1022,6 +1025,7 @@ function disable_invalid_options(){
                     let temp;
                     try {
                         temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
+                        console.log(temp);
                     }
                     catch (err){
                         console.log(err);
@@ -1167,7 +1171,7 @@ function disable_invalid_options(){
         }
 
         if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
-            if (!($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW")){
+            if (!($(this).prop("id")=="APCALW")){//
                 $(this).prop('hidden', false);
                 $("label[for=" + $(this).prop("id") + "]").prop('hidden', false);
             }else{
@@ -1472,27 +1476,18 @@ function disable_invalid_options(){
     }
 }
 
-// function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
-//     $("input[name="+ option_name +"]").each(function() {
-//         let option_1 = $("#"+ this.name +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
-//         let option_2 = $("#"+ name_to_check +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
-//         let option_2_text = $("label[for="+$("input[name="+ name_to_check +"]:checked").attr("id")+"]").text();
-//         if (valid_list.includes(this.value) || valid_list.length == 0){
-//             // $(this).prop('disabled', false);
-//             $("label[for="+$(this).attr("id")+"]").removeClass('disabled');
-//         }
-//         else{
-//             // $(this).prop('disabled', true);
-//             $("label[for="+$(this).attr("id")+"]").addClass('disabled');
-//             if ($(this).is(':checked')){
-//                 alert(option_1 + " " + $("label[for="+$(this).attr("id")+"]").text() + " и " + option_2.toLowerCase() + " " + option_2_text + " несовместимы! \nВыберите " + option_1.toLowerCase() + " заново.");
-//                 $("#"+this.name+"-select").prev(".option-to-select").find(".color-mark-field").removeClass("selected");
-//                 $("#"+this.name+"-select").prev(".option-to-select").find(".color-mark-field").addClass("unselected");
-//                 $(this).prop('checked', false);
-//             }
-//         }
-//     })
-// }
+function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
+    $("input[name="+ option_name +"]").each(function() {
+        let option_1 = $("#"+ this.name +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
+        let option_2 = $("#"+ name_to_check +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
+        let option_2_text = $("label[for="+$("input[name="+ name_to_check +"]:checked").attr("id")+"]").text();
+        if (valid_list.includes(this.value) || valid_list.length == 0){
+            if ($(this).is(':checked')){
+                alert(option_1 + " " + $("label[for="+$(this).attr("id")+"]").text() + " и " + option_2.toLowerCase() + " " + option_2_text + " несовместимы! \nВыберите " + option_1.toLowerCase() + " заново.");
+            }
+        }
+    })
+}
 
 $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
@@ -2127,7 +2122,8 @@ function uncheckAllConnections(plmin){////////СНЯТЬ ОТМЕТКИ СО В�
 }
 
 $(function(){
-    $("label[class='disabled']").click(function(){
-        console.log(this.name);
+    $(document).on("click", "label.disabled", function(){
+        $("#err_" + $(this).prop('for')).prop("style", "display:block");
+        console.log($(this).prop('for'));
     })
 })
