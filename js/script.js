@@ -945,6 +945,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 function disable_invalid_options(){
     $("div[id^='err_']").each(function(){
         $(this).prop("style", "display:none");
+        $(this).prop("innerHTML", "&emsp;&emsp;&emsp;Необходимо отменить: ");
     })
     let check_flag = true;
     let full_conf = get_full_config();
@@ -1034,6 +1035,9 @@ function disable_invalid_options(){
                         if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
                             $("label[for="+$(this).attr("id")+"]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ
                             $(this).prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                            document.getElementById("err_" + $(this).attr("id")).innerHTML += "<br>&emsp;&emsp;&emsp;" + $("label[for="+pair[1]+"]").text();
+                            console.log($("#err_" + $(this).attr("id")));
+                            console.log(pair[1], "  ", $("label[for="+pair[1]+"]").text());
                         }
                     })
                 }
