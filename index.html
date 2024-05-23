@@ -215,7 +215,7 @@
 		</div>
 		<div id="main-dev-apr-2000" class="main-dev">
 			<div class="img-hold"></div>
-			<div class="prod-name">APR-2000</div>
+			<div class="prod-name">APR-2000(2200)</div>
 		</div>
 		<div id="main-dev-sg-25" class="main-dev">
 			<div class="img-hold"></div>
@@ -231,7 +231,7 @@
 	<h1 class="pc-28-panel-container" style="display:none;">Преобразователь давления PC-28<br></h1>
 	<h1 class="apc-2000-panel-container" style="display:none;">Преобразователь давления APC-2000<br></h1>
 	<h1 class="pr-28-panel-container" style="display:none;">Преобразователь давления PR-28<br></h1>
-	<h1 class="apr-2000-panel-container" style="display:none;">Преобразователь давления APR-2000<br></h1>
+	<h1 class="apr-2000-panel-container" style="display:none;">Преобразователь давления APR-2000(2200)<br></h1>
 	<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25 В РАЗРАБОТКЕ!<br></h1>
 	<h1 class="ctr-panel-container" style="display:none;">Преобразователь температуры В РАЗРАБОТКЕ!<br></h1>
 
@@ -683,18 +683,18 @@
 						<input type="checkbox" name="special" value="0,16%" id="0_16" disabled><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа и аналоговый выход)</label><br><div id="err_0_16"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="0,05%" id="0_05" disabled><label for="0_05" class="disabled"><b>0,05%</b> - повышенная точность (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_0_05"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="H" id="hi_load" disabled><label for="hi_load" class="disabled"><b>H</b> - повышенная перегрузочная способность (поргешность 0,4%, только 4..20мА)</label><br><div id="err_hi_load"  style="display:none;">АХТУНГ!!!</div>
-						<input type="checkbox" name="special" value="Hart7" id="hart7" disabled><label for="hart7" class="disabled"><b>Hart7</b> - протокол обмена данными версии 7 (только для APC-2000ALW)</label><br><div id="err_hart7"  style="display:none;">АХТУНГ!!!</div>
+						<input type="checkbox" name="special" value="Hart7" id="hart7" disabled><label for="hart7" class="disabled"><b>Hart7</b> - протокол обмена данными версии 7 (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_hart7"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="Кислород" id="oxygen" disabled><label for="oxygen" class="disabled"><b>Кислород</b> - для измерения кислорода (только штуцеры M и G1/2)</label><br><div id="err_oxygen"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="TR" id="time_response" disabled><label for="time_response" class="disabled"><b>TR</b> - скорость реакции ниже 30мс (только 4..20мА, кроме ALW)</label><br><div id="err_time_response"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="(-20)" id="minus_20" disabled><label for="minus_20" class="disabled"><b>(-20)</b> - диапазон термокомпенсации -20...70°С</label><br><div id="err_minus_20"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="(-30)" id="minus_30" disabled><label for="minus_30" class="disabled"><b>(-30)</b> - диапазон термокомпенсации -30...50°С</label><br><div id="err_minus_30"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="(-40)" id="minus_40" disabled><label for="minus_40" class="disabled"><b>(-40)</b> - диапазон термокомпенсации -40...80°С (только для APC-2000PZ или APC-2000PD)</label><br><div id="err_minus_40"  style="display:none;">АХТУНГ!!!</div>
-						<input type="checkbox" name="special" value="(-50)" id="minus_50" disabled><label for="minus_50" class="disabled"><b>(-50)</b> - диапазон термокомпенсации -50...80°С (только для APC-2000ALW)</label><br><div id="err_minus_50"  style="display:none;">АХТУНГ!!!</div>
+						<input type="checkbox" name="special" value="(-50)" id="minus_50" disabled><label for="minus_50" class="disabled"><b>(-50)</b> - диапазон термокомпенсации -50...80°С (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_minus_50"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="(-60)" id="minus_60" disabled><label for="minus_60" class="disabled"><b>(-60)</b> - диапазон термокомпенсации -60...50°С (только для APC-2000PZ)</label><br><div id="err_minus_60"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="CT" id="ct_spec" disabled><label for="ct_spec" class="disabled"><b>CT</b> - цифровая термокомпенсация -30...50°С (только абсолютное давление)</label><br><div id="err_ct_spec"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="rad_cap" id="rad_cap" disabled><label for="rad_cap" class="disabled"><b>R</b> - радиальное выведение капилляра разделителя</label><br><div id="err_rad_cap"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="HS" id="hs" disabled><label for="hs" class="disabled"><b>HS</b> - полисенсорный измерительный элемент</label><br><div id="err_hs"  style="display:none;">АХТУНГ!!!</div>
-						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (для APC-2000ALW)</label><br><div id="err_spec_pd"  style="display:none;">АХТУНГ!!!</div>
+						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_spec_pd"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="SN" id="SN" disabled><label for="SN" class="disabled"><b>SN</b> - корпус индикатора APC-2000ALW из нержавеющей стали AISI316</label><br><div id="err_SN"  style="display:none;">АХТУНГ!!!</div>
 						<input type="checkbox" name="special" value="IP67" id="spec_ip67" disabled><label for="spec_ip67" class="disabled"><b>IP67</b> - степень защиты корпуса APC-2000ALW (только абс. давление), APR-2000ALW</label><br><div id="err_spec_ip67"  style="display:none;">АХТУНГ!!!</div>
 					</fieldset>

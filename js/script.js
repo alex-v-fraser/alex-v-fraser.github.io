@@ -1432,7 +1432,7 @@ function disable_invalid_options(){
         $("#hart7").prop('disabled', true);
         $("#hart7").prop('checked', false);
     }
-    if (full_conf.get("electrical")!="APCALW" || full_conf.get("pressure_type")!="ABS"){ // проверка специсполнения IP67
+    if ((full_conf.get("main_dev") != "apc-2000" || full_conf.get("pressure_type")!="ABS") || (full_conf.get("main_dev") != "apr-2000" || full_conf.get("electrical")!="APCALW")){ // проверка специсполнения IP67
         $("label[for=spec_ip67]").addClass('disabled');
         $("#spec_ip67").prop('disabled', true);
         $("#spec_ip67").prop('checked', false);

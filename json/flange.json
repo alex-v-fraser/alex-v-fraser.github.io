@@ -105,7 +105,8 @@
     "range": 10,
     "range_c": 25,
     "material": [
-      "aisi316"
+      "aisi316",
+      "dlc"
     ]
   },
   {
