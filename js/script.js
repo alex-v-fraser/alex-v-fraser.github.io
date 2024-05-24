@@ -662,7 +662,7 @@ function CorPSelected(c_or_p, state){ //////////////////////////////////////////
         let num = $("body .active-option-to-select").index($(".active")) + 1;
         let next_expand = $("body .active-option-to-select").eq(num);
         $("#" + add_n + "flange-select-field > span").each(function(){
-            $(this).prop("hidden", true);
+            $(this).prop("style", "display:none");
             $(this).find("select option[value='not_selected']").prop('selected', true);
         })
         var $this = $(document.getElementById(c_or_p).parentElement.parentElement.parentElement).prev();
@@ -1085,15 +1085,15 @@ function disable_invalid_options(){
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// ПРОВЕРКА PC и APC
         $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
             if (this.value=="1/4NPT(F)"){
-                $(this).prop('hidden', true);
-                $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+                // $(this).prop("style", "display:none");
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
             }else{
-                $(this).prop('hidden', false);
-                $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+                // $(this).prop("style", "display:block");
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
             }
         })
-        $("#c-pr").prop('hidden', true);
-        $("label[for=c-pr]").prop('hidden', true);
+        $("#c-pr").prop("style", "display:none");
+        $("label[for=c-pr]").prop("style", "display:none");
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
@@ -1181,22 +1181,38 @@ function disable_invalid_options(){
     $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
         if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
             if ($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW"){
-                $(this).prop('hidden', false);
-                $("label[for=" + $(this).prop("id") + "]").prop('hidden', false);
+                // $(this).prop("style", "display:block");
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
             }else{
-                $(this).prop('hidden', true);
-                $("label[for=" + $(this).prop("id") + "]").prop('hidden', true);
+                // $(this).prop("style", "display:none");
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
             }
         }
 
         if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
             if (!($(this).prop("id")=="APCALW")){//
-                $(this).prop('hidden', false);
-                $("label[for=" + $(this).prop("id") + "]").prop('hidden', false);
+                // $(this).prop("style", "display:block");
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
             }else{
-                $(this).prop('hidden', true);
-                $("label[for=" + $(this).prop("id") + "]").prop('hidden', true);
+                // $(this).prop("style", "display:none");
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
             }
+        }
+    })
+
+    $("input[name=output]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ВЫХОДНЫЕ СИГНАЛЫ В ЗАВИСИМОСТИ ОТ MAIN-DEV
+        if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
+            if ($(this).prop("id")=="4_20H"){
+                // $(this).prop("style", "display:block");
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+            }else{
+                // $(this).prop("style", "display:none");
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+            }
+        }
+
+        if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
+            $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
         }
     })
 
@@ -1204,15 +1220,15 @@ function disable_invalid_options(){
 
         $("input[name=thread]").each(function(){
             if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
-                $(this).prop('hidden', false);
-                $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+                // $(this).prop("style", "display:block");
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
             }else{
-                $(this).prop('hidden', true);
-                $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+                // $(this).prop("style", "display:none");
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
             }
         })
-        $("#c-pr").prop('hidden', false);
-        $("label[for=c-pr]").prop('hidden', false);
+        // $("#c-pr").prop("style", "display:block");
+        $("label[for=c-pr]").prop("style", "display:block");
 
         if (full_conf.get("range")>1600){       // деактивация MAX-STATIC по выбранному диапазону
             $("input[name=max-static]").each(function(){
@@ -1555,7 +1571,7 @@ $(function (){
             }
             if (this.name=="flange"){
                 $("#flange-select-field > span").each(function(){
-                    $(this).prop("hidden", true);
+                    $(this).prop("style", "display:none");
                     $(this).find("select option[value='not_selected']").prop('selected', true);
                 })
             }
@@ -1678,7 +1694,7 @@ $(function (){
                 let num = $("body .active-option-to-select").index($(".active")) + 1;
                 let next_expand = $("body .active-option-to-select").eq(num);
                 $("#" + add_n + "flange-select-field > span").each(function(){
-                    $(this).prop("hidden", true);
+                    $(this).prop("style", "display:none");
                     $(this).find("select option[value='not_selected']").prop('selected', true);
                 })
                 var $this = $(this.parentElement.parentElement.parentElement).prev();
@@ -1948,22 +1964,22 @@ $(function(){
             for (let cons of ["minus-thread", "minus-flange", "minus-hygienic"]){
                 $("input[name="+cons+"]").each(function(){
                     if ($(this).prop("id").startsWith("minus-s_")){
-                        $(this).prop("hidden", true);
-                        $("label[for="+$(this).prop('id')+"]").prop('hidden', true);
+                        $(this).prop("style", "display:none");
+                        $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
                     }
                 })
             }
-            // $("#con_header_plus").prop("hidden", false);
+            // $("#con_header_plus").prop("style", "display:block");
         }else{
             for (let cons of ["minus-thread", "minus-flange", "minus-hygienic"]){
                 $("input[name="+cons+"]").each(function(){
                     if ($(this).prop("id").startsWith("minus-s_")){
-                        $(this).prop("hidden", false);
-                        $("label[for="+$(this).prop('id')+"]").prop('hidden', false);
+                        // $(this).prop("style", "display:block");
+                        $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
                     }
                 })
             }
-            // $("#con_header_plus").prop("hidden", true);
+            // $("#con_header_plus").prop("style", "display:none");
         }
         // console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
         $("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)).each(function(){
