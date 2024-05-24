@@ -952,7 +952,7 @@ function disable_invalid_options(){
         if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
             $(this).prop("style", "display:none");
         }
-        $(this).prop("innerHTML", "&emsp;&emsp;&emsp;<span style='color: red'>Необходимо отменить: </span>");
+        $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
 
     let check_flag = true;
