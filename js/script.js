@@ -98,6 +98,11 @@ $(function(){         /////////// ИЗМЕНЯЕМАЯ ДЛИНА ПОЛЯ ВВ�
 $(function(){  /////  РАСКРЫТЬ-СКРЫТЬ СПИСОК ПРИ ЩЕЛЧКЕ НА ЗАГОЛОВОК
     var toDisplay = 0;
     $(".option-to-select").click(function(){
+        $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+            if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+                $(this).prop("style", "display:none");
+            }
+        })
         var $this = $(this);
         $this
         .next("div.option-to-select-list")
@@ -943,10 +948,13 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 }
 
 function disable_invalid_options(){
-    $("div[id^='err_']").each(function(){
-        $(this).prop("style", "display:none");
+    $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+        if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+            $(this).prop("style", "display:none");
+        }
         $(this).prop("innerHTML", "&emsp;&emsp;&emsp;Необходимо отменить: ");
     })
+
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
@@ -1035,9 +1043,15 @@ function disable_invalid_options(){
                         if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
                             $("label[for="+$(this).attr("id")+"]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ
                             $(this).prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
-                            document.getElementById("err_" + $(this).attr("id")).innerHTML += `<br>&emsp;&emsp;&emsp;<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
-                            console.log($("#err_" + $(this).attr("id")));
-                            console.log(pair[1], "  ", $("label[for="+pair[1]+"]").text());
+                            console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
+                            // if (!document.getElementById("err_" + $(this).attr("id")).innerHTML.startsWith("&emsp;&emsp;&emsp;Необходимо отменить: ")){
+                            //     document.getElementById("err_" + $(this).attr("id")).innerHTML="&emsp;&emsp;&emsp;Необходимо отменить: ";
+                            //     console.log("ДОБАВИЛ Необходимо отменить:")
+                            // }
+                            document.getElementById("err_" + $(this).attr("id")).innerHTML += `<br>&emsp;&emsp;&emsp;<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked class='custom-checkbox'><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
+                            console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
+                            // console.log($("#err_" + $(this).attr("id")));
+                            // console.log(pair[1], "  ", $("label[for="+pair[1]+"]").text());
                             num+=1;
                         }
                     })
@@ -1861,6 +1875,27 @@ $(function(){  //// СКРЫВАЕТ ДАННУЮ ОПЦИЮ и ОТОБРАЖА
 })
 
 $(function(){
+    $("input[id*=capillary-length]").change(function(){
+        let target_name = $(this).prop("id").slice(0,-16);
+        console.log(target_name);
+        let max_temp = parseInt(document.querySelector("#" + target_name + "capillary-length").value);
+        let min = parseInt($("input[name=" + target_name + "capillary-length]").prop('min'));
+        let max = parseInt($("input[name=" + target_name + "capillary-length]").prop('max'));
+        if (Number.isNaN(max_temp) || max_temp>max || max_temp<min){
+            document.getElementById(target_name + "length-span-err").hidden = false;
+            $("#" + target_name + "select").prev().find(".color-mark-field").addClass("unselected");
+            $("#" + target_name + "select").prev().find(".color-mark-field").removeClass("selected");
+            return;
+        }else{
+            document.getElementById(target_name + "length-span-err").hidden = true;
+            $("#" + target_name + "select").prev().find(".color-mark-field").removeClass("unselected");
+            $("#" + target_name + "select").prev().find(".color-mark-field").addClass("selected");
+            disable_invalid_options();
+        }
+    })
+})
+
+$(function(){
     $("input[name*=mes-env-temp]").change(function(){
         let max_temp = parseInt($(this).val());
         let temp_name = this.name.slice(0,-13);
@@ -2129,7 +2164,7 @@ function uncheckAllConnections(plmin){////////СНЯТЬ ОТМЕТКИ СО В�
 $(function(){
     $(document).on("click", "label.disabled", function(){
         $("#err_" + $(this).prop('for')).prop("style", "display:block");
-        console.log($(this).prop('for'));
+        $("#err_" + $(this).prop('for')).siblings("div[id^='err_']").prop("style", "display:none");
     })
 })
 
@@ -2137,21 +2172,15 @@ $(function(){
     $(document).on("click", "input[name='err_cancel']", function(){
         let check_state = $(this).is(":checked");
         // $("#err_" + $(this).prop('for')).prop("style", "display:block");
-        console.log($(this).prop('id').slice(0,-14));
         $("input#" + $(this).prop('id').slice(0,-14)).prop("checked", check_state);
-        var $this = $(this).prop('id').slice(0,-14);
-        var $this_checked_length = $("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]:checked").length;
-        console.log($("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]"));
-        console.log($("input#" + $(this).prop('id').slice(0,-14)).prop("name"));
-        var $this_select_field = $("#"+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"-select-field");
-        console.log($("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]").prev(".option-to-select"));
-        console.log($this_checked_length);
+        let $this_id = $(this).prop('id').slice(0,-14);
+        // console.log(document.getElementById($this_id).parentElement.parentElement.previousElementSibling.querySelector(".color-mark-field"));
+        let $color_mark_field = document.getElementById($this_id).closest(".active-option-to-select-list").previousElementSibling.querySelector(".color-mark-field");
+        let $this_checked_length = $("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]:checked").length;
         if ($this_checked_length == 0){
-            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-            console.log(check_state);
+            $($color_mark_field).removeClass("selected").addClass("unselected");
         }else{
-            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
-            console.log(check_state);
+            $($color_mark_field).removeClass("unselected").addClass("selected");
         }
         disable_invalid_options();
     })
