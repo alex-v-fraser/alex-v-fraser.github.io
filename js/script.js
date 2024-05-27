@@ -1043,13 +1043,13 @@ function disable_invalid_options(){
                         if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
                             $("label[for="+$(this).attr("id")+"]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ
                             $(this).prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
-                            console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
+                            // console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
                             // if (!document.getElementById("err_" + $(this).attr("id")).innerHTML.startsWith("&emsp;&emsp;&emsp;Необходимо отменить: ")){
                             //     document.getElementById("err_" + $(this).attr("id")).innerHTML="&emsp;&emsp;&emsp;Необходимо отменить: ";
                             //     console.log("ДОБАВИЛ Необходимо отменить:")
                             // }
                             document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
-                            console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
+                            // console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
                             // console.log($("#err_" + $(this).attr("id")));
                             // console.log(pair[1], "  ", $("label[for="+pair[1]+"]").text());
                             num+=1;
