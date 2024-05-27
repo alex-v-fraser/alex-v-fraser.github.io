@@ -76,7 +76,7 @@
 		}
 
 		.custom-checkbox+label {
-			display: inline-flex;
+			display: block;
 			align-items: center;
 			user-select: none;
 		}
@@ -103,10 +103,11 @@
 			height: 1em;
 			border: 1px solid #adb5bd;
 			background: url(/images/checkbox-4.png) 0 0 no-repeat;
-			/* background-position-y: -8px; */
 			background-size: 95%;
-			/* opacity: 1; */
-			/* transition: opacity 0.3s ease; */
+		}
+		.err-checkbox+label::before {
+			content: '&nbsp;&nbsp;&nbsp;';
+
 		}
 
 		.unselected {
@@ -281,9 +282,9 @@
 				</div>
 				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="approval-select" style="display: none;">
 					<fieldset id="approval-select-field" name="approval-select-field">
-						<input type="checkbox" name="approval" value="" id="non_hazard" class="custom-checkbox"><label for="non_hazard">Общепромышленное исполнение</label><br><div id="err_non_hazard"  style="display:none;"></div>
-						<input type="checkbox" name="approval" value="Ex/" id="Ex" class="custom-checkbox"><label for="Ex">Искробезопасная электрическая цепь</label><br><div id="err_Ex"  style="display:none;"></div>
-						<input type="checkbox" name="approval" value="Exd/" id="Exd" class="custom-checkbox"><label for="Exd">Взрывонепроницаемая оболочка</label><br><div id="err_Exd"  style="display:none;"></div>
+						<input type="checkbox" name="approval" value="" id="non_hazard" class="custom-checkbox"><label for="non_hazard">Общепромышленное исполнение</label><div id="err_non_hazard"  style="display:none;"></div>
+						<input type="checkbox" name="approval" value="Ex/" id="Ex" class="custom-checkbox"><label for="Ex">Искробезопасная электрическая цепь</label><div id="err_Ex"  style="display:none;"></div>
+						<input type="checkbox" name="approval" value="Exd/" id="Exd" class="custom-checkbox"><label for="Exd">Взрывонепроницаемая оболочка</label><div id="err_Exd"  style="display:none;"></div>
 					</fieldset>
 				</div>
 
@@ -331,12 +332,12 @@
 				</div>
 				<div class="option-to-select-list pr-28 apr-2000" id="max-static-select"  style="display: none;">
 					<fieldset id="max-static-select-field" name="max-static-select-field">
-						<input type="checkbox" name="max-static" value="4" id="4-max-static" class="custom-checkbox"><label for="4-max-static"><b>&nbsp;&nbsp;4 МПа</b> - тип P (штуцер M20x1,5M) либо разделительное устройство</label><br><div id="err_4-max-static"  style="display:none;"></div>
-						<input type="checkbox" name="max-static" value="10" id="10-max-static" class="custom-checkbox"><label for="10-max-static"><b>10 МПа</b> - только с дистанционными разделителями</label><br><div id="err_10-max-static"  style="display:none;"></div>
-						<input type="checkbox" name="max-static" value="25" id="25-max-static" class="custom-checkbox"><label for="25-max-static"><b>25 МПа</b> - тип С (под вентильный блок) либо с дистанционными разделителями</label><br><div id="err_25-max-static"  style="display:none;"></div>
-						<input type="checkbox" name="max-static" value="32" id="32-max-static" class="custom-checkbox"><label for="32-max-static"><b>32 МПа</b> - только тип С (под вентильный блок)</label><br><div id="err_32-max-static"  style="display:none;"></div>
-						<input type="checkbox" name="max-static" value="41" id="41-max-static" class="custom-checkbox"><label for="41-max-static"><b>41 МПа</b> - только тип С (под вентильный блок, резьба 7/16")</label><br><div id="err_41-max-static"  style="display:none;"></div>
-						<input type="checkbox" name="max-static" value="70" id="70-max-static" class="custom-checkbox"><label for="70-max-static"><b>70 МПа</b> - только тип С (под вентильный блок, резьба 7/16")</label><br><div id="err_70-max-static"  style="display:none;"></div>
+						<input type="checkbox" name="max-static" value="4" id="4-max-static" class="custom-checkbox"><label for="4-max-static"><b>&nbsp;&nbsp;4 МПа</b> - тип P (штуцер M20x1,5M) либо разделительное устройство</label><div id="err_4-max-static"  style="display:none;"></div>
+						<input type="checkbox" name="max-static" value="10" id="10-max-static" class="custom-checkbox"><label for="10-max-static"><b>10 МПа</b> - только с дистанционными разделителями</label><div id="err_10-max-static"  style="display:none;"></div>
+						<input type="checkbox" name="max-static" value="25" id="25-max-static" class="custom-checkbox"><label for="25-max-static"><b>25 МПа</b> - тип С (под вентильный блок) либо с дистанционными разделителями</label><div id="err_25-max-static"  style="display:none;"></div>
+						<input type="checkbox" name="max-static" value="32" id="32-max-static" class="custom-checkbox"><label for="32-max-static"><b>32 МПа</b> - только тип С (под вентильный блок)</label><div id="err_32-max-static"  style="display:none;"></div>
+						<input type="checkbox" name="max-static" value="41" id="41-max-static" class="custom-checkbox"><label for="41-max-static"><b>41 МПа</b> - только тип С (под вентильный блок, резьба 7/16")</label><div id="err_41-max-static"  style="display:none;"></div>
+						<input type="checkbox" name="max-static" value="70" id="70-max-static" class="custom-checkbox"><label for="70-max-static"><b>70 МПа</b> - только тип С (под вентильный блок, резьба 7/16")</label><div id="err_70-max-static"  style="display:none;"></div>
 					</fieldset>
 				</div>
 
@@ -353,14 +354,14 @@
 							<input type="number" name="cap-or-not-mes-env-temp" style="width: 5em" id="cap-or-not-mes-env-temp" min="-40" max="300" placeholder="-40...300">
 							<input type="button" id="cap-or-not-radiator-select-button-ok" value="ОК">
 						</span>
-						<span style="font-size: 85%;" id="cap-or-not-radiator-select-err" hidden><br>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<span style="font-size: 85%; color: red;" id="cap-or-not-radiator-select-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до 300°С и нажмите "OK"</span>
 						<input type="checkbox" name="cap-or-not" value="capillary" id="capillary" class="custom-checkbox"><label for="capillary">Дистанционное.</label>
 						<span id="cap-or-not-length-span" hidden>
 							<label for="cap-or-not-capillary-length">Длина капилляра, м:</label>
 							<input type="number" name="cap-or-not-capillary-length" style="width: 4em" id="cap-or-not-capillary-length" min="1" max="9" placeholder="1-9">
 							<input type="button" id="cap-or-not-capillary-length-button-ok" value="ОК">
-						</span><br>
-						<span style="font-size: 85%;" id="cap-or-not-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
+						</span>
+						<span style="font-size: 85%; color: red;" id="cap-or-not-length-span-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
 					</fieldset>
 				</div>
 
@@ -402,15 +403,15 @@
 				</div>
 				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="material-select" style="display: none;">
 					<fieldset id="material-select-field" name="material-select-field">
-						<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label for="aisi316">AISI316</label><br><div id="err_aisi316"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="AU" id="au" class="custom-checkbox"><label for="au">Золото</label><br><div id="err_au"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label for="hastelloy">Hastelloy С276</label><br><div id="err_hastelloy"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="Ni" id="nickel" class="custom-checkbox"><label for="nickel">Никель</label><br><div id="err_nickel"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="Monel" id="monel" class="custom-checkbox"><label for="monel">Монель</label><br><div id="err_monel"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="Ti" id="titan" class="custom-checkbox"><label for="titan">Титан</label><br><div id="err_titan"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="Ta" id="tantal" class="custom-checkbox"><label for="tantal">Тантал</label><br><div id="err_tantal"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="PTFE" id="ptfe" class="custom-checkbox"><label for="ptfe">Фторопласт-4 (политетрафторэтилен)</label><br><div id="err_ptfe"  style="display:none;"></div>
-						<input type="checkbox" name="material" value="DLC" id="dlc" class="custom-checkbox"><label for="dlc">DLC</label><br><div id="err_dlc"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="AU" id="au" class="custom-checkbox"><label for="au">Золото</label><div id="err_au"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label for="hastelloy">Hastelloy С276</label><div id="err_hastelloy"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="Ni" id="nickel" class="custom-checkbox"><label for="nickel">Никель</label><div id="err_nickel"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="Monel" id="monel" class="custom-checkbox"><label for="monel">Монель</label><div id="err_monel"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="Ti" id="titan" class="custom-checkbox"><label for="titan">Титан</label><div id="err_titan"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="Ta" id="tantal" class="custom-checkbox"><label for="tantal">Тантал</label><div id="err_tantal"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="PTFE" id="ptfe" class="custom-checkbox"><label for="ptfe">Фторопласт-4 (политетрафторэтилен)</label><div id="err_ptfe"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="DLC" id="dlc" class="custom-checkbox"><label for="dlc">DLC</label><div id="err_dlc"  style="display:none;"></div>
 					</fieldset>
 				</div>
 
@@ -426,14 +427,14 @@
 							<input type="number" name="cap-plus-mes-env-temp" style="width: 5em" id="cap-plus-mes-env-temp" min="-40" max="300" placeholder="-40...300">
 							<input type="button" id="cap-plus-radiator-select-button-ok" value="ОК">
 						</span>
-						<span style="font-size: 85%;" id="cap-plus-radiator-select-err" hidden><br>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<span style="font-size: 85%;  color: red;" id="cap-plus-radiator-select-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до 300°С и нажмите "OK"</span>
 						<input type="checkbox" name="cap-plus" value="capillary" id="capillary-cap-plus" class="custom-checkbox"><label for="capillary-cap-plus">Дистанционное.</label>
 						<span id="cap-plus-length-span" hidden>
 							<label for="cap-plus-capillary-length">В сборе с разделителем и капилляром длиной, м:</label>
 							<input type="number" name="cap-plus-capillary-length" style="width: 4em" id="cap-plus-capillary-length" min="1" max="9" placeholder="1-9">
 							<input type="button" id="cap-plus-capillary-length-button-ok" value="ОК">
-						</span><br>
-						<span style="font-size: 85%;" id="cap-plus-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
+						</span>
+						<span style="font-size: 85%;  color: red;" id="cap-plus-length-span-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
 					</fieldset>
 				</div>
 
@@ -443,9 +444,9 @@
 				</div>
 				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="connection-type-select" style="display: none;">
 					<fieldset id="connection-type-select-field" name="connection-type-select-field">
-						<input type="checkbox" name="connection-type" value="thread-list" id="thread-list" class="custom-checkbox"><label for="thread-list">Резьбовое</label><br>
-						<input type="checkbox" name="connection-type" value="flange-list" id="flange-list" class="custom-checkbox"><label for="flange-list">Фланцевое</label><br>
-						<input type="checkbox" name="connection-type" value="hygienic-list" id="hygienic-list" class="custom-checkbox"><label for="hygienic-list">Гигиеническое</label><br>
+						<input type="checkbox" name="connection-type" value="thread-list" id="thread-list" class="custom-checkbox"><label for="thread-list">Резьбовое</label>
+						<input type="checkbox" name="connection-type" value="flange-list" id="flange-list" class="custom-checkbox"><label for="flange-list">Фланцевое</label>
+						<input type="checkbox" name="connection-type" value="hygienic-list" id="hygienic-list" class="custom-checkbox"><label for="hygienic-list">Гигиеническое</label>
 					</fieldset>
 
 					<div class="thread-flange-hygienic" id="thread-select" style="display: none;">
@@ -487,10 +488,10 @@
 
 					<div class="thread-flange-hygienic" id="flange-select" style="display: none;">
 						<fieldset id="flange-select-field">
-							<input type="checkbox" name="flange" value="C" id="c-pr" class="custom-checkbox"><label for="c-pr"><b>C</b> - фланец для монтажа 3-х или 5-и ходового вентильного блока</label><br><div id="err_c-pr" style="display:none;"></div>
-							<input type="checkbox" name="flange" value="S-P-DN50PN40B" id="s_p_dn50" class="custom-checkbox"><label for="s_p_dn50"><b>S-P DN50PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_s_p_dn50" style="display:none;"></div>
-							<input type="checkbox" name="flange" value="S-P-DN80PN40B" id="s_p_dn80" class="custom-checkbox"><label for="s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_s_p_dn80" style="display:none;"></div>
-							<input type="checkbox" name="flange" value="S-P-DN100PN40B" id="s_p_dn100" class="custom-checkbox"><label for="s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_s_p_dn100" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="C" id="c-pr" class="custom-checkbox"><label for="c-pr"><b>C</b> - фланец для монтажа 3-х или 5-и ходового вентильного блока</label><div id="err_c-pr" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-P-DN50PN40B" id="s_p_dn50" class="custom-checkbox"><label for="s_p_dn50"><b>S-P DN50PN40B</b> - разделитель фланцевый плоский</label><div id="err_s_p_dn50" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-P-DN80PN40B" id="s_p_dn80" class="custom-checkbox"><label for="s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><div id="err_s_p_dn80" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-P-DN100PN40B" id="s_p_dn100" class="custom-checkbox"><label for="s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><div id="err_s_p_dn100" style="display:none;"></div>
 							<input type="checkbox" name="flange" value="S-T-DN50PN40B" id="s_t_dn50" class="custom-checkbox"><label for="s_t_dn50"><b>S-T DN50PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_s_t_dn50" style="display:none;"><br></div>
 							<span id="s_t_dn50-cilinder-select" hidden><br><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
 								<select name="s_t_dn50-cilinder-length" id="s_t_dn50-cilinder-length">
@@ -531,34 +532,34 @@
 									<option value="200">200</option>
 								</select><br>
 							</span><br>
-							<input type="checkbox" name="flange" value="S-Ch-DN50PN40B" id="s_ch_dn50" class="custom-checkbox"><label for="s_ch_dn50"><b>S-Ch DN50PN40B</b> - разделитель фланцевый плоский химостойкий</label><br><div id="err_s_ch_dn50" style="display:none;"></div>
-							<input type="checkbox" name="flange" value="S-Ch-DN80PN40B" id="s_ch_dn80" class="custom-checkbox"><label for="s_ch_dn80"><b>S-Ch DN80PN40B</b> - разделитель фланцевый плоский химостойкий</label><br><div id="err_s_ch_dn80" style="display:none;"></div>
-							<input type="checkbox" name="flange" value="S-Comp-d51" id="s_comp_d51" class="custom-checkbox"><label for="s_comp_d51"><b>S-Comp d51</b> - разделитель фланцевый компактный с противофланцами под сварку</label><br><div id="err_s_comp_d51" style="display:none;"></div>
-							<input type="checkbox" name="flange" value="S-CompCh-DN25PN16B" id="s_compch-dn25" class="custom-checkbox"><label for="s_compch-dn25"><b>S-CompCh DN25PN16B</b> - разделитель фланцевый компактный с танталовой мембраной</label><br><div id="err_s_compch-dn25" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-Ch-DN50PN40B" id="s_ch_dn50" class="custom-checkbox"><label for="s_ch_dn50"><b>S-Ch DN50PN40B</b> - разделитель фланцевый плоский химостойкий</label><div id="err_s_ch_dn50" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-Ch-DN80PN40B" id="s_ch_dn80" class="custom-checkbox"><label for="s_ch_dn80"><b>S-Ch DN80PN40B</b> - разделитель фланцевый плоский химостойкий</label><div id="err_s_ch_dn80" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-Comp-d51" id="s_comp_d51" class="custom-checkbox"><label for="s_comp_d51"><b>S-Comp d51</b> - разделитель фланцевый компактный с противофланцами под сварку</label><div id="err_s_comp_d51" style="display:none;"></div>
+							<input type="checkbox" name="flange" value="S-CompCh-DN25PN16B" id="s_compch-dn25" class="custom-checkbox"><label for="s_compch-dn25"><b>S-CompCh DN25PN16B</b> - разделитель фланцевый компактный с танталовой мембраной</label><div id="err_s_compch-dn25" style="display:none;"></div>
 						</fieldset>
 					</div>
 
 					<div class="thread-flange-hygienic" id="hygienic-select" style="display: none;">
 						<fieldset id="hygienic-select-field">
-							<input type="checkbox" name="hygienic" value="S-DIN-25" id="s_din_25" class="custom-checkbox"><label for="s_din_25"><b>S-DIN-25</b> - разделитель гигиенический</label><br><div id="err_s_din_25" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-DIN-32" id="s_din_32" class="custom-checkbox"><label for="s_din_32"><b>S-DIN-32</b> - разделитель гигиенический</label><br><div id="err_s_din_32" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-DIN-40" id="s_din_40" class="custom-checkbox"><label for="s_din_40"><b>S-DIN-40</b> - разделитель гигиенический</label><br><div id="err_s_din_40" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-DIN-50" id="s_din_50" class="custom-checkbox"><label for="s_din_50"><b>S-DIN-50</b> - разделитель гигиенический</label><br><div id="err_s_din_50" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-DIN-65" id="s_din_65" class="custom-checkbox"><label for="s_din_65"><b>S-DIN-65</b> - разделитель гигиенический</label><br><div id="err_s_din_65" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-DIN-80" id="s_din_80" class="custom-checkbox"><label for="s_din_80"><b>S-DIN-80</b> - разделитель гигиенический</label><br><div id="err_s_din_80" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Clamp-1" id="s_clamp_1" class="custom-checkbox"><label for="s_clamp_1"><b>S-Clamp-1</b> - разделитель гигиенический</label><br><div id="err_s_clamp_1" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Clamp-1,5" id="s_clamp_1_5" class="custom-checkbox"><label for="s_clamp_1_5"><b>S-Clamp-1,5</b> - разделитель гигиенический</label><br><div id="err_s_clamp_1_5" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Clamp-2" id="s_clamp_2" class="custom-checkbox"><label for="s_clamp_2"><b>S-Clamp-2</b> - разделитель гигиенический</label><br><div id="err_s_clamp_2" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Clamp-2,5" id="s_clamp_2_5" class="custom-checkbox"><label for="s_clamp_2_5"><b>S-Clamp-2,5</b> - разделитель гигиенический</label><br><div id="err_s_clamp_2_5" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Clamp-3" id="s_clamp_3" class="custom-checkbox"><label for="s_clamp_3"><b>S-Clamp-3</b> - разделитель гигиенический</label><br><div id="err_s_clamp_3" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Clamp-4" id="s_clamp_4" class="custom-checkbox"><label for="s_clamp_4"><b>S-Clamp-4</b> - разделитель гигиенический</label><br><div id="err_s_clamp_4" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-SMS-1" id="s_sms_1" class="custom-checkbox"><label for="s_sms_1"><b>S-SMS-1</b> - разделитель гигиенический</label><br><div id="err_s_sms_1" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-SMS-1,5" id="s_sms_1_5" class="custom-checkbox"><label for="s_sms_1_5"><b>S-SMS-1,5</b> - разделитель гигиенический</label><br><div id="err_s_sms_1_5" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-SMS-2" id="s_sms_2" class="custom-checkbox"><label for="s_sms_2"><b>S-SMS-2</b> - разделитель гигиенический</label><br><div id="err_s_sms_2" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-DRD-65" id="s_drd_65" class="custom-checkbox"><label for="s_drd_65"><b>S-DRD-65</b> - разделитель гигиенический</label><br><div id="err_s_drd_65" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Level-25" id="s_level_25" class="custom-checkbox"><label for="s_level_25"><b>S-Level-25</b> - разделитель гигиенический</label><br><div id="err_s_level_25" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Level-50" id="s_level_50" class="custom-checkbox"><label for="s_level_50"><b>S-Level-50</b> - разделитель гигиенический</label><br><div id="err_s_level_50" style="display:none;"></div>
-							<input type="checkbox" name="hygienic" value="S-Varivent" id="s_varivent" class="custom-checkbox"><label for="s_varivent"><b>S-Varivent</b> - разделитель гигиенический</label><br><div id="err_s_varivent" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DIN-25" id="s_din_25" class="custom-checkbox"><label for="s_din_25"><b>S-DIN-25</b> - разделитель гигиенический</label><div id="err_s_din_25" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DIN-32" id="s_din_32" class="custom-checkbox"><label for="s_din_32"><b>S-DIN-32</b> - разделитель гигиенический</label><div id="err_s_din_32" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DIN-40" id="s_din_40" class="custom-checkbox"><label for="s_din_40"><b>S-DIN-40</b> - разделитель гигиенический</label><div id="err_s_din_40" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DIN-50" id="s_din_50" class="custom-checkbox"><label for="s_din_50"><b>S-DIN-50</b> - разделитель гигиенический</label><div id="err_s_din_50" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DIN-65" id="s_din_65" class="custom-checkbox"><label for="s_din_65"><b>S-DIN-65</b> - разделитель гигиенический</label><div id="err_s_din_65" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DIN-80" id="s_din_80" class="custom-checkbox"><label for="s_din_80"><b>S-DIN-80</b> - разделитель гигиенический</label><div id="err_s_din_80" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Clamp-1" id="s_clamp_1" class="custom-checkbox"><label for="s_clamp_1"><b>S-Clamp-1</b> - разделитель гигиенический</label><div id="err_s_clamp_1" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Clamp-1,5" id="s_clamp_1_5" class="custom-checkbox"><label for="s_clamp_1_5"><b>S-Clamp-1,5</b> - разделитель гигиенический</label><div id="err_s_clamp_1_5" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Clamp-2" id="s_clamp_2" class="custom-checkbox"><label for="s_clamp_2"><b>S-Clamp-2</b> - разделитель гигиенический</label><div id="err_s_clamp_2" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Clamp-2,5" id="s_clamp_2_5" class="custom-checkbox"><label for="s_clamp_2_5"><b>S-Clamp-2,5</b> - разделитель гигиенический</label><div id="err_s_clamp_2_5" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Clamp-3" id="s_clamp_3" class="custom-checkbox"><label for="s_clamp_3"><b>S-Clamp-3</b> - разделитель гигиенический</label><div id="err_s_clamp_3" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Clamp-4" id="s_clamp_4" class="custom-checkbox"><label for="s_clamp_4"><b>S-Clamp-4</b> - разделитель гигиенический</label><div id="err_s_clamp_4" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-SMS-1" id="s_sms_1" class="custom-checkbox"><label for="s_sms_1"><b>S-SMS-1</b> - разделитель гигиенический</label><div id="err_s_sms_1" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-SMS-1,5" id="s_sms_1_5" class="custom-checkbox"><label for="s_sms_1_5"><b>S-SMS-1,5</b> - разделитель гигиенический</label><div id="err_s_sms_1_5" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-SMS-2" id="s_sms_2" class="custom-checkbox"><label for="s_sms_2"><b>S-SMS-2</b> - разделитель гигиенический</label><div id="err_s_sms_2" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-DRD-65" id="s_drd_65" class="custom-checkbox"><label for="s_drd_65"><b>S-DRD-65</b> - разделитель гигиенический</label><div id="err_s_drd_65" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Level-25" id="s_level_25" class="custom-checkbox"><label for="s_level_25"><b>S-Level-25</b> - разделитель гигиенический</label><div id="err_s_level_25" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Level-50" id="s_level_50" class="custom-checkbox"><label for="s_level_50"><b>S-Level-50</b> - разделитель гигиенический</label><div id="err_s_level_50" style="display:none;"></div>
+							<input type="checkbox" name="hygienic" value="S-Varivent" id="s_varivent" class="custom-checkbox"><label for="s_varivent"><b>S-Varivent</b> - разделитель гигиенический</label><div id="err_s_varivent" style="display:none;"></div>
 						</fieldset>
 					</div>
 				</div>
@@ -575,14 +576,14 @@
 							<input type="number" name="cap-minus-mes-env-temp" style="width: 5em" id="cap-minus-mes-env-temp" min="-40" max="300" placeholder="-40...300">
 							<input type="button" id="cap-minus-radiator-select-button-ok" value="ОК">
 						</span>
-						<span style="font-size: 85%;" id="cap-minus-radiator-select-err" hidden><br>Введите температуру от -40 до 300°С и нажмите "OK"</span><br>
+						<span style="font-size: 85%; color: red;" id="cap-minus-radiator-select-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'>Введите температуру от -40 до 300°С и нажмите "OK"</span>
 						<input type="checkbox" name="cap-minus" value="capillary" id="capillary-cap-minus" class="custom-checkbox"><label for="capillary-cap-minus">Дистанционное.</label>
 						<span id="cap-minus-length-span" hidden>
 							<label for="cap-minus-capillary-length">В сборе с разделителем и капилляром длиной, м:</label>
 							<input type="number" name="cap-minus-capillary-length" style="width: 4em" id="cap-minus-capillary-length" min="1" max="9" placeholder="1-9">
 							<input type="button" id="cap-minus-capillary-length-button-ok" value="ОК">
-						</span><br>
-						<span style="font-size: 85%;" id="cap-minus-length-span-err" hidden>Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
+						</span>
+						<span style="font-size: 85%; color: red;" id="cap-minus-length-span-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите длину капилляра от 1 до 9 метров и нажмите "OK"</span>
 					</fieldset>
 				</div>
 
@@ -593,41 +594,41 @@
 
 				<div class="option-to-select-list pr-28 apr-2000" id="minus-connection-type-select" style="display: none;">
 					<fieldset id="minus-connection-type-select-field" name="minus-connection-type-select-field">
-						<input type="checkbox" name="minus-connection-type" value="thread-list" id="minus-thread-list" class="custom-checkbox"><label for="minus-thread-list">Резьбовое</label><br>
-						<input type="checkbox" name="minus-connection-type" value="flange-list" id="minus-flange-list" class="custom-checkbox"><label for="minus-flange-list">Фланцевое</label><br>
-						<input type="checkbox" name="minus-connection-type" value="hygienic-list" id="minus-hygienic-list" class="custom-checkbox"><label for="minus-hygienic-list">Гигиеническое</label><br>
+						<input type="checkbox" name="minus-connection-type" value="thread-list" id="minus-thread-list" class="custom-checkbox"><label for="minus-thread-list">Резьбовое</label>
+						<input type="checkbox" name="minus-connection-type" value="flange-list" id="minus-flange-list" class="custom-checkbox"><label for="minus-flange-list">Фланцевое</label>
+						<input type="checkbox" name="minus-connection-type" value="hygienic-list" id="minus-hygienic-list" class="custom-checkbox"><label for="minus-hygienic-list">Гигиеническое</label>
 					</fieldset>
 
 					<div class="minus-thread-flange-hygienic" id="minus-thread-select" style="display: none;">
 						<fieldset id="minus-thread-select-field">
-							<input type="checkbox" name="minus-thread" value="P" id="minus-P" class="custom-checkbox"><label for="minus-P"><b>P</b> - штуцер M20x1,5, отверстие Ø12 (Ø9 для PR, APR)</label><br><div id="err_minus-P" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="1/4NPT(F)" id="minus-1_4npt_f" class="custom-checkbox"><label for="minus-1_4npt_f"><b>1/4NPT(F)</b> - штуцер с внутренней резьбой 1/4NPT</label><br><div id="err_minus-1_4npt_f" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Mazut-50" id="minus-s_mazut_50" class="custom-checkbox"><label for="minus-s_mazut_50"><b>S-Мазут-50</b> - разделитель с мембраной Ø50 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><br><div id="err_minus-s_mazut_50" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Mazut-75" id="minus-s_mazut_75" class="custom-checkbox"><label for="minus-s_mazut_75"><b>S-Mazut-75</b> - разделитель с мембраной Ø75 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><br><div id="err_minus-s_mazut_75" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Mazut-100" id="minus-s_mazut_100" class="custom-checkbox"><label for="minus-s_mazut_100"><b>S-Mazut-100</b> - разделитель с мембраной Ø100 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><br><div id="err_minus-s_mazut_100" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Mazut-50-G1/2(M)" id="minus-s_mazut_50_g1_2_m" class="custom-checkbox"><label for="minus-s_mazut_50_g1_2_m"><b>S-Mazut-50-G1/2(M)</b> - разделитель с мембраной Ø50 для горячих сред, штуцер G1/2, отверстие Ø12</label><br><div id="err_minus-s_mazut_50_g1_2_m" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Mazut-75-G1/2(M)" id="minus-s_mazut_75_g1_2_m" class="custom-checkbox"><label for="minus-s_mazut_75_g1_2_m"><b>S-Mazut-75-G1/2(M)</b> - разделитель с мембраной Ø75 для горячих сред, штуцер G1/2, отверстие Ø12</label><br><div id="err_minus-s_mazut_75_g1_2_m" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Mazut-100-G1/2(M)" id="minus-s_mazut_100_g1_2_m" class="custom-checkbox"><label for="minus-s_mazut_100_g1_2_m"><b>S-Mazut-100-G1/2(M)</b> - разделитель с мембраной Ø100 для горячих сред, штуцер G1/2, отверстие Ø12</label><br><div id="err_minus-s_mazut_100_g1_2_m" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-R-CM30x2" id="minus-s_r_m30_2" class="custom-checkbox"><label for="minus-s_r_m30_2"><b>S-R-CM30x2 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_minus-s_r_m30_2" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-R-CM30x1,5" id="minus-s_r_m30_1_5" class="custom-checkbox"><label for="minus-s_r_m30_1_5"><b>S-R-CM30x1,5 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5</label><br><div id="err_minus-s_r_m30_1_5" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-R2-CM30x2" id="minus-s_r2_m30_2" class="custom-checkbox"><label for="minus-s_r2_m30_2"><b>S-R2-CM30x2 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><br><div id="err_minus-s_r2_m30_2" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-R2-CM30x1,5" id="minus-s_r2_m30_1_5" class="custom-checkbox"><label for="minus-s_r2_m30_1_5"><b>S-R2-CM30x1,5 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5</label><br><div id="err_minus-s_r2_m30_1_5" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Comp-10МПа" id="minus-s_compk_10mpa" class="custom-checkbox"><label for="minus-s_compk_10mpa"><b>S-CompK-10МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 10 МПа</label><br><div id="err_minus-s_compk_10mpa" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Comp-25МПа" id="minus-s_compk_25mpa" class="custom-checkbox"><label for="minus-s_compk_25mpa"><b>S-CompK-25МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 25 МПа</label><br><div id="err_minus-s_compk_25mpa" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-Comp-60МПа" id="minus-s_compk_60mpa" class="custom-checkbox"><label for="minus-s_compk_60mpa"><b>S-CompK-60МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 60 МПа</label><br><div id="err_minus-s_compk_60mpa" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-CG1.1/2" id="minus-s_cg1_1_2" class="custom-checkbox"><label for="minus-s_cg1_1_2"><b>S-CG1 1/2</b> - разделитель с лицевой мембраной и резьбовым присоединением G1 1/2</label><br><div id="err_minus-s_cg1_1_2" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-CompCh-M20x1,5" id="minus-s_compch_m20_1_5" class="custom-checkbox"><label for="minus-s_compch_m20_1_5"><b>S-CompCh-M20x1,5</b> - разделитель фланцевый с танталовой мембраной, штуцер M20x1,5(M)</label><br><div id="err_minus-s_compch_m20_1_5" style="display:none;"></div>
-							<input type="checkbox" name="minus-thread" value="S-CompCh-G1/2" id="minus-s_compch_g1_2" class="custom-checkbox"><label for="minus-s_compch_g1_2"><b>S-CompCh-G1/2</b> - разделитель фланцевый с танталовой мембраной, штуцер G1/2(M)</label><br><div id="err_minus-s_compch_g1_2" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="P" id="minus-P" class="custom-checkbox"><label for="minus-P"><b>P</b> - штуцер M20x1,5, отверстие Ø12 (Ø9 для PR, APR)</label><div id="err_minus-P" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="1/4NPT(F)" id="minus-1_4npt_f" class="custom-checkbox"><label for="minus-1_4npt_f"><b>1/4NPT(F)</b> - штуцер с внутренней резьбой 1/4NPT</label><div id="err_minus-1_4npt_f" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Mazut-50" id="minus-s_mazut_50" class="custom-checkbox"><label for="minus-s_mazut_50"><b>S-Мазут-50</b> - разделитель с мембраной Ø50 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><div id="err_minus-s_mazut_50" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Mazut-75" id="minus-s_mazut_75" class="custom-checkbox"><label for="minus-s_mazut_75"><b>S-Mazut-75</b> - разделитель с мембраной Ø75 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><div id="err_minus-s_mazut_75" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Mazut-100" id="minus-s_mazut_100" class="custom-checkbox"><label for="minus-s_mazut_100"><b>S-Mazut-100</b> - разделитель с мембраной Ø100 для горячих сред, штуцер M20x1,5, отверстие Ø12</label><div id="err_minus-s_mazut_100" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Mazut-50-G1/2(M)" id="minus-s_mazut_50_g1_2_m" class="custom-checkbox"><label for="minus-s_mazut_50_g1_2_m"><b>S-Mazut-50-G1/2(M)</b> - разделитель с мембраной Ø50 для горячих сред, штуцер G1/2, отверстие Ø12</label><div id="err_minus-s_mazut_50_g1_2_m" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Mazut-75-G1/2(M)" id="minus-s_mazut_75_g1_2_m" class="custom-checkbox"><label for="minus-s_mazut_75_g1_2_m"><b>S-Mazut-75-G1/2(M)</b> - разделитель с мембраной Ø75 для горячих сред, штуцер G1/2, отверстие Ø12</label><div id="err_minus-s_mazut_75_g1_2_m" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Mazut-100-G1/2(M)" id="minus-s_mazut_100_g1_2_m" class="custom-checkbox"><label for="minus-s_mazut_100_g1_2_m"><b>S-Mazut-100-G1/2(M)</b> - разделитель с мембраной Ø100 для горячих сред, штуцер G1/2, отверстие Ø12</label><div id="err_minus-s_mazut_100_g1_2_m" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-R-CM30x2" id="minus-s_r_m30_2" class="custom-checkbox"><label for="minus-s_r_m30_2"><b>S-R-CM30x2 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><div id="err_minus-s_r_m30_2" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-R-CM30x1,5" id="minus-s_r_m30_1_5" class="custom-checkbox"><label for="minus-s_r_m30_1_5"><b>S-R-CM30x1,5 (до 160°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5</label><div id="err_minus-s_r_m30_1_5" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-R2-CM30x2" id="minus-s_r2_m30_2" class="custom-checkbox"><label for="minus-s_r2_m30_2"><b>S-R2-CM30x2 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x2</label><div id="err_minus-s_r2_m30_2" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-R2-CM30x1,5" id="minus-s_r2_m30_1_5" class="custom-checkbox"><label for="minus-s_r2_m30_1_5"><b>S-R2-CM30x1,5 (до 260°С)</b> - разделитель с лицевой мембраной и резьбовым присоединением M30x1,5</label><div id="err_minus-s_r2_m30_1_5" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Comp-10МПа" id="minus-s_compk_10mpa" class="custom-checkbox"><label for="minus-s_compk_10mpa"><b>S-CompK-10МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 10 МПа</label><div id="err_minus-s_compk_10mpa" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Comp-25МПа" id="minus-s_compk_25mpa" class="custom-checkbox"><label for="minus-s_compk_25mpa"><b>S-CompK-25МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 25 МПа</label><div id="err_minus-s_compk_25mpa" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-Comp-60МПа" id="minus-s_compk_60mpa" class="custom-checkbox"><label for="minus-s_compk_60mpa"><b>S-CompK-60МПа</b> - разделитель дистанционный фланцевый, штуцер 1/2NPT(F) до 60 МПа</label><div id="err_minus-s_compk_60mpa" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-CG1.1/2" id="minus-s_cg1_1_2" class="custom-checkbox"><label for="minus-s_cg1_1_2"><b>S-CG1 1/2</b> - разделитель с лицевой мембраной и резьбовым присоединением G1 1/2</label><div id="err_minus-s_cg1_1_2" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-CompCh-M20x1,5" id="minus-s_compch_m20_1_5" class="custom-checkbox"><label for="minus-s_compch_m20_1_5"><b>S-CompCh-M20x1,5</b> - разделитель фланцевый с танталовой мембраной, штуцер M20x1,5(M)</label><div id="err_minus-s_compch_m20_1_5" style="display:none;"></div>
+							<input type="checkbox" name="minus-thread" value="S-CompCh-G1/2" id="minus-s_compch_g1_2" class="custom-checkbox"><label for="minus-s_compch_g1_2"><b>S-CompCh-G1/2</b> - разделитель фланцевый с танталовой мембраной, штуцер G1/2(M)</label><div id="err_minus-s_compch_g1_2" style="display:none;"></div>
 						</fieldset>
 					</div>
 
 					<div class="minus-thread-flange-hygienic" id="minus-flange-select" style="display: none;">
 						<fieldset id="minus-flange-select-field">
-							<input type="checkbox" name="minus-flange" value="C" id="minus-c-pr" class="custom-checkbox"><label for="minus-c-pr"><b>C</b> - фланец для монтажа 3-х или 5-и ходового вентильного блока</label><br><div id="err_minus-c-pr" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-P-DN50PN40B" id="minus-s_p_dn50" class="custom-checkbox"><label for="minus-s_p_dn50"><b>S-P DN50PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_minus-s_p_dn50" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-P-DN80PN40B" id="minus-s_p_dn80" class="custom-checkbox"><label for="minus-s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_minus-s_p_dn80" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-P-DN100PN40B" id="minus-s_p_dn100" class="custom-checkbox"><label for="minus-s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><br><div id="err_minus-s_p_dn100" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-T-DN50PN40B" id="minus-s_t_dn50" class="custom-checkbox"><label for="minus-s_t_dn50"><b>S-T DN50PN40B</b> - разделитель фланцевый цилиндрический</label><br><div id="err_minus-s_t_dn50" style="display:none;"><br></div>
+							<input type="checkbox" name="minus-flange" value="C" id="minus-c-pr" class="custom-checkbox"><label for="minus-c-pr"><b>C</b> - фланец для монтажа 3-х или 5-и ходового вентильного блока</label><div id="err_minus-c-pr" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-P-DN50PN40B" id="minus-s_p_dn50" class="custom-checkbox"><label for="minus-s_p_dn50"><b>S-P DN50PN40B</b> - разделитель фланцевый плоский</label><div id="err_minus-s_p_dn50" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-P-DN80PN40B" id="minus-s_p_dn80" class="custom-checkbox"><label for="minus-s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><div id="err_minus-s_p_dn80" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-P-DN100PN40B" id="minus-s_p_dn100" class="custom-checkbox"><label for="minus-s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><div id="err_minus-s_p_dn100" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-T-DN50PN40B" id="minus-s_t_dn50" class="custom-checkbox"><label for="minus-s_t_dn50"><b>S-T DN50PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_dn50" style="display:none;"><br></div>
 							<span id="minus-s_t_dn50-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
 								<select name="s_t_dn50-cilinder-length" id="minus-s_t_dn50-cilinder-length">
 									<option value="not_selected" selected>--Не выбрано--</option>
@@ -637,7 +638,7 @@
 									<option value="200">200</option>
 								</select><br><br>
 							</span>
-							<input type="checkbox" name="minus-flange" value="S-T-DN80PN40B" id="minus-s_t_dn80" class="custom-checkbox"><label for="minus-s_t_dn80"><b>S-T DN80PN40B</b> - разделитель фланцевый цилиндрический</label><br><div id="err_minus-s_t_dn80" style="display:none;"><br></div>
+							<input type="checkbox" name="minus-flange" value="S-T-DN80PN40B" id="minus-s_t_dn80" class="custom-checkbox"><label for="minus-s_t_dn80"><b>S-T DN80PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_dn80" style="display:none;"><br></div>
 							<span id="minus-s_t_dn80-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
 								<select name="s_t_dn80-cilinder-length" id="minus-s_t_dn80-cilinder-length">
 									<option value="not_selected" selected>--Не выбрано--</option>
@@ -647,7 +648,7 @@
 									<option value="200">200</option>
 								</select><br><br>
 							</span>
-							<input type="checkbox" name="minus-flange" value="S-T-DN100PN40B" id="minus-s_t_dn100" class="custom-checkbox"><label for="minus-s_t_dn100"><b>S-T DN100PN40B</b> - разделитель фланцевый цилиндрический</label><br><div id="err_minus-s_t_dn100" style="display:none;"><br></div>
+							<input type="checkbox" name="minus-flange" value="S-T-DN100PN40B" id="minus-s_t_dn100" class="custom-checkbox"><label for="minus-s_t_dn100"><b>S-T DN100PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_dn100" style="display:none;"><br></div>
 							<span id="minus-s_t_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
 								<select name="s_t_dn100-cilinder-length" id="minus-s_t_dn100-cilinder-length">
 									<option value="not_selected" selected>--Не выбрано--</option>
@@ -657,7 +658,7 @@
 									<option value="200">200</option>
 								</select><br><br>
 							</span>
-							<input type="checkbox" name="minus-flange" value="S-T-WASH-DN100PN40B" id="minus-s_tk_wash_dn100" class="custom-checkbox"><label for="minus-s_tk_wash_dn100"><b>S-TK-WASH DN100PN40B</b> - разделитель дистанционный фланцевый цилиндрический с системой промывания мембраны</label><br><div id="err_minus-s_tk_wash_dn100" style="display:none;"><br></div>
+							<input type="checkbox" name="minus-flange" value="S-T-WASH-DN100PN40B" id="minus-s_tk_wash_dn100" class="custom-checkbox"><label for="minus-s_tk_wash_dn100"><b>S-TK-WASH DN100PN40B</b> - разделитель дистанционный фланцевый цилиндрический с системой промывания мембраны</label><div id="err_minus-s_tk_wash_dn100" style="display:none;"><br></div>
 							<span id="minus-s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
 								<select name="s_tk_wash_dn100-cilinder-length" id="minus-s_tk_wash_dn100-cilinder-length">
 									<option value="not_selected" selected>--Не выбрано--</option>
@@ -667,34 +668,34 @@
 									<option value="200">200</option>
 								</select><br><br>
 							</span>
-							<input type="checkbox" name="minus-flange" value="S-Ch-DN50PN40B" id="minus-s_ch_dn50" class="custom-checkbox"><label for="minus-s_ch_dn50"><b>S-Ch DN50PN40B</b> - разделитель фланцевый плоский химостойкий</label><br><div id="err_minus-s_ch_dn50" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-Ch-DN80PN40B" id="minus-s_ch_dn80" class="custom-checkbox"><label for="minus-s_ch_dn80"><b>S-Ch DN80PN40B</b> - разделитель фланцевый плоский химостойкий</label><br><div id="err_minus-s_ch_dn80" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-Comp-d51" id="minus-s_comp_d51" class="custom-checkbox"><label for="minus-s_comp_d51"><b>S-Comp d51</b> - разделитель фланцевый компактный с противофланцами под сварку</label><br><div id="err_minus-s_comp_d51" style="display:none;"></div>
-							<input type="checkbox" name="minus-flange" value="S-CompCh-DN25PN16B" id="minus-s_compch-dn25" class="custom-checkbox"><label for="minus-s_compch-dn25"><b>S-CompCh DN25PN16B</b> - разделитель фланцевый компактный с танталовой мембраной</label><br><div id="err_minus-s_compch-dn25" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-Ch-DN50PN40B" id="minus-s_ch_dn50" class="custom-checkbox"><label for="minus-s_ch_dn50"><b>S-Ch DN50PN40B</b> - разделитель фланцевый плоский химостойкий</label><div id="err_minus-s_ch_dn50" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-Ch-DN80PN40B" id="minus-s_ch_dn80" class="custom-checkbox"><label for="minus-s_ch_dn80"><b>S-Ch DN80PN40B</b> - разделитель фланцевый плоский химостойкий</label><div id="err_minus-s_ch_dn80" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-Comp-d51" id="minus-s_comp_d51" class="custom-checkbox"><label for="minus-s_comp_d51"><b>S-Comp d51</b> - разделитель фланцевый компактный с противофланцами под сварку</label><div id="err_minus-s_comp_d51" style="display:none;"></div>
+							<input type="checkbox" name="minus-flange" value="S-CompCh-DN25PN16B" id="minus-s_compch-dn25" class="custom-checkbox"><label for="minus-s_compch-dn25"><b>S-CompCh DN25PN16B</b> - разделитель фланцевый компактный с танталовой мембраной</label><div id="err_minus-s_compch-dn25" style="display:none;"></div>
 						</fieldset>
 					</div>
 
 					<div class="minus-thread-flange-hygienic" id="minus-hygienic-select" style="display: none;">
 						<fieldset id="minus-hygienic-select-field">
-							<input type="checkbox" name="minus-hygienic" value="S-DIN-25" id="minus-s_din_25" class="custom-checkbox"><label for="minus-s_din_25"><b>S-DIN-25</b> - разделитель гигиенический</label><br><div id="err_minus-s_din_25" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-DIN-32" id="minus-s_din_32" class="custom-checkbox"><label for="minus-s_din_32"><b>S-DIN-32</b> - разделитель гигиенический</label><br><div id="err_minus-s_din_32" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-DIN-40" id="minus-s_din_40" class="custom-checkbox"><label for="minus-s_din_40"><b>S-DIN-40</b> - разделитель гигиенический</label><br><div id="err_minus-s_din_40" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-DIN-50" id="minus-s_din_50" class="custom-checkbox"><label for="minus-s_din_50"><b>S-DIN-50</b> - разделитель гигиенический</label><br><div id="err_minus-s_din_50" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-DIN-65" id="minus-s_din_65" class="custom-checkbox"><label for="minus-s_din_65"><b>S-DIN-65</b> - разделитель гигиенический</label><br><div id="err_minus-s_din_65" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-DIN-80" id="minus-s_din_80" class="custom-checkbox"><label for="minus-s_din_80"><b>S-DIN-80</b> - разделитель гигиенический</label><br><div id="err_minus-s_din_80" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Clamp-1" id="minus-s_clamp_1" class="custom-checkbox"><label for="minus-s_clamp_1"><b>S-Clamp-1</b> - разделитель гигиенический</label><br><div id="err_minus-s_clamp_1" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Clamp-1,5" id="minus-s_clamp_1_5" class="custom-checkbox"><label for="minus-s_clamp_1_5"><b>S-Clamp-1,5</b> - разделитель гигиенический</label><br><div id="err_minus-s_clamp_1_5" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Clamp-2" id="minus-s_clamp_2" class="custom-checkbox"><label for="minus-s_clamp_2"><b>S-Clamp-2</b> - разделитель гигиенический</label><br><div id="err_minus-s_clamp_2" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Clamp-2,5" id="minus-s_clamp_2_5" class="custom-checkbox"><label for="minus-s_clamp_2_5"><b>S-Clamp-2,5</b> - разделитель гигиенический</label><br><div id="err_minus-s_clamp_2_5" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Clamp-3" id="minus-s_clamp_3" class="custom-checkbox"><label for="minus-s_clamp_3"><b>S-Clamp-3</b> - разделитель гигиенический</label><br><div id="err_minus-s_clamp_3" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Clamp-4" id="minus-s_clamp_4" class="custom-checkbox"><label for="minus-s_clamp_4"><b>S-Clamp-4</b> - разделитель гигиенический</label><br><div id="err_minus-s_clamp_4" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-SMS-1" id="minus-s_sms_1" class="custom-checkbox"><label for="minus-s_sms_1"><b>S-SMS-1</b> - разделитель гигиенический</label><br><div id="err_minus-s_sms_1" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-SMS-1,5" id="minus-s_sms_1_5" class="custom-checkbox"><label for="minus-s_sms_1_5"><b>S-SMS-1,5</b> - разделитель гигиенический</label><br><div id="err_minus-s_sms_1_5" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-SMS-2" id="minus-s_sms_2" class="custom-checkbox"><label for="minus-s_sms_2"><b>S-SMS-2</b> - разделитель гигиенический</label><br><div id="err_minus-s_sms_2" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-DRD-65" id="minus-s_drd_65" class="custom-checkbox"><label for="minus-s_drd_65"><b>S-DRD-65</b> - разделитель гигиенический</label><br><div id="err_minus-s_drd_65" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Level-25" id="minus-s_level_25" class="custom-checkbox"><label for="minus-s_level_25"><b>S-Level-25</b> - разделитель гигиенический</label><br><div id="err_minus-s_level_25" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Level-50" id="minus-s_level_50" class="custom-checkbox"><label for="minus-s_level_50"><b>S-Level-50</b> - разделитель гигиенический</label><br><div id="err_minus-s_level_50" style="display:none;"></div>
-							<input type="checkbox" name="minus-hygienic" value="S-Varivent" id="minus-s_varivent" class="custom-checkbox"><label for="minus-s_varivent"><b>S-Varivent</b> - разделитель гигиенический</label><br><div id="err_minus-s_varivent" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DIN-25" id="minus-s_din_25" class="custom-checkbox"><label for="minus-s_din_25"><b>S-DIN-25</b> - разделитель гигиенический</label><div id="err_minus-s_din_25" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DIN-32" id="minus-s_din_32" class="custom-checkbox"><label for="minus-s_din_32"><b>S-DIN-32</b> - разделитель гигиенический</label><div id="err_minus-s_din_32" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DIN-40" id="minus-s_din_40" class="custom-checkbox"><label for="minus-s_din_40"><b>S-DIN-40</b> - разделитель гигиенический</label><div id="err_minus-s_din_40" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DIN-50" id="minus-s_din_50" class="custom-checkbox"><label for="minus-s_din_50"><b>S-DIN-50</b> - разделитель гигиенический</label><div id="err_minus-s_din_50" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DIN-65" id="minus-s_din_65" class="custom-checkbox"><label for="minus-s_din_65"><b>S-DIN-65</b> - разделитель гигиенический</label><div id="err_minus-s_din_65" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DIN-80" id="minus-s_din_80" class="custom-checkbox"><label for="minus-s_din_80"><b>S-DIN-80</b> - разделитель гигиенический</label><div id="err_minus-s_din_80" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Clamp-1" id="minus-s_clamp_1" class="custom-checkbox"><label for="minus-s_clamp_1"><b>S-Clamp-1</b> - разделитель гигиенический</label><div id="err_minus-s_clamp_1" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Clamp-1,5" id="minus-s_clamp_1_5" class="custom-checkbox"><label for="minus-s_clamp_1_5"><b>S-Clamp-1,5</b> - разделитель гигиенический</label><div id="err_minus-s_clamp_1_5" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Clamp-2" id="minus-s_clamp_2" class="custom-checkbox"><label for="minus-s_clamp_2"><b>S-Clamp-2</b> - разделитель гигиенический</label><div id="err_minus-s_clamp_2" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Clamp-2,5" id="minus-s_clamp_2_5" class="custom-checkbox"><label for="minus-s_clamp_2_5"><b>S-Clamp-2,5</b> - разделитель гигиенический</label><div id="err_minus-s_clamp_2_5" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Clamp-3" id="minus-s_clamp_3" class="custom-checkbox"><label for="minus-s_clamp_3"><b>S-Clamp-3</b> - разделитель гигиенический</label><div id="err_minus-s_clamp_3" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Clamp-4" id="minus-s_clamp_4" class="custom-checkbox"><label for="minus-s_clamp_4"><b>S-Clamp-4</b> - разделитель гигиенический</label><div id="err_minus-s_clamp_4" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-SMS-1" id="minus-s_sms_1" class="custom-checkbox"><label for="minus-s_sms_1"><b>S-SMS-1</b> - разделитель гигиенический</label><div id="err_minus-s_sms_1" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-SMS-1,5" id="minus-s_sms_1_5" class="custom-checkbox"><label for="minus-s_sms_1_5"><b>S-SMS-1,5</b> - разделитель гигиенический</label><div id="err_minus-s_sms_1_5" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-SMS-2" id="minus-s_sms_2" class="custom-checkbox"><label for="minus-s_sms_2"><b>S-SMS-2</b> - разделитель гигиенический</label><div id="err_minus-s_sms_2" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-DRD-65" id="minus-s_drd_65" class="custom-checkbox"><label for="minus-s_drd_65"><b>S-DRD-65</b> - разделитель гигиенический</label><div id="err_minus-s_drd_65" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Level-25" id="minus-s_level_25" class="custom-checkbox"><label for="minus-s_level_25"><b>S-Level-25</b> - разделитель гигиенический</label><div id="err_minus-s_level_25" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Level-50" id="minus-s_level_50" class="custom-checkbox"><label for="minus-s_level_50"><b>S-Level-50</b> - разделитель гигиенический</label><div id="err_minus-s_level_50" style="display:none;"></div>
+							<input type="checkbox" name="minus-hygienic" value="S-Varivent" id="minus-s_varivent" class="custom-checkbox"><label for="minus-s_varivent"><b>S-Varivent</b> - разделитель гигиенический</label><div id="err_minus-s_varivent" style="display:none;"></div>
 						</fieldset>
 					</div>
 				</div>
@@ -705,9 +706,9 @@
 				</div>
 				<div class="option-to-select-list fluid-select-div" id="fluid-select" style="display: none;"> <!-- pc-28 apc-2000 pr-28 apr-2000 -->
 					<fieldset id="fluid-select-field" name="fluid-select-field">
-						<input type="checkbox" name="fluid" value="AK" id="ak20" class="custom-checkbox"><label for="ak20"><b>AK</b> - жидкость с рабочей температурой -50...180°С (кроме вакуума).</label><br><div id="err_ak20"  style="display:none;"></div>
-						<input type="checkbox" name="fluid" value="DC" id="dc550" class="custom-checkbox"><label for="dc550"><b>DC</b> - жидкость с рабочей температурой -5...310°С.</label><br><div id="err_dc550"  style="display:none;"></div>
-						<input type="checkbox" name="fluid" value="SF" id="sofexil" class="custom-checkbox"><label for="sofexil"><b>SF</b> - жидкость с рабочей температурой -60...350°С.</label><br><div id="err_sofexil"  style="display:none;"></div>
+						<input type="checkbox" name="fluid" value="AK" id="ak20" class="custom-checkbox"><label for="ak20"><b>AK</b> - жидкость с рабочей температурой -50...180°С (кроме вакуума).</label><div id="err_ak20"  style="display:none;"></div>
+						<input type="checkbox" name="fluid" value="DC" id="dc550" class="custom-checkbox"><label for="dc550"><b>DC</b> - жидкость с рабочей температурой -5...310°С.</label><div id="err_dc550"  style="display:none;"></div>
+						<input type="checkbox" name="fluid" value="SF" id="sofexil" class="custom-checkbox"><label for="sofexil"><b>SF</b> - жидкость с рабочей температурой -60...350°С.</label><div id="err_sofexil"  style="display:none;"></div>
 					</fieldset>
 				</div>
 
@@ -717,23 +718,23 @@
 				</div>
 				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="special-select" style="display: none;">
 					<fieldset id="special-select-field" name="special-select-field">
-						<input type="checkbox" name="special" value="0,16%" id="0_16" disabled class="custom-checkbox"><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа и аналоговый выход)</label><br><div id="err_0_16"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="0,05%" id="0_05" disabled class="custom-checkbox"><label for="0_05" class="disabled"><b>0,05%</b> - повышенная точность (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_0_05"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="H" id="hi_load" disabled class="custom-checkbox"><label for="hi_load" class="disabled"><b>H</b> - повышенная перегрузочная способность (поргешность 0,4%, только 4..20мА)</label><br><div id="err_hi_load"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="Hart7" id="hart7" disabled class="custom-checkbox"><label for="hart7" class="disabled"><b>Hart7</b> - протокол обмена данными версии 7 (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_hart7"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="Кислород" id="oxygen" disabled class="custom-checkbox"><label for="oxygen" class="disabled"><b>Кислород</b> - для измерения кислорода (только штуцеры M и G1/2)</label><br><div id="err_oxygen"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="TR" id="time_response" disabled class="custom-checkbox"><label for="time_response" class="disabled"><b>TR</b> - скорость реакции ниже 30мс (только 4..20мА, кроме ALW)</label><br><div id="err_time_response"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="(-20)" id="minus_20" disabled class="custom-checkbox"><label for="minus_20" class="disabled"><b>(-20)</b> - диапазон термокомпенсации -20...70°С</label><br><div id="err_minus_20"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="(-30)" id="minus_30" disabled class="custom-checkbox"><label for="minus_30" class="disabled"><b>(-30)</b> - диапазон термокомпенсации -30...50°С</label><br><div id="err_minus_30"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="(-40)" id="minus_40" disabled class="custom-checkbox"><label for="minus_40" class="disabled"><b>(-40)</b> - диапазон термокомпенсации -40...80°С (только для APC-2000PZ или APC-2000PD)</label><br><div id="err_minus_40"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="(-50)" id="minus_50" disabled class="custom-checkbox"><label for="minus_50" class="disabled"><b>(-50)</b> - диапазон термокомпенсации -50...80°С (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_minus_50"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="(-60)" id="minus_60" disabled class="custom-checkbox"><label for="minus_60" class="disabled"><b>(-60)</b> - диапазон термокомпенсации -60...50°С (только для APC-2000PZ)</label><br><div id="err_minus_60"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="CT" id="ct_spec" disabled class="custom-checkbox"><label for="ct_spec" class="disabled"><b>CT</b> - цифровая термокомпенсация -30...50°С (только абсолютное давление)</label><br><div id="err_ct_spec"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="rad_cap" id="rad_cap" disabled class="custom-checkbox"><label for="rad_cap" class="disabled"><b>R</b> - радиальное выведение капилляра разделителя</label><br><div id="err_rad_cap"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="HS" id="hs" disabled class="custom-checkbox"><label for="hs" class="disabled"><b>HS</b> - полисенсорный измерительный элемент</label><br><div id="err_hs"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled class="custom-checkbox"><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (только для APC-2000ALW, APR-2000ALW)</label><br><div id="err_spec_pd"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="SN" id="SN" disabled class="custom-checkbox"><label for="SN" class="disabled"><b>SN</b> - корпус индикатора APC-2000ALW из нержавеющей стали AISI316</label><br><div id="err_SN"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="IP67" id="spec_ip67" disabled class="custom-checkbox"><label for="spec_ip67" class="disabled"><b>IP67</b> - степень защиты корпуса APC-2000ALW (только абс. давление), APR-2000ALW</label><br><div id="err_spec_ip67"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="0,16%" id="0_16" disabled class="custom-checkbox"><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа и аналоговый выход)</label><div id="err_0_16"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="0,05%" id="0_05" disabled class="custom-checkbox"><label for="0_05" class="disabled"><b>0,05%</b> - повышенная точность (только для APC-2000ALW, APR-2000ALW)</label><div id="err_0_05"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="H" id="hi_load" disabled class="custom-checkbox"><label for="hi_load" class="disabled"><b>H</b> - повышенная перегрузочная способность (поргешность 0,4%, только 4..20мА)</label><div id="err_hi_load"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="Hart7" id="hart7" disabled class="custom-checkbox"><label for="hart7" class="disabled"><b>Hart7</b> - протокол обмена данными версии 7 (только для APC-2000ALW, APR-2000ALW)</label><div id="err_hart7"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="Кислород" id="oxygen" disabled class="custom-checkbox"><label for="oxygen" class="disabled"><b>Кислород</b> - для измерения кислорода (только штуцеры M и G1/2)</label><div id="err_oxygen"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="TR" id="time_response" disabled class="custom-checkbox"><label for="time_response" class="disabled"><b>TR</b> - скорость реакции ниже 30мс (только 4..20мА, кроме ALW)</label><div id="err_time_response"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="(-20)" id="minus_20" disabled class="custom-checkbox"><label for="minus_20" class="disabled"><b>(-20)</b> - диапазон термокомпенсации -20...70°С</label><div id="err_minus_20"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="(-30)" id="minus_30" disabled class="custom-checkbox"><label for="minus_30" class="disabled"><b>(-30)</b> - диапазон термокомпенсации -30...50°С</label><div id="err_minus_30"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="(-40)" id="minus_40" disabled class="custom-checkbox"><label for="minus_40" class="disabled"><b>(-40)</b> - диапазон термокомпенсации -40...80°С (только для APC-2000PZ или APC-2000PD)</label><div id="err_minus_40"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="(-50)" id="minus_50" disabled class="custom-checkbox"><label for="minus_50" class="disabled"><b>(-50)</b> - диапазон термокомпенсации -50...80°С (только для APC-2000ALW, APR-2000ALW)</label><div id="err_minus_50"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="(-60)" id="minus_60" disabled class="custom-checkbox"><label for="minus_60" class="disabled"><b>(-60)</b> - диапазон термокомпенсации -60...50°С (только для APC-2000PZ)</label><div id="err_minus_60"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="CT" id="ct_spec" disabled class="custom-checkbox"><label for="ct_spec" class="disabled"><b>CT</b> - цифровая термокомпенсация -30...50°С (только абсолютное давление)</label><div id="err_ct_spec"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="rad_cap" id="rad_cap" disabled class="custom-checkbox"><label for="rad_cap" class="disabled"><b>R</b> - радиальное выведение капилляра разделителя</label><div id="err_rad_cap"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="HS" id="hs" disabled class="custom-checkbox"><label for="hs" class="disabled"><b>HS</b> - полисенсорный измерительный элемент</label><div id="err_hs"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled class="custom-checkbox"><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (только для APC-2000ALW, APR-2000ALW)</label><div id="err_spec_pd"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="SN" id="SN" disabled class="custom-checkbox"><label for="SN" class="disabled"><b>SN</b> - корпус индикатора APC-2000ALW из нержавеющей стали AISI316</label><div id="err_SN"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="IP67" id="spec_ip67" disabled class="custom-checkbox"><label for="spec_ip67" class="disabled"><b>IP67</b> - степень защиты корпуса APC-2000ALW (только абс. давление), APR-2000ALW</label><div id="err_spec_ip67"  style="display:none;"></div>
 					</fieldset>
 				</div>
 			</div>

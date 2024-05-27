@@ -987,7 +987,7 @@ function disable_invalid_options(){
     for (let els of caps){
         $("input[name="+ els +"-mes-env-temp]").prop('max', 300);// СНЯТЬ ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ
         $("input[name="+ els +"-mes-env-temp]").prop('placeholder', "-40...300");
-        document.getElementById(els +"-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до 300°C и нажмите \"OK\"";
+        document.getElementById(els +"-radiator-select-err").innerHTML = "<br/><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до 300°C и нажмите \"OK\"";
     }
 
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
@@ -1048,7 +1048,7 @@ function disable_invalid_options(){
                             //     document.getElementById("err_" + $(this).attr("id")).innerHTML="&emsp;&emsp;&emsp;Необходимо отменить: ";
                             //     console.log("ДОБАВИЛ Необходимо отменить:")
                             // }
-                            document.getElementById("err_" + $(this).attr("id")).innerHTML += `<br>&emsp;&emsp;&emsp;<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked class='custom-checkbox'><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
+                            document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
                             console.log(document.getElementById("err_" + $(this).attr("id")).innerHTML);
                             // console.log($("#err_" + $(this).attr("id")));
                             // console.log(pair[1], "  ", $("label[for="+pair[1]+"]").text());
@@ -1133,7 +1133,7 @@ function disable_invalid_options(){
                 if (typeof max_temp!='undefined' && !window[con_type + "_restr_lst"].has("radiator")){
                     $("input[name=cap-or-not-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                     $("input[name=cap-or-not-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
-                    document.getElementById("cap-or-not-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
+                    document.getElementById("cap-or-not-radiator-select-err").innerHTML = "<br/><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
                 }
             }
 
@@ -1299,7 +1299,7 @@ function disable_invalid_options(){
                 if (typeof max_temp!='undefined' && !window[con_type + "_restr_lst"].has("radiator")){
                     $("input[name=cap-plus-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                     $("input[name=cap-plus-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
-                    document.getElementById("cap-plus-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
+                    document.getElementById("cap-plus-radiator-select-err").innerHTML = "<br/><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
                 }
             }
 
@@ -1332,7 +1332,7 @@ function disable_invalid_options(){
                 if (typeof max_temp!='undefined' && !window[con_type + "_restr_lst"].has("radiator")){
                     $("input[name=cap-minus-mes-env-temp]").prop('max', max_temp);// ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ для DIRECT для выбранного присоединения
                     $("input[name=cap-minus-mes-env-temp]").prop('placeholder', "-40..." + max_temp);
-                    document.getElementById("cap-minus-radiator-select-err").innerHTML = "<br/>Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
+                    document.getElementById("cap-minus-radiator-select-err").innerHTML = "<br/><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до "+ max_temp + "°C и нажмите \"OK\"";
                 }
             }
 
@@ -1471,7 +1471,7 @@ function disable_invalid_options(){
         $("#hart7").prop('disabled', true);
         $("#hart7").prop('checked', false);
     }
-    if ((full_conf.get("main_dev") != "apc-2000" || full_conf.get("pressure_type")!="ABS") || (full_conf.get("main_dev") != "apr-2000" || full_conf.get("electrical")!="APCALW")){ // проверка специсполнения IP67
+    if (!(full_conf.get("electrical")=="APCALW" && (full_conf.get("pressure_type")=="ABS" || full_conf.get("main_dev") == "apr-2000"))){ // проверка специсполнения IP67
         $("label[for=spec_ip67]").addClass('disabled');
         $("#spec_ip67").prop('disabled', true);
         $("#spec_ip67").prop('checked', false);
@@ -1969,7 +1969,6 @@ $(function(){
                     }
                 })
             }
-            // $("#con_header_plus").prop("style", "display:block");
         }else{
             for (let cons of ["minus-thread", "minus-flange", "minus-hygienic"]){
                 $("input[name="+cons+"]").each(function(){
@@ -1979,7 +1978,11 @@ $(function(){
                     }
                 })
             }
-            // $("#con_header_plus").prop("style", "display:none");
+        }
+        if ($(".main-dev-selected").prop("id").slice(9,)=="pr-28" || $(".main-dev-selected").prop("id").slice(9,)=="apr-2000"){
+            $("#con_header_plus").prop("hidden", false);
+        }else{
+            $("#con_header_plus").prop("hidden", true);
         }
         // console.log($("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)));
         $("div.option-to-select." + $(".main-dev-selected").prop("id").slice(9,)).each(function(){
