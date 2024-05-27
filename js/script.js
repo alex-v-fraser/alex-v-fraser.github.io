@@ -1575,6 +1575,12 @@ $(function (){
                     $(this).find("select option[value='not_selected']").prop('selected', true);
                 })
             }
+            if (this.name=="minus-flange"){
+                $("#minus-flange-select-field > span").each(function(){
+                    $(this).prop("style", "display:none");
+                    $(this).find("select option[value='not_selected']").prop('selected', true);
+                })
+            }
             if (this.name=="max-static"){
                 for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки MAX-STATIC
                     for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
@@ -1678,13 +1684,15 @@ $(function (){
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
             if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
                 let target = $(this).prop("id")  + "-cilinder-select";
+                console.log(add_n);
+                console.log(target);
                 $("#" + add_n + "flange-select-field > span").each(function(){
                     if ($(this).prop("id")!=target){
-                        document.getElementById($(this).prop("id")).hidden = true;
+                        $(this).prop("style", "display: none");
                         $(this).find("select option[value='not_selected']").prop('selected', true);
                         // console.log('Установка длины тубуса как не выбрано при переключении на другой');
                     }else{
-                        document.getElementById($(this).prop("id")).hidden = false;
+                        $(this).prop("style", "display: inline");
                     }
                 })
                 disable_invalid_options();
