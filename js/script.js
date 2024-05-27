@@ -1969,6 +1969,8 @@ $(function(){
                     }
                 })
             }
+            $("label[for=capillary-cap-minus]").prop("style", "display:none");
+            $("label[for=minus-hygienic-list]").prop("style", "display:none");
         }else{
             for (let cons of ["minus-thread", "minus-flange", "minus-hygienic"]){
                 $("input[name="+cons+"]").each(function(){
@@ -1978,6 +1980,8 @@ $(function(){
                     }
                 })
             }
+            $("label[for=capillary-cap-minus]").prop("style", "display:block");
+            $("label[for=minus-hygienic-list]").prop("style", "display:block");
         }
         if ($(".main-dev-selected").prop("id").slice(9,)=="pr-28" || $(".main-dev-selected").prop("id").slice(9,)=="apr-2000"){
             $("#con_header_plus").prop("hidden", false);
