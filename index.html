@@ -352,14 +352,14 @@
 				</div>
 				<div class="option-to-select-list pc-28 apc-2000" id="cap-or-not-select" style="display: none;">
 					<fieldset id="cap-or-not-select-field" name="cap-or-not-select-field">
-						<input type="checkbox" name="cap-or-not" value="direct" id="direct" class="custom-checkbox"><label for="direct">Непосредственное.</label>
+						<input type="checkbox" name="cap-or-not" value="direct" id="direct" class="custom-checkbox"><label for="direct">Непосредственное.</label><div id="err_direct"  style="display:none;"></div>
 						<span id="cap-or-not-radiator-select" hidden>
 							<label for="cap-or-not-mes-env-temp">Температура среды не более, °С:</label>
 							<input type="number" name="cap-or-not-mes-env-temp" style="width: 5em" id="cap-or-not-mes-env-temp" min="-40" max="300" placeholder="-40...300">
 							<input type="button" id="cap-or-not-radiator-select-button-ok" value="ОК">
 						</span>
 						<span style="font-size: 85%; color: red;" id="cap-or-not-radiator-select-err" hidden><br><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до 300°С и нажмите "OK"</span>
-						<input type="checkbox" name="cap-or-not" value="capillary" id="capillary" class="custom-checkbox"><label for="capillary">Дистанционное.</label>
+						<input type="checkbox" name="cap-or-not" value="capillary" id="capillary" class="custom-checkbox"><label for="capillary">Дистанционное.</label><div id="err_capillary"  style="display:none;"></div>
 						<span id="cap-or-not-length-span" hidden>
 							<label for="cap-or-not-capillary-length">Длина капилляра, м:</label>
 							<input type="number" name="cap-or-not-capillary-length" style="width: 4em" id="cap-or-not-capillary-length" min="1" max="9" placeholder="1-9">
