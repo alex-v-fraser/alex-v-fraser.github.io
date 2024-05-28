@@ -2011,7 +2011,7 @@ $(function(){
 
 $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
     $(".back-to-main-dev-select").click(function(){
-        if ($("div.color-mark-field.selected").length>0 || $('body input:checkbox:checked').length>0){
+        if ($("div.color-mark-field.selected").length>0){
             $( "#dialog-confirm" ).dialog({
                 resizable: false,
                 height: "auto",
