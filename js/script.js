@@ -1069,6 +1069,8 @@ function disable_invalid_options(){
         if ((typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<0 && full_conf.get("pressure_type")=="") || (typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<100 && full_conf.get("pressure_type")=="ABS") || (typeof full_conf.get("max_temp")!='undefined' && full_conf.get("max_temp")>180)  || (typeof full_conf.get("max_temp_plus")!='undefined' && full_conf.get("max_temp_plus")>180)  || (typeof full_conf.get("max_temp_minus")!='undefined' && full_conf.get("max_temp_minus")>180)){
             $("label[for=ak20]").addClass('disabled');
             $("#ak20").prop('disabled', true);
+            document.getElementById("err_ak20").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='ak20_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='ak20_err_cancel${num}'>Выбранный диапазон. Вакуум не допускается!.</label>`;
+            num+=1;
         }else{
             $("label[for=ak20]").removeClass('disabled');
             $("#ak20").prop('disabled', false);
