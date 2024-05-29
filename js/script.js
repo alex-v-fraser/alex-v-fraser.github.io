@@ -1845,15 +1845,28 @@ function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВА�
             $("#range-select").slideUp("slow");
             disable_invalid_options();
             return;
-        }else{
+        }
+        else{
             $("#range-select").prev().find(".color-mark-field").removeClass("selected");
             $("#range-select").prev().find(".color-mark-field").addClass("unselected");
-            disable_invalid_options();
+            document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
+            document.getElementById("code").value = "";
+            try{
+                document.querySelector("table").remove();
+            }catch (err){console.log(err);}
+            return;
+            // disable_invalid_options();
         }
     }else{
         $("#range-select").prev().find(".color-mark-field").removeClass("selected");
         $("#range-select").prev().find(".color-mark-field").addClass("unselected");
-        disable_invalid_options();
+        document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
+        document.getElementById("code").value = "";
+        try{
+            document.querySelector("table").remove();
+        }catch (err){console.log(err);}
+        return;
+        // disable_invalid_options();
     }
 
 }
