@@ -1600,7 +1600,14 @@ function disable_invalid_options(){
     }
     if (check_flag == true){
         console.log("КОНФИГУРИРОВАНИЕ ЗАВЕРШЕНО!!!");
+        $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
+            $(this).prop("innerHTML", "");
+        })
         get_code_info(full_conf);
+    }else{
+        $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
+            $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Завершите конфигурирование!</span>");
+        })
     }
 }
 
