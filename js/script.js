@@ -1367,6 +1367,8 @@ function disable_invalid_options(){
                     if (!window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("material").includes($(this).attr("id"))){
                         $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
                         $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                        document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='minus-${full_conf.get("minus-" + con_type).slice(6,)}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='minus-${full_conf.get("minus-" + con_type).slice(6,)}_err_cancel${num}'>${$("label[for="+full_conf.get("minus-" + con_type).slice(6,)+"]").text()}</label>`;
+                        num+=1;
                     }
                 })
                 if (window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).has("cap-or-not") && window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("cap-or-not") == "direct"){//ОГРАНИЧЕНИЕ  cap-or-not для DIRECT ONLY
