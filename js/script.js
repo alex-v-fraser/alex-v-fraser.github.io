@@ -938,6 +938,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + plus_fluid + "/(-)" + minus_connection + minus_fluid;
     }
     // document.getElementById("code").innerHTML = code;
+    console.log("класс Unselected: ");
     console.log($("div.color-mark-field.unselected:visible"));
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
@@ -968,6 +969,18 @@ function disable_invalid_options(){
         $("input[name="+ opt_name +"]").each(function() {
             $(this).prop('disabled', false);                                                   /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
         })
+    }
+    if (typeof full_conf.get("minus-flange")!=='undefined' && full_conf.get("minus-flange")=="minus-c-pr"){
+        for (let plmin of ["","minus-"]){////////присоединения плюс и минус пометить причину деактивации при включенном C
+            for (let cons of ["thread", "flange", "hygienic"]){
+                $("input[name=" + plmin + cons + "]").each(function(){
+                    if (typeof document.getElementById("err_" + $(this).prop("id"))!="undefined" && document.getElementById("err_" + $(this).prop("id"))!=null){
+                        document.getElementById("err_" + $(this).prop("id")).innerHTML += `<input type='checkbox' name='c_err_cancel' value='' id='${plmin}c-pr_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='CorPSelected("c-pr", false)'><label for='${plmin}c-pr_err_cancel${num}'>${$('label[for=' + plmin + 'c-pr]').text()}</label>`;
+                        num+=1;
+                    }
+                })
+            }
+        }
     }
 
     let condition4 = (full_conf.has("thread") && (full_conf.get("thread")=='P' || full_conf.get("thread")=='minus-P')) || (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
@@ -1302,11 +1315,11 @@ function disable_invalid_options(){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
-                    console.log("min_range capillary ", min_range);
+                    // console.log("min_range capillary ", min_range);
                 }
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="direct"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") : min_range;
-                    console.log("min_range direct ", min_range);
+                    // console.log("min_range direct ", min_range);
                 }
 
                 low_press_diff = -hi_press_diff;
@@ -1380,7 +1393,6 @@ function disable_invalid_options(){
                     num+=1;
                     $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ширине диапазона THREAD или FLANGE или HYGIENIC
                     $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    console.log(entr[0]);
                     if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
                         document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("minus-" + con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("minus-" + con_type)}_err_cancel${num}'>Выбранный диапазон. Допустимая минимальная ширина ${entr[1].get("range")} кПа.</label>`;
                         num+=1;
@@ -1393,7 +1405,6 @@ function disable_invalid_options(){
                     num+=1;
                     $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                     $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    console.log(entr[0]);
                     if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
                         document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
                         num+=1;
@@ -1404,7 +1415,7 @@ function disable_invalid_options(){
                     if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='capillary-cap-plus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='capillary-cap-plus_err_cancel${num}'>${$("label[for=capillary-cap-plus]").text()}</label>`;
+                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-plus")+"-cap-plus]").text()}</label>`;
                         num+=1;
                     }
                 }
@@ -1413,7 +1424,7 @@ function disable_invalid_options(){
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                            document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='capillary-cap-minus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='capillary-cap-minus_err_cancel${num}'>${$("label[for=capillary-cap-minus]").text()}</label>`;
+                            document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-minus")}-cap-minus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-minus")}-cap-minus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-minus")+"-cap-minus]").text()}</label>`;
                             num+=1;
                         }
                     }
@@ -1621,6 +1632,10 @@ $(function (){
             console.log("1");
         }
         else{
+            if (this.name=="special"){
+                disable_invalid_options();
+                return;
+            }
             if ($("#connection-type-select input:checkbox:checked").length==0){/// ЕСЛИ НЕ ВЫБРАНО тип и размер - скрыть список thread-flange-hygienic
                 $('.thread-flange-hygienic').hide(0);
                 console.log("2");
