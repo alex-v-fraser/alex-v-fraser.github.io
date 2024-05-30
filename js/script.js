@@ -2319,14 +2319,17 @@ $(function(){
 $(function(){
     $(document).on("click", "input[name='err_cancel']", function(){
         let check_state = $(this).is(":checked");
-        // $("#err_" + $(this).prop('for')).prop("style", "display:block");
-        $("input#" + $(this).prop('id').slice(0,-14)).prop("checked", check_state);
         let $this_id = $(this).prop('id').slice(0,-14);
         console.log($this_id);
+        if ($this_id=="c-pr" || $this_id=="minus-c-pr"){
+            CorPSelected("c-pr", false);
+        }else{
+            $("input#" + $this_id).prop("checked", check_state);
+        }
         console.log($(this).closest("div"));
         // console.log(document.getElementById($this_id).parentElement.parentElement.previousElementSibling.querySelector(".color-mark-field"));
         let $color_mark_field = document.getElementById($this_id).closest(".active-option-to-select-list").previousElementSibling.querySelector(".color-mark-field");
-        let $this_checked_length = $("input[name="+$("input#" + $(this).prop('id').slice(0,-14)).prop("name")+"]:checked").length;
+        let $this_checked_length = $("input[name="+$("input#" + $this_id).prop("name")+"]:checked").length;
         if ($this_checked_length == 0){
             $($color_mark_field).removeClass("selected").addClass("unselected");
         }else{
