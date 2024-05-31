@@ -1556,7 +1556,6 @@ function disable_invalid_options(){
         $("#hi_load").prop('disabled', true);
     }
     if ((((full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "apc-2000") && (!(full_conf.has("thread")) || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")))) || ((full_conf.get("main_dev") == "pr-28" || full_conf.get("main_dev") == "apr-2000") && (!(full_conf.has("flange")) || full_conf.get("flange") != "c-pr"))){ // проверка Кислород
-        console.log("Откл кислород");
         $("label[for=oxygen]").addClass('disabled');
         $("#oxygen").prop('disabled', true);
     }
