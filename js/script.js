@@ -1556,7 +1556,6 @@ function disable_invalid_options(){
         $("#hi_load").prop('disabled', true);
     }
     if ((((full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "apc-2000") && (!(full_conf.has("thread")) || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")))) || ((full_conf.get("main_dev") == "pr-28" || full_conf.get("main_dev") == "apr-2000") && ((!full_conf.has("flange")) || full_conf.get("flange") != "c-pr") || typeof full_conf.get("range")=="undefined" || full_conf.get("begin_range")<-0.5 || full_conf.get("end_range")>100)){ // проверка Кислород
-        console.log("отключить кислород");
         $("label[for=oxygen]").addClass('disabled');
         $("#oxygen").prop('disabled', true);
     }
@@ -1581,7 +1580,6 @@ function disable_invalid_options(){
         $("#rad_cap").prop('disabled', true);
     }
     if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"  || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT"))){ // проверка HS
-        console.log("ОТключить HS");
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('disabled', true);
         $("#hs").prop('checked', false);
