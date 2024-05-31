@@ -1585,7 +1585,9 @@ function disable_invalid_options(){
         $("#minus_60").prop('checked', false);
     }
 
-
+    $("div.color-mark-field.special.unselected").removeClass("unselected");
+    console.log("класс Unselected: ");
+    console.log($("div.color-mark-field.unselected:visible"));
     ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
     for (let x of full_conf.values()){
         if (typeof x === 'undefined'){
