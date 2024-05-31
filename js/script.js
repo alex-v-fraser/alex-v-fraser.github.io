@@ -938,8 +938,6 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + main_range + range + output + "(+)" + connection + plus_fluid + "/(-)" + minus_connection + minus_fluid;
     }
     // document.getElementById("code").innerHTML = code;
-    console.log("класс Unselected: ");
-    console.log($("div.color-mark-field.unselected:visible"));
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -1502,6 +1500,51 @@ function disable_invalid_options(){
     }
 
 
+    ///СКРЫТИЕ И ПОКАЗ SPECIAL
+    if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
+        $("label[for=0_16]").prop("style", "display:block");
+        $("label[for=hi_load]").prop("style", "display:block");
+        $("label[for=time_response]").prop("style", "display:block");
+        $("label[for=ct_spec]").prop("style", "display:block");
+        $("label[for=minus_20]").prop("style", "display:block");
+        $("label[for=minus_30]").prop("style", "display:block");
+    }else{
+        $("label[for=0_16]").prop("style", "display:none");
+        $("label[for=hi_load]").prop("style", "display:none");
+        $("label[for=time_response]").prop("style", "display:none");
+        $("label[for=ct_spec]").prop("style", "display:none");
+        $("label[for=minus_20]").prop("style", "display:none");
+        $("label[for=minus_30]").prop("style", "display:none");
+    }
+    if (full_conf.get("main_dev") == "pr-28"){
+        $("label[for=0_16]").prop("style", "display:none");
+        $("label[for=hi_load]").prop("style", "display:none");
+    }
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000"){
+        $("label[for=0_05]").prop("style", "display:block");
+        $("label[for=spec_pd]").prop("style", "display:block");
+        $("label[for=spec_ip67]").prop("style", "display:block");
+        $("label[for=SN]").prop("style", "display:block");
+        $("label[for=hart7]").prop("style", "display:block");
+        $("label[for=hs]").prop("style", "display:block");
+        $("label[for=minus_40]").prop("style", "display:block");
+    }else{
+        $("label[for=0_05]").prop("style", "display:none");
+        $("label[for=spec_pd]").prop("style", "display:none");
+        $("label[for=spec_ip67]").prop("style", "display:none");
+        $("label[for=SN]").prop("style", "display:none");
+        $("label[for=hart7]").prop("style", "display:none");
+        $("label[for=hs]").prop("style", "display:none");
+        $("label[for=minus_40]").prop("style", "display:none");
+    }
+    if (full_conf.get("main_dev") == "apc-2000"){
+        $("label[for=minus_50]").prop("style", "display:block");
+        $("label[for=minus_60]").prop("style", "display:block");
+    }else{
+        $("label[for=minus_50]").prop("style", "display:none");
+        $("label[for=minus_60]").prop("style", "display:none");
+    }
+
 
     /// ПРОВЕРКА SPECIAL
     if (full_conf.get("main_dev") != "pc-28" || typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || typeof full_conf.get("output")=='undefined'){ //проверка 0,16
@@ -1512,7 +1555,8 @@ function disable_invalid_options(){
         $("label[for=hi_load]").addClass('disabled');
         $("#hi_load").prop('disabled', true);
     }
-    if (!full_conf.has("thread") || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")){ // проверка Кислород
+    if ((((full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "apc-2000") && (!(full_conf.has("thread")) || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")))) || ((full_conf.get("main_dev") == "pr-28" || full_conf.get("main_dev") == "apr-2000") && (!(full_conf.has("flange")) || full_conf.get("flange") != "c-pr"))){ // проверка Кислород
+        console.log("Откл кислород");
         $("label[for=oxygen]").addClass('disabled');
         $("#oxygen").prop('disabled', true);
     }
@@ -1564,7 +1608,12 @@ function disable_invalid_options(){
         $("#hart7").prop('disabled', true);
         $("#hart7").prop('checked', false);
     }
-    if (!(full_conf.get("electrical")=="APCALW" && (full_conf.get("pressure_type")=="ABS" || full_conf.get("main_dev") == "apr-2000"))){ // проверка специсполнения IP67
+    if ($("#spec_ip67").is(":checked")){
+        $("#spec_pd").prop('disabled', true);
+        $("#spec_pd").prop('checked', false);
+        $("label[for=spec_pd]").addClass('disabled');
+    }
+    if (!(full_conf.get("electrical")=="APCALW" && (full_conf.get("pressure_type")=="ABS" || full_conf.get("main_dev") == "apr-2000")) || $("#spec_pd").is(":checked")){ // проверка специсполнения IP67
         $("label[for=spec_ip67]").addClass('disabled');
         $("#spec_ip67").prop('disabled', true);
         $("#spec_ip67").prop('checked', false);
@@ -1586,8 +1635,7 @@ function disable_invalid_options(){
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
-    console.log("класс Unselected: ");
-    console.log($("div.color-mark-field.unselected:visible"));
+
     ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
     for (let x of full_conf.values()){
         if (typeof x === 'undefined'){
