@@ -559,6 +559,7 @@ function CorPSelected(c_or_p, state){ //////////////////////////////////////////
                     $("input[name=" + plmin + cons + "]").each(function(){
                         $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                         $(this).prop('disabled', true);                                     //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                        $(this).prop('checked', false);
                     })
                     $("#"+ plmin + cons + "-select").prev(".option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
                 }
@@ -567,6 +568,7 @@ function CorPSelected(c_or_p, state){ //////////////////////////////////////////
                     $("#" + plmin + "thread-list").prop('checked', false);
                     $("#" + plmin + "c-pr").prop('checked', true);
                     $("#" + plmin + "c-pr").prop('disabled', false);
+                    $('.' + plmin + 'thread-flange-hygienic').hide(0);
                     $('#' + plmin + 'flange-select').prop('style', "display=block");
                     $("label[for="+ plmin +"c-pr]").removeClass('disabled');
                     $("label[for="+ plmin +"flange-list]").removeClass('disabled');
