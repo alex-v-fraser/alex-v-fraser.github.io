@@ -918,6 +918,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
     if (main_dev=="PR-28" && ((connection=="P" && minus_connection=="P") || connection=="C")){
         console.log("code PR-28 или С или P");
+        material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
         code = dev_type + approval + material + special + max_static + main_range + range + $("#"+data.get("electrical")).val() + "/" + output + connection;
@@ -928,6 +929,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
     if (main_dev=="APR-2000" && ((connection=="P" && minus_connection=="P") || connection=="C")){
         console.log("code APR-2000  или С или P");
+        material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
         max_static = (connection=="C" && max_static!=25) ? max_static + "МПа/" : "";
         connection = (connection=="C" && (max_static=="41МПа/" || max_static=="70МПа/")) ? "C7/16" : connection;
         code = main_dev + $("#"+data.get("electrical")).val() + "/" + approval + material + special + max_static + main_range + range + output + connection;
