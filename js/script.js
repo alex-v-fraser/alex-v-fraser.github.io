@@ -1559,7 +1559,7 @@ function disable_invalid_options(){
         $("label[for=hi_load]").addClass('disabled');
         $("#hi_load").prop('disabled', true);
     }
-    if ((((full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "apc-2000") && (!(full_conf.has("thread")) || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")))) || ((full_conf.get("main_dev") == "pr-28" || full_conf.get("main_dev") == "apr-2000") && ((!full_conf.has("flange")) || full_conf.get("flange") != "c-pr") || typeof full_conf.get("range")=="undefined" || full_conf.get("begin_range")<-0.5 || full_conf.get("end_range")>100)){ // проверка Кислород
+    if ((((full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "apc-2000") && (!(full_conf.has("thread")) || (full_conf.get("thread") != "M" && full_conf.get("thread") != "G1_2")))) || ((full_conf.get("main_dev") == "pr-28" || full_conf.get("main_dev") == "apr-2000") && ((!full_conf.has("flange")) || full_conf.get("flange") != "c-pr") || typeof full_conf.get("range")=="undefined" || full_conf.get("begin_range")<-0.5 || full_conf.get("end_range")>100) || $("#minus_20").is(":checked") || $("#minus_30").is(":checked")  || $("#minus_40").is(":checked") || $("#minus_50").is(":checked") || $("#minus_60").is(":checked")){ // проверка Кислород
         $("label[for=oxygen]").addClass('disabled');
         $("#oxygen").prop('disabled', true);
     }
@@ -1567,11 +1567,11 @@ function disable_invalid_options(){
         $("label[for=time_response]").addClass('disabled');
         $("#time_response").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-20)
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || $("#minus_30").is(":checked") || $("#ct_spec").is(":checked") || $("#oxygen").is(":checked")){ //проверка (-20)
         $("label[for=minus_20]").addClass('disabled');
         $("#minus_20").prop('disabled', true);
     }
-    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked")){ //проверка (-30)
+    if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus"  || $("#minus_20").is(":checked") || $("#ct_spec").is(":checked") || $("#oxygen").is(":checked")){ //проверка (-30)
         $("label[for=minus_30]").addClass('disabled');
         $("#minus_30").prop('disabled', true);
     }
@@ -1626,13 +1626,13 @@ function disable_invalid_options(){
         $("#0_05").prop('disabled', true);
         $("#0_05").prop('checked', false);
     }
-    if ((full_conf.get("main_dev") != "apc-2000" && full_conf.get("main_dev") != "apr-2000") || (full_conf.get("main_dev") == "apc-2000" && !(full_conf.get("electrical")=="PD" || full_conf.get("electrical")=="PZ")) || $("#minus_60").is(":checked")){ // проверка специсполнения -40
+    if ((full_conf.get("main_dev") != "apc-2000" && full_conf.get("main_dev") != "apr-2000") || (full_conf.get("main_dev") == "apc-2000" && !(full_conf.get("electrical")=="PD" || full_conf.get("electrical")=="PZ")) || $("#minus_60").is(":checked") || $("#oxygen").is(":checked")){ // проверка специсполнения -40
         console.log((full_conf.get("main_dev") != "apc-2000" && full_conf.get("main_dev") != "apr-2000"));
         $("label[for=minus_40]").addClass('disabled');
         $("#minus_40").prop('disabled', true);
         $("#minus_40").prop('checked', false);
     }
-    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("electrical")!="PZ") || $("#minus_40").is(":checked")){ // проверка специсполнения -60
+    if (full_conf.get("main_dev") != "apc-2000" || (full_conf.get("main_dev") == "apc-2000" && full_conf.get("electrical")!="PZ") || $("#minus_40").is(":checked") || $("#oxygen").is(":checked")){ // проверка специсполнения -60
         $("label[for=minus_60]").addClass('disabled');
         $("#minus_60").prop('disabled', true);
         $("#minus_60").prop('checked', false);
