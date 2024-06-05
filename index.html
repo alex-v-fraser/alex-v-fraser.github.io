@@ -277,14 +277,14 @@
 	<h1 class="apr-2000-panel-container" style="display:none;">Преобразователь давления APR-2000(2200)<br></h1>
 	<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25 В РАЗРАБОТКЕ!<br></h1>
 	<h1 class="ctr-panel-container" style="display:none;">Преобразователь температуры В РАЗРАБОТКЕ!<br></h1>
-	<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container" style="display:none;">
+	<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container" style="display:none;">
 		<div class="panel-left">
 			<div id="device-options">
-				<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000" style="display:none;">
+				<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Тип взрывозащиты</span></div>
 				</div>
-				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="approval-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="approval-select" style="display: none;">
 					<fieldset id="approval-select-field" name="approval-select-field">
 						<input type="checkbox" name="approval" value="" id="non_hazard" class="custom-checkbox"><label for="non_hazard">Общепромышленное исполнение</label><div id="err_non_hazard"  style="display:none;"></div>
 						<input type="checkbox" name="approval" value="Ex/" id="Ex" class="custom-checkbox"><label for="Ex">Искробезопасная электрическая цепь</label><div id="err_Ex"  style="display:none;"></div>
@@ -292,11 +292,81 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000" style="display:none;">
+				<div class="option-to-select ctr" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Тип и количество сенсоров</span></div>
+				</div>
+				<div class="option-to-select-list ctr" id="sensor-type-select" style="display: none;">
+					<fieldset id="sensor-type-select-field" name="sensor-type-select-field">
+						<input type="checkbox" name="sensor-type" value="thermoresistor-list" id="thermoresistor-list" class="custom-checkbox"><label for="thermoresistor-list">Термосопротивление</label><div id="eerr_thermoresistor-list"  style="display:none;"></div>
+						<input type="checkbox" name="sensor-type" value="thermocouple-list" id="thermocouple-list" class="custom-checkbox"><label for="thermocouple-list">Термопара</label><div id="eerr_thermocouple-list"  style="display:none;"></div>
+					</fieldset>
+
+					<div class="thermoresistor-thermocouple" id="thermoresistor-select" style="display: none;">
+						<fieldset id="thermoresistor-select-field">
+							<input type="checkbox" name="thermoresistor" value="pt100" id="pt100" class="custom-checkbox"><label for="pt100"><b>Pt100</b> - термосопротивление<br></label><div id="err_pt100" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="pt1000" id="pt1000" class="custom-checkbox"><label for="pt1000"><b>Pt1000</b> - термосопротивление<br></label><div id="err_pt1000" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="100p" id="100p" class="custom-checkbox"><label for="100p"><b>100П</b> - термосопротивление<br></label><div id="err_100p" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="100m" id="100m" class="custom-checkbox"><label for="100m"><b>100М</b> - термосопротивление<br></label><div id="err_100m" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="50m" id="50m" class="custom-checkbox"><label for="50m"><b>50М</b> - термосопротивление<br></label><div id="err_50m" style="display:none;"></div>
+						</fieldset>
+					</div>
+					<div class="thermoresistor-thermocouple" id="thermocouple-select" style="display: none;">
+						<fieldset id="thermocouple-select-field">
+							<input type="checkbox" name="thermocouple" value="tha" id="tha" class="custom-checkbox"><label for="tha"><b>K</b> - ТХА<br></label><div id="err_tha" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="tzk" id="tzk" class="custom-checkbox"><label for="tzk"><b>J</b> - ТЖК<br></label><div id="err_tzk" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="tpp13" id="tpp13" class="custom-checkbox"><label for="tpp13"><b>R</b> - ТПП13<br></label><div id="err_tha" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="tpp10" id="tpp10" class="custom-checkbox"><label for="tpp10"><b>S</b> - ТПП10<br></label><div id="err_tpp10" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="tpr" id="tpr" class="custom-checkbox"><label for="tpr"><b>B</b> - ТПР<br></label><div id="err_tpr" style="display:none;"></div>
+						</fieldset>
+					</div>
+					<fieldset id="quantity-accuracy-wiring" style="display: none;">
+						<span id="sensor-quantity-span" style="display: none;" class="thermocouple thermoresistor">
+							<label for="sensor-quantity" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block;">Количество сенсоров </label>
+							<select name="sensor-quantity" id="sensor-quantity" onchange="showHideSensorOpts()">
+								<option value="not_selected" selected>-Не выбрано-</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+							</select>
+						</span>
+
+						<span id="sensor-accuracy-tc-span" style="display: none" class="thermocouple">
+							<label for="sensor-accuracy-tc" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Класс допуска </label>
+							<select name="sensor-accuracy-tc" id="sensor-accuracy-tc" style="margin-left: 3.5em" onchange="showHideSensorOpts()">
+								<option value="not_selected" selected>-Не выбрано-</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+							</select>
+						</span>
+
+						<span id="sensor-accuracy-tr-span" style="display: none" class="thermoresistor">
+							<label for="sensor-accuracy-tr" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block;">Класс допуска </label>
+							<select name="sensor-accuracy-tr" id="sensor-accuracy-tr" style="margin-left: 3.5em" onchange="showHideSensorOpts()">
+								<option value="not_selected" selected>-Не выбрано-</option>
+								<option value="A">A</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+							</select>
+						</span>
+
+						<span id="sensor-wiring-tr-span" style="display: none" class="thermoresistor">
+							<label for="sensor-wiring-tr" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block;">Схема соединения </label>
+							<select name="sensor-wiring-tr" id="sensor-wiring-tr" style="margin-left: 1.5em" onchange="showHideSensorOpts()">
+								<option value="not_selected" selected>-Не выбрано-</option>
+								<option value="2">2-х провод.</option>
+								<option value="3">3-х провод.</option>
+								<option value="4">4-х провод.</option>
+							</select>
+						</span>
+					</fieldset>
+				</div>
+
+
+				<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Выходной сигнал</span></div>
 				</div>
-				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="output-select"  style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="output-select"  style="display: none;">
 					<fieldset id="output-select-field" name="output-select-field">
 						<input type="checkbox" name="output" value="PC-28/" id="4_20" class="custom-checkbox"><label for="4_20">4...20мА<br></label><div id="err_4_20"  style="display:none;"></div>
 						<input type="checkbox" name="output" value="PC-28.Smart/" id="4_20H" class="custom-checkbox"><label for="4_20H">4...20мА + HART<br></label><div id="err_4_20H"  style="display:none;"></div>
@@ -304,6 +374,7 @@
 						<input type="checkbox" name="output" value="PC-28.B 0...2В/" id="0_2" class="custom-checkbox"><label for="0_2">0...2В<br></label><div id="err_0_2"  style="display:none;"></div>
 						<input type="checkbox" name="output" value="PC-28.B 0,4...2В/" id="04_2" class="custom-checkbox"><label for="04_2">0,4...2В<br></label><div id="err_04_2"  style="display:none;"></div>
 						<input type="checkbox" name="output" value="PC-28.B 0...10В/" id="0_10" class="custom-checkbox"><label for="0_10">0...10В<br></label><div id="err_0_10"  style="display:none;"></div>
+						<input type="checkbox" name="output" value="" id="no_trand" class="custom-checkbox"><label for="no_trand">Без преобразователя<br></label><div id="err_no_trand"  style="display:none;"></div>
 					</fieldset>
 				</div>
 
@@ -765,7 +836,7 @@
 	</div>
 
 	<div class="ctr-panel-container" style="display:none;">
-		В РАЗРАБОТКЕ!!!
+
 	</div>
 
 

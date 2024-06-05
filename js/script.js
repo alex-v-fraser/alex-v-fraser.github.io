@@ -1241,10 +1241,20 @@ function disable_invalid_options(){
                 // $(this).prop("style", "display:none");
                 $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
             }
+            $("label[for=no_trand]").prop("style", "display:none");
         }
 
         if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
             $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+            $("label[for=no_trand]").prop("style", "display:none");
+        }
+
+        if (full_conf.get("main_dev")=="ctr"){
+            if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20" || $(this).prop("id")=="no_trand"){
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+            }else{
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+            }
         }
     })
 
@@ -1627,7 +1637,6 @@ function disable_invalid_options(){
         $("#0_05").prop('checked', false);
     }
     if ((full_conf.get("main_dev") != "apc-2000" && full_conf.get("main_dev") != "apr-2000") || (full_conf.get("main_dev") == "apc-2000" && !(full_conf.get("electrical")=="PD" || full_conf.get("electrical")=="PZ")) || $("#minus_60").is(":checked") || $("#oxygen").is(":checked")){ // проверка специсполнения -40
-        console.log((full_conf.get("main_dev") != "apc-2000" && full_conf.get("main_dev") != "apr-2000"));
         $("label[for=minus_40]").addClass('disabled');
         $("#minus_40").prop('disabled', true);
         $("#minus_40").prop('checked', false);
@@ -1665,18 +1674,18 @@ function disable_invalid_options(){
     }
 }
 
-function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
-    $("input[name="+ option_name +"]").each(function() {
-        let option_1 = $("#"+ this.name +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
-        let option_2 = $("#"+ name_to_check +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
-        let option_2_text = $("label[for="+$("input[name="+ name_to_check +"]:checked").attr("id")+"]").text();
-        if (valid_list.includes(this.value) || valid_list.length == 0){
-            if ($(this).is(':checked')){
-                alert(option_1 + " " + $("label[for="+$(this).attr("id")+"]").text() + " и " + option_2.toLowerCase() + " " + option_2_text + " несовместимы! \nВыберите " + option_1.toLowerCase() + " заново.");
-            }
-        }
-    })
-}
+// function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
+//     $("input[name="+ option_name +"]").each(function() {
+//         let option_1 = $("#"+ this.name +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
+//         let option_2 = $("#"+ name_to_check +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
+//         let option_2_text = $("label[for="+$("input[name="+ name_to_check +"]:checked").attr("id")+"]").text();
+//         if (valid_list.includes(this.value) || valid_list.length == 0){
+//             if ($(this).is(':checked')){
+//                 alert(option_1 + " " + $("label[for="+$(this).attr("id")+"]").text() + " и " + option_2.toLowerCase() + " " + option_2_text + " несовместимы! \nВыберите " + option_1.toLowerCase() + " заново.");
+//             }
+//         }
+//     })
+// }
 
 $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
@@ -1705,6 +1714,29 @@ $(function (){
                 $('.minus-thread-flange-hygienic').hide(0);
                 console.log("2-minus");
             }
+            if (this.name=="sensor-type"){/// при снятии галки термосопротивление или термопара - скрыть список, сбросить выбор
+                $("#quantity-accuracy-wiring").slideUp();
+                $("#sensor-quantity-span").prop('style', 'display:none');
+                $("#sensor-accuracy-tc-span").prop('style', 'display:none');
+                $("#sensor-accuracy-tr-span").prop('style', 'display:none');
+                $("#sensor-wiring-tr-span").prop('style', 'display:none');
+                $("select#sensor-quantity option[value='not_selected']").prop('selected', true);
+                $("select#sensor-accuracy-tc option[value='not_selected']").prop('selected', true);
+                $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+                $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+                $('.thermoresistor-thermocouple').hide(0);
+                $(".thermoresistor-thermocouple").find("input:checkbox:checked").prop('checked', false);
+                $(".thermoresistor-thermocouple").find("label").prop('style', 'display:block')
+
+                console.log("thermoresistor-thermocouple hide");
+            }
+
+            if (this.name=="thermoresistor" || this.name=="thermocouple"){
+                $(".thermoresistor-thermocouple").find("label").slideDown();
+                $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            }
+
+
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
@@ -1807,6 +1839,44 @@ $(function (){
             }
             disable_invalid_options();
             console.log("5");
+            return;
+        }
+
+        if (this.name=="sensor-type"){/// ПРИ ВЫБОРЕ ТЕРМОПАРЫ ИЛИ ТЕРМОСОПРОТИВЛЕНИЯ ПОКАЗЫВАЕМ их список, СКРЫВАЕМ И СБРАСЫВАЕМ ОСТАЛЬНОЕ, ОТМЕТКУ КРАСНЫМ
+            $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $(".thermoresistor-thermocouple").find("label").prop('style', 'display:block')
+            $("#sensor-quantity-span").prop('style', 'display:none');
+            $("#sensor-accuracy-tc-span").prop('style', 'display:none');
+            $("#sensor-accuracy-tr-span").prop('style', 'display:none');
+            $("#sensor-wiring-tr-span").prop('style', 'display:none');
+            $("select#sensor-quantity option[value='not_selected']").prop('selected', true);
+            $("select#sensor-accuracy-tc option[value='not_selected']").prop('selected', true);
+            $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+            $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+            let target = $('#' + $(this).prop("id").slice(0,-5) + '-select');
+            console.log("show-hide sensors list");
+            $(".thermoresistor-thermocouple").find("input:checkbox:checked").prop('checked', false);
+            if ($("#sensor-type-select input:checkbox:checked").length==0){
+                $('.thermoresistor-thermocouple').hide(0);
+                console.log("9");
+            }else{
+                $('.thermoresistor-thermocouple').not(target).hide(0);
+                target.fadeIn(500);
+                console.log("10");
+            }
+            $("#quantity-accuracy-wiring").slideUp();
+            disable_invalid_options();
+            return;
+        }
+        if (this.name=="thermoresistor" || this.name=="thermocouple"){ //После выбора терморезистора или термопары СКРЫТЬ НЕ ВЫБРАННЫЕ, отобразить остальные опции
+            $("input[name=" + this.name + "]:not(:checked)").each(function(){
+                $("label[for="+$(this).prop('id')+"]").slideUp(); //.prop("style", "display:none");
+            })
+            $("span."+ this.name).each(function(){
+                $(this).prop("style", "display:block");
+            })
+            $("#quantity-accuracy-wiring").slideDown();//.prop("style", "display:block");
+            showHideSensorOpts();
             return;
         }
 
@@ -2406,4 +2476,26 @@ function uncheckMaxTemp(data){
     document.getElementById(data + "-mes-env-temp").value="";
     $("#" + data + "-select").prev().find(".color-mark-field").removeClass("selected").addClass("unselected");
     disable_invalid_options();
+}
+
+function showHideSensorOpts(){
+    let no_check = false;
+    $("#quantity-accuracy-wiring span:visible select").each(function(){
+        if ($(this).val()=='not_selected'){
+            no_check = true;
+        }
+    })
+    if($("input[name=thermoresistor]:checked").length==0 && $("input[name=thermocouple]:checked").length==0){
+        no_check = true;
+    }
+    if (no_check==true){///ЕСЛИ НЕ ВЫБРАНО КЛАСС, КОЛ_ВО , ПРОВОДА - STOP, пометить красным
+        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        disable_invalid_options();
+        return;
+    }else{///ИНАЧЕ ПОМЕТИТЬ ЗЕЛЕНЫМ, СКРЫТЬ, ОТКРЫТЬ СЛЕД. РАЗДЕЛ
+        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.option-to-select").addClass("active").next("div.option-to-select-list").slideDown();
+        disable_invalid_options();
+        return;
+    }
 }
