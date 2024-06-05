@@ -2499,3 +2499,19 @@ function showHideSensorOpts(){
         return;
     }
 }
+
+// $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ ОПЦИИ ПРИ НАВЕДЕНИИ и УДЕРЖАНИИ
+//     var delayed_function;
+//     $("label:not(:disabled)").hover(function () {
+//             // over
+//             console.log("Показать картинку через 3 с");
+//             delayed_function = setTimeout(function(){
+//                 console.log("КАРТИНКА ПОКАЗАНА");
+//             }, 3000);
+//         }, function () {
+//             // out
+//             console.log("Cкрыть или отменить показ картинки");
+//             clearTimeout(delayed_function);
+//         }
+//     )
+// })
