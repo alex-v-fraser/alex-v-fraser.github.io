@@ -74,10 +74,11 @@
 			cursor: pointer;
 		}
 		input[type=checkbox]:hover + label:hover {
-			text-decoration: underline #000000;
-			text-underline-offset: 0.2em;
-			/* font-weight: bold; */
+			background-color: #f3ebeb;
 			cursor: pointer;
+			/* text-decoration: underline #000000; */
+			/* text-underline-offset: 0.2em; */
+			/* font-weight: bold; */
 		}
 
 		.custom-checkbox+label {
@@ -307,6 +308,7 @@
 							<input type="checkbox" name="thermoresistor" value="pt100" id="pt100" class="custom-checkbox"><label for="pt100"><b>Pt100</b> - термосопротивление<br></label><div id="err_pt100" style="display:none;"></div>
 							<input type="checkbox" name="thermoresistor" value="pt1000" id="pt1000" class="custom-checkbox"><label for="pt1000"><b>Pt1000</b> - термосопротивление<br></label><div id="err_pt1000" style="display:none;"></div>
 							<input type="checkbox" name="thermoresistor" value="100p" id="100p" class="custom-checkbox"><label for="100p"><b>100П</b> - термосопротивление<br></label><div id="err_100p" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="1000p" id="1000p" class="custom-checkbox"><label for="1000p"><b>1000П</b> - термосопротивление<br></label><div id="err_1000p" style="display:none;"></div>
 							<input type="checkbox" name="thermoresistor" value="100m" id="100m" class="custom-checkbox"><label for="100m"><b>100М</b> - термосопротивление<br></label><div id="err_100m" style="display:none;"></div>
 							<input type="checkbox" name="thermoresistor" value="50m" id="50m" class="custom-checkbox"><label for="50m"><b>50М</b> - термосопротивление<br></label><div id="err_50m" style="display:none;"></div>
 						</fieldset>
@@ -314,6 +316,7 @@
 					<div class="thermoresistor-thermocouple" id="thermocouple-select" style="display: none;">
 						<fieldset id="thermocouple-select-field">
 							<input type="checkbox" name="thermocouple" value="tha" id="tha" class="custom-checkbox"><label for="tha"><b>K</b> - ТХА<br></label><div id="err_tha" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="thk" id="thk" class="custom-checkbox"><label for="thk"><b>L</b> - ТХК<br></label><div id="err_thk" style="display:none;"></div>
 							<input type="checkbox" name="thermocouple" value="tzk" id="tzk" class="custom-checkbox"><label for="tzk"><b>J</b> - ТЖК<br></label><div id="err_tzk" style="display:none;"></div>
 							<input type="checkbox" name="thermocouple" value="tpp13" id="tpp13" class="custom-checkbox"><label for="tpp13"><b>R</b> - ТПП13<br></label><div id="err_tha" style="display:none;"></div>
 							<input type="checkbox" name="thermocouple" value="tpp10" id="tpp10" class="custom-checkbox"><label for="tpp10"><b>S</b> - ТПП10<br></label><div id="err_tpp10" style="display:none;"></div>
@@ -382,11 +385,36 @@
 					<div class="option-to-select-header"><span>Тип электрического присоединения</span></div>
 				</div>
 				<div class="option-to-select-list ctr" id="ctr-electrical-select" style="display: none;">
-					<fieldset id="ctr-electrical-select-field" name="ctr-electrical-select-field">
-						<input type="checkbox" name="ctr-electrical" value="PD" id="PD-ctr" class="custom-checkbox"><label for="PD-ctr"><b>PD</b> IP65 разъем DIN43650<br></label><div id="err_PD-ctr"  style="display:none;"></div>
-						<input type="checkbox" name="ctr-electrical" value="PM12" id="PM12-ctr" class="custom-checkbox"><label for="PM12-ctr"><b>PM12</b> IP67 разъем M12x1<br></label><div id="err_PM12-ctr"  style="display:none;"></div>
-						<input type="checkbox" name="ctr-electrical" value="PZ" id="PZ-ctr" class="custom-checkbox"><label for="PZ-ctr"><b>PZ</b> IP65 Зажимная коробка из нерж.стали с сальником M20x1,5<br></label><div id="err_PZ-ctr"  style="display:none;"></div>
+					<fieldset  id="ctr-electrical-select-field" name="ctr-electrical-select-field">
+						<input type="checkbox" name="ctr-electrical" value="head" id="head-list" class="custom-checkbox"><label for="head-list">В монтажной головке (клеммник)<br></label><div id="err_head-list"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-electrical" value="nohead" id="nohead-list" class="custom-checkbox"><label for="nohead-list">Без монтажной головки (разъем)<br></label><div id="err_nohead-list"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-electrical" value="cabel" id="cabel-list" class="custom-checkbox"><label for="cabel-list">Кабельное исполнение<br></label><div id="err_cabel-list"  style="display:none;"></div>
 					</fieldset>
+					<div class="head-nohead-cabel" id="head-select" style="display: none;">
+						<fieldset id="head-select-field" name="head-select-field">
+							<input type="checkbox" name="head" value="NA" id="ctr-NA" class="custom-checkbox"><label for="ctr-NA"><b>NA</b> IP65 Зажимная коробка из алюминиевого сплава с сальником M20x1,5<br></label><div id="err_ctr-NA"  style="display:none;"></div>
+							<input type="checkbox" name="head" value="DA" id="ctr-DA" class="custom-checkbox"><label for="ctr-DA"><b>DA</b> IP65 Зажимная коробка из алюминиевого сплава с сальником M20x1,5<br></label><div id="err_ctr-DA"  style="display:none;"></div>
+							<input type="checkbox" name="head" value="DAO" id="ctr-DAO" class="custom-checkbox"><label for="ctr-DAO"><b>DAO</b> IP66 Зажимная коробка из алюминиевого сплава с сальником M20x1,5<br></label><div id="err_ctr-DAO"  style="display:none;"></div>
+							<input type="checkbox" name="head" value="PZ" id="ctr-PZ" class="custom-checkbox"><label for="ctr-PZ"><b>PZ</b> IP65 Зажимная коробка из нерж.стали AISI304 с сальником M20x1,5<br></label><div id="err_ctr-PZ"  style="display:none;"></div>
+							<input type="checkbox" name="head" value="ALW" id="ctr-ALW" class="custom-checkbox"><label for="ctr-ALW"><b>ALW</b> IP66 Алюминиевый корпус с индикатором и сальником M20x1,5<br></label><div id="err_ctr-ALW"  style="display:none;"></div>
+						</fieldset>
+					</div>
+					<div class="head-nohead-cabel" id="nohead-select" style="display: none;">
+						<fieldset id="ctr-nohead-select-field" name="ctr-nohead-select-field">
+							<input type="checkbox" name="nohead" value="PD" id="ctr-PD" class="custom-checkbox"><label for="ctr-PD"><b>PD</b> IP65 разъем DIN43650<br></label><div id="err_ctr-PD"  style="display:none;"></div>
+							<input type="checkbox" name="nohead" value="PM12" id="ctr-PM12" class="custom-checkbox"><label for="ctr-PM12"><b>PM12</b> IP67 разъем M12x1<br></label><div id="err_ctr-PM12"  style="display:none;"></div>
+						</fieldset>
+					</div>
+					<div class="head-nohead-cabel" id="cabel-select" style="display: none;">
+						<fieldset id="ctr-cabel-select-field" name="ctr-cabel-select-field">
+							<input type="checkbox" name="cabel" value="K1" id="ctr-K1" class="custom-checkbox"><label for="ctr-K1"><b>K1</b> кабельное исполнение 1<br></label><div id="err_ctr-K1"  style="display:none;"></div>
+							<input type="checkbox" name="cabel" value="K2" id="ctr-K2" class="custom-checkbox"><label for="ctr-K2"><b>K2</b> кабельное исполнение 2<br></label><div id="err_ctr-K2"  style="display:none;"></div>
+							<input type="checkbox" name="cabel" value="K3" id="ctr-K3" class="custom-checkbox"><label for="ctr-K3"><b>K3</b> кабельное исполнение 3<br></label><div id="err_ctr-K3"  style="display:none;"></div>
+							<input type="checkbox" name="cabel" value="K4" id="ctr-K4" class="custom-checkbox"><label for="ctr-K4"><b>K4</b> кабельное исполнение 4<br></label><div id="err_ctr-K4"  style="display:none;"></div>
+							<input type="checkbox" name="cabel" value="K5" id="ctr-K5" class="custom-checkbox"><label for="ctr-K5"><b>K5</b> кабельное исполнение 5<br></label><div id="err_ctr-K5"  style="display:none;"></div>
+							<input type="checkbox" name="cabel" value="K6" id="ctr-K6" class="custom-checkbox"><label for="ctr-K6"><b>K6</b> кабельное исполнение 6<br></label><div id="err_ctr-K6"  style="display:none;"></div>
+						</fieldset>
+					</div>
 				</div>
 
 				<div class="option-to-select pc-28 apc-2000 pr-28 pr-28 apr-2000" style="display:none;">

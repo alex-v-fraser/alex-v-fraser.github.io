@@ -1727,7 +1727,6 @@ $(function (){
                 $('.thermoresistor-thermocouple').hide(0);
                 $(".thermoresistor-thermocouple").find("input:checkbox:checked").prop('checked', false);
                 $(".thermoresistor-thermocouple").find("label").prop('style', 'display:block')
-
                 console.log("thermoresistor-thermocouple hide");
             }
 
@@ -1735,8 +1734,12 @@ $(function (){
                 $(".thermoresistor-thermocouple").find("label").slideDown();
                 $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             }
-
-
+            if(this.name=="ctr-electrical"){
+                console.log("спрятать head или nohead или cabel");
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");;
+                $(".head-nohead-cabel").find("input:checkbox:checked").prop('checked', false);
+                $('.head-nohead-cabel').hide(0);
+            }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
             $this.prev(".option-to-select").find(".color-mark-field").addClass("unselected");
@@ -1877,6 +1880,28 @@ $(function (){
             })
             $("#quantity-accuracy-wiring").slideDown();//.prop("style", "display:block");
             showHideSensorOpts();
+            return;
+        }
+
+        if(this.name=="ctr-electrical"){
+            console.log("отобразить head или nohead или cabel");
+            let target = $('#' + $(this).prop("id").slice(0,-5) + '-select');
+            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");;
+            $(".head-nohead-cabel").find("input:checkbox:checked").prop('checked', false);
+            if ($("#ctr-electrical-select input:checkbox:checked").length==0){
+                $('.head-nohead-cabel').hide(0);
+                console.log("ctr-electrical");
+            }else{
+                $('.head-nohead-cabel').not(target).hide(0);
+                target.fadeIn(500);
+            }
+            disable_invalid_options();
+            return;
+        }
+
+        if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){
+            console.log();
+            disable_invalid_options();
             return;
         }
 
@@ -2506,6 +2531,7 @@ function showHideSensorOpts(){
 //             // over
 //             console.log("Показать картинку через 3 с");
 //             delayed_function = setTimeout(function(){
+//                 createTooltip($(this).prop('for'));
 //                 console.log("КАРТИНКА ПОКАЗАНА");
 //             }, 3000);
 //         }, function () {
@@ -2515,3 +2541,13 @@ function showHideSensorOpts(){
 //         }
 //     )
 // })
+
+// function createTooltip(item_id){
+//     console.log("Create tooltip");
+//     let tooltip = document.createElement('div');
+//     tooltip.className = "tooltip";
+//     tooltip.id = item_id + "_tooltip";
+//     tooltip.css = "";
+//     document.body.append(tooltip);
+//     setTimeout(() => tooltip.remove(), 3000);
+// }
