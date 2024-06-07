@@ -2530,12 +2530,31 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
     var tooltip_id;
     var mouse;
     $("div.option-to-select-list label:not(:disabled)").hover(function (e) {
-            // over
+
+        // over
             tooltip_id = $(this).prop("htmlFor");
+
+            //ВАРИАНТ 1
+            fetch('/images/tooltips/'+ tooltip_id +'_tooltip.jpg')
+            .then(response => {
+                if(response.ok)
+                    console.log("Файл существует");
+                else
+                console.log("Файл не существует");
+            })
+            .catch(() => console.log("Ошибка: Файл не найден"));
+
+            //ВАРИАНТ 2
+            let img = new Image();
+            img.src = '/images/tooltips/'+ $(this).prop("htmlFor") +'_tooltip.jpg';
+            img.onload = () => console.log('Изображение есть');
+            img.onerror = () => console.log('Изображение не найдено');
+
+
+
             mouse = $(this);
             console.log("Показать картинку через 1 с");
             delayed_function = setTimeout(function(){
-
                 // Calculate the position of the image tooltip
                 x = e.pageX - mouse.offset().left;
                 y = e.pageY - mouse.offset().top;
@@ -2559,19 +2578,3 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
         }
     ).mousemove(function(){$(".tooltip").each(function(){$(this).remove()})});
 })
-
-function createTooltip(item_id){
-    console.log("Create tooltip");
-
-    // Calculate the position of the image tooltip
-    x = e.pageX - $(this).offset().left;
-    y = e.pageY - $(this).offset().top;
-
-    let tooltip = document.createElement('div');
-    tooltip.className = "tooltip";
-    tooltip.innerHTML = "ЗДЕСЬ БУДЕТ КАРТИНКА";
-    tooltip.id = item_id + "_tooltip";
-    tooltip.style = "display:block";
-    document.body.append(tooltip);
-    // setTimeout(() => tooltip.remove(), 3000);
-}
