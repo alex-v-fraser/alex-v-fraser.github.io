@@ -2548,15 +2548,12 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                 $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':' #eee url(/images/tooltips/tooltip.jpg) center center no-repeat'});
                 console.log("КАРТИНКА ПОКАЗАНА");
             }, 1000);
-            setTimeout(() => $(".tooltip").each(function(){$(this).remove();}), 3000);
+            setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3000);
         }, function () {
             // out
-            $(".tooltip").each(function(){
-                $(this).remove();
-            })
-            console.log(this);
-            $(this).css('z-index','');
             console.log("Cкрыть или отменить показ картинки");
+            $(".tooltip").each(function(){$(this).remove()});
+            $(this).css('z-index','');
             clearTimeout(delayed_function);
         }
     )
