@@ -2538,9 +2538,9 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
             fetch('/images/tooltips/'+ tooltip_id +'_tooltip.jpg')
             .then(response => {
                 if(response.ok){
-                    console.log("Файл существует");
+                    // console.log("Файл существует");
                     mouse = $(this);
-                    console.log("Показать картинку через 1 с");
+                    // console.log("Показать картинку через 1 с");
                     delayed_function = setTimeout(function(){
                         // Calculate the position of the image tooltip
                         x = e.pageX - mouse.offset().left;
@@ -2552,10 +2552,10 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
                         $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':'#eee url(/images/tooltips/'+tooltip_id+'_tooltip.jpg) center no-repeat', 'background-size':'cover', 'box-shadow':'10px 10px 30px rgba(0, 0, 0, 0.8)', 'border-radius':'15px'});
-                        console.log("КАРТИНКА ПОКАЗАНА");
+                        // console.log("КАРТИНКА ПОКАЗАНА");
                     }, 1000);
                 }else{
-                    console.log("Файл не существует");
+                    console.log("Файл /images/tooltips/"+tooltip_id+"_tooltip.jpg не существует");
                 }
             })
             .catch(error => {console.log(error)});
@@ -2573,7 +2573,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
             // $("label[for="+tooltip_id+"]").css('z-index','');
         }, function () {
             // out
-            console.log("Cкрыть или отменить показ картинки");
+            // console.log("Cкрыть или отменить показ картинки");
             $(".tooltip").each(function(){$(this).remove()});
             $(this).css('z-index','');
             clearTimeout(delayed_function);
