@@ -2540,8 +2540,6 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                 data: "data",
                 dataType: "dataType",
                 success: function (response) {
-                    console.log('ФАЙЛ НАЙДЕН!');
-
                     delayed_function = setTimeout(function(){
                         // Calculate the position of the image tooltip
                         x = e.pageX - mouse.offset().left;
