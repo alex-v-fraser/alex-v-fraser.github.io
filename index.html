@@ -22,6 +22,18 @@
 
 	<style type="text/css">
 
+		.tooltip span.overlay {
+			/* the png image, need ie6 hack though */
+			/* background: url(images/overlay.png) no-repeat;  */
+			/* put this overlay on the top of the tooltip image */
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			display: block;
+			width: 350px;
+			height: 200px;
+		}
+
 		.ui-resizable-e {
     		width: 14px !important;
 			cursor: col-resize !important;
@@ -83,6 +95,7 @@
 
 		.custom-checkbox+label {
 			display: block;
+			position: relative;
 			align-items: center;
 			user-select: none;
 		}

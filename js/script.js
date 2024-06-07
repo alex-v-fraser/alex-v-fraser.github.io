@@ -2525,37 +2525,55 @@ function showHideSensorOpts(){
     }
 }
 
-// $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ ОПЦИИ ПРИ НАВЕДЕНИИ и УДЕРЖАНИИ
-//     var delayed_function;
-//     var tooltip_id;
-//     $("div.option-to-select-list label:not(:disabled)").hover(function () {
-//             // over
-//             tooltip_id = $(this).prop("htmlFor");
-//             console.log("Показать картинку через 1.5 с");
-//             delayed_function = setTimeout(function(){
-//                 createTooltip(tooltip_id);
-//                 console.log(tooltip_id);
-//                 console.log("КАРТИНКА ПОКАЗАНА");
-//             }, 1500);
-//         }, function () {
-//             // out
-//             console.log(tooltip_id + "_tooltip");
-//             $(".tooltip").each(function(){
-//                 $(this).remove();
-//             })
-//             console.log("Cкрыть или отменить показ картинки");
-//             clearTimeout(delayed_function);
-//         }
-//     )
-// })
+$(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ ОПЦИИ ПРИ НАВЕДЕНИИ и УДЕРЖАНИИ
+    var delayed_function;
+    var tooltip_id;
+    var mouse;
+    $("div.option-to-select-list label:not(:disabled)").hover(function (e) {
+            // over
+            tooltip_id = $(this).prop("htmlFor");
+            mouse = $(this);
+            console.log("Показать картинку через 1 с");
+            delayed_function = setTimeout(function(){
 
-// function createTooltip(item_id){
-//     console.log("Create tooltip");
-//     let tooltip = document.createElement('div');
-//     tooltip.className = "tooltip";
-//     tooltip.innerHTML = "ПРИВЕТ";
-//     tooltip.id = item_id + "_tooltip";
-//     tooltip.css = "";
-//     document.body.append(tooltip);
-//     // setTimeout(() => tooltip.remove(), 3000);
-// }
+                // Calculate the position of the image tooltip
+                x = e.pageX - mouse.offset().left;
+                y = e.pageY - mouse.offset().top;
+
+                let tooltip = document.createElement('div');
+                tooltip.className = "tooltip";
+                tooltip.id = tooltip_id + "_tooltip";
+                document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
+                $("label[for="+tooltip_id+"]").css('z-index','999999');
+                $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':' #eee url(/images/tooltips/tooltip.jpg) center center no-repeat'});
+                console.log("КАРТИНКА ПОКАЗАНА");
+            }, 1000);
+            setTimeout(() => $(".tooltip").each(function(){$(this).remove();}), 3000);
+        }, function () {
+            // out
+            $(".tooltip").each(function(){
+                $(this).remove();
+            })
+            console.log(this);
+            $(this).css('z-index','');
+            console.log("Cкрыть или отменить показ картинки");
+            clearTimeout(delayed_function);
+        }
+    )
+})
+
+function createTooltip(item_id){
+    console.log("Create tooltip");
+
+    // Calculate the position of the image tooltip
+    x = e.pageX - $(this).offset().left;
+    y = e.pageY - $(this).offset().top;
+
+    let tooltip = document.createElement('div');
+    tooltip.className = "tooltip";
+    tooltip.innerHTML = "ЗДЕСЬ БУДЕТ КАРТИНКА";
+    tooltip.id = item_id + "_tooltip";
+    tooltip.style = "display:block";
+    document.body.append(tooltip);
+    // setTimeout(() => tooltip.remove(), 3000);
+}
