@@ -2542,11 +2542,11 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                 else
                 console.log("Файл не существует");
             })
-            .catch(() => console.log("Ошибка: Файл не найден"));
+            .catch(error => {console.log(error)});
 
             //ВАРИАНТ 2
             let img = new Image();
-            img.src = '/images/tooltips/'+ $(this).prop("htmlFor") +'_tooltip.jpg';
+            img.src = '/images/tooltips/'+ tooltip_id +'_tooltip.jpg';
             img.onload = () => console.log('Изображение есть');
             img.onerror = () => console.log('Изображение не найдено');
 
