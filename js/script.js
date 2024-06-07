@@ -2545,10 +2545,11 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                 tooltip.id = tooltip_id + "_tooltip";
                 document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                 $("label[for="+tooltip_id+"]").css('z-index','999999');
-                $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':' #eee url(/images/tooltips/tooltip.jpg) center center no-repeat'});
+                $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':'#eee url(/images/tooltips/tooltip.jpg) center center no-repeat', 'box-shadow':'10px 10px 30px rgba(0, 0, 0, 0.8)', 'border-radius':'15px'});
                 console.log("КАРТИНКА ПОКАЗАНА");
             }, 1000);
-            setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3000);
+            // setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3000);
+            // $("label[for="+tooltip_id+"]").css('z-index','');
         }, function () {
             // out
             console.log("Cкрыть или отменить показ картинки");
@@ -2556,7 +2557,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
             $(this).css('z-index','');
             clearTimeout(delayed_function);
         }
-    )
+    ).mousemove(function(){$(".tooltip").each(function(){$(this).remove()})});
 })
 
 function createTooltip(item_id){
