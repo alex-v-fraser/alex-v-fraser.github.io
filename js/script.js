@@ -747,7 +747,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         if (data.get("pressure_type")==""){
             let min_main_range = [-200000, 200000, ""];
             for (el of main_ranges){
-                if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                if (data.get("begin_range_kpa")>=el[0] && data.get("begin_range_kpa")<=el[1] && data.get("end_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
                     if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
                         min_main_range = el;
                     }
@@ -758,7 +758,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         if (data.get("pressure_type")=="ABS"){
             let min_main_range = [-200000, 200000, ""];
             for (el of main_ranges_abs){
-                if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                if (data.get("begin_range_kpa")>=el[0] && data.get("begin_range_kpa")<=el[1] && data.get("end_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
                     if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
                         min_main_range = el;
                     }
@@ -791,7 +791,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         ]
         let min_main_range = [-200000, 200000, "-200000...20000кПа"];
         for (el of main_hs_ranges){
-            if (data.get("begin_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+            if (data.get("begin_range_kpa")>=el[0] && data.get("begin_range_kpa")<=el[1] && data.get("end_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
                 if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
                     min_main_range = el;
                 }
@@ -2527,15 +2527,22 @@ function showHideSensorOpts(){
 
 // $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ ОПЦИИ ПРИ НАВЕДЕНИИ и УДЕРЖАНИИ
 //     var delayed_function;
-//     $("label:not(:disabled)").hover(function () {
+//     var tooltip_id;
+//     $("div.option-to-select-list label:not(:disabled)").hover(function () {
 //             // over
-//             console.log("Показать картинку через 3 с");
+//             tooltip_id = $(this).prop("htmlFor");
+//             console.log("Показать картинку через 1.5 с");
 //             delayed_function = setTimeout(function(){
-//                 createTooltip($(this).prop('for'));
+//                 createTooltip(tooltip_id);
+//                 console.log(tooltip_id);
 //                 console.log("КАРТИНКА ПОКАЗАНА");
-//             }, 3000);
+//             }, 1500);
 //         }, function () {
 //             // out
+//             console.log(tooltip_id + "_tooltip");
+//             $(".tooltip").each(function(){
+//                 $(this).remove();
+//             })
 //             console.log("Cкрыть или отменить показ картинки");
 //             clearTimeout(delayed_function);
 //         }
@@ -2546,8 +2553,9 @@ function showHideSensorOpts(){
 //     console.log("Create tooltip");
 //     let tooltip = document.createElement('div');
 //     tooltip.className = "tooltip";
+//     tooltip.innerHTML = "ПРИВЕТ";
 //     tooltip.id = item_id + "_tooltip";
 //     tooltip.css = "";
 //     document.body.append(tooltip);
-//     setTimeout(() => tooltip.remove(), 3000);
+//     // setTimeout(() => tooltip.remove(), 3000);
 // }
