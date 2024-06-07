@@ -2530,50 +2530,33 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
     var tooltip_id;
     var mouse;
     $("div.option-to-select-list label:not(:disabled)").hover(function (e) {
-
         // over
             tooltip_id = $(this).prop("htmlFor");
+            let img_path = "/images/tooltips/"+ tooltip_id +"_tooltip.jpg";
+            mouse = $(this);
+            $.ajax({
+                type: "HEAD",
+                url: img_path,
+                data: "data",
+                dataType: "dataType",
+                success: function (response) {
+                    console.log('ФАЙЛ НАЙДЕН!');
 
-            //ВАРИАНТ 1
-            fetch('/images/tooltips/'+ tooltip_id +'_tooltip.jpg')
-            .then(response => {
-                if(response.ok){
-                    // console.log("Файл существует");
-                    mouse = $(this);
-                    // console.log("Показать картинку через 1 с");
                     delayed_function = setTimeout(function(){
                         // Calculate the position of the image tooltip
                         x = e.pageX - mouse.offset().left;
                         y = e.pageY - mouse.offset().top;
-
                         let tooltip = document.createElement('div');
                         tooltip.className = "tooltip";
                         tooltip.id = tooltip_id + "_tooltip";
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
-                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':'#eee url(/images/tooltips/'+tooltip_id+'_tooltip.jpg) center no-repeat', 'background-size':'cover', 'box-shadow':'10px 10px 30px rgba(0, 0, 0, 0.8)', 'border-radius':'15px'});
-                        // console.log("КАРТИНКА ПОКАЗАНА");
+                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'10px 10px 30px rgba(0, 0, 0, 0.8)', 'border-radius':'15px'});
                     }, 1000);
-                }else{
-                    console.log("Файл /images/tooltips/"+tooltip_id+"_tooltip.jpg не существует");
-                }
-            })
-            .catch(error => {console.log(error)});
-
-            //ВАРИАНТ 2
-            // let img = new Image();
-            // img.src = '/images/tooltips/'+ tooltip_id +'_tooltip.jpg';
-            // img.onload = () => console.log('Изображение есть');
-            // img.onerror = () => console.log('Изображение не найдено');
-
-
-
-
-            // setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3000);
-            // $("label[for="+tooltip_id+"]").css('z-index','');
+                },
+            });
         }, function () {
             // out
-            // console.log("Cкрыть или отменить показ картинки");
             $(".tooltip").each(function(){$(this).remove()});
             $(this).css('z-index','');
             clearTimeout(delayed_function);
