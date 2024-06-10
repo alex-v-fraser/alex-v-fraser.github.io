@@ -1702,6 +1702,17 @@ $(function (){
             console.log("1");
         }
         else{
+            if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ СНЯТИИ ГАЛКИ типа датчика температуры
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                disable_invalid_options();
+                return;
+            }
+
+            if (this.name=="ctr-cabel-type"){//СКРЫТЬ ВЫБОР ДЛИНЫ КАБЕЛЯ при отмене К1-К6
+                $("#ctr-cabel-length-span").prop("style", "display:none").removeClass("active-option-to-select");
+                $("input[id=ctr-cabel-length]").prop("value", "");
+            }
+
             if (this.name=="special"){
                 disable_invalid_options();
                 return;
@@ -1736,9 +1747,13 @@ $(function (){
             }
             if(this.name=="ctr-electrical"){
                 console.log("спрятать head или nohead или cabel");
-                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");;
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $(".head-nohead-cabel").find("input:checkbox:checked").prop('checked', false);
                 $('.head-nohead-cabel').hide(0);
+                //СКРЫТЬ ВЫБОР ДЛИНЫ КАБЕЛЯ
+                $("#ctr-cabel-type-select-div").prop("style", "display:none").removeClass("active-option-to-select");
+                $("#ctr-cabel-type-select").removeClass("active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("input[name=ctr-cabel-type]:checked").prop("checked", false);
             }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
@@ -1886,7 +1901,7 @@ $(function (){
         if(this.name=="ctr-electrical"){
             console.log("отобразить head или nohead или cabel");
             let target = $('#' + $(this).prop("id").slice(0,-5) + '-select');
-            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");;
+            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             $(".head-nohead-cabel").find("input:checkbox:checked").prop('checked', false);
             if ($("#ctr-electrical-select input:checkbox:checked").length==0){
                 $('.head-nohead-cabel').hide(0);
@@ -1895,13 +1910,40 @@ $(function (){
                 $('.head-nohead-cabel').not(target).hide(0);
                 target.fadeIn(500);
             }
+            if ($(this).val()=="cabel"){
+                console.log("Показать выбор типа и длины кабеля");
+                $("#ctr-cabel-type-select-div").prop("style", "display:block").addClass("active-option-to-select");
+                $("#ctr-cabel-type-select").addClass("active-option-to-select-list");
+            }else{
+                console.log("Скрыть выбор длины кабеля");
+                $("#ctr-cabel-type-select-div").prop("style", "display:none").removeClass("active-option-to-select");
+                $("#ctr-cabel-type-select").removeClass("active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("input[name=ctr-cabel-type]:checked").prop("checked", false);
+            }
             disable_invalid_options();
             return;
         }
 
-        if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){
-            console.log();
+        if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ ВЫБОРЕ СКРЫТЬ СПИСОК, ПОКАЗАТЬ СЛЕДУЮЩИЙ
+            console.log("ПОКАЗ СЛЕД АКТИВНОГО БЛОКА");
+            var $this = $("#ctr-electrical-select");
+            let num = $("body .active-option-to-select").index($(".active")) + 1;
+            let next_expand = $("body .active-option-to-select").eq(num);
+            $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
+            $this.prev(".option-to-select").removeClass("active");
+            $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
+            $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
+            next_expand.addClass("active");
+            next_expand.next().slideToggle("slow");
             disable_invalid_options();
+            return;
+        }
+
+        if (this.name=="ctr-cabel-type"){//ПОКАЗАТЬ ВЫБОР ДЛИНЫ КАБЕЛЯ
+            console.log("показать длину и пометку красным");
+            $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $("#ctr-cabel-length-span").prop("style", "display:block");
+            $("input[id=ctr-cabel-length]").prop("value", "");
             return;
         }
 
@@ -2519,7 +2561,7 @@ function showHideSensorOpts(){
         return;
     }else{///ИНАЧЕ ПОМЕТИТЬ ЗЕЛЕНЫМ, СКРЫТЬ, ОТКРЫТЬ СЛЕД. РАЗДЕЛ
         $("#quantity-accuracy-wiring").closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
-        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.option-to-select").addClass("active").next("div.option-to-select-list").slideDown();
+        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
         disable_invalid_options();
         return;
     }
@@ -2529,7 +2571,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
     var delayed_function;
     var tooltip_id;
     var mouse;
-    $("div.option-to-select-list label:not(:disabled)").hover(function (e) {
+    $("div.option-to-select-list label.tooltiped").hover(function (e) {
         // over
             tooltip_id = $(this).prop("htmlFor");
             let img_path = "/images/tooltips/"+ tooltip_id +"_tooltip.jpg";
@@ -2560,4 +2602,31 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
             clearTimeout(delayed_function);
         }
     ).mousemove(function(){$(".tooltip").each(function(){$(this).remove()})});
+})
+
+$(function(){
+    $("input[name=ctr-cabel-length]").change(function(){
+        let cabel_length = parseInt($(this).val());
+        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100){
+            $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            return;
+        }else{
+            $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+            disable_invalid_options();
+        }
+    })
+})
+
+$(function(){
+    $("input[id=ctr-cabel-length-button-ok]").click(function(){
+        let cabel_length = parseInt($("input[name=ctr-cabel-length]").val());
+        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100){
+            $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            return;
+        }else{
+            $(this).closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
+            $(this).closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
+            disable_invalid_options();
+        }
+    })
 })
