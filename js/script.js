@@ -1709,7 +1709,7 @@ $(function (){
             }
 
             if (this.name=="ctr-cabel-type"){//СКРЫТЬ ВЫБОР ДЛИНЫ КАБЕЛЯ при отмене К1-К6
-                $("#ctr-cabel-length-span").prop("style", "display:none").removeClass("active-option-to-select");
+                $("#ctr-cabel-length-span").prop("style", "display:none");
                 $("input[id=ctr-cabel-length]").prop("value", "");
             }
 
@@ -1754,6 +1754,8 @@ $(function (){
                 $("#ctr-cabel-type-select-div").prop("style", "display:none").removeClass("active-option-to-select");
                 $("#ctr-cabel-type-select").removeClass("active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $("input[name=ctr-cabel-type]:checked").prop("checked", false);
+                $("#ctr-cabel-length-span").prop("style", "display:none");
+                $("input[id=ctr-cabel-length]").prop("value", "");
             }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
@@ -1919,6 +1921,8 @@ $(function (){
                 $("#ctr-cabel-type-select-div").prop("style", "display:none").removeClass("active-option-to-select");
                 $("#ctr-cabel-type-select").removeClass("active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $("input[name=ctr-cabel-type]:checked").prop("checked", false);
+                $("#ctr-cabel-length-span").prop("style", "display:none");
+                $("input[id=ctr-cabel-length]").prop("value", "");
             }
             disable_invalid_options();
             return;
