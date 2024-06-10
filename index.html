@@ -442,7 +442,7 @@
 						<input type="checkbox" name="ctr-cabel-type" value="fiberglass" id="ctr-fiberglass" class="custom-checkbox"><label for="ctr-fiberglass"><b>Стекловолокно</b> - температура до 400°С.</label><div id="err_ctr-fiberglass"  style="display:none;"></div>
 						<span id="ctr-cabel-length-span" style="display: none">
 							<label for="ctr-cabel-length" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Длина кабеля, м</label>
-							<input type="number" step="0.5" name="ctr-cabel-length" id="ctr-cabel-length" min="1" max="300" style="width: 3.5em" required>
+							<input type="number" step="1" name="ctr-cabel-length" id="ctr-cabel-length" min="1" max="300" style="width: 3.5em" required>
 							<input type="button" id="ctr-cabel-length-button-ok" value="ОК">
 						</span>
 					</fieldset>
@@ -456,7 +456,18 @@
 
 				<div class="option-to-select-list ctr" id="ctr-range-select" style="display: none;">
 					<fieldset id="ctr-range-select-field">
-						в разработке
+						<div>
+							<label for="ctr-begin-range">Температура, °С: </label>
+							<input type="number" step="1" min="-196" max="1300" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-begin-range" style="width: 4.5em; margin-left:1.2em" id="ctr-begin-range" required onchange="ctr_range_selected()">
+							<span>...</span>
+							<input type="number" step="1" min="-196" max="1300" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-end-range" style="width: 4.5em" id="ctr-end-range" required onchange="ctr_range_selected()">
+						</div>
+						<div style="margin-top: 0.5em;">
+							<label for="ctr-pressure">Максимальное давление, МПа: </label>
+							<input type="number" step="1" min="0" max="40" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="ctr-pressure" style="width: 4.5em" id="ctr-pressure" required onchange="ctr_range_selected()">
+						</div>
+						<div id="ctr-range_warning" style="display:none; font-size: 85%;"></div>
+						<div id="err_ctr-range" style="display:none;"></div>
 					</fieldset>
 				</div>
 

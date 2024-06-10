@@ -1044,28 +1044,29 @@ function disable_invalid_options(){
     }
 
 
-    //ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ
-    for (let pair of full_conf.entries()){
-        if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
-            for (let opt in option_names){
-                if (option_names[opt]!=pair[0]){             /// НЕ СРАВНИВАТЬ ОПЦИЮ САМУ С СОБОЙ
-                    // console.log(pair[0], " - ", pair[1], " - ", option_names[opt]);
-                    let temp;
-                    try {
-                        temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
-                    }
-                    catch (err){
-                        console.log(err);
-                    }
-                    $("input[name="+ option_names[opt] +"]").each(function() {
-                        if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
-                            $("label[for="+$(this).attr("id")+"]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ
-                            $(this).prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
-                                                        // }
-                            document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
-                            num+=1;
+    if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){//ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ ДАВЛЕНИЕ
+        for (let pair of full_conf.entries()){
+            if (typeof pair[1] !== 'undefined'){        /// проверка VALUE(pair[1]) из full_conf на UNDEFINED
+                for (let opt in option_names){
+                    if (option_names[opt]!=pair[0]){             /// НЕ СРАВНИВАТЬ ОПЦИЮ САМУ С СОБОЙ
+                        // console.log(pair[0], " - ", pair[1], " - ", option_names[opt]);
+                        let temp;
+                        try {
+                            temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
                         }
-                    })
+                        catch (err){
+                            console.log(err);
+                        }
+                        $("input[name="+ option_names[opt] +"]").each(function() {
+                            if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
+                                $("label[for="+$(this).attr("id")+"]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ВАРИАНТЫ
+                                $(this).prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                                                            // }
+                                document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${pair[1]}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${pair[1]}_err_cancel${num}'>${$("label[for="+pair[1]+"]").text()}</label>`;
+                                num+=1;
+                            }
+                        })
+                    }
                 }
             }
         }
@@ -1512,7 +1513,9 @@ function disable_invalid_options(){
             }
         }
     }
-
+    if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
+        console.log("ctr disable invalid options");
+    }
 
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
@@ -2634,3 +2637,7 @@ $(function(){
         }
     })
 })
+
+function ctr_range_selected(){
+    console.log("ctr_range_selected");
+}
