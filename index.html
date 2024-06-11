@@ -471,6 +471,40 @@
 					</fieldset>
 				</div>
 
+				<div class="option-to-select ctr" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Размеры измерительной части</span></div>
+				</div>
+
+				<div class="option-to-select-list ctr" id="ctr-dimensions-select" style="display: none;">
+					<fieldset id="ctr-dimensions-select-field">
+						<div>
+							<label for="ctr-diameter">Диаметр защитного корпуса, мм: </label>
+							<select name="ctr-diameter" id="ctr-diameter" style="width: 4.5em; margin-left:0.5em" onchange="ctr_dimensions_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="3">3</option>
+								<option value="6">6</option>
+								<option value="7">7</option>
+								<option value="8">8</option>
+								<option value="9">9</option>
+								<option value="10">10</option>
+								<option value="15">15</option>
+								<option value="22">22</option>
+							</select>
+						</div>
+						<div style="margin-top: 0.5em;">
+							<label for="ctr-length">Длина измерительной части, мм: </label>
+							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-length" style="width: 4.5em; margin-left:0.5em" id="ctr-length" required onchange="ctr_dimensions_selected()">
+						</div>
+						<div style="margin-top: 0.5em;">
+							<label for="ctr-outlength">Длина наружной части части, мм: </label>
+							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-outlength" style="width: 4.5em" id="ctr-outlength" required onchange="ctr_dimensions_selected()">
+						</div>
+						<div id="ctr-dimensions_warning" style="display:none; font-size: 85%;"></div>
+						<div id="err_ctr-dimensions" style="display:none;"></div>
+					</fieldset>
+				</div>
+
 				<div class="option-to-select pc-28 apc-2000 pr-28 pr-28 apr-2000" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
 					<div class="option-to-select-header"><span>Тип электрического присоединения</span></div>

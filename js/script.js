@@ -1933,15 +1933,16 @@ $(function (){
 
         if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ ВЫБОРЕ СКРЫТЬ СПИСОК, ПОКАЗАТЬ СЛЕДУЮЩИЙ
             console.log("ПОКАЗ СЛЕД АКТИВНОГО БЛОКА");
-            var $this = $("#ctr-electrical-select");
-            let num = $("body .active-option-to-select").index($(".active")) + 1;
-            let next_expand = $("body .active-option-to-select").eq(num);
-            $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
-            $this.prev(".option-to-select").removeClass("active");
-            $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
-            $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
-            next_expand.addClass("active");
-            next_expand.next().slideToggle("slow");
+            // var $this = $("#ctr-electrical-select");
+            // let num = $("body .active-option-to-select").index($(".active")) + 1;
+            // let next_expand = $("body .active-option-to-select").eq(num);
+            // $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
+            // $this.prev(".option-to-select").removeClass("active");
+            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
+            // $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
+            // next_expand.addClass("active");
+            // next_expand.next().slideToggle("slow");
+            expand_next_div($(this).prop("id"));
             disable_invalid_options();
             return;
         }
@@ -2567,8 +2568,9 @@ function showHideSensorOpts(){
         disable_invalid_options();
         return;
     }else{///ИНАЧЕ ПОМЕТИТЬ ЗЕЛЕНЫМ, СКРЫТЬ, ОТКРЫТЬ СЛЕД. РАЗДЕЛ
-        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
-        $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
+        expand_next_div("quantity-accuracy-wiring");
+        // $("#quantity-accuracy-wiring").closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        // $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
         disable_invalid_options();
         return;
     }
@@ -2599,16 +2601,17 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
                         $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'10px 10px 30px rgba(0, 0, 0, 0.8)', 'border-radius':'15px'});
-                    }, 1000);
+                    }, 700);
                 },
             });
         }, function () {
             // out
+            clearTimeout(delayed_function);
             $(".tooltip").each(function(){$(this).remove()});
             $(this).css('z-index','');
-            clearTimeout(delayed_function);
         }
-    ).mousemove(function(){$(".tooltip").each(function(){$(this).remove()})});
+    ).mousemove(function(){
+        $(".tooltip").each(function(){$(this).remove()})});
 })
 
 $(function(){
@@ -2631,13 +2634,34 @@ $(function(){
             $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             return;
         }else{
-            $(this).closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
-            $(this).closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
+            expand_next_div("ctr-cabel-length-button-ok");
             disable_invalid_options();
         }
     })
 })
 
-function ctr_range_selected(){
+function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИАПАЗОНА ТЕМПЕРАТУРЫ
+
     console.log("ctr_range_selected");
+    if (!Number.isNaN(parseInt($("#ctr-begin-range").val())) && !Number.isNaN(parseInt($("#ctr-end-range").val())) && !Number.isNaN(parseInt($("#ctr-pressure").val()))){
+        expand_next_div("ctr-end-range");
+        disable_invalid_options();
+    }else{
+        $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
+}
+
+function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РАСКРЫТЬ СЛЕДУЮЩИЙ
+
+    console.log("ФУНКЦИЯ expand_next_div");
+    var $this = $("#" + id).closest("div.active-option-to-select-list");
+    let num = $("body .active-option-to-select").index($(".active")) + 1;
+    let next_expand = $("body .active-option-to-select").eq(num);
+    $this.slideToggle("slow").siblings("div.active-option-to-select-list").slideUp("slow");
+    $this.prev(".active-option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
+    next_expand.addClass("active").next().slideToggle("slow");
+}
+
+function ctr_dimensions_selected(){
+    console.log("ctr_dimensions_selected");
 }
