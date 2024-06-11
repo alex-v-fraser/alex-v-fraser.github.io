@@ -2583,7 +2583,8 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
     $("div.option-to-select-list label.tooltiped").hover(function (e) {
         // over
             tooltip_id = $(this).prop("htmlFor");
-            let img_path = "/images/tooltips/"+ tooltip_id +"_tooltip.jpg";
+            // console.log(`/images/tooltips/${tooltip_id}_tooltip.jpg`);
+            let img_path = `/images/tooltips/${tooltip_id}_tooltip.jpg`;// + ${/(jpg$|png$)/};
             mouse = $(this);
             $.ajax({
                 type: "HEAD",
@@ -2600,7 +2601,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         tooltip.id = tooltip_id + "_tooltip";
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
-                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 30, 'left':x + 20, 'display':'block', 'position':'absolute', 'width':200, 'height':200, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'10px 10px 30px rgba(0, 0, 0, 0.8)', 'border-radius':'15px'});
+                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 45, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
                     }, 700);
                 },
             });
@@ -2611,7 +2612,10 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
             $(this).css('z-index','');
         }
     ).mousemove(function(){
-        $(".tooltip").each(function(){$(this).remove()})});
+        $(".tooltip").each(function(){
+            $(this).remove();
+        })
+    })
 })
 
 $(function(){
