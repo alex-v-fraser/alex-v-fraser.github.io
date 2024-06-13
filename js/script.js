@@ -1748,7 +1748,7 @@ $(function (){
                 $(".thermoresistor-thermocouple").find("label").slideDown();
                 $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             }
-            if(this.name=="ctr-electrical"){
+            if (this.name=="ctr-electrical"){
                 console.log("спрятать head или nohead или cabel");
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $(".head-nohead-cabel").find("input:checkbox:checked").prop('checked', false);
@@ -1759,6 +1759,16 @@ $(function (){
                 $("input[name=ctr-cabel-type]:checked").prop("checked", false);
                 $("#ctr-cabel-length-span").prop("style", "display:none");
                 $("input[id=ctr-cabel-length]").prop("value", "");
+            }
+            if (this.name=="ctr-connection-type"){ /// ПРИ ОТМЕНЕ ПРИСОЕДИНЕНИЯ CTR СПРЯТАТЬ ВСЕ СПИСКИ, отметить красным, выбор not_selected
+                console.log('Спрятать все списки ctr-connection-type, пометить красным');
+                $("div#ctr-connection-type-select span").each(function(){
+                    $(this).prop("style", "display:none");
+                })
+                $("div#ctr-connection-type-select").find("select option[value='not_selected']").prop('selected', true);
+                $("div#ctr-connection-type-select").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+
+
             }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
@@ -1949,10 +1959,33 @@ $(function (){
 
         if (this.name=="ctr-cabel-type"){//ПОКАЗАТЬ ВЫБОР ДЛИНЫ КАБЕЛЯ
             console.log("показать длину и пометку красным");
-            $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $(this).closest("div.active-option-to-select-list").prev("div.active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             $("#ctr-cabel-length-span").prop("style", "display:block");
             $("input[id=ctr-cabel-length]").prop("value", "");
             return;
+        }
+
+        if (this.name=="ctr-connection-type" && $(this).prop("id")!="ctr-no-connection"){ ///ПОКАЗАТЬ ВЫБОР ПРИСОЕДИНЕНИЯ CTR, скрыть другие, пометить красным
+            console.log("ПОКАЗАТЬ ВЫБОР ПРИСОЕДИНЕНИЯ CTR");
+            let target = $(this).prop("id").slice(0,-4) + "select";
+            $("#ctr-connection-type-select-field span").each(function(){
+                if ($(this).prop("id")!=target){
+                    $(this).prop("style", "display:none");
+                    $(this).find("select option[value='not_selected']").prop('selected', true);
+                }else{
+                    $(this).prop("style", "display:block");
+                }
+            })
+            $("#"+$(this).prop("id").slice(0,-4)+"select").prop("style", "display:block");
+            $(this).closest("div.active-option-to-select-list").prev("div.active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+            return;
+        }
+        if (this.name=="ctr-connection-type" && $(this).prop("id")=="ctr-no-connection"){
+            $("#ctr-connection-type-select-field span").each(function(){
+                $(this).prop("style", "display:none");
+                $(this).find("select option[value='not_selected']").prop('selected', true);
+            })
         }
 
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
@@ -2318,6 +2351,32 @@ $(function(){
             $(this).addClass("active-option-to-select");
             $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
         })
+
+        let ctr_materials = ["aisi310", "aisi316", "aisi321", "ceramic",  "sialon"]
+        if ($(".main-dev-selected").prop("id").slice(9,)=="ctr"){
+            $("#pressure-material-header").prop("style", "display:none");
+            $("#ctr-material-header").prop("style", "display:block");
+            $("input[name=material]").next("label").each(function(){
+                if (ctr_materials.includes($(this).prop("for"))){
+                    $(this).prop("style", "display:block");
+                }else{
+                    $(this).prop("style", "display:none");
+                }
+            })
+
+        }else{
+            $("#pressure-material-header").prop("style", "display:block");
+            $("#ctr-material-header").prop("style", "display:none");
+            $("input[name=material]").next("label").each(function(){
+                if (ctr_materials.includes($(this).prop("for"))){
+                    $(this).prop("style", "display:none");
+                }else{
+                    $(this).prop("style", "display:block");
+                }
+            })
+            $("label[for=aisi316]").prop("style", "display:block");
+        }
+
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
         setTimeout(() => {  $("#approval-select").slideDown("slow"); }, 300);
         $("#approval-select").prev("div").addClass("active");
@@ -2644,7 +2703,7 @@ $(function(){
     })
 })
 
-function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИАПАЗОНА ТЕМПЕРАТУРЫ
+function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИАПАЗОНА ТЕМПЕРАТУРЫ CTR
 
     console.log("ctr_range_selected");
     if (!Number.isNaN(parseInt($("#ctr-begin-range").val())) && !Number.isNaN(parseInt($("#ctr-end-range").val())) && !Number.isNaN(parseInt($("#ctr-pressure").val()))){
@@ -2666,6 +2725,32 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
     next_expand.addClass("active").next().slideToggle("slow");
 }
 
-function ctr_dimensions_selected(){
-    console.log("ctr_dimensions_selected");
+function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
+    if (!Number.isNaN(parseInt($("#ctr-length").val())) && !Number.isNaN(parseInt($("#ctr-outlength").val())) && $("#ctr-diameter").val()!="not_selected"){
+        expand_next_div("ctr-outlength");
+        disable_invalid_options();
+    }else{
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        disable_invalid_options();
+    }
+}
+
+function ctr_connection_selected(){
+    if ($("#ctr-connection-type-select-field select:visible:has(option[value=not_selected]:selected)").length>0){
+        $("#ctr-connection-type-select-field").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        disable_invalid_options();
+        return false;
+    }else{
+        $("#ctr-connection-type-select-field").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        // expand_next_div("ctr-connection-type-select-field");
+        disable_invalid_options();
+        return true;
+    }
+}
+
+function ctr_connection_button_ok(){
+    let check = ctr_connection_selected();
+    if (check == true){
+        expand_next_div("ctr-connection-type-select-field");
+    }
 }

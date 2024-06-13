@@ -43,6 +43,7 @@
 			bottom: 158px;
 			border: 10px solid transparent;
 			border-right-color: #ffffff;
+
 		}
 
 		.ui-resizable-e {
@@ -610,13 +611,17 @@
 					</fieldset>
 				</div>
 
-				<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000" style="display:none;">
+				<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr" style="display:none;">
 					<div class="color-mark-field unselected" title="Set"></div>
-					<div class="option-to-select-header"><span>Материал смачиваемых частей</span></div>
+					<div class="option-to-select-header"><span id="pressure-material-header" style="display: none;">Материал смачиваемых частей</span><span id="ctr-material-header" style="display: none;">Материал защитного корпуса</span></div>
 				</div>
-				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="material-select" style="display: none;">
+				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="material-select" style="display: none;">
 					<fieldset id="material-select-field" name="material-select-field">
+						<input type="checkbox" name="material" value="" id="aisi310" class="custom-checkbox"><label for="aisi310">AISI310</label><div id="err_aisi310"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="" id="aisi321" class="custom-checkbox"><label for="aisi321">AISI321</label><div id="err_aisi321"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="" id="ceramic" class="custom-checkbox"><label for="ceramic">Коррунд</label><div id="err_ceramic"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="" id="sialon" class="custom-checkbox"><label for="sialon">Сиалон</label><div id="err_sialon"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="AU" id="au" class="custom-checkbox"><label for="au">Золото</label><div id="err_au"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label for="hastelloy">Hastelloy С276</label><div id="err_hastelloy"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="Ni" id="nickel" class="custom-checkbox"><label for="nickel">Никель</label><div id="err_nickel"  style="display:none;"></div>
@@ -625,6 +630,90 @@
 						<input type="checkbox" name="material" value="Ta" id="tantal" class="custom-checkbox"><label for="tantal">Тантал</label><div id="err_tantal"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="PTFE" id="ptfe" class="custom-checkbox"><label for="ptfe">Фторопласт-4 (политетрафторэтилен)</label><div id="err_ptfe"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="DLC" id="dlc" class="custom-checkbox"><label for="dlc">DLC</label><div id="err_dlc"  style="display:none;"></div>
+					</fieldset>
+				</div>
+
+				<div class="option-to-select ctr" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Тип и размер присоединения</span></div>
+				</div>
+				<div class="option-to-select-list ctr" id="ctr-connection-type-select" style="display: none;">
+					<fieldset id="ctr-connection-type-select-field" name="ctr-connection-type-select-field">
+						<input type="checkbox" name="ctr-connection-type" value="ctr-no-connection" id="ctr-no-connection" class="custom-checkbox"><label for="ctr-no-connection">Без монтажного присоединения</label><div id="eerr_ctr-no-connection"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-thread-list" id="ctr-thread-list" class="custom-checkbox"><label for="ctr-thread-list">Резьбовое</label><div id="eerr_ctr-thread-list"  style="display:none;"></div>
+						<span id="ctr-thread-select" style="display: none;">
+							<label for="ctr-thread-type" style="margin-left: 1.4em;">Тип и размер:</label>
+							<select name="ctr-thread-type" id="ctr-thread-type" style="width: 5.5em; margin-left:0.5em" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="g1_8">G1/8</option>
+								<option value="g1_4">G1/4</option>
+								<option value="g1_2">G1/2</option>
+								<option value="m12_1">M12x1</option>
+								<option value="m20_15">M20x1,5</option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+							</select>
+							<input type="button" id="ctr-thread-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
+						</span>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-flange-list" id="ctr-flange-list" class="custom-checkbox"><label for="ctr-flange-list">Фланцевое</label><div id="eerr_ctr-flange-list"  style="display:none;"></div>
+						<span id="ctr-flange-select" style="display: none;">
+							<label for="ctr-flange-type" style="margin-left: 1.4em;">Тип и размер:</label>
+							<select name="ctr-flange-type" id="ctr-flange-type" style="width: 4.5em; margin-left:0.5em" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="DN25">DN25</option>
+								<option value="DN50">DN50</option>
+								<option value="DN80">DN80</option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+							</select>
+							<select name="ctr-flange-type-pn" id="ctr-flange-type-pn" style="width: 4.5em; margin-left:0.5em" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="PN10">PN10</option>
+								<option value="PN16">PN16</option>
+								<option value="PN25">PN25</option>
+								<option value="PN40">PN40</option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+							</select>
+							<input type="button" id="ctr-flange-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
+						</span>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-hygienic-list" id="ctr-hygienic-list" class="custom-checkbox"><label for="ctr-hygienic-list">Гигиеническое</label><div id="eerr_ctr-hygienic-list"  style="display:none;"></div>
+						<span id="ctr-hygienic-select" style="display: none;">
+							<label for="ctr-hygienic-type" style="margin-left: 1.4em;">Тип и размер:</label>
+							<select name="ctr-hygienic-type" id="ctr-hygienic-type" style="width: 6em; margin-left:0.5em" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="clamp1">Clamp1"</option>
+								<option value="Clamp15">Clamp1,5"</option>
+								<option value="Clamp2">Clamp2"</option>
+								<option value="DIN40">DIN40</option>
+								<option value="DIN50">DIN50</option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+								<option value="" style="display: none;"></option>
+							</select>
+							<input type="button" id="ctr-hygienic-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
+						</span>
+					</fieldset>
+				</div>
+
+				<div class="option-to-select thermowell" style="display:none;">
+					<div class="color-mark-field unselected" title="Set"></div>
+					<div class="option-to-select-header"><span>Защитная гильза</span></div>
+				</div>
+
+				<div class="option-to-select-list thermowell" id="thermowell-type-select" style="display: none;">
+					<fieldset id="thermowell-type-select-field" name="thermowell-type-select-field">
+						<input type="checkbox" name="thermowell-type" value="not_required" id="not_required" class="custom-checkbox"><label for="not_required">Не требуется</label><div id="err_not_required"  style="display:none;"></div>
+						<input type="checkbox" name="thermowell-type" value="welded-thermowell" id="welded-thermowell" class="custom-checkbox"><label for="welded-thermowell">Сварная</label><div id="err_welded-thermowell"  style="display:none;"></div>
+						<input type="checkbox" name="thermowell-type" value="barstock-thermowell" id="barstock-thermowell" class="custom-checkbox"><label for="barstock-thermowell">Цельноточеная</label><div id="err_barstock-thermowell"  style="display:none;"></div>
 					</fieldset>
 				</div>
 
