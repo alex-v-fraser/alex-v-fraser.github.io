@@ -2495,11 +2495,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $("div.option-to-select.active").removeClass("active");
                         $( this ).dialog( "close" );
                         $("#approval-select").slideUp("slow");
-
                         $("div.option-to-select").each(function(){
-                            $(this).prop("style", "display:none");
-                        })
-                        $("div.option-to-select-list").each(function(){
                             $(this).prop("style", "display:none");
                         })
                         $("div.active-option-to-select").removeClass("active-option-to-select");
@@ -2518,11 +2514,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
             $("div.option-to-select.active").removeClass("active");
             $("#approval-select").slideUp("slow");
-
             $("div.option-to-select").each(function(){
-                $(this).prop("style", "display:none");
-            })
-            $("div.option-to-select-list").each(function(){
                 $(this).prop("style", "display:none");
             })
             $("div.active-option-to-select").removeClass("active-option-to-select");
@@ -2545,7 +2537,7 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     for (let ids of ["cap-or-not-radiator-select", "cap-plus-radiator-select", "cap-minus-radiator-select", "cap-or-not-length-span", "cap-plus-length-span", "cap-minus-length-span", "cap-or-not-radiator-select-err", "cap-plus-radiator-select-err", "cap-minus-radiator-select-err", "cap-or-not-length-span-err", "cap-plus-length-span-err", "cap-minus-length-span-err"]){
         document.getElementById(ids).hidden = true;
     }
-    for (let ids of ["ctr-flange-select", "ctr-thread-select", "ctr-hygienic-select"]){
+    for (let ids of ["ctr-flange-select", "ctr-thread-select", "ctr-hygienic-select", "quantity-accuracy-wiring"]){
         $("#"+ids).prop("style", "display:none");
     }
     $("select option[value='not_selected']").each(function(){
@@ -2556,6 +2548,9 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     })
     $("div.color-mark-field").each(function(){
         $(this).removeClass("selected").addClass("unselected");
+    })
+    $("div.option-to-select-list").each(function(){
+        $(this).prop("style", "display:none");
     })
 }
 
