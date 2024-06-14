@@ -2739,8 +2739,8 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
                         $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
-                    }, 700);
-                    setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3000);
+                    }, 300);
+                    setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3500);
                 },
             });
         }, function () {
