@@ -2490,28 +2490,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         $(".active-panel-container").slideUp("slow");
                         $("#main-dev-select").slideDown("slow");
                         $(".active-panel-container").removeClass("active-panel-container");
-                        $('.thread-flange-hygienic').hide(0);
-                        $('.minus-thread-flange-hygienic').hide(0);
-                        $('body input:checkbox:checked').each(function(){
-                            // console.log("CHECKED: " + $(this).prop("id"));
-                            $(this).prop("checked", false);
-                        });
-                        $('body input:checkbox:disabled').each(function(){
-                            // console.log("disabled: " + $(this).prop("id"));
-                            $(this).prop("disabled", false);
-                        });
-                        for (let ids of ["cap-or-not-capillary-length", "cap-plus-capillary-length", "cap-minus-capillary-length", "begin-range", "end-range", "cap-or-not-mes-env-temp", "cap-plus-mes-env-temp", "cap-minus-mes-env-temp"]){
-                            document.getElementById(ids).value="";
-                        }
-                        for (let ids of ["cap-or-not-radiator-select", "cap-plus-radiator-select", "cap-minus-radiator-select", "cap-or-not-length-span", "cap-plus-length-span", "cap-minus-length-span", "cap-or-not-radiator-select-err", "cap-plus-radiator-select-err", "cap-minus-radiator-select-err", "cap-or-not-length-span-err", "cap-plus-length-span-err", "cap-minus-length-span-err"]){
-                            document.getElementById(ids).hidden = true;
-                        }
-                        document.getElementById("pressure-unit-select").value="not_selected";
-                        document.getElementById("pressure-type").value="not_selected";
-                        $("div.color-mark-field").each(function(){
-                            $(this).removeClass("selected");
-                            $(this).addClass("unselected");
-                        })
+                        resetConfig();
                         $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
                         $("div.option-to-select.active").removeClass("active");
                         $( this ).dialog( "close" );
@@ -2519,11 +2498,10 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
 
                         $("div.option-to-select").each(function(){
                             $(this).prop("style", "display:none");
-                        });
+                        })
                         $("div.option-to-select-list").each(function(){
                             $(this).prop("style", "display:none");
-                        });
-
+                        })
                         $("div.active-option-to-select").removeClass("active-option-to-select");
                         $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
                     },
@@ -2536,24 +2514,51 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             $(".active-panel-container").slideUp("slow");
             $("#main-dev-select").slideDown("slow");
             $(".active-panel-container").removeClass("active-panel-container");
+            resetConfig();
             $("div.option-to-select.active").next("div.option-to-select-list").slideUp("slow");
             $("div.option-to-select.active").removeClass("active");
             $("#approval-select").slideUp("slow");
-            document.getElementById("pressure-type").value="not_selected";
-
 
             $("div.option-to-select").each(function(){
                 $(this).prop("style", "display:none");
-            });
+            })
             $("div.option-to-select-list").each(function(){
                 $(this).prop("style", "display:none");
-            });
-
+            })
             $("div.active-option-to-select").removeClass("active-option-to-select");
             $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
         }
     })
 })
+
+function resetConfig(){///СБРОС КОНФИГУРАТОРА
+    console.log("СБРОС КОНФИГУРАТОРА");
+    for (let classes of ['.thread-flange-hygienic', '.minus-thread-flange-hygienic', '.thermoresistor-thermocouple', '.head-nohead-cabel']) {
+        $(classes).hide(0);
+    }
+    $('body input:checkbox:checked').each(function(){
+        $(this).prop("checked", false);
+    })
+    $('body input:checkbox:disabled').each(function(){
+        $(this).prop("disabled", false);
+    })
+    for (let ids of ["cap-or-not-radiator-select", "cap-plus-radiator-select", "cap-minus-radiator-select", "cap-or-not-length-span", "cap-plus-length-span", "cap-minus-length-span", "cap-or-not-radiator-select-err", "cap-plus-radiator-select-err", "cap-minus-radiator-select-err", "cap-or-not-length-span-err", "cap-plus-length-span-err", "cap-minus-length-span-err"]){
+        document.getElementById(ids).hidden = true;
+    }
+    for (let ids of ["ctr-flange-select", "ctr-thread-select", "ctr-hygienic-select"]){
+        $("#"+ids).prop("style", "display:none");
+    }
+    $("select option[value='not_selected']").each(function(){
+        $(this).prop('selected', true);
+    })
+    $(":input[type=number]").each(function(){
+        $(this).prop('value', '');
+    })
+    $("div.color-mark-field").each(function(){
+        $(this).removeClass("selected").addClass("unselected");
+    })
+}
+
 
 function MaxStaticChecked(){
 
