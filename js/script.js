@@ -580,7 +580,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }
         if (full_conf.has("thermoresistor")){
             for (let el of ["sensor_quantity", "sensor_accuracy_tr", "sensor_wiring_tr"]){
-                console.log(eval(el));
                 full_conf.set(el, eval(el));
             }
         }else{
@@ -590,7 +589,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }
         if (full_conf.has("thermocouple")){
             for (let el of ["sensor_quantity", "sensor_accuracy_tc"]){
-                console.log(eval(el));
                 full_conf.set(el, eval(el));
             }
         }else{
@@ -615,26 +613,12 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }
         if (typeof full_conf.get("ctr-connection-type")!="undefined" && full_conf.get("ctr-connection-type")!="ctr-no-connection"){
             let el = "ctr_" + full_conf.get("ctr-connection-type").slice(4, -5) + "_type";
-            console.log(full_conf.get("ctr-connection-type").slice(4, -5)+"_type");
             full_conf.set(el, eval(el));
         }else{
             full_conf.delete("ctr_thread_type");
             full_conf.delete("ctr_flange_type");
             full_conf.delete("ctr_hygienic_type");
         }
-        ///################################################################################################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     return full_conf;
