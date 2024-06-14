@@ -396,6 +396,22 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let max_temp_plus = parseInt(document.querySelector("#cap-plus-mes-env-temp").value);
     let max_temp_minus = parseInt(document.querySelector("#cap-minus-mes-env-temp").value);
     let max_static = !Number.isNaN(parseInt($("input[name=max-static]:checked").val())) ? parseInt($("input[name=max-static]:checked").val()) : undefined;
+    let sensor_quantity = $("select[name=sensor-quantity]").val()!="not_selected" ? $("select[name=sensor-quantity]").val() : undefined;
+    let sensor_accuracy_tr = $("select[name=sensor-accuracy-tr]").val()!="not_selected" ? $("select[name=sensor-accuracy-tr]").val() : undefined;
+    let sensor_accuracy_tc = $("select[name=sensor-accuracy-tc]").val()!="not_selected" ? $("select[name=sensor-accuracy-tc]").val() : undefined;
+    let sensor_wiring_tr = $("select[name=sensor-wiring-tr]").val()!="not_selected" ? $("select[name=sensor-wiring-tr]").val() : undefined;
+    let ctr_begin_range = !Number.isNaN(parseInt(document.querySelector("#ctr-begin-range").value)) ? parseInt(document.querySelector("#ctr-begin-range").value) : undefined;
+    let ctr_end_range = !Number.isNaN(parseInt(document.querySelector("#ctr-end-range").value)) ? parseInt(document.querySelector("#ctr-end-range").value) : undefined;
+    let ctr_pressure = !Number.isNaN(parseInt(document.querySelector("#ctr-pressure").value)) ? parseInt(document.querySelector("#ctr-pressure").value) : undefined;
+    let ctr_diameter = $("select[name=ctr-diameter]").val()!="not_selected" ? $("select[name=ctr-diameter]").val() : undefined;
+    let ctr_length = !Number.isNaN(parseInt(document.querySelector("#ctr-length").value)) ? parseInt(document.querySelector("#ctr-length").value) : undefined;
+    let ctr_outlength = !Number.isNaN(parseInt(document.querySelector("#ctr-outlength").value)) ? parseInt(document.querySelector("#ctr-outlength").value) : undefined;
+    let ctr_cabel_length = !Number.isNaN(parseInt(document.querySelector("#ctr-cabel-length").value)) ? parseInt(document.querySelector("#ctr-cabel-length").value) : undefined;
+    let ctr_cabel_type = $("input[name=ctr-cabel-type]:checked").length>0 ? $("input[name=ctr-cabel-type]:checked").val() : undefined;
+    let ctr_thread_type = $("select[name=ctr-thread-type]").val()!="not_selected" ? $("select[name=ctr-thread-type]").val() : undefined;
+    let ctr_hygienic_type = $("select[name=ctr-hygienic-type]").val()!="not_selected" ? $("select[name=ctr-hygienic-type]").val() : undefined;
+    let ctr_flange_type = ($("select[name=ctr-flange-type]").val()!="not_selected" && $("select[name=ctr-flange-type-pn]").val()!="not_selected" && $("select[name=ctr-flange-type-typ]").val()!="not_selected") ? $("select[name=ctr-flange-type]").val() + $("select[name=ctr-flange-type-pn]").val() + $("select[name=ctr-flange-type-typ]").val() : undefined;
+
     const koef = new Map([
         ["Па", 0.001],
         ["кПа", 1],
@@ -412,136 +428,213 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let full_conf = new Map([]);
     main_dev = $(".main-dev-selected").prop("id").slice(9,);
     full_conf.set("main_dev", main_dev);
-    // console.log();  $(".main-dev-selected div.prod-name").prop("innerText")
-    let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
-    if (main_dev=="pr-28" || main_dev=="apr-2000"){
-        full_conf.set("max-static", max_static);
-        if (!(max_static==32 || max_static==41 || max_static==70)){
-            full_conf.set("cap-plus", $("input[name=cap-plus]:checked").val());
-            full_conf.set("cap-minus", $("input[name=cap-minus]:checked").val());
-            full_conf.set("capillary_length_plus");
-            full_conf.set("capillary_length_minus");
-        }
-        options.push("minus-connection-type");
-        for (let i = options.length - 1; i >= 0; i--) {
-            if (options[i] == "cap-or-not") {
-                options.splice(i, 1);
+
+    if (main_dev=="pr-28" || main_dev=="apr-2000" || main_dev=="pc-28" || main_dev=="apc-2000"){
+
+        let options = ["approval", "output", "electrical", "cap-or-not", "material", "connection-type"]; //, "display"
+        if (main_dev=="pr-28" || main_dev=="apr-2000"){
+            full_conf.set("max-static", max_static);
+            if (!(max_static==32 || max_static==41 || max_static==70)){
+                full_conf.set("cap-plus", $("input[name=cap-plus]:checked").val());
+                full_conf.set("cap-minus", $("input[name=cap-minus]:checked").val());
+                full_conf.set("capillary_length_plus");
+                full_conf.set("capillary_length_minus");
             }
-        }
-    }else{
-        full_conf.delete("max-static");
-        full_conf.delete("cap-plus");
-        full_conf.delete("cap-minus");
-        full_conf.delete("capillary_length_plus");
-        full_conf.delete("capillary_length_minus");
-        full_conf.delete("minus-connection-type");
-        for (let i = options.length - 1; i >= 0; i--) {
-            if (options[i] == "minus-connection-type") {
-                options.splice(i, 1);
-                console.log(options[i]);
+            options.push("minus-connection-type");
+            for (let i = options.length - 1; i >= 0; i--) {
+                if (options[i] == "cap-or-not") {
+                    options.splice(i, 1);
+                }
             }
-        }
-        options.push("cap-or-not");
-    }
-    for (let el of options){
-        full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
-    }
-    for (itms of ["capillary_length", "capillary_length_plus", "capillary_length_minus"])
-    if (!Number.isNaN(eval(itms))){
-        full_conf.set(itms, eval(itms));
-    }
-    if ($("input[name=cap-or-not]:checked").prop("id")=="direct"){
-        full_conf.delete("capillary_length");
-        if (!Number.isNaN(max_temp)){
-            full_conf.set("max_temp", max_temp);
         }else{
-            full_conf.set("max_temp");
+            full_conf.delete("max-static");
+            full_conf.delete("cap-plus");
+            full_conf.delete("cap-minus");
+            full_conf.delete("capillary_length_plus");
+            full_conf.delete("capillary_length_minus");
+            full_conf.delete("minus-connection-type");
+            for (let i = options.length - 1; i >= 0; i--) {
+                if (options[i] == "minus-connection-type") {
+                    options.splice(i, 1);
+                    console.log(options[i]);
+                }
+            }
+            options.push("cap-or-not");
         }
-    }
-    for (let plmin of ["plus", "minus"]){
-        if (typeof $("input[name=cap-"+plmin+"]:checked").prop("id")!="undefined" && $("input[name=cap-"+plmin+"]:checked").prop("id").startsWith("direct")){
-            full_conf.delete("capillary_length_" + plmin);
-            if (!Number.isNaN(eval("max_temp_"+ plmin))){
-                full_conf.set("max_temp_" + plmin, eval("max_temp_"+ plmin));
+        for (let el of options){
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }
+        for (itms of ["capillary_length", "capillary_length_plus", "capillary_length_minus"])
+        if (!Number.isNaN(eval(itms))){
+            full_conf.set(itms, eval(itms));
+        }
+        if ($("input[name=cap-or-not]:checked").prop("id")=="direct"){
+            full_conf.delete("capillary_length");
+            if (!Number.isNaN(max_temp)){
+                full_conf.set("max_temp", max_temp);
             }else{
-                full_conf.set("max_temp_" + plmin);
+                full_conf.set("max_temp");
             }
         }
-    }
-    if ($("input[name=cap-or-not]:checked").prop("id")=="capillary"){
-        full_conf.delete("max_temp");
-    }
-    if ($("input[name=cap-plus]:checked").prop("id")=="capillary"){
-        full_conf.delete("max_temp_plus");
-    }
-    if ($("input[name=cap-minus]:checked").prop("id")=="capillary"){
-        full_conf.delete("max_temp_minus");
-    }
-    if (press_type!='not_selected' && units!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range){
-        full_conf.set("begin_range", begin_range);
-        full_conf.set("end_range", end_range);
-        full_conf.set("units", units);
-        full_conf.set("pressure_type", press_type);
-        full_conf.set("range", range);
-        full_conf.set("begin_range_kpa", begin_range_kpa);
-        full_conf.set("end_range_kpa", end_range_kpa);
-    }
-    if (press_type=='not_selected' || units=='not_selected' || Number.isNaN(begin_range) || Number.isNaN(end_range) || end_range==begin_range){
-        full_conf.set("begin_range");
-        full_conf.set("end_range");
-        full_conf.set("units");
-        full_conf.set("pressure_type");
-        full_conf.set("range");
-        full_conf.delete("begin_range_kpa");
-        full_conf.delete("end_range_kpa");
-    }
+        for (let plmin of ["plus", "minus"]){
+            if (typeof $("input[name=cap-"+plmin+"]:checked").prop("id")!="undefined" && $("input[name=cap-"+plmin+"]:checked").prop("id").startsWith("direct")){
+                full_conf.delete("capillary_length_" + plmin);
+                if (!Number.isNaN(eval("max_temp_"+ plmin))){
+                    full_conf.set("max_temp_" + plmin, eval("max_temp_"+ plmin));
+                }else{
+                    full_conf.set("max_temp_" + plmin);
+                }
+            }
+        }
+        if ($("input[name=cap-or-not]:checked").prop("id")=="capillary"){
+            full_conf.delete("max_temp");
+        }
+        if ($("input[name=cap-plus]:checked").prop("id")=="capillary"){
+            full_conf.delete("max_temp_plus");
+        }
+        if ($("input[name=cap-minus]:checked").prop("id")=="capillary"){
+            full_conf.delete("max_temp_minus");
+        }
+        if (press_type!='not_selected' && units!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range){
+            full_conf.set("begin_range", begin_range);
+            full_conf.set("end_range", end_range);
+            full_conf.set("units", units);
+            full_conf.set("pressure_type", press_type);
+            full_conf.set("range", range);
+            full_conf.set("begin_range_kpa", begin_range_kpa);
+            full_conf.set("end_range_kpa", end_range_kpa);
+        }
+        if (press_type=='not_selected' || units=='not_selected' || Number.isNaN(begin_range) || Number.isNaN(end_range) || end_range==begin_range){
+            full_conf.set("begin_range");
+            full_conf.set("end_range");
+            full_conf.set("units");
+            full_conf.set("pressure_type");
+            full_conf.set("range");
+            full_conf.delete("begin_range_kpa");
+            full_conf.delete("end_range_kpa");
+        }
 
-    if (typeof full_conf.get("connection-type")!=='undefined'){
-        full_conf.set(full_conf.get("connection-type").slice(0,-5), $("input[name ="+ full_conf.get("connection-type").slice(0,-5) +"]:checked").prop("id"));
-        full_conf.delete("connection-type");
-    }
-    if (typeof full_conf.get("minus-connection-type")!=='undefined'){
-        full_conf.set(full_conf.get("minus-connection-type").slice(0,-5), $("input[name ="+ full_conf.get("minus-connection-type").slice(0,-5) +"]:checked").prop("id"));
-        full_conf.delete("minus-connection-type");
-    }
-    if ($("input[name=cap-or-not]:checked").prop("id")=="capillary" && !full_conf.has("capillary_length")){
-        full_conf.set("capillary_length");
-    }
-    if (typeof full_conf.get("flange")!='undefined' && full_conf.get("flange").slice(0,3)=="s_t"){
-        let t_length = parseInt($("#" + full_conf.get("flange") + "-cilinder-length").val());
-        if (!Number.isNaN(t_length)){
-            full_conf.set("cilinder_length", parseInt($("#" + full_conf.get("flange") + "-cilinder-length").val()));
-        }else{
-            full_conf.set("cilinder_length");
+        if (typeof full_conf.get("connection-type")!=='undefined'){
+            full_conf.set(full_conf.get("connection-type").slice(0,-5), $("input[name ="+ full_conf.get("connection-type").slice(0,-5) +"]:checked").prop("id"));
+            full_conf.delete("connection-type");
         }
-    }else{
-        full_conf.delete("cilinder_length");
-    }
-    if (typeof full_conf.get("minus-flange")!='undefined' && full_conf.get("minus-flange").slice(0,9)=="minus-s_t"){
-        let t_length = parseInt($("#" + full_conf.get("minus-flange") + "-cilinder-length").val());
-        if (!Number.isNaN(t_length)){
-            full_conf.set("minus_cilinder_length", parseInt($("#" + full_conf.get("minus-flange") + "-cilinder-length").val()));
-        }else{
-            full_conf.set("minus_cilinder_length");
+        if (typeof full_conf.get("minus-connection-type")!=='undefined'){
+            full_conf.set(full_conf.get("minus-connection-type").slice(0,-5), $("input[name ="+ full_conf.get("minus-connection-type").slice(0,-5) +"]:checked").prop("id"));
+            full_conf.delete("minus-connection-type");
         }
-    }else{
-        full_conf.delete("minus-cilinder_length");
-    }
-    if ((full_conf.has("minus-thread") && full_conf.get("minus-thread")=="minus-P") || (full_conf.has("minus-flange") && full_conf.get("minus-flange")=="minus-c-pr")){
-        full_conf.delete("max_temp_plus");
-        full_conf.delete("max_temp_minus");
-        full_conf.delete("capillary_length_plus");
-        full_conf.delete("capillary_length_minus");
-    }
+        if ($("input[name=cap-or-not]:checked").prop("id")=="capillary" && !full_conf.has("capillary_length")){
+            full_conf.set("capillary_length");
+        }
+        if (typeof full_conf.get("flange")!='undefined' && full_conf.get("flange").slice(0,3)=="s_t"){
+            let t_length = parseInt($("#" + full_conf.get("flange") + "-cilinder-length").val());
+            if (!Number.isNaN(t_length)){
+                full_conf.set("cilinder_length", parseInt($("#" + full_conf.get("flange") + "-cilinder-length").val()));
+            }else{
+                full_conf.set("cilinder_length");
+            }
+        }else{
+            full_conf.delete("cilinder_length");
+        }
+        if (typeof full_conf.get("minus-flange")!='undefined' && full_conf.get("minus-flange").slice(0,9)=="minus-s_t"){
+            let t_length = parseInt($("#" + full_conf.get("minus-flange") + "-cilinder-length").val());
+            if (!Number.isNaN(t_length)){
+                full_conf.set("minus_cilinder_length", parseInt($("#" + full_conf.get("minus-flange") + "-cilinder-length").val()));
+            }else{
+                full_conf.set("minus_cilinder_length");
+            }
+        }else{
+            full_conf.delete("minus-cilinder_length");
+        }
+        if ((full_conf.has("minus-thread") && full_conf.get("minus-thread")=="minus-P") || (full_conf.has("minus-flange") && full_conf.get("minus-flange")=="minus-c-pr")){
+            full_conf.delete("max_temp_plus");
+            full_conf.delete("max_temp_minus");
+            full_conf.delete("capillary_length_plus");
+            full_conf.delete("capillary_length_minus");
+        }
 
-    if ($("#fluid-select-div").hasClass("active-option-to-select")){
-        if ($("input[name=fluid]").is("checked").length==0){
-            full_conf.set("fluid");
+        if ($("#fluid-select-div").hasClass("active-option-to-select")){
+            if ($("input[name=fluid]").is("checked").length==0){
+                full_conf.set("fluid");
+            }else{
+                full_conf.set("fluid", $("input[name=fluid]:checked").val());
+            }
         }else{
-            full_conf.set("fluid", $("input[name=fluid]:checked").val());
+            full_conf.delete("fluid");
         }
-    }else{
-        full_conf.delete("fluid");
+    }
+    if (main_dev=="ctr"){///ПОЛУЧАЕМ CTR FULL_CONF
+        console.log("ПОЛУЧАЕМ CTR FULL_CONF");
+        let options = ["approval", "sensor-type", "output", "ctr-electrical", "material", "ctr-connection-type"];
+        for (let el of options){
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }
+        for (let el of ["ctr_begin_range", "ctr_end_range", "ctr_pressure", "ctr_diameter", "ctr_length", "ctr_outlength"]){
+            full_conf.set(el, eval(el));
+        }
+        if (typeof full_conf.get("sensor-type")!='undefined'){
+            let el = $("input[name=sensor-type]:checked").prop("id").slice(0,-5);
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }else{
+            full_conf.delete("thermoresistor");
+            full_conf.delete("thermocouple");
+        }
+        if (full_conf.has("thermoresistor")){
+            for (let el of ["sensor_quantity", "sensor_accuracy_tr", "sensor_wiring_tr"]){
+                console.log(eval(el));
+                full_conf.set(el, eval(el));
+            }
+        }else{
+            for (let el of ["sensor_quantity", "sensor_accuracy_tr", "sensor_wiring_tr"]){
+                full_conf.delete(el);
+            }
+        }
+        if (full_conf.has("thermocouple")){
+            for (let el of ["sensor_quantity", "sensor_accuracy_tc"]){
+                console.log(eval(el));
+                full_conf.set(el, eval(el));
+            }
+        }else{
+            for (let el of ["sensor_quantity", "sensor_accuracy_tc"]){
+                full_conf.delete(el);
+            }
+        }
+        if (typeof full_conf.get("ctr-electrical")!='undefined'){
+            let el = full_conf.get(("ctr-electrical")).slice(0,-5);
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }else{
+            for (let el of ["head", "nohead", "cabel"]){
+                full_conf.delete(el);
+            }
+        }
+        if (full_conf.has("cabel")){
+            full_conf.set("ctr_cabel_length", ctr_cabel_length);
+            full_conf.set("ctr_cabel_type", ctr_cabel_type);
+        }else{
+            full_conf.delete("ctr_cabel_length");
+            full_conf.delete("ctr_cabel_type");
+        }
+        if (typeof full_conf.get("ctr-connection-type")!="undefined" && full_conf.get("ctr-connection-type")!="ctr-no-connection"){
+            let el = "ctr_" + full_conf.get("ctr-connection-type").slice(4, -5) + "_type";
+            console.log(full_conf.get("ctr-connection-type").slice(4, -5)+"_type");
+            full_conf.set(el, eval(el));
+        }else{
+            full_conf.delete("ctr_thread_type");
+            full_conf.delete("ctr_flange_type");
+            full_conf.delete("ctr_hygienic_type");
+        }
+        ///################################################################################################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
     }
 
     return full_conf;
@@ -951,6 +1044,10 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         })
         addDescription();
     }
+}
+
+function get_ctr_code_info(){
+    console.log("Создаем код заказа CTR");
 }
 
 function disable_invalid_options(){
@@ -1669,7 +1766,12 @@ function disable_invalid_options(){
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
             $(this).prop("innerHTML", "");
         })
-        get_code_info(full_conf);
+        if (full_conf.get("main_dev") == "apc-2000" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
+            get_code_info(full_conf);
+        }
+        if (full_conf.get("main_dev") == "ctr"){
+            get_ctr_code_info(full_conf);
+        }
     }else{
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
             $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Завершите конфигурирование!</span>");
@@ -1942,16 +2044,6 @@ $(function (){
         }
 
         if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ ВЫБОРЕ СКРЫТЬ СПИСОК, ПОКАЗАТЬ СЛЕДУЮЩИЙ
-            console.log("ПОКАЗ СЛЕД АКТИВНОГО БЛОКА");
-            // var $this = $("#ctr-electrical-select");
-            // let num = $("body .active-option-to-select").index($(".active")) + 1;
-            // let next_expand = $("body .active-option-to-select").eq(num);
-            // $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
-            // $this.prev(".option-to-select").removeClass("active");
-            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
-            // $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
-            // next_expand.addClass("active");
-            // next_expand.next().slideToggle("slow");
             expand_next_div($(this).prop("id"));
             disable_invalid_options();
             return;
@@ -1962,6 +2054,7 @@ $(function (){
             $(this).closest("div.active-option-to-select-list").prev("div.active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             $("#ctr-cabel-length-span").prop("style", "display:block");
             $("input[id=ctr-cabel-length]").prop("value", "");
+            disable_invalid_options();
             return;
         }
 
@@ -2639,11 +2732,12 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
     var delayed_function;
     var tooltip_id;
     var mouse;
+    var img_path;
     $("div.option-to-select-list label.tooltiped").hover(function (e) {
         // over
             tooltip_id = $(this).prop("htmlFor");
             // console.log(`/images/tooltips/${tooltip_id}_tooltip.jpg`);
-            let img_path = `/images/tooltips/${tooltip_id}_tooltip.jpg`;// + ${/(jpg$|png$)/};
+            img_path = `/images/tooltips/${tooltip_id}_tooltip.jpg`;// + ${/(jpg$|png$)/};
             mouse = $(this);
             $.ajax({
                 type: "HEAD",
@@ -2660,8 +2754,9 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         tooltip.id = tooltip_id + "_tooltip";
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
-                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 45, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
+                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
                     }, 700);
+                    setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3000);
                 },
             });
         }, function () {
@@ -2670,10 +2765,15 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
             $(".tooltip").each(function(){$(this).remove()});
             $(this).css('z-index','');
         }
-    ).mousemove(function(){
-        $(".tooltip").each(function(){
-            $(this).remove();
-        })
+    ).mousemove(function(e){
+        // $(".tooltip").each(function(){
+        //     $(this).remove();
+        // })
+
+        x = e.pageX - mouse.offset().left;
+        y = e.pageY - mouse.offset().top;
+        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});;
+
     })
 })
 

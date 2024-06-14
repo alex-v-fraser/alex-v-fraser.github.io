@@ -23,9 +23,6 @@
 	<style type="text/css">
 
 		.tooltip span.overlay {
-			/* the png image, need ie6 hack though */
-			/* background: url(images/overlay.png) no-repeat;  */
-			/* put this overlay on the top of the tooltip image */
 			position: absolute;
 			top: 0px;
 			left: 0px;
@@ -34,7 +31,8 @@
 			height: 200px;
 		}
 
-		div.tooltip:before {
+		/* Треугольник слева от картинки tooltip */
+		/* div.tooltip:before {
 			content: ' ';
 			height: 0;
 			position: absolute;
@@ -43,8 +41,7 @@
 			bottom: 158px;
 			border: 10px solid transparent;
 			border-right-color: #ffffff;
-
-		}
+		} */
 
 		.ui-resizable-e {
     		width: 14px !important;
@@ -660,7 +657,7 @@
 						<input type="checkbox" name="ctr-connection-type" value="ctr-flange-list" id="ctr-flange-list" class="custom-checkbox"><label for="ctr-flange-list">Фланцевое</label><div id="eerr_ctr-flange-list"  style="display:none;"></div>
 						<span id="ctr-flange-select" style="display: none;">
 							<label for="ctr-flange-type" style="margin-left: 1.4em;">Тип и размер:</label>
-							<select name="ctr-flange-type" id="ctr-flange-type" style="width: 4.5em; margin-left:0.5em" onchange="ctr_connection_selected()">
+							<select name="ctr-flange-type" id="ctr-flange-type" style="width: 4.5em;" onchange="ctr_connection_selected()">
 								<option value="not_selected" selected>---</option>
 								<option value="DN25">DN25</option>
 								<option value="DN50">DN50</option>
@@ -671,7 +668,7 @@
 								<option value="" style="display: none;"></option>
 								<option value="" style="display: none;"></option>
 							</select>
-							<select name="ctr-flange-type-pn" id="ctr-flange-type-pn" style="width: 4.5em; margin-left:0.5em" onchange="ctr_connection_selected()">
+							<select name="ctr-flange-type-pn" id="ctr-flange-type-pn" style="width: 4.5em;" onchange="ctr_connection_selected()">
 								<option value="not_selected" selected>---</option>
 								<option value="PN10">PN10</option>
 								<option value="PN16">PN16</option>
@@ -681,6 +678,14 @@
 								<option value="" style="display: none;"></option>
 								<option value="" style="display: none;"></option>
 								<option value="" style="display: none;"></option>
+							</select>
+							<select name="ctr-flange-type-typ" id="ctr-flange-type-typ" style="width: 2.5em;" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="B">B</option>
+								<option value="C">C</option>
+								<option value="D">D</option>
+								<option value="E">E</option>
+								<option value="F">F</option>
 							</select>
 							<input type="button" id="ctr-flange-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
 						</span>
