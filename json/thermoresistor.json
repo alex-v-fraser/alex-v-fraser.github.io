@@ -1,0 +1,76 @@
+[
+    {
+        "name": "pt100",
+        "code_name": "Pt100",
+        "description": "Термопреобразователь сопротивления платиновый Pt100.",
+        "begin_range_aa": -50,
+        "end_range_aa": 250,
+        "begin_range_a": -100,
+        "end_range_a": 450,
+        "begin_range_b": -196,
+        "end_range_b": 550,
+        "begin_range_c": -196,
+        "end_range_c": 550
+    },
+    {
+        "name": "pt1000",
+        "code_name": "Pt1000",
+        "description": "Термопреобразователь сопротивления платиновый Pt1000.",
+        "begin_range_aa": -50,
+        "end_range_aa": 250,
+        "begin_range_a": -100,
+        "end_range_a": 450,
+        "begin_range_b": -196,
+        "end_range_b": 550,
+        "begin_range_c": -196,
+        "end_range_c": 550
+    },
+    {
+        "name": "100p",
+        "code_name": "100П",
+        "description": "Термопреобразователь сопротивления платиновый 100П.",
+        "begin_range_aa": -50,
+        "end_range_aa": 250,
+        "begin_range_a": -100,
+        "end_range_a": 450,
+        "begin_range_b": -196,
+        "end_range_b": 550,
+        "begin_range_c": -196,
+        "end_range_c": 550
+    },
+    {
+        "name": "1000p",
+        "code_name": "1000П",
+        "description": "Термопреобразователь сопротивления платиновый 1000П.",
+        "begin_range_aa": -50,
+        "end_range_aa": 250,
+        "begin_range_a": -100,
+        "end_range_a": 450,
+        "begin_range_b": -196,
+        "end_range_b": 550,
+        "begin_range_c": -196,
+        "end_range_c": 550
+    },
+    {
+        "name": "100m",
+        "code_name": "100М",
+        "description": "Термопреобразователь сопротивления медный 100М.",
+        "begin_range_a": -50,
+        "end_range_a": 120,
+        "begin_range_b": -196,
+        "end_range_b": -50,
+        "begin_range_c": -180,
+        "end_range_c": 200
+    },
+    {
+        "name": "50m",
+        "code_name": "50М",
+        "description": "Термопреобразователь сопротивления медный 50М.",
+        "begin_range_a": -50,
+        "end_range_a": 120,
+        "begin_range_b": -196,
+        "end_range_b": -50,
+        "begin_range_c": -180,
+        "end_range_c": 200
+    }
+]

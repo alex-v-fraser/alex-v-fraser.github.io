@@ -20,6 +20,12 @@ var min_range_abs = 20.0;   // мин ширина диапазона абс, к
 var low_press_diff = -2500; // начало диапазона перепад, кПа
 var hi_press_diff = 2500;   // конец диапазона перепад, кПа
 var min_range_diff = 1.6;   // мин ширина диапазона перепад, кПа
+var ctr_low_temp; //ограничение начала диапазона температуры CTR
+var ctr_high_temp;//ограничение конца диапазона температуры CTR
+var sensor_names = ["thermocouple", "thermoresistor", "material"];
+var thermocouple_restr_lst = new Map();     // ОГРАНИЧЕНИЯ ТЕРМОПАР
+var thermoresistor_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ТЕРМОРЕЗИСТОРОВ
+var material_restr_lst = new Map();   // ОГРАНИЧЕНИЯ МАТЕРИАЛОВ (для температуры)
 
 
 
@@ -40,6 +46,27 @@ async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА 
     }));
     return data;
 }
+
+async function fetchSensorRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ДЛЯ сенсоров CTR
+    const data = await Promise.all(sensor_names.map(async url => {
+        const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
+        return resp.json();
+    }));
+    return data;
+}
+
+fetchSensorRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕНИЯ температуры ПО СЕНСОРАМ CTR и МАТЕРИАЛАМ
+    for (let el in sensor_names){
+        let arr = new Map();
+        data[el].forEach(obj => {
+            let dat = new Map(Object.entries(obj));
+            arr.set(obj["name"], dat);
+        });;
+        window[sensor_names[el] + "_restr_lst"] = arr;
+        console.log(sensor_names[el] + "_restr_lst", window[sensor_names[el] + "_restr_lst"]);
+    }
+}).catch(error => {console.log(error);
+})
 
 fetchConnectRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕНИЯ ПО ПРИСОЕДИЕНИЯМ
     for (let el in search_names){
@@ -588,13 +615,14 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             }
         }
         if (full_conf.has("thermocouple")){
-            for (let el of ["sensor_quantity", "sensor_accuracy_tc"]){
-                full_conf.set(el, eval(el));
-            }
+                full_conf.set("sensor_accuracy_tc", sensor_accuracy_tc);
         }else{
-            for (let el of ["sensor_quantity", "sensor_accuracy_tc"]){
-                full_conf.delete(el);
-            }
+                full_conf.delete("sensor_accuracy_tc");
+        }
+        if (full_conf.has("thermocouple") || full_conf.has("thermoresistor")){
+                full_conf.set("sensor_quantity", sensor_quantity);
+        }else{
+            full_conf.delete("sensor_quantity");
         }
         if (typeof full_conf.get("ctr-electrical")!='undefined'){
             let el = full_conf.get(("ctr-electrical")).slice(0,-5);
@@ -1032,6 +1060,15 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 
 function get_ctr_code_info(){
     console.log("Создаем код заказа CTR");
+    if ($("div.color-mark-field.unselected:visible").length==0){
+        document.getElementById("code").value = "В РАЗРАБОТКЕ!!!";
+        $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+            minWidth: 200,
+            maxWidth: function(){return $('.code-input-container').width()-8; },
+            comfortZone: 5
+        })
+        addDescription();
+    }
 }
 
 function disable_invalid_options(){
@@ -1042,6 +1079,10 @@ function disable_invalid_options(){
         }
         $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
+
+    // $("select option:disabled").each(function(){
+    //     $(this).removeAttr('disabled');
+    // })
 
     let check_flag = true;
     let full_conf = get_full_config();
@@ -1071,6 +1112,15 @@ function disable_invalid_options(){
     if (((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false) || (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apc-2000")){ //ТОЛЬКО ДЛЯ С или P присоединений
         let opt_names2 = ["cap-plus", "cap-minus", "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
         for (let opt_name of opt_names2){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
+            $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
+            $("input[name="+ opt_name +"]").each(function() {
+                $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
+            })
+        }
+    }
+
+    if (full_conf.get("main_dev")=="ctr"){
+        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "head", "nohead", "cabel", "material"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
             $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
             $("input[name="+ opt_name +"]").each(function() {
                 $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
@@ -1596,6 +1646,66 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
         console.log("ctr disable invalid options");
+
+        if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW
+            for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
+                $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
+                $("#"+entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ Exd головки ЧЕКБОКСОВ
+                document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("approval")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("approval")}_err_cancel${num}'>${$("label[for="+full_conf.get("approval")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if (typeof full_conf.get("output")!=="undefined" && full_conf.get("output")!=="4_20H"){ // ЕСЛИ не 4_20H - деакт ALW
+            for (let entr of ["ctr-ALW"]){
+                $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#"+entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("output")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("output")}_err_cancel${num}'>${$("label[for="+full_conf.get("output")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if (typeof full_conf.get("output")!=="undefined" && full_conf.get("output")!="no_trand"){ // ЕСЛИ с преобразователем - деакт кабельные
+            for (let entr of ["cabel-list"]){
+                $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#"+entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("output")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("output")}_err_cancel${num}'>${$("label[for="+full_conf.get("output")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if (full_conf.has("cabel")){ // ЕСЛИ кабельное - деакт 4_20, 4_20H, Exd
+            for (let entr of ["4_20", "4_20H", "Exd"]){
+                $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#"+entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='cabel-list_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='cabel-list_err_cancel${num}'>${$("label[for=cabel-list]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if (typeof full_conf.get("head")!=="undefined" && full_conf.get("head")=="ctr-ALW"){ // ЕСЛИ ALW - только 4-20H
+            for (let entr of ["4_20", "no_trand"]){
+                $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#"+entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // ################################################################################################################################################################################
     }
 
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
@@ -2646,9 +2756,9 @@ function uncheckAllConnections(plmin){////////СНЯТЬ ОТМЕТКИ СО В�
 
 $(function(){
     $(document).on("click", "label.disabled", function(){
-        $("#err_" + $(this).prop('for')).prop("style", "display:block");
-        $("#err_" + $(this).prop('for')).siblings("div[id^='err_']").prop("style", "display:none");
-    })
+        $("#err_" + $(this).prop('for')).prop("style", "display:block").siblings("div[id^='err_']").prop("style", "display:none");
+        // $("#err_" + $(this).prop('for')).siblings("div[id^='err_']").prop("style", "display:none");
+    }) ///////// ДОБАВИТЬ СКРЫТИЕ ДРУГИХ ВИДИМЫХ  div[id^='err_']")
 })
 
 $(function(){
@@ -2690,6 +2800,22 @@ function uncheckMaxTemp(data){
 }
 
 function showHideSensorOpts(){
+    if ($("#sensor-quantity").val()=="2"){
+        if ($("#sensor-wiring-tr").val()=="4"){
+            $("#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+        }
+        $("#sensor-wiring-tr option[value=4]").attr('disabled', 'disabled');
+    }else{
+        $("#sensor-wiring-tr option[value=4]").removeAttr('disabled');
+    }
+    if ($("select#sensor-accuracy-tr option:selected").val()=="A"){
+        if ($("select#sensor-wiring-tr option:selected").val()=="2"){
+            $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+        }
+        $("select#sensor-wiring-tr option[value=2]").attr('disabled','disabled');
+    }else{
+        $("select#sensor-wiring-tr option[value=2]").removeAttr('disabled');
+    }
     let no_check = false;
     $("#quantity-accuracy-wiring span:visible select").each(function(){
         if ($(this).val()=='not_selected'){
