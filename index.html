@@ -327,22 +327,22 @@
 
 					<div class="thermoresistor-thermocouple" id="thermoresistor-select" style="display: none;">
 						<fieldset id="thermoresistor-select-field">
-							<input type="checkbox" name="thermoresistor" value="pt100" id="pt100" class="custom-checkbox"><label for="pt100"><b>Pt100</b> - термосопротивление<br></label><div id="err_pt100" style="display:none;"></div>
-							<input type="checkbox" name="thermoresistor" value="pt1000" id="pt1000" class="custom-checkbox"><label for="pt1000"><b>Pt1000</b> - термосопротивление<br></label><div id="err_pt1000" style="display:none;"></div>
-							<input type="checkbox" name="thermoresistor" value="100p" id="100p" class="custom-checkbox"><label for="100p"><b>100П</b> - термосопротивление<br></label><div id="err_100p" style="display:none;"></div>
-							<input type="checkbox" name="thermoresistor" value="1000p" id="1000p" class="custom-checkbox"><label for="1000p"><b>1000П</b> - термосопротивление<br></label><div id="err_1000p" style="display:none;"></div>
-							<input type="checkbox" name="thermoresistor" value="100m" id="100m" class="custom-checkbox"><label for="100m"><b>100М</b> - термосопротивление<br></label><div id="err_100m" style="display:none;"></div>
-							<input type="checkbox" name="thermoresistor" value="50m" id="50m" class="custom-checkbox"><label for="50m"><b>50М</b> - термосопротивление<br></label><div id="err_50m" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="Pt100" id="pt100" class="custom-checkbox"><label for="pt100"><b>Pt100</b> - термосопротивление<br></label><div id="err_pt100" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="Pt1000" id="pt1000" class="custom-checkbox"><label for="pt1000"><b>Pt1000</b> - термосопротивление<br></label><div id="err_pt1000" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="100П" id="100p" class="custom-checkbox"><label for="100p"><b>100П</b> - термосопротивление<br></label><div id="err_100p" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="1000П" id="1000p" class="custom-checkbox"><label for="1000p"><b>1000П</b> - термосопротивление<br></label><div id="err_1000p" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="100М" id="100m" class="custom-checkbox"><label for="100m"><b>100М</b> - термосопротивление<br></label><div id="err_100m" style="display:none;"></div>
+							<input type="checkbox" name="thermoresistor" value="50М" id="50m" class="custom-checkbox"><label for="50m"><b>50М</b> - термосопротивление<br></label><div id="err_50m" style="display:none;"></div>
 						</fieldset>
 					</div>
 					<div class="thermoresistor-thermocouple" id="thermocouple-select" style="display: none;">
 						<fieldset id="thermocouple-select-field">
-							<input type="checkbox" name="thermocouple" value="tha" id="tha" class="custom-checkbox"><label for="tha"><b>K</b> - ТХА<br></label><div id="err_tha" style="display:none;"></div>
-							<input type="checkbox" name="thermocouple" value="thk" id="thk" class="custom-checkbox"><label for="thk"><b>L</b> - ТХК<br></label><div id="err_thk" style="display:none;"></div>
-							<input type="checkbox" name="thermocouple" value="tzk" id="tzk" class="custom-checkbox"><label for="tzk"><b>J</b> - ТЖК<br></label><div id="err_tzk" style="display:none;"></div>
-							<input type="checkbox" name="thermocouple" value="tpp13" id="tpp13" class="custom-checkbox"><label for="tpp13"><b>R</b> - ТПП13<br></label><div id="err_tha" style="display:none;"></div>
-							<input type="checkbox" name="thermocouple" value="tpp10" id="tpp10" class="custom-checkbox"><label for="tpp10"><b>S</b> - ТПП10<br></label><div id="err_tpp10" style="display:none;"></div>
-							<input type="checkbox" name="thermocouple" value="tpr" id="tpr" class="custom-checkbox"><label for="tpr"><b>B</b> - ТПР<br></label><div id="err_tpr" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="K" id="tha" class="custom-checkbox"><label for="tha"><b>K</b> - ТХА<br></label><div id="err_tha" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="L" id="thk" class="custom-checkbox"><label for="thk"><b>L</b> - ТХК<br></label><div id="err_thk" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="J" id="tzk" class="custom-checkbox"><label for="tzk"><b>J</b> - ТЖК<br></label><div id="err_tzk" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="R" id="tpp13" class="custom-checkbox"><label for="tpp13"><b>R</b> - ТПП13<br></label><div id="err_tha" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="S" id="tpp10" class="custom-checkbox"><label for="tpp10"><b>S</b> - ТПП10<br></label><div id="err_tpp10" style="display:none;"></div>
+							<input type="checkbox" name="thermocouple" value="B" id="tpr" class="custom-checkbox"><label for="tpr"><b>B</b> - ТПР<br></label><div id="err_tpr" style="display:none;"></div>
 						</fieldset>
 					</div>
 					<fieldset id="quantity-accuracy-wiring" style="display: none;">
@@ -472,11 +472,11 @@
 							<input type="number" step="1" min="-196" max="1700" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-end-range" style="width: 4.5em" id="ctr-end-range" required onchange="ctr_range_selected()">
 						</div>
 						<div id="ctr-range_warning" style="display:none; font-size: 85%;"></div>
+						<div id="err_ctr-range" style="display:none;"></div>
 						<div style="margin-top: 0.5em;">
 							<label for="ctr-pressure">Максимальное давление, МПа: </label>
 							<input type="number" step="1" min="0" max="40" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="ctr-pressure" style="width: 4.5em" id="ctr-pressure" required onchange="ctr_range_selected()">
 						</div>
-						<div id="err_ctr-range" style="display:none;"></div>
 					</fieldset>
 				</div>
 
@@ -614,9 +614,11 @@
 				</div>
 				<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="material-select" style="display: none;">
 					<fieldset id="material-select-field" name="material-select-field">
+						<input type="checkbox" name="material" value="" id="aisi304" class="custom-checkbox"><label for="aisi304">AISI304</label><div id="err_aisi304"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="" id="aisi310" class="custom-checkbox"><label for="aisi310">AISI310</label><div id="err_aisi310"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="" id="aisi321" class="custom-checkbox"><label for="aisi321">AISI321</label><div id="err_aisi321"  style="display:none;"></div>
+						<input type="checkbox" name="material" value="" id="inconel" class="custom-checkbox"><label for="inconel">Alloy 600</label><div id="err_inconel"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="" id="ceramic" class="custom-checkbox"><label for="ceramic">Коррунд</label><div id="err_ceramic"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="" id="sialon" class="custom-checkbox"><label for="sialon">Сиалон</label><div id="err_sialon"  style="display:none;"></div>
 						<input type="checkbox" name="material" value="AU" id="au" class="custom-checkbox"><label for="au">Золото</label><div id="err_au"  style="display:none;"></div>

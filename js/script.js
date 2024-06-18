@@ -1079,6 +1079,7 @@ function disable_invalid_options(){
         }
         $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
+    $("#err_ctr-range").prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Или отмените: </span>");
 
     // $("select option:disabled").each(function(){
     //     $(this).removeAttr('disabled');
@@ -1139,6 +1140,12 @@ function disable_invalid_options(){
         $("input[name="+ els +"-mes-env-temp]").prop('placeholder', "-40...300");
         document.getElementById(els +"-radiator-select-err").innerHTML = "<br/><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> Введите температуру от -40 до 300°C и нажмите \"OK\"";
     }
+
+    ctr_low_temp = -196;    // СНЯТЬ ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ CTR
+    ctr_high_temp = 1700;   // СНЯТЬ ОГРАНИЧЕНИЕ ТЕМПЕРАТУРЫ CTR
+    $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+    $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+    document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
 
     //СНЯТИЕ ОГРАНИЧЕНИЙ ПО ДАВЛЕНИЮ
     low_press = -101;                               // начало диапазона избыт, кПа
@@ -1647,13 +1654,19 @@ function disable_invalid_options(){
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
         console.log("ctr disable invalid options");
 
-        if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW
+        if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
                 $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
                 $("#"+entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ Exd головки ЧЕКБОКСОВ
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("approval")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("approval")}_err_cancel${num}'>${$("label[for="+full_conf.get("approval")+"]").text()}</label>`;
                 num+=1;
             }
+            ctr_high_temp = 450 < ctr_high_temp ? 450 : ctr_high_temp;
+            $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+            $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+            document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+            document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("approval")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("approval")}_err_cancel${num}'>${$("label[for="+full_conf.get("approval")+"]").text()} (до 450°С)</label>`;
+            num+=1;
         }
         if (typeof full_conf.get("output")!=="undefined" && full_conf.get("output")!=="4_20H"){ // ЕСЛИ не 4_20H - деакт ALW
             for (let entr of ["ctr-ALW"]){
@@ -1687,8 +1700,38 @@ function disable_invalid_options(){
                 num+=1;
             }
         }
-
-
+        for (let sensor of ["thermoresistor", "thermocouple"]){
+            if (full_conf.has(sensor) && typeof full_conf.get(sensor)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН ТЕМПЕРАТУР ЕСЛИ ВЫБРАНО thermoresistor, thermocouple
+                if (full_conf.has("thermocouple")){
+                    ctr_low_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range") > ctr_low_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range") : ctr_low_temp;
+                    ctr_high_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range") < ctr_high_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range") : ctr_high_temp;
+                    $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                    $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                    document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                    document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermocouple")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermocouple")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermocouple")+"]").text()} (от ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")} до ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
+                    num+=1;
+                }
+                if (full_conf.has("thermoresistor")){
+                    if (typeof full_conf.get("sensor_accuracy_tr")==="undefined"){
+                        ctr_low_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_c") > ctr_low_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_c") : ctr_low_temp;
+                        ctr_high_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_c") < ctr_high_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_c") : ctr_high_temp;
+                        $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                        $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                        document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (от ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")} до ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
+                        num+=1;
+                    }else{
+                        ctr_low_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) > ctr_low_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) : ctr_low_temp;
+                        ctr_high_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) < ctr_high_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) : ctr_high_temp;
+                        $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                        $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                        document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (от ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")} до ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
+                        num+=1;
+                    }
+                }
+            }
+        }
 
 
 
@@ -2539,7 +2582,7 @@ $(function(){
             $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
         })
 
-        let ctr_materials = ["aisi310", "aisi316", "aisi321", "ceramic",  "sialon"]
+        let ctr_materials = ["aisi304", "aisi310", "aisi316", "aisi321", "inconel", "ceramic",  "sialon"]
         if ($(".main-dev-selected").prop("id").slice(9,)=="ctr"){
             $("#pressure-material-header").prop("style", "display:none");
             $("#ctr-material-header").prop("style", "display:block");
@@ -2914,14 +2957,31 @@ $(function(){
 })
 
 function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИАПАЗОНА ТЕМПЕРАТУРЫ CTR
-
     console.log("ctr_range_selected");
-    if (!Number.isNaN(parseInt($("#ctr-begin-range").val())) && !Number.isNaN(parseInt($("#ctr-end-range").val())) && !Number.isNaN(parseInt($("#ctr-pressure").val()))){
-        expand_next_div("ctr-end-range");
-        disable_invalid_options();
-    }else{
-        $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    let ctr_begin_range = parseInt($("#ctr-begin-range").val());
+    let ctr_end_range = parseInt($("#ctr-end-range").val());
+    let ctr_pressure = parseInt($("#ctr-pressure").val());
+    if (!Number.isNaN(ctr_begin_range) && !Number.isNaN(ctr_end_range)){
+        if(ctr_begin_range < ctr_low_temp || ctr_end_range > ctr_high_temp || ctr_begin_range > ctr_high_temp || ctr_end_range < ctr_low_temp || ctr_begin_range==ctr_end_range){
+            // console.log("ДИАПАЗОН НЕ В ДОПУСКЕ!");
+            $("#ctr-range_warning").prop("style", "display:block");
+            if ($("#err_ctr-range").children("input").length>0){
+                $("#err_ctr-range").prop("style", "display:block");
+            }
+            $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            return;
+        }else{
+            // console.log("ДИАПАЗОН В ДОПУСКЕ!");
+            $("#ctr-range_warning").prop("style", "display:none");
+            $("#err_ctr-range").prop("style", "display:none");
+        }
     }
+    if (Number.isNaN(ctr_pressure)){
+        $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        return;
+    }
+    expand_next_div("ctr-end-range");
+    disable_invalid_options();
 }
 
 function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РАСКРЫТЬ СЛЕДУЮЩИЙ
