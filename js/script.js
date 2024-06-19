@@ -31,6 +31,7 @@ var material_restr_lst = new Map();   // ОГРАНИЧЕНИЯ МАТЕРИАЛ
 
 
 
+
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
         const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
@@ -1079,11 +1080,17 @@ function disable_invalid_options(){
         }
         $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
-    $("#err_ctr-range").prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Или отмените: </span>");
+    $("#err_ctr-range").prop("innerHTML", "<span style='color: red; margin-left:1.5em'>или отмените: </span>"); // &emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'>
 
-    // $("select option:disabled").each(function(){
-    //     $(this).removeAttr('disabled');
-    // })
+    // async function getErrRangeCount(){
+    //     var count = errRangeCount();
+    //     let promise = Promise.resolve(count);
+    //     const response = await promise;
+    //     return response;
+    // }
+    // getErrRangeCount().then(val => console.log(val));
+    // console.log("err_count:", err_count);
+
 
     let check_flag = true;
     let full_conf = get_full_config();
@@ -1654,6 +1661,15 @@ function disable_invalid_options(){
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
         console.log("ctr disable invalid options");
 
+        // console.log($("#err_ctr-range").children());/// CЮДА ВСТАВИТЬ ОТОБРАЖЕНИЕ ИЛИ СКРЫТИЕ err_ctr-range
+
+        $(document).trigger( "myCustomEvent", ["bim"] );
+
+        // const event = new Event("build");
+        // document.dispatchEvent(event);
+
+
+
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
                 $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
@@ -1708,7 +1724,7 @@ function disable_invalid_options(){
                     $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                     $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                     document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
-                    document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermocouple")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermocouple")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermocouple")+"]").text()} (от ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")} до ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
+                    document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermocouple")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermocouple")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermocouple")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
                     num+=1;
                 }
                 if (full_conf.has("thermoresistor")){
@@ -1718,7 +1734,7 @@ function disable_invalid_options(){
                         $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
-                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (от ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")} до ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
+                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_c")}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_c")}°C)</label>`;
                         num+=1;
                     }else{
                         ctr_low_temp = window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) > ctr_low_temp ? window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) : ctr_low_temp;
@@ -1726,11 +1742,18 @@ function disable_invalid_options(){
                         $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
-                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (от ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range")} до ${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range")}°C)</label>`;
+                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}°C)</label>`;
                         num+=1;
                     }
                 }
             }
+        }
+        if (full_conf.has("material") && typeof full_conf.get("material")!='undefined'){// ОГРАНИЧИТЬ end-range ЕСЛИ ВЫБРАНО material
+            ctr_high_temp = window["material_restr_lst"].get(full_conf.get("material")).get("end_range") < ctr_high_temp ? window["material_restr_lst"].get(full_conf.get("material")).get("end_range") : ctr_high_temp;
+            $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+            document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+            document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()} (до ${window["material_restr_lst"].get(full_conf.get("material")).get("end_range")}°C)</label>`;
+            num+=1;
         }
 
 
@@ -1914,6 +1937,7 @@ function disable_invalid_options(){
             $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Завершите конфигурирование!</span>");
         })
     }
+    ctrShowHideErrSpan();
 }
 
 // function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
@@ -2890,7 +2914,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
         // over
             tooltip_id = $(this).prop("htmlFor");
             // console.log(`/images/tooltips/${tooltip_id}_tooltip.jpg`);
-            img_path = `/images/tooltips/${tooltip_id}_tooltip.jpg`;// + ${/(jpg$|png$)/};
+            img_path = `/images/tooltips/${tooltip_id}_tooltip.png`;// + ${/(jpg$|png$)/};
             mouse = $(this);
             $.ajax({
                 type: "HEAD",
@@ -2907,7 +2931,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         tooltip.id = tooltip_id + "_tooltip";
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
-                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
+                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
                     }, 300);
                     setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3500);
                 },
@@ -2961,6 +2985,14 @@ function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
     let ctr_begin_range = parseInt($("#ctr-begin-range").val());
     let ctr_end_range = parseInt($("#ctr-end-range").val());
     let ctr_pressure = parseInt($("#ctr-pressure").val());
+    if (Number.isNaN(ctr_begin_range) || Number.isNaN(ctr_end_range)){
+        $("#ctr-range_warning").prop("style", "display:block");
+        if ($("#err_ctr-range").children("input").length>0){
+            $("#err_ctr-range").prop("style", "display:block");
+        }
+        $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        return;
+    }
     if (!Number.isNaN(ctr_begin_range) && !Number.isNaN(ctr_end_range)){
         if(ctr_begin_range < ctr_low_temp || ctr_end_range > ctr_high_temp || ctr_begin_range > ctr_high_temp || ctr_end_range < ctr_low_temp || ctr_begin_range==ctr_end_range){
             // console.log("ДИАПАЗОН НЕ В ДОПУСКЕ!");
@@ -2974,6 +3006,7 @@ function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
             // console.log("ДИАПАЗОН В ДОПУСКЕ!");
             $("#ctr-range_warning").prop("style", "display:none");
             $("#err_ctr-range").prop("style", "display:none");
+            disable_invalid_options();
         }
     }
     if (Number.isNaN(ctr_pressure)){
@@ -3023,4 +3056,43 @@ function ctr_connection_button_ok(){
     if (check == true){
         expand_next_div("ctr-connection-type-select-field");
     }
+}
+
+// $(function(){
+//     $(document).on("change", {
+//         // type: "change"
+//     }, function (event, arg1) {
+//         let err_count = $("#err_ctr-range").children("input").length;
+//         console.log("Количество input: ", err_count);
+//         return err_count;
+//     })
+// })
+
+function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИАПАЗОНА ТЕМПЕРАТУРЫ CTR
+    console.log("ctrShowHideErrSpan");
+    let ctr_begin_range = parseInt($("#ctr-begin-range").val());
+    let ctr_end_range = parseInt($("#ctr-end-range").val());
+    let ctr_pressure = parseInt($("#ctr-pressure").val());
+    if (Number.isNaN(ctr_begin_range) || Number.isNaN(ctr_end_range)){
+        $("#ctr-range_warning").prop("style", "display:block");
+        if ($("#err_ctr-range").children("input").length>0){
+            $("#err_ctr-range").prop("style", "display:block");
+        }
+        return;
+    }
+    if (!Number.isNaN(ctr_begin_range) && !Number.isNaN(ctr_end_range)){
+        if(ctr_begin_range < ctr_low_temp || ctr_end_range > ctr_high_temp || ctr_begin_range > ctr_high_temp || ctr_end_range < ctr_low_temp || ctr_begin_range==ctr_end_range){
+            // console.log("ДИАПАЗОН НЕ В ДОПУСКЕ!");
+            $("#ctr-range_warning").prop("style", "display:block");
+            if ($("#err_ctr-range").children("input").length>0){
+                $("#err_ctr-range").prop("style", "display:block");
+            }
+            return;
+        }else{
+            // console.log("ДИАПАЗОН В ДОПУСКЕ!");
+            $("#ctr-range_warning").prop("style", "display:none");
+            $("#err_ctr-range").prop("style", "display:none");
+        }
+    }
+
 }

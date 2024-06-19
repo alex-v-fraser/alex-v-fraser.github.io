@@ -3,43 +3,43 @@
         "name": "aisi304",
         "code_name": "AISI304",
         "description": "Сталь нержавеющая коррозионно-стойкая AISI304.",
-        "max_temp": 800
+        "end_range": 800
     },
     {
         "name": "aisi310",
         "code_name": "AISI310",
         "description": "Сталь нержавеющая коррозионно-стойкая AISI310.",
-        "max_temp": 800
+        "end_range": 800
     },
     {
         "name": "aisi316",
         "code_name": "AISI316",
         "description": "Сталь нержавеющая коррозионно-стойкая AISI316.",
-        "max_temp": 800
+        "end_range": 800
     },
     {
         "name": "aisi321",
         "code_name": "AISI321",
         "description": "Сталь нержавеющая коррозионно-стойкая AISI321.",
-        "max_temp": 800
+        "end_range": 800
     },
     {
         "name": "inconel",
         "code_name": "Alloy600",
         "description": "Сплав Alloy 600 (Inconel 600)",
-        "max_temp": 1100
+        "end_range": 1100
     },
     {
         "name": "ceramic",
         "code_name": "Коррунд",
         "description": "Керамика \"Корунд 799\".",
-        "max_temp": 1600
+        "end_range": 1600
     },
     {
         "name": "sialon",
         "code_name": "Sialon",
         "description": "Керамика \"SiAlON\".",
-        "max_temp": 1200
+        "end_range": 1200
     },
     {
         "name": "hastelloy",
