@@ -1128,7 +1128,7 @@ function disable_invalid_options(){
     }
 
     if (full_conf.get("main_dev")=="ctr"){
-        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "head", "nohead", "cabel", "material"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
+        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "head", "nohead", "cabel", "material", "thermocouple", "thermoresistor"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
             $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
             $("input[name="+ opt_name +"]").each(function() {
                 $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
@@ -1661,15 +1661,6 @@ function disable_invalid_options(){
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
         console.log("ctr disable invalid options");
 
-        // console.log($("#err_ctr-range").children());/// CЮДА ВСТАВИТЬ ОТОБРАЖЕНИЕ ИЛИ СКРЫТИЕ err_ctr-range
-
-        $(document).trigger( "myCustomEvent", ["bim"] );
-
-        // const event = new Event("build");
-        // document.dispatchEvent(event);
-
-
-
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
                 $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
@@ -1755,6 +1746,43 @@ function disable_invalid_options(){
             document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()} (до ${window["material_restr_lst"].get(full_conf.get("material")).get("end_range")}°C)</label>`;
             num+=1;
         }
+
+        for (let entr of window["thermocouple_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ  thermocouple по  ТЕМПЕРАТУРЕ
+            if ((typeof entr[1].get("begin_range") !== 'undefined' && full_conf.get("ctr_begin_range")<entr[1].get("begin_range")) || (typeof entr[1].get("end_range") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range"))){
+                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ  thermocouple
+                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ thermocouple по  ТЕМПЕРАТУРЕ
+                document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("thermocouple")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("thermocouple")}_err_cancel${num}'>Температура. Допускается ${entr[1].get("begin_range")}...${entr[1].get("end_range")}°C.</label>`;
+                num+=1;
+            }
+        }
+
+        for (let entr of window["thermoresistor_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ  THERMORESISTOR по  ТЕМПЕРАТУРЕ
+            if (typeof full_conf.get("sensor_accuracy_tr")==="undefined"){
+                if ((typeof entr[1].get("begin_range_c") !== 'undefined' && full_conf.get("ctr_begin_range")<entr[1].get("begin_range_c")) || (typeof entr[1].get("end_range_c") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range_c"))){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ THERMORESISTOR
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THERMORESISTOR по  ТЕМПЕРАТУРЕ
+                    document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>Температура. Допускается ${entr[1].get("begin_range_c")}...${entr[1].get("end_range_c")}°C.</label>`;
+                    num+=1;
+                }
+            }else{
+                if ((typeof entr[1].get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) !== 'undefined' && full_conf.get("ctr_begin_range")<entr[1].get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())) || (typeof entr[1].get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()) !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase()))){
+                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ THERMORESISTOR
+                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THERMORESISTOR по  ТЕМПЕРАТУРЕ
+                    document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>Температура. Допускается ${entr[1].get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}...${entr[1].get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}°C.</label>`;
+                    num+=1;
+                }
+            }
+        }
+
+        for (let entr of window["material_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ material по ТЕМПЕРАТУРЕ
+            if (typeof entr[1].get("end_range") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range")){
+                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ material
+                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ material
+                document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("end_range")}_err_cancel${num}'>Температура. Допускается до ${entr[1].get("end_range")}°C.</label>`;
+                num+=1;
+            }
+        }
+
 
 
 
@@ -2832,6 +2860,9 @@ $(function(){
     $(document).on("click", "input[name='err_cancel']", function(){
         let check_state = $(this).is(":checked");
         let $this_id = $(this).prop('id').slice(0,-14);
+        if ($("#"+$this_id).prop('name')=="thermoresistor"){
+            $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+        }
         console.log($this_id);
         if ($this_id=="c-pr" || $this_id=="minus-c-pr"){
             CorPSelected("c-pr", false);
@@ -3095,4 +3126,11 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
         }
     }
 
+}
+
+function uncheckCTRRange(){
+    document.getElementById("ctr-begin-range").value="";
+    document.getElementById("ctr-end-range").value="";
+    $("#ctr-range-select").prev().find(".color-mark-field").removeClass("selected").addClass("unselected");
+    disable_invalid_options();
 }
