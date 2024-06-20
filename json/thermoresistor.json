@@ -57,8 +57,8 @@
         "description": "Термопреобразователь сопротивления медный 100М.",
         "begin_range_a": -50,
         "end_range_a": 120,
-        "begin_range_b": -196,
-        "end_range_b": -50,
+        "begin_range_b": -50,
+        "end_range_b": 200,
         "begin_range_c": -180,
         "end_range_c": 200
     },
@@ -68,8 +68,8 @@
         "description": "Термопреобразователь сопротивления медный 50М.",
         "begin_range_a": -50,
         "end_range_a": 120,
-        "begin_range_b": -196,
-        "end_range_b": -50,
+        "begin_range_b": -50,
+        "end_range_b": 200,
         "begin_range_c": -180,
         "end_range_c": 200
     }

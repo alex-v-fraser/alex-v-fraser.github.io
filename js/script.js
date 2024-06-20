@@ -1659,7 +1659,6 @@ function disable_invalid_options(){
         }
     }
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
-        console.log("ctr disable invalid options");
 
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
