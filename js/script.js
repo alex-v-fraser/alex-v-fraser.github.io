@@ -1830,10 +1830,6 @@ function disable_invalid_options(){
 
 
 
-
-
-
-
         // ################################################################################################################################################################################
     }
 
@@ -1988,7 +1984,10 @@ function disable_invalid_options(){
     if ((full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
         $("#spec_lvk").prop('disabled', true);
         $("#spec_lvk").prop('checked', true);
-        $("#ctr-diameter option[value=3]").attr('disabled', 'disabled')
+    }
+    if (full_conf.get("approval")=="Exd" && full_conf.get("head")=="ctr-DAO"){///ОТКЛ ДИАМЕТР 3,8 для DAO/Exd
+        $("#ctr-diameter option[value=3]").attr('disabled', 'disabled');
+        $("#ctr-diameter option[value=8]").attr('disabled', 'disabled');
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
@@ -2024,6 +2023,7 @@ function disable_invalid_options(){
     ctrShowHideErrSpan();
 }
 
+//
 // function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
 //     $("input[name="+ option_name +"]").each(function() {
 //         let option_1 = $("#"+ this.name +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
