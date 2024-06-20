@@ -27,7 +27,7 @@
   {
     "name": "P",
     "code_name": "P",
-    "description": "Штуцер M20x1,5, отверстие Ø12 (Ø9 для PR, APR).",
+    "description": "Штуцер M20x1,5, отверстие Ø12 для PC, APC (или Ø9 для PR, APR).",
     "cap-or-not": "direct",
     "max_temp": 120,
     "begin_range_kpa": -101,
