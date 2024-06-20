@@ -1411,7 +1411,7 @@ function disable_invalid_options(){
     if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){   /// ПРОВЕРКА PR и APR
 
         $("input[name=thread]").each(function(){
-            if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
+            if (this.value=="M12x1" || this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
                 // $(this).prop("style", "display:block");
                 $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
             }else{
@@ -1883,6 +1883,17 @@ function disable_invalid_options(){
         $("label[for=minus_50]").prop("style", "display:none");
         $("label[for=minus_60]").prop("style", "display:none");
     }
+    if (full_conf.get("main_dev") == "ctr"){
+        $("input[name=special]").each(function(){
+            if ($(this).prop('id')=="spec_lvk"){
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
+            }else{
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
+            }
+        })
+    }else{
+        $("label[for=spec_lvk]").prop("style", "display:none");
+    }
 
 
     /// ПРОВЕРКА SPECIAL
@@ -1970,6 +1981,16 @@ function disable_invalid_options(){
         $("label[for=minus_60]").addClass('disabled');
         $("#minus_60").prop('disabled', true);
         $("#minus_60").prop('checked', false);
+    }
+    if (typeof full_conf.get("ctr_diameter")==='undefined' || (typeof full_conf.get("ctr_diameter")!='undefined' && full_conf.get("ctr_diameter") != "3" && full_conf.get("ctr_diameter") != "6")){ // проверка специсполнения Lvk
+        $("label[for=spec_lvk]").addClass('disabled');
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', false);
+    }
+    if ((full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        $("#ctr-diameter option[value=3]").attr('disabled', 'disabled')
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
@@ -3162,7 +3183,6 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
             $("#err_ctr-range").prop("style", "display:none");
         }
     }
-
 }
 
 function uncheckCTRRange(){
