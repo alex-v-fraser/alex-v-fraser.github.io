@@ -10,7 +10,13 @@
         "begin_range_b": -196,
         "end_range_b": 550,
         "begin_range_c": -196,
-        "end_range_c": 550
+        "end_range_c": 550,
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "pt1000",
@@ -23,7 +29,13 @@
         "begin_range_b": -196,
         "end_range_b": 550,
         "begin_range_c": -196,
-        "end_range_c": 550
+        "end_range_c": 550,
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "100p",
@@ -36,7 +48,13 @@
         "begin_range_b": -196,
         "end_range_b": 550,
         "begin_range_c": -196,
-        "end_range_c": 550
+        "end_range_c": 550,
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "1000p",
@@ -49,7 +67,13 @@
         "begin_range_b": -196,
         "end_range_b": 550,
         "begin_range_c": -196,
-        "end_range_c": 550
+        "end_range_c": 550,
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "100m",
@@ -60,7 +84,13 @@
         "begin_range_b": -50,
         "end_range_b": 200,
         "begin_range_c": -180,
-        "end_range_c": 200
+        "end_range_c": 200,
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "50m",
@@ -71,6 +101,12 @@
         "begin_range_b": -50,
         "end_range_b": 200,
         "begin_range_c": -180,
-        "end_range_c": 200
+        "end_range_c": 200,
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     }
 ]

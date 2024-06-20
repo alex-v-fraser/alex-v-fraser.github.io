@@ -5,7 +5,16 @@
         "description": "Преобразователь термоэлектрический хромель-алюмелевый ТХА (K).",
         "begin_range": -200,
         "end_range": 1300,
-        "class": [1,2,3]
+        "class": [1,2,3],
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321",
+            "inconel",
+            "ceramic",
+            "sialon"
+          ]
     },
     {
         "name": "thk",
@@ -13,7 +22,13 @@
         "description": "Преобразователь термоэлектрический хромель-копелевый ТХК (L).",
         "begin_range": -200,
         "end_range": 800,
-        "class": [2,3]
+        "class": [2,3],
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "tzk",
@@ -21,7 +36,13 @@
         "description": "Преобразователь термоэлектрический железо-константановый ТЖК (J).",
         "begin_range": -200,
         "end_range": 900,
-        "class": [1,2]
+        "class": [1,2],
+        "material": [
+            "aisi304",
+            "aisi310",
+            "aisi316",
+            "aisi321"
+          ]
     },
     {
         "name": "tpp13",

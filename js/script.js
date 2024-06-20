@@ -1102,6 +1102,10 @@ function disable_invalid_options(){
             $(this).prop('disabled', false);                                                   /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
         })
     }
+    $("select option").each(function(){ /// АКТИВАЦИЯ ВСЕХ OPTION
+        $(this).removeAttr('disabled');
+    })
+
     if (typeof full_conf.get("minus-flange")!=='undefined' && full_conf.get("minus-flange")=="minus-c-pr"){
         for (let plmin of ["","minus-"]){////////присоединения плюс и минус пометить причину деактивации при включенном C
             for (let cons of ["thread", "flange", "hygienic"]){
@@ -1736,14 +1740,45 @@ function disable_invalid_options(){
                         num+=1;
                     }
                 }
+                $("input[name=material]").each(function() { //// ДЛЯ ВЫБРАННОГО СЕНСОРА thermoresistor, thermocouple ПОМЕЧАЕМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                    if (typeof window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("material")!="undefined" && !window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("material").includes($(this).attr("id"))){
+                        $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                        $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                        document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get(sensor)}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get(sensor)}_err_cancel${num}'>${$("label[for="+full_conf.get(sensor)+"]").text()}</label>`;
+                        num+=1;
+                    }
+                })
             }
         }
-        if (full_conf.has("material") && typeof full_conf.get("material")!='undefined'){// ОГРАНИЧИТЬ end-range ЕСЛИ ВЫБРАНО material
+        if (full_conf.has("thermocouple") && typeof full_conf.get("thermocouple")!='undefined'){ ///ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ КЛАССОВ ТОЧНОСТИ ТЕРМОПАР
+            let classes_arr = window["thermocouple_restr_lst"].get(full_conf.get("thermocouple")).get("class");
+            $("#sensor-accuracy-tc option").each(function(){
+                if ($(this).val()!='not_selected'){
+                    if (!(classes_arr.includes(parseInt($(this).val())))){
+                        $(this).attr('disabled', 'disabled');
+                        $(this).prop('selected', false);
+                    }
+                }
+            })
+        }
+        if (full_conf.has("material") && typeof full_conf.get("material")!='undefined'){//// ОГРАНИЧЕНИЕ end-range и ДЕАКТИВАЦИЯ СЕНСОРОВ ЕСЛИ ВЫБРАНО material
             ctr_high_temp = window["material_restr_lst"].get(full_conf.get("material")).get("end_range") < ctr_high_temp ? window["material_restr_lst"].get(full_conf.get("material")).get("end_range") : ctr_high_temp;
             $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
             document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
             document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()} (до ${window["material_restr_lst"].get(full_conf.get("material")).get("end_range")}°C)</label>`;
             num+=1;
+            for (let sensor of ["thermoresistor", "thermocouple"]){
+                for (let entr of window[sensor + "_restr_lst"].entries()){
+                    if (typeof full_conf.get("material")!=='undefined'){
+                        if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
+                            $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ СЕНОСОРЫ по материалу
+                            $("#"+entr[0]).prop('disabled', true);                  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                            document.getElementById("err_" +entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                            num+=1;
+                        }
+                    }
+                }
+            }
         }
 
         for (let entr of window["thermocouple_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ  thermocouple по  ТЕМПЕРАТУРЕ
@@ -1781,6 +1816,9 @@ function disable_invalid_options(){
                 num+=1;
             }
         }
+
+
+
 
 
 
