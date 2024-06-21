@@ -1817,6 +1817,58 @@ function disable_invalid_options(){
             }
         }
 
+        if (typeof full_conf.get("ctr-electrical")==="undefined" || (typeof full_conf.get("ctr-electrical")!="undefined" && full_conf.has("head")  && typeof full_conf.get("head")==="undefined") || (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-ALW")){// ОТКЛ 3мм для исполнения HEAD кроме CTR-ALW
+            if ((!full_conf.has("thermoresistor") && !full_conf.has("thermocouple")) || (full_conf.has("thermocouple") && typeof full_conf.get("thermocouple")==="undefined") || (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")!="tha" && full_conf.get("thermocouple")!="tzk") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2")){
+                console.log("ОТКЛ 3мм");
+                $("#ctr-diameter option[value=3]").attr('disabled', 'disabled').prop("selected", false);
+            }
+        }
+
+        if (full_conf.get("approval")=="Exd" && full_conf.get("head")=="ctr-DAO"){///ОТКЛ ДИАМЕТР 3,8 для DAO/Exd
+            $("#ctr-diameter option[value=3]").attr('disabled', 'disabled');
+            $("#ctr-diameter option[value=8]").attr('disabled', 'disabled');
+        }
+
+        if (typeof full_conf.get("sensor_quantity")!="undefined" & full_conf.get("sensor_quantity")=="2"){//деактивация ALW для 2-х сенсоров
+            $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+            $("#ctr-ALW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+            document.getElementById("err_ctr-ALW").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_quantity")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='${full_conf.get("sensor_quantity")}_err_cancel${num}'>Количество сенсоров: 2.</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){// ОТКЛ 2 сенсора для CTR-ALW
+            $("#sensor-quantity option[value=2]").prop('selected', false).attr('disabled', 'disabled');
+        }
+
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="22"){ // ДЕАКТИВАЦИЯ СИАЛОН если выбран диаметер не 22мм
+            $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 22мм.</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="sialon"){
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="22"){
+                    $(this).attr("disabled", "disabled");
+                }
+            })
+        }
+
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="ceramic"){
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="15" && $(this).val()!="10"){
+                    $(this).attr("disabled", "disabled");
+                }
+            })
+        }
+
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="10" && full_conf.get("ctr_diameter")!="15"){ // ДЕАКТИВАЦИЯ КОРУНД если выбран диаметер не 10 и не 15 мм
+            $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#ceramic").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 10 или 15 мм.</label>`;
+            num+=1;
+        }
 
 
 
@@ -1976,18 +2028,36 @@ function disable_invalid_options(){
         $("#minus_60").prop('disabled', true);
         $("#minus_60").prop('checked', false);
     }
-    if (typeof full_conf.get("ctr_diameter")==='undefined' || (typeof full_conf.get("ctr_diameter")!='undefined' && full_conf.get("ctr_diameter") != "3" && full_conf.get("ctr_diameter") != "6")){ // проверка специсполнения Lvk
+    if (typeof full_conf.get("ctr_diameter")==='undefined' || (full_conf.get("thermoresistor")==="undefined" && full_conf.get("thermocouple")==="undefined") || (typeof full_conf.get("ctr_diameter")!='undefined' && full_conf.get("ctr_diameter") != "3" && full_conf.get("ctr_diameter") != "6") || (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")!="tha" && full_conf.get("thermocouple")!="tzk")){ // проверка специсполнения Lvk
         $("label[for=spec_lvk]").addClass('disabled');
         $("#spec_lvk").prop('disabled', true);
         $("#spec_lvk").prop('checked', false);
     }
-    if ((full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
+
+    if ((full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6") || full_conf.get("ctr_diameter")=="3"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
         $("#spec_lvk").prop('disabled', true);
         $("#spec_lvk").prop('checked', true);
     }
-    if (full_conf.get("approval")=="Exd" && full_conf.get("head")=="ctr-DAO"){///ОТКЛ ДИАМЕТР 3,8 для DAO/Exd
-        $("#ctr-diameter option[value=3]").attr('disabled', 'disabled');
-        $("#ctr-diameter option[value=8]").attr('disabled', 'disabled');
+
+    if ($("#spec_lvk").is(":checked")){//ОГРАНИЧЕНИЯ МАТЕРИАЛОВ если ВЫБРАНО Lvk
+        console.log("ОГРАНИЧЕНИЯ МАТЕРИАЛОВ если ВЫБРАНО Lvk");
+        $("input[name=material]").each(function() {
+            if ($(this).prop("id")!="aisi316" && $(this).prop("id")!="inconel"){
+                $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                if ($(this).is(":checked")){
+                    $(this).prop("checked", false).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                }
+                document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='spec_lvk_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='spec_lvk_err_cancel${num}'>Открытый (заменяемый) измерительный вкладыш</label>`;
+                num+=1;
+            }
+            if (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")=="tha" && $(this).prop("id")=="aisi316"){
+                $("label[for=aisi316]").addClass('disabled'); ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                $("#aisi316").prop('disabled', true);         //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='spec_lvk_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='spec_lvk_err_cancel${num}'>Открытый (заменяемый) измерительный вкладыш</label>`;
+                num+=1;
+            }
+        })
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
@@ -2022,6 +2092,7 @@ function disable_invalid_options(){
     }
     ctrShowHideErrSpan();
 }
+
 
 //
 // function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
@@ -2919,13 +2990,18 @@ $(function(){
         if ($("#"+$this_id).prop('name')=="thermoresistor"){
             $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
         }
-        console.log($this_id);
+        if ( $this_id=="spec_lvk" && $("#spec_lvk:checked").prop('disabled')){///ПРИ ОТМЕНЕ ЗАБЛОКИРОВАННОГО Lvk из ДРУГОЙ ОПЦИИ
+            console.log("КЛИК НА ЗАБЛОКИРОВАННЫЙ #spec_lvk");
+            disableLvk();
+            return;
+        }
+        // console.log($this_id);
         if ($this_id=="c-pr" || $this_id=="minus-c-pr"){
             CorPSelected("c-pr", false);
         }else{
             $("input#" + $this_id).prop("checked", check_state);
         }
-        console.log($(this).closest("div"));
+        // console.log($(this).closest("div"));
         // console.log(document.getElementById($this_id).parentElement.parentElement.previousElementSibling.querySelector(".color-mark-field"));
         let $color_mark_field = document.getElementById($this_id).closest(".active-option-to-select-list").previousElementSibling.querySelector(".color-mark-field");
         let $this_checked_length = $("input[name="+$("input#" + $this_id).prop("name")+"]:checked").length;
@@ -3189,3 +3265,44 @@ function uncheckCTRRange(){
     $("#ctr-range-select").prev().find(".color-mark-field").removeClass("selected").addClass("unselected");
     disable_invalid_options();
 }
+
+function changeSensorQuantity(){//меняем количество сенсоров с 2 на 1 (для CRT-ALW)
+    $("#sensor-quantity option[value=2]").prop('selected', false);
+    $("#sensor-quantity option[value=1]").prop('selected', true);
+    disable_invalid_options();
+}
+
+ function disableLvk(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ ОТКЛЮЧЕНИЯ Lvk
+    console.log("ОТКЛЮЧИТЬ LVK или НЕТ?");
+    $( "#dialog2-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        buttons: {
+            Продолжить: function() {
+                console.log("Отключаем Lvk");
+                $( this ).dialog( "close" );
+
+            },
+            Отмена: function() {
+                console.log("НЕ Отключаем Lvk");
+                $( this ).dialog( "close" );
+            }
+        }
+    })
+    disable_invalid_options();
+ }
+
+ $(function(){//ПРИ клике на заблокированный Lvk
+    $(document).on("click", "label[for='spec_lvk']", function(){
+        if ($("#spec_lvk").is(":checked:disabled")){
+            disableLvk();
+        }
+    })
+ })
+
+ function changeDiameterTo22(){
+    $("#ctr-diameter option[value=not_selected]").prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    disable_invalid_options();
+ }
