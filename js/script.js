@@ -2034,9 +2034,19 @@ function disable_invalid_options(){
         $("#spec_lvk").prop('checked', false);
     }
 
-    if ((full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6") || full_conf.get("ctr_diameter")=="3"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
+    if (full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk для Exd d=6
         $("#spec_lvk").prop('disabled', true);
         $("#spec_lvk").prop('checked', true);
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='err_cancel' value='' id='Exd_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox'><label for='Exd_err_cancel${num}'>${$("label[for=Exd]").text()}</label>
+        <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 6мм.</label>`;
+        num+=2;
+    }
+    if ((full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6") || full_conf.get("ctr_diameter")=="3"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        //////////////  ПРОДОЛЖИТЬ /////////////////////////////
     }
 
     if ($("#spec_lvk").is(":checked")){//ОГРАНИЧЕНИЯ МАТЕРИАЛОВ если ВЫБРАНО Lvk
