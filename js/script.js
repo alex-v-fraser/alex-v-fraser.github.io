@@ -996,7 +996,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         material = "";
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
-        if ($(this).is(":checked") && $(this).val()!="rad_cap"  && $(this).val()!="Hart7"){
+        if ($(this).is(":checked") && $(this).val()!="rad_cap" && $(this).val()!="Hart7"){
             special = special + $(this).val() + "/";
         }
     })
@@ -1059,10 +1059,25 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
 }
 
-function get_ctr_code_info(){
+function get_ctr_code_info(data){
     console.log("Создаем код заказа CTR");
+    let code = "";
+    let output = data.get("output");
+    let appr = data.get("approval");
+    let sensor_quantity = data.get("sensor_quantity")=="1" ? "" : data.get("sensor_quantity")+"x";
+    let sensor;
+    let accuracy;
+    let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
+    let main_dev = data.get("main_dev").toUpperCase();
+    let head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : data.get("cabel").slice(4,);
+    if (output=="4_20" && data.has("thermoresistor")){
+        sensor = $("#" + data.get("thermoresistor")).val();
+        code = "CT-R/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr");
+    }
+
+
     if ($("div.color-mark-field.unselected:visible").length==0){
-        document.getElementById("code").value = "В РАЗРАБОТКЕ!!!";
+        document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
             minWidth: 200,
             maxWidth: function(){return $('.code-input-container').width()-8; },
@@ -1671,6 +1686,8 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("approval")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("approval")}_err_cancel${num}'>${$("label[for="+full_conf.get("approval")+"]").text()}</label>`;
                 num+=1;
             }
+            $("#cabel-select").prop("style", "display:none");
+            $("#ctr-cabel-type-select-div").prop("style", "display:none");
             ctr_high_temp = 450 < ctr_high_temp ? 450 : ctr_high_temp;
             $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
             $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
@@ -1693,6 +1710,8 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("output")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("output")}_err_cancel${num}'>${$("label[for="+full_conf.get("output")+"]").text()}</label>`;
                 num+=1;
             }
+            $("#cabel-select").prop("style", "display:none");
+            $("#ctr-cabel-type-select-div").prop("style", "display:none");
         }
         if (full_conf.has("cabel")){ // ЕСЛИ кабельное - деакт 4_20, 4_20H, Exd
             for (let entr of ["4_20", "4_20H", "Exd"]){
@@ -1701,6 +1720,12 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='cabel-list_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='cabel-list_err_cancel${num}'>${$("label[for=cabel-list]").text()}</label>`;
                 num+=1;
             }
+        }
+        if (full_conf.has("nohead")){ // ДЕАКТИВАЦИЯ Exd для NoHead
+            $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
         }
         if (typeof full_conf.get("head")!=="undefined" && full_conf.get("head")=="ctr-ALW"){ // ЕСЛИ ALW - только 4-20H
             for (let entr of ["4_20", "no_trand"]){
@@ -2028,7 +2053,7 @@ function disable_invalid_options(){
         $("#minus_60").prop('disabled', true);
         $("#minus_60").prop('checked', false);
     }
-    if (typeof full_conf.get("ctr_diameter")==='undefined' || (full_conf.get("thermoresistor")==="undefined" && full_conf.get("thermocouple")==="undefined") || (typeof full_conf.get("ctr_diameter")!='undefined' && full_conf.get("ctr_diameter") != "3" && full_conf.get("ctr_diameter") != "6") || (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")!="tha" && full_conf.get("thermocouple")!="tzk")){ // проверка специсполнения Lvk
+    if (typeof full_conf.get("ctr_diameter")==='undefined' || (full_conf.get("thermoresistor")==="undefined" && full_conf.get("thermocouple")==="undefined") || (typeof full_conf.get("ctr_diameter")!='undefined' && full_conf.get("ctr_diameter") != "3" && full_conf.get("ctr_diameter") != "6") || (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")!="tha" && full_conf.get("thermocouple")!="tzk") || typeof full_conf.get("material")==='undefined' || (typeof full_conf.get("material")!='undefined' && full_conf.get("material")!="aisi316" & full_conf.get("material")!="inconel")){ // проверка специсполнения Lvk
         $("label[for=spec_lvk]").addClass('disabled');
         $("#spec_lvk").prop('disabled', true);
         $("#spec_lvk").prop('checked', false);
@@ -2039,14 +2064,26 @@ function disable_invalid_options(){
         $("#spec_lvk").prop('checked', true);
         document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
         <br>
-        <input type='checkbox' name='err_cancel' value='' id='Exd_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox'><label for='Exd_err_cancel${num}'>${$("label[for=Exd]").text()}</label>
+        <input type='checkbox' name='err_cancel' value='' id='exdxx_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='uncheckExd()'><label for='exdxx_err_cancel${num}'>${$("label[for=Exd]").text()}</label>
         <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 6мм.</label>`;
         num+=2;
     }
-    if ((full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6") || full_conf.get("ctr_diameter")=="3"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk
+    if ((full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk d=6 и 2 сенсора
         $("#spec_lvk").prop('disabled', true);
         $("#spec_lvk").prop('checked', true);
-        //////////////  ПРОДОЛЖИТЬ /////////////////////////////
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='err_cancel' value='' id='sensor_quantity_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='sensor_quantity_err_cancel${num}'>${$("label[for=sensor-quantity]").text()} 2шт.</label>
+        <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 6мм.</label>`;
+        num+=2;
+    }
+    if (full_conf.get("ctr_diameter")=="3"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk для Exd d=3
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 3мм.</label>`;
+        num+=1;
     }
 
     if ($("#spec_lvk").is(":checked")){//ОГРАНИЧЕНИЯ МАТЕРИАЛОВ если ВЫБРАНО Lvk
@@ -3087,7 +3124,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
         // over
             tooltip_id = $(this).prop("htmlFor");
             // console.log(`/images/tooltips/${tooltip_id}_tooltip.jpg`);
-            img_path = `/images/tooltips/${tooltip_id}_tooltip.png`;// + ${/(jpg$|png$)/};
+            img_path = `/images/tooltips/${tooltip_id}_tooltip.jpg`;// + ${/(jpg$|png$)/};
             mouse = $(this);
             $.ajax({
                 type: "HEAD",
@@ -3291,17 +3328,19 @@ function changeSensorQuantity(){//меняем количество сенсор
         modal: true,
         buttons: {
             Продолжить: function() {
-                console.log("Отключаем Lvk");
+                $("#dialog2-confirm input").each(function(){
+                    console.log($(this).attr('onclick'));
+                    eval($(this).attr('onclick'));
+                })
                 $( this ).dialog( "close" );
 
             },
             Отмена: function() {
-                console.log("НЕ Отключаем Lvk");
                 $( this ).dialog( "close" );
+                disable_invalid_options();
             }
         }
     })
-    disable_invalid_options();
  }
 
  $(function(){//ПРИ клике на заблокированный Lvk
@@ -3311,6 +3350,10 @@ function changeSensorQuantity(){//меняем количество сенсор
         }
     })
  })
+
+ function uncheckExd(){
+    $("#Exd").prop("checked", false).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+ }
 
  function changeDiameterTo22(){
     $("#ctr-diameter option[value=not_selected]").prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
