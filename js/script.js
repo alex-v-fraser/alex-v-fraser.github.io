@@ -436,9 +436,10 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let ctr_outlength = !Number.isNaN(parseInt(document.querySelector("#ctr-outlength").value)) ? parseInt(document.querySelector("#ctr-outlength").value) : undefined;
     let ctr_cabel_length = !Number.isNaN(parseInt(document.querySelector("#ctr-cabel-length").value)) ? parseInt(document.querySelector("#ctr-cabel-length").value) : undefined;
     let ctr_cabel_type = $("input[name=ctr-cabel-type]:checked").length>0 ? $("input[name=ctr-cabel-type]:checked").val() : undefined;
-    let ctr_thread_type = $("select[name=ctr-thread-type]").val()!="not_selected" ? $("select[name=ctr-thread-type]").val() : undefined;
+    let ctr_thread_type = $("select[name=ctr-thread-type]").val()!="not_selected" ? $("select[name=ctr-fm-type]").val() + $("select[name=ctr-ph-type]").val() + "(" + $("select[name=ctr-thread-type]").val() + ")" : undefined;
     let ctr_hygienic_type = $("select[name=ctr-hygienic-type]").val()!="not_selected" ? $("select[name=ctr-hygienic-type]").val() : undefined;
     let ctr_flange_type = ($("select[name=ctr-flange-type]").val()!="not_selected" && $("select[name=ctr-flange-type-pn]").val()!="not_selected" && $("select[name=ctr-flange-type-typ]").val()!="not_selected") ? $("select[name=ctr-flange-type]").val() + $("select[name=ctr-flange-type-pn]").val() + $("select[name=ctr-flange-type-typ]").val() : undefined;
+
 
     const koef = new Map([
         ["Па", 0.001],
@@ -1061,21 +1062,36 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 
 function get_ctr_code_info(data){
     console.log("Создаем код заказа CTR");
-    let code = "";
+    let code = "ERROR!!!";
     let output = data.get("output");
     let appr = data.get("approval");
     let sensor_quantity = data.get("sensor_quantity")=="1" ? "" : data.get("sensor_quantity")+"x";
     let sensor;
-    let accuracy;
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "";
     let main_dev = data.get("main_dev").toUpperCase();
     let head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : data.get("cabel").slice(4,);
-    if (output=="4_20" && data.has("thermoresistor")){
+    let vk = $("#spec_lvk").is(":checked") ? "vk" : "";
+    let connection = data.has("ctr_thread_type") ? data.get("ctr_thread_type") : data.has("ctr_flange_type") ? data.get("ctr_flange_type") : data.has("ctr_hygienic_type") ? data.get("ctr_hygienic_type") : "I";
+    let material = window["material_restr_lst"].get(data.get("material")).get("code_name");
+    let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT" : (output=="4_20" && data.has("thermocouple")) ? "Gi-22" : output=="4_20H" ? "Li-24G" : "";
+    let range = data.get("ctr_begin_range") + "..." + data.get("ctr_end_range") + "°C";
+    let open_circuit = "23мА";
+
+
+    if (data.has("thermoresistor") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW")){
         sensor = $("#" + data.get("thermoresistor")).val();
-        code = "CT-R/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr");
+        code = "CT-R/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + "/" + range + "/" + open_circuit;
+    }
+    if (data.has("thermocouple") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW")){
+        sensor = $("#" + data.get("thermocouple")).val();
+        code = "CT-U/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + "/" + range + "/" + open_circuit;
     }
 
 
+
+
+
+    ////ПРОДОЛЖИТЬ//////////////////////////////////////////////////////////////////
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -1725,6 +1741,12 @@ function disable_invalid_options(){
             $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
             $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
             document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+        }
+        if (full_conf.has("head") && full_conf.get("head")!="ctr-DAO" && full_conf.get("head")!="ctr-ALW"){///ДЕАКТИВИРОВАТЬ EXD ЕСЛИ ГОЛОВКА НЕ Exd
+            $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
             num+=1;
         }
         if (typeof full_conf.get("head")!=="undefined" && full_conf.get("head")=="ctr-ALW"){ // ЕСЛИ ALW - только 4-20H

@@ -650,17 +650,23 @@
 						<input type="checkbox" name="ctr-connection-type" value="ctr-thread-list" id="ctr-thread-list" class="custom-checkbox"><label for="ctr-thread-list">Резьбовое</label><div id="eerr_ctr-thread-list"  style="display:none;"></div>
 						<span id="ctr-thread-select" style="display: none;">
 							<label for="ctr-thread-type" style="margin-left: 1.4em;">Тип и размер:</label>
-							<select name="ctr-thread-type" id="ctr-thread-type" style="width: 5.5em; margin-left:0.5em" onchange="ctr_connection_selected()">
+							<select name="ctr-thread-type" id="ctr-thread-type" style="width: 5.5em;" onchange="ctr_connection_selected()">
 								<option value="not_selected" selected>---</option>
-								<option value="g1_8">G1/8</option>
-								<option value="g1_4">G1/4</option>
-								<option value="g1_2">G1/2</option>
-								<option value="m12_1">M12x1</option>
-								<option value="m20_15">M20x1,5</option>
-								<option value="" style="display: none;"></option>
-								<option value="" style="display: none;"></option>
-								<option value="" style="display: none;"></option>
-								<option value="" style="display: none;"></option>
+								<option value="G1/8">G1/8</option>
+								<option value="G1/4">G1/4</option>
+								<option value="G1/2">G1/2</option>
+								<option value="M12x1">M12x1</option>
+								<option value="M20x1,5">M20x1,5</option>
+							</select>
+							<select name="ctr-fm-type" id="ctr-fm-type" style="width: 2.8em;" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="M">M (наруж.)</option>
+								<option value="F">F (внутр.)</option>
+							</select>
+							<select name="ctr-ph-type" id="ctr-ph-type" style="width: 2.8em;" onchange="ctr_connection_selected()">
+								<option value="not_selected" selected>---</option>
+								<option value="P">P (подвиж.)</option>
+								<option value="H">H (неподв.)</option>
 							</select>
 							<input type="button" id="ctr-thread-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
 						</span>
