@@ -1091,7 +1091,7 @@ function get_ctr_code_info(data){
 
 
 
-    ////ПРОДОЛЖИТЬ//////////////////////////////////////////////////////////////////
+                                                                                ////ПРОДОЛЖИТЬ///////////////////////////////////////////////////////////////////
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -1743,7 +1743,7 @@ function disable_invalid_options(){
             document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
             num+=1;
         }
-        if (full_conf.has("head") && full_conf.get("head")!="ctr-DAO" && full_conf.get("head")!="ctr-ALW"){///ДЕАКТИВИРОВАТЬ EXD ЕСЛИ ГОЛОВКА НЕ Exd
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-DAO" && full_conf.get("head")!="ctr-ALW"){///ДЕАКТИВИРОВАТЬ EXD ЕСЛИ ГОЛОВКА НЕ Exd
             $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
             $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
             document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
