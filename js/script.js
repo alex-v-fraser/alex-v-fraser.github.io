@@ -1063,7 +1063,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
 
 function get_ctr_code_info(data){
     console.log("Создаем код заказа CTR");
-    let code = "ERROR!!!";
+    let code = "В_РАЗРАБОТКЕ!!!";
     let output = data.get("output");
     let appr = data.get("approval");
     let sensor_quantity = data.get("sensor_quantity")=="1" ? "" : data.get("sensor_quantity")+"x";
