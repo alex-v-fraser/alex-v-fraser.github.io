@@ -1980,7 +1980,7 @@ function disable_invalid_options(){
             num+=1;
         }
         if(typeof full_conf.get("ctr_cabel_type")!="undefined"){///ОГРАНИЧИТЬ ТЕМПЕРАТУРУ В ЗАВИСИМОСТИ ОТ КАБЕЛЯ
-            let cabel_max_temp = full_conf.get("ctr_cabel_type")=="Silicon" ? 200 : full_conf.get("ctr_cabel_type")=="PTFE" ? 250 : full_conf.get("ctr_cabel_type")=="SV" ? 400 : 1700;
+            let cabel_max_temp = window["cabel_restr_lst"].get("ctr-" + full_conf.get("ctr_cabel_type").toLowerCase()).get("end_range");
             ctr_high_temp = cabel_max_temp < ctr_high_temp ? cabel_max_temp : ctr_high_temp;
             $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
             $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
