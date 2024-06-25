@@ -454,9 +454,9 @@
 
 				<div class="option-to-select-list ctr-cabel-type-select-div" id="ctr-cabel-type-select" style="display: none;">
 					<fieldset id="ctr-cabel-type-select-field">
-						<input type="checkbox" name="ctr-cabel-type" value="silicon" id="ctr-silicon" class="custom-checkbox"><label for="ctr-silicon"><b>Силикон</b> - температура до 180°С.</label><div id="err_ctr-silicon"  style="display:none;"></div>
-						<input type="checkbox" name="ctr-cabel-type" value="ptfe" id="ctr-ptfe" class="custom-checkbox"><label for="ctr-ptfe"><b>ПТФЭ (тефлон)</b> - температура до 180°С.</label><div id="err_ctr-ptfe"  style="display:none;"></div>
-						<input type="checkbox" name="ctr-cabel-type" value="fiberglass" id="ctr-fiberglass" class="custom-checkbox"><label for="ctr-fiberglass"><b>Стекловолокно</b> - температура до 400°С.</label><div id="err_ctr-fiberglass"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-cabel-type" value="Silicon" id="ctr-silicon" class="custom-checkbox"><label for="ctr-silicon"><b>Силикон</b> - до 200°С.</label><div id="err_ctr-silicon"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-cabel-type" value="PTFE" id="ctr-ptfe" class="custom-checkbox"><label for="ctr-ptfe"><b>ПТФЭ (тефлон)</b> - до 250°С.</label><div id="err_ctr-ptfe"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-cabel-type" value="SV" id="ctr-sv" class="custom-checkbox"><label for="ctr-sv"><b>Стекловолокно</b> - до 400°С.</label><div id="err_ctr-sv"  style="display:none;"></div>
 						<span id="ctr-cabel-length-span" style="display: none">
 							<label for="ctr-cabel-length" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Длина кабеля, м</label>
 							<input type="number" step="1" name="ctr-cabel-length" id="ctr-cabel-length" min="1" max="300" style="width: 3.5em" required>
@@ -646,8 +646,8 @@
 				</div>
 				<div class="option-to-select-list ctr" id="ctr-connection-type-select" style="display: none;">
 					<fieldset id="ctr-connection-type-select-field" name="ctr-connection-type-select-field">
-						<input type="checkbox" name="ctr-connection-type" value="ctr-no-connection" id="ctr-no-connection" class="custom-checkbox"><label for="ctr-no-connection">Без монтажного присоединения</label><div id="eerr_ctr-no-connection"  style="display:none;"></div>
-						<input type="checkbox" name="ctr-connection-type" value="ctr-thread-list" id="ctr-thread-list" class="custom-checkbox"><label for="ctr-thread-list">Резьбовое</label><div id="eerr_ctr-thread-list"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-no-connection" id="ctr-no-connection" class="custom-checkbox"><label for="ctr-no-connection">Без монтажного присоединения</label><div id="err_ctr-no-connection"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-thread-list" id="ctr-thread-list" class="custom-checkbox"><label for="ctr-thread-list">Резьбовое</label><div id="err_ctr-thread-list"  style="display:none;"></div>
 						<span id="ctr-thread-select" style="display: none;">
 							<label for="ctr-thread-type" style="margin-left: 1.4em;">Тип и размер:</label>
 							<select name="ctr-thread-type" id="ctr-thread-type" style="width: 5.5em;" onchange="ctr_connection_selected()">
@@ -670,7 +670,7 @@
 							</select>
 							<input type="button" id="ctr-thread-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
 						</span>
-						<input type="checkbox" name="ctr-connection-type" value="ctr-flange-list" id="ctr-flange-list" class="custom-checkbox"><label for="ctr-flange-list">Фланцевое</label><div id="eerr_ctr-flange-list"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-flange-list" id="ctr-flange-list" class="custom-checkbox"><label for="ctr-flange-list">Фланцевое</label><div id="err_ctr-flange-list"  style="display:none;"></div>
 						<span id="ctr-flange-select" style="display: none;">
 							<label for="ctr-flange-type" style="margin-left: 1.4em;">Тип и размер:</label>
 							<select name="ctr-flange-type" id="ctr-flange-type" style="width: 4.5em;" onchange="ctr_connection_selected()">
@@ -705,7 +705,7 @@
 							</select>
 							<input type="button" id="ctr-flange-select-button-ok" value="ОК" onclick="ctr_connection_button_ok()">
 						</span>
-						<input type="checkbox" name="ctr-connection-type" value="ctr-hygienic-list" id="ctr-hygienic-list" class="custom-checkbox"><label for="ctr-hygienic-list">Гигиеническое</label><div id="eerr_ctr-hygienic-list"  style="display:none;"></div>
+						<input type="checkbox" name="ctr-connection-type" value="ctr-hygienic-list" id="ctr-hygienic-list" class="custom-checkbox"><label for="ctr-hygienic-list">Гигиеническое</label><div id="err_ctr-hygienic-list"  style="display:none;"></div>
 						<span id="ctr-hygienic-select" style="display: none;">
 							<label for="ctr-hygienic-type" style="margin-left: 1.4em;">Тип и размер:</label>
 							<select name="ctr-hygienic-type" id="ctr-hygienic-type" style="width: 6em; margin-left:0.5em" onchange="ctr_connection_selected()">
@@ -1060,6 +1060,8 @@
 						<input type="checkbox" name="special" value="SN" id="SN" disabled class="custom-checkbox"><label for="SN" class="disabled"><b>SN</b> - корпус ALW из нержавеющей стали AISI316</label><div id="err_SN"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="IP67" id="spec_ip67" disabled class="custom-checkbox"><label for="spec_ip67" class="disabled"><b>IP67</b> - степень защиты корпуса APC-2000ALW (только абс. давление), APR-2000ALW</label><div id="err_spec_ip67"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="Lvk" id="spec_lvk" disabled class="custom-checkbox"><label for="spec_lvk" class="disabled">Открытый (заменяемый) измерительный вкладыш (для монтажа только в защитной гильзе)</label><div id="err_spec_lvk"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="Lvk" id="spec_38" disabled class="custom-checkbox"><label for="spec_38" class="disabled"><b>3,8мА</b> сигнал обрыва цепи сенсора</label><div id="err_spec_38"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="Lvk" id="spec_375" disabled class="custom-checkbox"><label for="spec_375" class="disabled"><b>3,75мА</b> сигнал обрыва цепи сенсора</label><div id="err_spec_375"  style="display:none;"></div>
 					</fieldset>
 				</div>
 			</div>
