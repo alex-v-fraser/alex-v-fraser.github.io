@@ -1069,12 +1069,11 @@ function get_ctr_code_info(data){
     let sensor_quantity = data.get("sensor_quantity")=="1" ? "" : data.get("sensor_quantity")+"x";
     let sensor;
     let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "-/";
-    let main_dev = data.get("main_dev").toUpperCase();
     let head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : data.get("cabel").slice(4,) + "-" + data.get("ctr_cabel_type") + "=" + data.get("ctr_cabel_length") + "м";
     let vk = $("#spec_lvk").is(":checked") ? "vk" : "";
     let connection = data.has("ctr_thread_type") ? data.get("ctr_thread_type") : data.has("ctr_flange_type") ? data.get("ctr_flange_type") : data.has("ctr_hygienic_type") ? data.get("ctr_hygienic_type") : "I";
     let material = window["material_restr_lst"].get(data.get("material")).get("code_name");
-    let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT" : (output=="4_20" && data.has("thermocouple")) ? "Gi-22" : output=="4_20H" ? "Li-24G" : "";
+    let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT/" : (output=="4_20" && data.has("thermocouple")) ? "Gi-22/" : output=="4_20H" ? "Li-24G/" : "";
     let range = data.get("ctr_begin_range") + "..." + data.get("ctr_end_range") + "°C";
     let open_circuit = (output=="4_20" && !$("#spec_38").is(":checked")) ? "/23мА" : (output=="4_20" && $("#spec_38").is(":checked")) ? "/3,8мА" : (output=="4_20H" && !$("#spec_375").is(":checked")) ? "/21,5мА" :  (output=="4_20H" && $("#spec_375").is(":checked")) ? "/3,75мА" : "";
 
@@ -1082,22 +1081,25 @@ function get_ctr_code_info(data){
     if (data.has("thermoresistor") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW")){
         console.log("Код CT-R");
         sensor = $("#" + data.get("thermoresistor")).val();
-        code = "CT-R/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + "/" + range + open_circuit;
+        code = "CT-R/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range + open_circuit;
     }
     if (data.has("thermocouple") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW") && data.get("ctr_end_range")<=1100){
         console.log("Код CT-U");
         sensor = $("#" + data.get("thermocouple")).val();
-        code = "CT-U/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + "/" + range + open_circuit;
+        code = "CT-U/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range + open_circuit;
     }
     if(data.has("thermoresistor") && data.get("output")=="no_trand"){
         console.log("Код CT");
         sensor = $("#" + data.get("thermoresistor")).val();
-        code = "CT/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + "/" + range;
+        code = "CT/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range;
     }
     if((data.has("thermocouple") && data.get("output")=="no_trand") || (data.has("thermocouple") && data.get("output")!="no_trand" && data.get("ctr_end_range")>1100)){
         console.log("Код CTU");
         sensor = $("#" + data.get("thermocouple")).val();
-        code = "CTU/" + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/" + material  + "/" + "L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + head_nohead + "/" + transducer + "/" + range;
+        let s_length =  !data.has("cabel") ? "S=" + data.get("ctr_outlength") + "мм/" : "";
+        connection = connection=="I" ? "-" : connection;
+        head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : "C" + data.get("ctr_cabel_type").toLowerCase() + "(" + data.get("cabel").slice(4,) + ")=" + data.get("ctr_cabel_length") + "м";
+        code = "CTU/" + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/" + material  + "/" + "L" + vk + "=" + data.get("ctr_length") + "мм/" + s_length + connection + "/" + head_nohead + "/" + transducer + range;
     }
 
 
@@ -2548,6 +2550,7 @@ $(function (){
             return;
         }
         if (this.name=="ctr-connection-type" && $(this).prop("id")=="ctr-no-connection"){
+            $("input#ctr-outlength").prop('value', '0');
             $("#ctr-connection-type-select-field span").each(function(){
                 $(this).prop("style", "display:none");
                 $(this).find("select option[value='not_selected']").prop('selected', true);
