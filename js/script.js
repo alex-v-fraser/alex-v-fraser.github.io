@@ -2474,6 +2474,9 @@ $(function (){
             return;
         }
         if (this.name=="thermoresistor" || this.name=="thermocouple"){ //После выбора терморезистора или термопары СКРЫТЬ НЕ ВЫБРАННЫЕ, отобразить остальные опции
+            $("div[id^='err_']:visible").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+                $(this).slideUp();//.prop("style", "display:none");
+            })
             $("input[name=" + this.name + "]:not(:checked)").each(function(){
                 $("label[for="+$(this).prop('id')+"]").slideUp(); //.prop("style", "display:none");
             })
