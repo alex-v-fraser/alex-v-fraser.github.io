@@ -3274,7 +3274,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
 $(function(){
     $("input[name=ctr-cabel-length]").change(function(){
         let cabel_length = parseInt($(this).val());
-        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100){
+        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100 || $("input[name=ctr-cabel-type]:checked").length==0){
             $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             return;
         }else{
@@ -3287,7 +3287,7 @@ $(function(){
 $(function(){
     $("input[id=ctr-cabel-length-button-ok]").click(function(){
         let cabel_length = parseInt($("input[name=ctr-cabel-length]").val());
-        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100){
+        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100 || $("input[name=ctr-cabel-type]:checked").length==0){
             $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             return;
         }else{
