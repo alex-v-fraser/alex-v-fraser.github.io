@@ -1077,7 +1077,13 @@ function get_ctr_code_info(data){
     let material = window["material_restr_lst"].get(data.get("material")).get("code_name");
     let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT/" : (output=="4_20" && data.has("thermocouple")) ? "Gi-22/" : output=="4_20H" ? "Li-24G/" : "";
     let range = data.get("ctr_begin_range") + "..." + data.get("ctr_end_range") + "°C";
-    let open_circuit = (output=="4_20" && !$("#spec_38").is(":checked")) ? "/23мА" : (output=="4_20" && $("#spec_38").is(":checked")) ? "/3,8мА" : (output=="4_20H" && !$("#spec_375").is(":checked")) ? "/21,5мА" :  (output=="4_20H" && $("#spec_375").is(":checked")) ? "/3,75мА" : "";
+    let open_circuit = (!$("#spec_38").is(':disabled') && !$("#spec_38").is(":checked")) ? "/23мА" : ($("#spec_38").is(":checked")) ? "/3,8мА" : (!$("#spec_375").is(':disabled') && !$("#spec_375").is(":checked")) ? "/21,5мА" :  (output=="4_20H" && $("#spec_375").is(":checked")) ? "/3,75мА" : "";
+    let special = "";
+    $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
+        if ($(this).is(":checked") && $(this).val()!="Lvk"){
+            special = special + $(this).val() + "/";
+        }
+    })
 
 
     if (data.has("thermoresistor") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW")){
@@ -1103,7 +1109,14 @@ function get_ctr_code_info(data){
         head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : "C" + data.get("ctr_cabel_type").toLowerCase() + "(" + data.get("cabel").slice(4,) + ")=" + data.get("ctr_cabel_length") + "м";
         code = "CTU/" + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/" + material  + "/" + "L" + vk + "=" + data.get("ctr_length") + "мм/" + s_length + connection + "/" + head_nohead + "/" + transducer + range;
     }
-
+    if (data.has("thermoresistor") && data.get("head")=="ctr-ALW"){
+        console.log("Код CTR-ALW");
+        code = "CTR-ALW/" + $("input[name=ctr-ALW-type]:checked").val() + "/" + approval + special + "d" + "=" + data.get("ctr_diameter") + "мм/L" + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + range + open_circuit;
+    }
+    if (data.has("thermocouple") && data.get("head")=="ctr-ALW"){
+        console.log("Код CTU-ALW");
+        code = "CTU-ALW/" + $("input[name=ctr-ALW-type]:checked").val() + "/" + approval + special + "d" + "=" + data.get("ctr_diameter") + "мм/L" + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + range + open_circuit;
+    }
 
 
 
@@ -2205,12 +2218,12 @@ function disable_invalid_options(){
         $("#spec_lvk").prop('checked', false);
     }
 
-    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")!="4_20")){ // проверка специсполнения 3.8мА
+    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="no_trand") || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="4_20H" && typeof full_conf.get("head")!='undefined' && full_conf.get("head")!="ctr-ALW")){ // проверка специсполнения 3.8мА
         $("label[for=spec_38]").addClass('disabled');
         $("#spec_38").prop('disabled', true);
         $("#spec_38").prop('checked', false);
     }
-    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")!="4_20H")){ // проверка специсполнения 3.8мА
+    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")!="4_20H") || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="4_20H" && typeof full_conf.get("head")!='undefined' && full_conf.get("head")=="ctr-ALW")){ // проверка специсполнения 3.75мА
         $("label[for=spec_375]").addClass('disabled');
         $("#spec_375").prop('disabled', true);
         $("#spec_375").prop('checked', false);
@@ -2262,6 +2275,13 @@ function disable_invalid_options(){
                 num+=1;
             }
         })
+    }
+
+    if ($("#ctr-ALW").is(":checked")){
+        $("#ctr-ALW-type").prop("style", "display:block; margin-left: 1.5em");
+    }else{
+        $("#ctr-ALW-type").prop("style", "display:none");
+        $("input[name=ctr-ALW-type]:checked").prop("checked", false);
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
@@ -2328,6 +2348,11 @@ $(function (){
         }
         else{
             if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ СНЯТИИ ГАЛКИ типа датчика температуры
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                disable_invalid_options();
+                return;
+            }
+            if (this.name=="ctr-ALW-type"){ //ПРИ СНЯТИИ ГАЛКИ
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 disable_invalid_options();
                 return;
@@ -2571,8 +2596,16 @@ $(function (){
                 $("#sensor-quantity option[value=1]").prop('selected', true);
                 $("#sensor-accuracy-tr option[value=A]").prop('selected', true);
                 $("#sensor-accuracy-tc option[value=1]").prop('selected', true);
+                disable_invalid_options();
+                return;
             }
             expand_next_div($(this).prop("id"));
+            disable_invalid_options();
+            return;
+        }
+
+        if (this.name=="ctr-ALW-type"){
+            expand_next_div("ctr-ALW");
             disable_invalid_options();
             return;
         }
