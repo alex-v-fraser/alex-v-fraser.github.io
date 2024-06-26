@@ -1,0 +1,11 @@
+[
+    {
+        "name": "ALW",
+        "code_name": "",
+        "description": "",
+        "output": "4_20H",
+        "thermoresistor": ["pt100", -196, 420],
+        "thermocouple": ["tha", -40, 550],
+        "sensor_quantity": 1
+    }
+]

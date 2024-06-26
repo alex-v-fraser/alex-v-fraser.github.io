@@ -1803,7 +1803,7 @@ function disable_invalid_options(){
                         $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
-                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}°C)</label>`;
+                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}°C для класса ${full_conf.get("sensor_accuracy_tr")})</label>`;
                         num+=1;
                     }
                 }
@@ -1912,15 +1912,61 @@ function disable_invalid_options(){
             $("#ctr-diameter option[value=8]").attr('disabled', 'disabled');
         }
 
-        if (typeof full_conf.get("sensor_quantity")!="undefined" & full_conf.get("sensor_quantity")=="2"){//деактивация ALW для 2-х сенсоров
+        if (typeof full_conf.get("sensor_quantity")!="undefined" && full_conf.get("sensor_quantity")=="2"){//деактивация ALW для 2-х сенсоров
             $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
             $("#ctr-ALW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
             document.getElementById("err_ctr-ALW").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_quantity")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='${full_conf.get("sensor_quantity")}_err_cancel${num}'>Количество сенсоров: 2.</label>`;
             num+=1;
         }
 
-        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){// ОТКЛ 2 сенсора для CTR-ALW
+        if (typeof full_conf.get("sensor-type")!="undefined"){ //деактивация ALW если не PT100 и не терм K
+            let sens_typ = full_conf.get("sensor-type").slice(0,-5);
+            if (typeof full_conf.get(sens_typ)!="undefined" && (full_conf.get(sens_typ)!="tha" && full_conf.get(sens_typ)!="pt100")){
+                $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+                $("#ctr-ALW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+                document.getElementById("err_ctr-ALW").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get(sens_typ)}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get(sens_typ)}_err_cancel${num}'>${$("label[for="+full_conf.get(sens_typ)+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){// ОТКЛ 2 сенсора и классы В, С для CTR-ALW
             $("#sensor-quantity option[value=2]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tr option[value=B]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tr option[value=C]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tc option[value=2]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tc option[value=3]").prop('selected', false).attr('disabled', 'disabled');
+        }
+
+        if(typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){ // ДЕАКТИВАЦИЯ СЕНСОРОВ для CTR-ALW (кроме K и Pt100)
+            for (let sensor of ["thermoresistor", "thermocouple"]){
+                $("input[name="+ sensor +"]").each(function(){
+                    if ($(this).prop("id")!="pt100" && $(this).prop("id")!="tha"){
+                        $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ СЕНОСОРЫ по материалу
+                        $("#"+$(this).prop("id")).prop('disabled', true);                  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                        document.getElementById("err_" +$(this).prop("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+                        num+=1;
+                    }
+                })
+            }
+            if (full_conf.has("thermocouple")){
+                ctr_low_temp = -40 > ctr_low_temp ? -40 : ctr_low_temp;
+                ctr_high_temp = 550 < ctr_high_temp ? 550 : ctr_high_temp;
+                $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()} (мин -40°С)</label>`;
+                num+=1;
+            }
+            if (full_conf.has("thermoresistor")){
+                ctr_low_temp = -196 > ctr_low_temp ? -196 : ctr_low_temp;
+                ctr_high_temp = 420 < ctr_high_temp ? 420 : ctr_high_temp;
+                $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()} (до 420°С)</label>`;
+                num+=1;
+            }
+            //////////////////
         }
 
         if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="22"){ // ДЕАКТИВАЦИЯ СИАЛОН если выбран диаметер не 22мм
@@ -2519,6 +2565,11 @@ $(function (){
         }
 
         if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ ВЫБОРЕ СКРЫТЬ СПИСОК, ПОКАЗАТЬ СЛЕДУЮЩИЙ
+            if ($(this).prop("id")=="ctr-ALW"){
+                $("#sensor-quantity option[value=1]").prop('selected', true);
+                $("#sensor-accuracy-tr option[value=A]").prop('selected', true);
+                $("#sensor-accuracy-tc option[value=1]").prop('selected', true);
+            }
             expand_next_div($(this).prop("id"));
             disable_invalid_options();
             return;
@@ -3147,8 +3198,15 @@ $(function(){
     $(document).on("click", "input[name='err_cancel']", function(){
         let check_state = $(this).is(":checked");
         let $this_id = $(this).prop('id').slice(0,-14);
-        if ($("#"+$this_id).prop('name')=="thermoresistor"){
+        if ($("#"+$this_id).prop('name')=="thermoresistor" || $("#"+$this_id).prop('name')=="thermocouple"){
             $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+            $("select#sensor-accuracy-tc option[value='not_selected']").prop('selected', true);
+            $(".thermoresistor-thermocouple").hide(0);
+            $("#quantity-accuracy-wiring").hide(0);
+            $("input[name=sensor-type]:checked").prop("checked", false);
+        }
+        if ($("#"+$this_id).prop('name')=="thermocouple"){
+            $("select#sensor-accuracy-tc option[value='not_selected']").prop('selected', true);
         }
         if ( $this_id=="spec_lvk" && $("#spec_lvk:checked").prop('disabled')){///ПРИ ОТМЕНЕ ЗАБЛОКИРОВАННОГО Lvk из ДРУГОЙ ОПЦИИ
             console.log("КЛИК НА ЗАБЛОКИРОВАННЫЙ #spec_lvk");
@@ -3397,7 +3455,6 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
     console.log("ctrShowHideErrSpan");
     let ctr_begin_range = parseInt($("#ctr-begin-range").val());
     let ctr_end_range = parseInt($("#ctr-end-range").val());
-    let ctr_pressure = parseInt($("#ctr-pressure").val());
     if (Number.isNaN(ctr_begin_range) || Number.isNaN(ctr_end_range)){
         $("#ctr-range_warning").prop("style", "display:block");
         if ($("#err_ctr-range").children("input").length>0){
@@ -3408,6 +3465,7 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
     if (!Number.isNaN(ctr_begin_range) && !Number.isNaN(ctr_end_range)){
         if(ctr_begin_range < ctr_low_temp || ctr_end_range > ctr_high_temp || ctr_begin_range > ctr_high_temp || ctr_end_range < ctr_low_temp || ctr_begin_range==ctr_end_range){
             // console.log("ДИАПАЗОН НЕ В ДОПУСКЕ!");
+            $("#err_ctr-range").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             $("#ctr-range_warning").prop("style", "display:block");
             if ($("#err_ctr-range").children("input").length>0){
                 $("#err_ctr-range").prop("style", "display:block");
@@ -3415,6 +3473,7 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
             return;
         }else{
             // console.log("ДИАПАЗОН В ДОПУСКЕ!");
+            $("#err_ctr-range").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
             $("#ctr-range_warning").prop("style", "display:none");
             $("#err_ctr-range").prop("style", "display:none");
         }
