@@ -1,4 +1,0 @@
-[ZoneTransfer]
-ZoneId=3
-ReferrerUrl=https://crm.mp-s.ru/crm/deal/list/
-HostUrl=https://crm.mp-s.ru/bitrix/services/main/ajax.php?action=disk.api.file.download&SITE_ID=s1&humanRE=1&fileId=353794&fileName=PD.jpg
