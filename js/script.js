@@ -400,6 +400,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
         myTableDiv.appendChild(table);                  // ТАБЛИЦА ГОТОВА
         document.getElementById("mytable").border= "1";
+        $("#code-entered-button-ok").prop("style", "display:none");
+        $("#reset-config").prop("style", "display:inline-block");
     }else{
         document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
     }
@@ -3079,6 +3081,12 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     $("div.option-to-select-list").each(function(){
         $(this).prop("style", "display:none");
     })
+    $("label").removeClass('disabled');
+    $("#code-entered-button-ok").prop("style", "display:inline-block");
+    $("#reset-config").prop("style", "display:none");
+    document.getElementById("code").value = "";
+    document.getElementById("codeError").innerHTML = "";
+    document.getElementById("codeDescription").innerHTML = "";
 }
 
 
