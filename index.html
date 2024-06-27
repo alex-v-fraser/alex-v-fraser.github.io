@@ -509,6 +509,7 @@
 							<label for="ctr-pressure">Максимальное давление, МПа: </label>
 							<input type="number" step="1" min="0" max="40" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="ctr-pressure" style="width: 4.5em" id="ctr-pressure" required onchange="ctr_range_selected()">
 						</div>
+						<div id="eerr_ctr-pressure" style="display:none;">&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Введите давление измеряемой среды</span></div>
 					</fieldset>
 				</div>
 
@@ -1083,7 +1084,7 @@
 						<input type="checkbox" name="special" value="HS" id="hs" disabled class="custom-checkbox"><label for="hs" class="disabled"><b>HS</b> - полисенсорный измерительный элемент</label><div id="err_hs"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="PD" id="spec_pd" disabled class="custom-checkbox"><label for="spec_pd" class="disabled"><b>PD</b> - разъем DIN43650 (только для ALW)</label><div id="err_spec_pd"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="SN" id="SN" disabled class="custom-checkbox"><label for="SN" class="disabled"><b>SN</b> - корпус ALW из нержавеющей стали AISI316</label><div id="err_SN"  style="display:none;"></div>
-						<input type="checkbox" name="special" value="IP67" id="spec_ip67" disabled class="custom-checkbox"><label for="spec_ip67" class="disabled"><b>IP67</b> - степень защиты корпуса APC-2000ALW (только абс. давление), APR-2000ALW</label><div id="err_spec_ip67"  style="display:none;"></div>
+						<input type="checkbox" name="special" value="IP67" id="spec_ip67" disabled class="custom-checkbox"><label for="spec_ip67" class="disabled"><b>IP67</b> - степень защиты корпуса ALW</label><div id="err_spec_ip67"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="Lvk" id="spec_lvk" disabled class="custom-checkbox"><label for="spec_lvk" class="disabled">Открытый (заменяемый) измерительный вкладыш (для монтажа только в защитной гильзе)</label><div id="err_spec_lvk"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="Lvk" id="spec_38" disabled class="custom-checkbox"><label for="spec_38" class="disabled"><b>3,8мА</b> сигнал обрыва цепи сенсора</label><div id="err_spec_38"  style="display:none;"></div>
 						<input type="checkbox" name="special" value="Lvk" id="spec_375" disabled class="custom-checkbox"><label for="spec_375" class="disabled"><b>3,75мА</b> сигнал обрыва цепи сенсора</label><div id="err_spec_375"  style="display:none;"></div>
