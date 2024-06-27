@@ -326,6 +326,16 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     }
     if (full_description.has("(+)")){full_description.delete("(+)")}
     if (full_description.has("(-)")){full_description.delete("(-)")}
+    if (full_description.has("Ex")){
+        console.log("Замена описания на EX");
+        if (!full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0]).get("ex_description")!="undefined"){
+            full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("ex_description"));
+        }
+        if (full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0]).get("exalw_description")!="undefined"){
+            full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("exalw_description"));
+        }
+    }
+
     for (let i=0; i<=code.length; i++){
         if (code[i]=="(+)" || code[i]=="(-)"){
             code.splice(i,1);
@@ -356,11 +366,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             code.splice(i, 2, temp_code);
             i-=1;
         }
-        // if (typeof code[i]!="undefined" && (code[i].startsWith("S-")||code[i].startsWith("(-)S-")) && !(code[i].endsWith("-DC") || code[i].endsWith("-SF"))){
-        //     full_description.set(code[i], full_description.get(code[i]) + "<br>Метрологический комплект заполнен манометрической жидкостью с диапазоном рабочих температур: -50...180°С и НЕ ПРЕДНАЗНАЧЕННОЙ ДЛЯ ВАКУУМА!");
-        //     console.log(code[i]);
-        //     console.log('добавляем в описание заправку АК');
-        // }
     }
     console.log(full_description);
     console.log(code);
@@ -1981,7 +1986,6 @@ function disable_invalid_options(){
                 document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()} (до 420°С)</label>`;
                 num+=1;
             }
-            //////////////////
         }
 
         if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="22"){ // ДЕАКТИВАЦИЯ СИАЛОН если выбран диаметер не 22мм
@@ -2051,7 +2055,45 @@ function disable_invalid_options(){
             document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}'>${$("label[for=ctr-"+full_conf.get("ctr_cabel_type").toLowerCase()+"]").text()}</label>`;
             num+=1;
         }
-
+        if ($("input[name=ctr-ALW-type]:checked").val()=="WW"){ //// Для WW диаметр только 6мм
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="6"){
+                    $(this).attr("disabled", "disabled").prop('selected', false);
+                }
+            })
+        }
+        if ($("input[name=ctr-ALW-type]:checked").val()=="KO"){ //// Для KO диаметрЫ только 9мм и 11мм
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="9" && $(this).val()!="11"){
+                    $(this).attr("disabled", "disabled").prop('selected', false);
+                }
+            })
+        }
+        if ($("input[name=ctr-ALW-type]:checked").val()=="GN"){ //// Для GN диаметрЫ только 3мм и 6мм
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="3" && $(this).val()!="6"){
+                    $(this).attr("disabled", "disabled").prop('selected', false);
+                }
+            })
+        }
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="6"){ // ДЕАКТИВАЦИЯ WW если выбран диаметер не 6 мм
+            $("label[for=WW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#WW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_WW").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 6 мм.</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="9" && full_conf.get("ctr_diameter")!="11"){ // ДЕАКТИВАЦИЯ KO если выбран диаметер не 9 или 11 мм
+            $("label[for=KO]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#KO").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_KO").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 9 или 11 мм.</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="3" && full_conf.get("ctr_diameter")!="6"){ // ДЕАКТИВАЦИЯ GN если выбран диаметер не 3 или 6 мм
+            $("label[for=GN]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#GN").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_GN").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 3 или 6 мм.</label>`;
+            num+=1;
+        }
 
 
 
