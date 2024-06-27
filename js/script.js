@@ -2070,7 +2070,7 @@ function disable_invalid_options(){
         }
         if ($("input[name=ctr-ALW-type]:checked").val()=="KO"){ //// Для KO диаметрЫ только 9мм и 11мм
             $("#ctr-diameter option").each(function(){
-                if ($(this).val()!="9" && $(this).val()!="11"){
+                if ($(this).val()!="6" && $(this).val()!="9" && $(this).val()!="11"){
                     $(this).attr("disabled", "disabled");
                     if ($(this).is(":selected")){
                         $("#ctr-diameter option[value='not_selected']").prop('selected', true);
@@ -2097,7 +2097,7 @@ function disable_invalid_options(){
             document.getElementById("err_WW").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 6 мм.</label>`;
             num+=1;
         }
-        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="9" && full_conf.get("ctr_diameter")!="11"){ // ДЕАКТИВАЦИЯ KO если выбран диаметер не 9 или 11 мм
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="6" && full_conf.get("ctr_diameter")!="9" && full_conf.get("ctr_diameter")!="11"){ // ДЕАКТИВАЦИЯ KO если выбран диаметер не 6, 9 или 11 мм
             $("label[for=KO]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
             $("#KO").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
             document.getElementById("err_KO").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 9 или 11 мм.</label>`;
