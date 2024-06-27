@@ -1199,7 +1199,7 @@ function disable_invalid_options(){
     }
 
     if (full_conf.get("main_dev")=="ctr"){
-        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "head", "nohead", "cabel", "ctr-cabel-type", "material", "thermocouple", "thermoresistor"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
+        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "ctr-ALW-type", "head", "nohead", "cabel", "ctr-cabel-type", "material", "thermocouple", "thermoresistor"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
             $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
             $("input[name="+ opt_name +"]").each(function() {
                 $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
@@ -1209,6 +1209,7 @@ function disable_invalid_options(){
             $("label[for=ctr-"+lst+"-list]").removeClass('disabled');
             $("#ctr-"+lst+"-list").prop('disabled', false);
         }
+
     }
 
     $("input[name=special]").each(function() {/// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ SPECIAL
@@ -2055,27 +2056,41 @@ function disable_invalid_options(){
             document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}'>${$("label[for=ctr-"+full_conf.get("ctr_cabel_type").toLowerCase()+"]").text()}</label>`;
             num+=1;
         }
+
         if ($("input[name=ctr-ALW-type]:checked").val()=="WW"){ //// Для WW диаметр только 6мм
             $("#ctr-diameter option").each(function(){
                 if ($(this).val()!="6"){
-                    $(this).attr("disabled", "disabled").prop('selected', false);
+                    $(this).attr("disabled", "disabled");
+                    if ($(this).is(":selected")){
+                        $("#ctr-diameter option[value='not_selected']").prop('selected', true);
+                    }
                 }
             })
+            $("#ctr-diameter option[value='not_selected']").removeAttr("disabled");
         }
         if ($("input[name=ctr-ALW-type]:checked").val()=="KO"){ //// Для KO диаметрЫ только 9мм и 11мм
             $("#ctr-diameter option").each(function(){
                 if ($(this).val()!="9" && $(this).val()!="11"){
-                    $(this).attr("disabled", "disabled").prop('selected', false);
+                    $(this).attr("disabled", "disabled");
+                    if ($(this).is(":selected")){
+                        $("#ctr-diameter option[value='not_selected']").prop('selected', true);
+                    }
                 }
             })
+            $("#ctr-diameter option[value='not_selected']").removeAttr("disabled");
         }
         if ($("input[name=ctr-ALW-type]:checked").val()=="GN"){ //// Для GN диаметрЫ только 3мм и 6мм
             $("#ctr-diameter option").each(function(){
                 if ($(this).val()!="3" && $(this).val()!="6"){
-                    $(this).attr("disabled", "disabled").prop('selected', false);
+                    $(this).attr("disabled", "disabled");
+                    if ($(this).is(":selected")){
+                        $("#ctr-diameter option[value='not_selected']").prop('selected', true);
+                    }
                 }
             })
+            $("#ctr-diameter option[value='not_selected']").removeAttr("disabled");
         }
+
         if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="6"){ // ДЕАКТИВАЦИЯ WW если выбран диаметер не 6 мм
             $("label[for=WW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
             $("#WW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
