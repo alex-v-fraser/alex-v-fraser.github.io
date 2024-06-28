@@ -209,18 +209,37 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
 
-        if (code[i].includes("...") && code[i].endsWith("C")){
-            full_description.set(code[i], "Диапазон измерения температуры от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + "°C.");
-        }
-        if (code[i]=="23мА" || code[i]=="21,5мА" || code[i]=="3,8мА" || code[i]=="3,75мА"){
-            full_description.set(code[i], "Сигнал обрыва цепи сенсора температуры " + code[i] + ".");
-        }
-        if (code[i]=="-"){
-            full_description.set(code[i], "Без специального исполнения.");
-        }
+        if (code[0].startsWith("CT")){
+            let ctr_unit = (typeof code[i].split("=")[1]=="undefined" || code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)==null) ? "." : " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".";
+            if (code[i].includes("...") && code[i].endsWith("C")){
+                full_description.set(code[i], "Диапазон измерения температуры от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + "°C.");
+            }
+            if (code[i]=="23мА" || code[i]=="21,5мА" || code[i]=="3,8мА" || code[i]=="3,75мА"){
+                full_description.set(code[i], "Сигнал обрыва цепи сенсора температуры " + code[i] + ".");
+            }
+            if (code[i]=="-"){
+                full_description.set(code[i], "Без специального исполнения.");
+            }
+            if (code[i].startsWith("d=")){
+                console.log(code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g));
+                full_description.set(code[i], "Диаметр защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+            }
+            if (code[i].startsWith("dvk=")){
+                full_description.set(code[i], "Диаметр термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+            }
+            if (code[i].startsWith("L=")){
+                full_description.set(code[i], "Длина защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+            }
+            if (code[i].startsWith("Lvk=")){
+                full_description.set(code[i], "Длина термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+            }
+            if (code[i].startsWith("S=")){
+                full_description.set(code[i], "Длина наружной (выносной) части " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+            }
 
-        if (code[i].slice(0,2) == "K="){
-            full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
+            if (code[i].slice(0,2) == "K="){
+                full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
+            }
         }
 
         if (code[i].slice(0,2) == "T="){
