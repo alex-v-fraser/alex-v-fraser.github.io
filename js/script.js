@@ -174,7 +174,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
                 code.splice(i, 2, "(-)", code[i+1].slice(1,));
             }
-            if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)"){
+            if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)" || code[i]=="(+)M12x1"){
                 code.splice(i, 1, "(+)", code[i].slice(3,));
             }
         }
@@ -209,6 +209,16 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
 
+        if (code[i].includes("...") && code[i].endsWith("C")){
+            full_description.set(code[i], "Диапазон измерения температуры от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + "°C.");
+        }
+        if (code[i]=="23мА" || code[i]=="21,5мА" || code[i]=="3,8мА" || code[i]=="3,75мА"){
+            full_description.set(code[i], "Сигнал обрыва цепи сенсора температуры " + code[i] + ".");
+        }
+        if (code[i]=="-"){
+            full_description.set(code[i], "Без специального исполнения.");
+        }
+
         if (code[i].slice(0,2) == "K="){
             full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
         }
@@ -217,7 +227,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
         }
 
-        if (code[i].toLowerCase()=="s" || (typeof code[i-1]!='undefined' && (code[i-1]=="(-)") && (code[i]=="P" || code[i]=="1/4NPT(F)"))  || (typeof code[i-1]!='undefined' && (code[i-1]=="(+)") && (code[i]=="P" || code[i]=="1/4NPT(F)"))){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+        if ((code[i].toLowerCase()=="s" && !code[0].startsWith("CT")) || (typeof code[i-1]!='undefined' && (code[i-1]=="(-)") && (code[i]=="P" || code[i]=="1/4NPT(F)" || code[i]=="M12x1"))  || (typeof code[i-1]!='undefined' && (code[i-1]=="(+)") && (code[i]=="P" || code[i]=="1/4NPT(F)" || code[i]=="M12x1"))){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
             let add_descr = "<br>В сборе с разделителем.";
             if (code[i-1]=="(+)"){
                 plus_minus = "(+)";
@@ -269,6 +279,17 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
             if ((code[i-1]=="(+)" && code[i]=="1/4NPT(F)") || (code[i-1]=="(-)" && code[i]=="1/4NPT(F)")){
                 // temp_codes=["1/4NPT(F)"];
+                for (el of window["thread_restr_lst"].values()){
+                    if (el.get("code_name")==code[i]){
+                        let temp_desc = el.get("description") + add_descr;
+                        full_description.set(plus_minus + code[i], temp_desc);
+                        // console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                        break;
+                    }
+                }
+            }
+            if ((code[i-1]=="(+)" && code[i]=="M12x1") || (code[i-1]=="(-)" && code[i]=="M12x1")){
+                // temp_codes=["M12x1"];
                 for (el of window["thread_restr_lst"].values()){
                     if (el.get("code_name")==code[i]){
                         let temp_desc = el.get("description") + add_descr;
