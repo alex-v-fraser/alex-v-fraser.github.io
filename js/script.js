@@ -22,7 +22,7 @@ var hi_press_diff = 2500;   // конец диапазона перепад, к�
 var min_range_diff = 1.6;   // мин ширина диапазона перепад, кПа
 var ctr_low_temp; //ограничение начала диапазона температуры CTR
 var ctr_high_temp;//ограничение конца диапазона температуры CTR
-var sensor_names = ["thermocouple", "thermoresistor", "material", "cabel"];
+var sensor_names = ["thermocouple", "thermoresistor", "material", "cabel", "ctr-electrical"];///СПИСОК ОГРАНИЧЕНИЙ ДЛЯ ТЕМПЕРАТУРЫ
 var thermocouple_restr_lst = new Map();     // ОГРАНИЧЕНИЯ ТЕРМОПАР
 var thermoresistor_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ТЕРМОРЕЗИСТОРОВ
 var material_restr_lst = new Map();   // ОГРАНИЧЕНИЯ МАТЕРИАЛОВ (для температуры)
@@ -162,20 +162,22 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
-    for (let i=0; i<code.length; i++){
-        if (code[i].toLowerCase().startsWith("s-") || (code[i].startsWith("(+)") && code[i]!="P") || (code[i].startsWith("(-)") && code[i]!="P")){
-            let temp = code[i].split("-");
-            code[i]= temp[0];
-            let x=i+1;
-            for (let j=1; j<temp.length; j++){
-                code.splice(x, 0, temp[j]);
-                x+=1;
-            }
-            if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
-                code.splice(i, 2, "(-)", code[i+1].slice(1,));
-            }
-            if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)" || code[i]=="(+)M12x1"){
-                code.splice(i, 1, "(+)", code[i].slice(3,));
+    if (!code[0].startsWith("CT")){
+        for (let i=0; i<code.length; i++){
+            if (code[i].toLowerCase().startsWith("s-") || (code[i].startsWith("(+)") && code[i]!="P") || (code[i].startsWith("(-)") && code[i]!="P")){
+                let temp = code[i].split("-");
+                code[i]= temp[0];
+                let x=i+1;
+                for (let j=1; j<temp.length; j++){
+                    code.splice(x, 0, temp[j]);
+                    x+=1;
+                }
+                if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
+                    code.splice(i, 2, "(-)", code[i+1].slice(1,));
+                }
+                if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)" || code[i]=="(+)M12x1"){
+                    code.splice(i, 1, "(+)", code[i].slice(3,));
+                }
             }
         }
     }
@@ -221,7 +223,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Без специального исполнения.");
             }
             if (code[i].startsWith("d=")){
-                console.log(code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g));
                 full_description.set(code[i], "Диаметр защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
             }
             if (code[i].startsWith("dvk=")){
@@ -236,10 +237,10 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             if (code[i].startsWith("S=")){
                 full_description.set(code[i], "Длина наружной (выносной) части " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
             }
+        }
 
-            if (code[i].slice(0,2) == "K="){
-                full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
-            }
+        if (code[i].slice(0,2) == "K="){
+            full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
         }
 
         if (code[i].slice(0,2) == "T="){
@@ -348,22 +349,49 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             // console.log(code);
         }
 
-        for (item of search_names){
-            for (el of window[item + "_restr_lst"].values()){
-                if (el.get("name")==code[i] || el.get("code_name")==code[i]){
-                    if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                        full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
-                        break;
+        if(!code[0].startsWith("CT")){
+            for (item of search_names){
+                for (el of window[item + "_restr_lst"].values()){
+                    if (el.get("name")==code[i] || el.get("code_name")==code[i]){
+                        if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                            full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                            break;
+                        }
+                        if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                            full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                            break;
+                        }
+                        full_description.set(code[i], el.get("description"));
                     }
-                    if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                        full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
-                        break;
-                    }
-                    full_description.set(code[i], el.get("description"));
                 }
             }
         }
+        if(code[0].startsWith("CT")){
+            let t_code = (code[i].startsWith("2x")) ? code[i].slice(2,) : code[i];
+            let ad_descr = (code[i].startsWith("2x")) ? "<br>Количество сенсоров: 2шт." : "";
+            for (item of ["device", "approval", "output", "material", "special", "ctr-electrical", "thread", "flange", "hygienic", "cabel", "thermoresistor", "thermocouple"]){
+                let prev_descr = item=="material" ? "Материал измерительной части:<br>" : "";
+                for (el of window[item + "_restr_lst"].values()){
+                    if (el.get("name")==t_code || el.get("code_name")==t_code){
+                        full_description.set(code[i], prev_descr + el.get("description") + ad_descr);
+                        break;
+                    }
+                }
+            }
+
+            if (i-1>=2 && (code[i]=="A" || code[i]=="B" || code[i]=="C") & (['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-1]) || code[i-1].startsWith("2x"))){
+                full_description.set(code[i], "Класс точности сенсора: \""+code[i]+"\".");
+            }
+            if (i-1>=2 && (code[i]=="2" || code[i]=="3" || code[i]=="4") & ['A', 'B', 'C'].includes(code[i-1])){
+                full_description.set(code[i], "Схема соединения сенсора "+code[i]+"-х проводная.");
+            }
+            if (i-1>=2 && (code[i]=="1" || code[i]=="2" || code[i]=="3") & ['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2])){
+                full_description.set(code[i], "Класс точности сенсора: \""+code[i]+"\".");
+            }
+        }
     }
+    //console.log(window["thermoresistor_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термосопротивлений по code_name
+    //console.log(window["thermocouple_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термопар по code_name
     if (full_description.has("(+)")){full_description.delete("(+)")}
     if (full_description.has("(-)")){full_description.delete("(-)")}
     if (full_description.has("Ex")){
