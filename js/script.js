@@ -3543,6 +3543,7 @@ function showHideSensorOpts(){
 
 $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ ОПЦИИ ПРИ НАВЕДЕНИИ и УДЕРЖАНИИ
     var delayed_function;
+    var delayed_function2
     var tooltip_id;
     var mouse;
     var img_path;
@@ -3569,12 +3570,13 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
                         $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
                     }, 300);
-                    setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3500);
+                    delayed_function2 = setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 2500);
                 },
             });
         }, function () {
             // out
             clearTimeout(delayed_function);
+            clearTimeout(delayed_function2);
             $(".tooltip").each(function(){$(this).remove()});
             $(this).css('z-index','');
         }
