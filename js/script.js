@@ -157,7 +157,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     for (let i=0; i<code.length; i++){
 
         if (typeof code[i+1]!='undefined'){
-            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="4") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-2)=="G3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1]=="см2")){
+            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="4") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-2)=="G3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1]=="см2") || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex")){
                 code.splice(i, 2, code[i] + "/" + code[i+1]);
             }
         }
@@ -1198,7 +1198,8 @@ function get_ctr_code_info(data){
     let vk = $("#spec_lvk").is(":checked") ? "vk" : "";
     let connection = data.has("ctr_thread_type") ? data.get("ctr_thread_type") : data.has("ctr_flange_type") ? data.get("ctr_flange_type") : data.has("ctr_hygienic_type") ? data.get("ctr_hygienic_type") : "I";
     let material = window["material_restr_lst"].get(data.get("material")).get("code_name");
-    let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT/" : (output=="4_20" && data.has("thermocouple")) ? "Gi-22/" : output=="4_20H" ? "Li-24G/" : "";
+    let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT/" : (output=="4_20" && data.has("thermocouple")) ? "GI-22/" : output=="4_20H" ? "LI-24G/" : "";
+    transducer = (approval=="Ex/" && transducer!="") ? transducer + "Ex/" : transducer;
     let range = data.get("ctr_begin_range") + "..." + data.get("ctr_end_range") + "°C";
     let open_circuit = (!$("#spec_38").is(':disabled') && !$("#spec_38").is(":checked")) ? "/23мА" : ($("#spec_38").is(":checked")) ? "/3,8мА" : (!$("#spec_375").is(':disabled') && !$("#spec_375").is(":checked")) ? "/21,5мА" :  (output=="4_20H" && $("#spec_375").is(":checked")) ? "/3,75мА" : "";
     let special = "";
@@ -2060,6 +2061,13 @@ function disable_invalid_options(){
             num+=1;
         }
 
+        if (typeof full_conf.get("sensor_quantity")!="undefined" && full_conf.get("sensor_quantity")=="2"){//деактивация 4..20мА для 2-х сенсоров
+            $("label[for=4_20]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+            $("#4_20").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+            document.getElementById("err_4_20").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_quantity")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='${full_conf.get("sensor_quantity")}_err_cancel${num}'>Количество сенсоров: 2.</label>`;
+            num+=1;
+        }
+
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")!="aisi316" && full_conf.get("material")!="inconel"){//деактивация ALW для НЕПОДХОДЯЩИХ МАТЕРИАЛОВ
             $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
             $("#ctr-ALW").prop('disabled', true).prop("checked", false);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
@@ -2083,6 +2091,10 @@ function disable_invalid_options(){
             $("#sensor-accuracy-tr option[value=C]").prop('selected', false).attr('disabled', 'disabled');
             $("#sensor-accuracy-tc option[value=2]").prop('selected', false).attr('disabled', 'disabled');
             $("#sensor-accuracy-tc option[value=3]").prop('selected', false).attr('disabled', 'disabled');
+        }
+
+        if (typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20"){// ОТКЛ 2 сенсора  для 4..20мА
+            $("#sensor-quantity option[value=2]").prop('selected', false).attr('disabled', 'disabled');
         }
 
         if(typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){ // ДЕАКТИВАЦИЯ СЕНСОРОВ для CTR-ALW (кроме K и Pt100)
