@@ -224,7 +224,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Диапазон измерения температуры от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + "°C.");
             }
             if (code[i]=="23мА" || code[i]=="21,5мА" || code[i]=="3,8мА" || code[i]=="3,75мА"){
-                full_description.set(code[i], "Сигнал обрыва цепи сенсора температуры " + code[i] + ".");
+                full_description.set(code[i], "Сигнал обрыва цепи сенсора " + code[i] + ".");
             }
             if (code[i]=="-"){
                 full_description.set(code[i], "Без специального исполнения.");
@@ -387,13 +387,13 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
 
             if (i-1>=2 && (code[i]=="A" || code[i]=="B" || code[i]=="C") & (['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-1]) || code[i-1].startsWith("2x"))){
-                full_description.set(code[i], "Класс точности " + code[i] + ".");
+                full_description.set(code[i], "Класс точности сенсора \"" + code[i] + "\".");
             }
             if (i-1>=2 && (code[i]=="2" || code[i]=="3" || code[i]=="4") & ['A', 'B', 'C'].includes(code[i-1])){
                 full_description.set(code[i], "Схема соединения сенсора " + code[i] + "-х проводная.");
             }
             if (i-1>=1 && (code[i]=="1" || code[i]=="2" || code[i]=="3") & ['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2])){
-                full_description.set(code[i], "Класс точности " + code[i] + ".");
+                full_description.set(code[i], "Класс точности сенсора \"" + code[i] + "\".");
             }
             if (code[i]=="I"){
                 full_description.set(code[i], "Без монтажного присоединения.");
