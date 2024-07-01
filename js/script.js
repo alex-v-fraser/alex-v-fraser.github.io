@@ -184,7 +184,14 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     // console.log(code);
 
     let full_description = new Map([]);
-    for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
+
+    for (el of window["device_restr_lst"].values()){
+        if (el.get("name")==code[0] || el.get("code_name")==code[0]){
+            full_description.set(code[0], el.get("description"));
+            break;
+        }
+    }
+    for (let i=1; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
         let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
         let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
         let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
@@ -204,8 +211,8 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Основной диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
                 full_description.set(code[i+1], "Установленный диапазон измерения абсолютного давления."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
             }else{
-                let units_0 = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
-                let units = code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                // let units_0 = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                // let units = code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
                 full_description.set(code[i], "Основной диапазон измерения."); //  от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units_0 + "
                 full_description.set(code[i+1], "Установленный диапазон измерения."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
             }
@@ -380,26 +387,69 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
 
             if (i-1>=2 && (code[i]=="A" || code[i]=="B" || code[i]=="C") & (['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-1]) || code[i-1].startsWith("2x"))){
-                full_description.set(code[i], "Класс точности сенсора: \""+code[i]+"\".");
+                full_description.set(code[i], "Класс точности " + code[i] + ".");
             }
             if (i-1>=2 && (code[i]=="2" || code[i]=="3" || code[i]=="4") & ['A', 'B', 'C'].includes(code[i-1])){
-                full_description.set(code[i], "Схема соединения сенсора "+code[i]+"-х проводная.");
+                full_description.set(code[i], "Схема соединения сенсора " + code[i] + "-х проводная.");
             }
-            if (i-1>=2 && (code[i]=="1" || code[i]=="2" || code[i]=="3") & ['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2])){
-                full_description.set(code[i], "Класс точности сенсора: \""+code[i]+"\".");
+            if (i-1>=1 && (code[i]=="1" || code[i]=="2" || code[i]=="3") & ['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2])){
+                full_description.set(code[i], "Класс точности " + code[i] + ".");
             }
+            if (code[i]=="I"){
+                full_description.set(code[i], "Без монтажного присоединения.");
+            }
+            if (code[i].startsWith("FH(") || code[i].startsWith("MH(") || code[i].startsWith("MP(") || code[i].startsWith("FP(")){
+                const fit_nut = new Map([
+                    ["FH", "неподвижная гайка"],
+                    ["MH", "неподвижный штуцер"],
+                    ["MP", "подвижный штуцер"],
+                    ["FP", "подвижная гайка"]
+                ]);
+                full_description.set(code[i], "Монтажное присоединение: " + fit_nut.get(code[i].slice(0,2)) + " с резьбой " + code[i].slice(3,-1));
+            }
+            if (code[i].startsWith("DN")){
+                full_description.set(code[i], "Монтажное присоединение: фланцевое.<br>Номинальный диаметр: DN" + code[i].match(/\d+(\,\d+)?/g)[0] + "<br>Номинальное давление: PN" + code[i].match(/\d+(\,\d+)?/g)[1] + "<br>Тип уплотнительной поверхности: " + code[i].match(/[a-zA-Zа-яА-я]+/g)[2] + ".");
+            }
+            if (code[i].startsWith("DIN")){
+                full_description.set(code[i], "Монтажное присоединение: гигеническое по DIN 11851.<br>Номинальный диаметр: DN" + code[i].match(/\d+(\,\d+)?/g)[0] + ".");
+            }
+            if (code[i].startsWith("Tri-")){
+                full_description.set(code[i], "Монтажное присоединение: гигеническое по DIN 32676.<br>Номинальный размер: Clamp" + code[i].match(/\d+(\,\d+)?/g)[0] + ".");
+            }
+            if (code[i].startsWith("K") && code[i].includes("-") && code[i].includes("=")){
+                let temp_desc0 = "";
+                for (el of window["cabel_restr_lst"].values()){
+                    if (el.get("name")==(code[i].split("=")[0].split("-")[1]).toLowerCase() || el.get("code_name")==(code[i].split("=")[0].split("-")[1]).toLowerCase()){
+                        temp_desc0 = el.get("description");
+                    }
+                }
+                full_description.set(code[i], "Кабельное исполнение типа " + code[i].split("-")[0] + "<br>" + temp_desc0 + "<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+            }
+            if (code[i].startsWith("C") && code[i].includes("(K") && code[i].includes(")=")){
+                let temp_desc0 = "";
+                for (el of window["cabel_restr_lst"].values()){
+                    if (el.get("name")==(code[i].split("(")[0]).slice(1,).toLowerCase() || el.get("code_name")==(code[i].split("(")[0]).slice(1,).toLowerCase()){
+                        temp_desc0 = el.get("description");
+                    }
+                }
+                full_description.set(code[i], "Кабельное исполнение типа " + code[i].split("(")[1].split(")")[0] + "<br>" + temp_desc0 + "<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+            }
+
+
+            /////////////////ПРОДОЛЖИТЬ//////////////////////
         }
     }
+
     //console.log(window["thermoresistor_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термосопротивлений по code_name
     //console.log(window["thermocouple_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термопар по code_name
     if (full_description.has("(+)")){full_description.delete("(+)")}
     if (full_description.has("(-)")){full_description.delete("(-)")}
     if (full_description.has("Ex")){
         console.log("Замена описания на EX");
-        if (!full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0]).get("ex_description")!="undefined"){
+        if (!full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("ex_description")!="undefined"){
             full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("ex_description"));
         }
-        if (full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0]).get("exalw_description")!="undefined"){
+        if (full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("exalw_description")!="undefined"){
             full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("exalw_description"));
         }
     }
