@@ -2806,6 +2806,7 @@ $(function (){
 
         if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ ВЫБОРЕ СКРЫТЬ СПИСОК, ПОКАЗАТЬ СЛЕДУЮЩИЙ
             if ($(this).prop("id")=="ctr-ALW"){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 $("#sensor-quantity option[value=1]").prop('selected', true);
                 $("#sensor-accuracy-tr option[value=A]").prop('selected', true);
                 $("#sensor-accuracy-tc option[value=1]").prop('selected', true);
