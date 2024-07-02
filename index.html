@@ -40,6 +40,15 @@
 	<link rel="manifest" href="/site.webmanifest">
 
 	<style type="text/css">
+		input[type="number"]::-webkit-inner-spin-button,
+		input[type="number"]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+		}
+		input[type="number"] {
+			-moz-appearance: textfield;
+			appearance: textfield; /* или auto*/
+		}
 
 		.tooltip span.overlay {
 			position: absolute;
@@ -539,11 +548,12 @@
 							<label for="ctr-length">Длина измерительной части, мм: </label>
 							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-length" style="width: 4.5em; margin-left:0.5em" id="ctr-length" required onchange="ctr_dimensions_selected()">
 						</div>
+						<div id="ctr-length_warning" style="display:none; font-size: 85%;">Допустимая длина</div>
 						<div style="margin-top: 0.5em;">
 							<label for="ctr-outlength">Длина наружной части части, мм: </label>
 							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-outlength" style="width: 4.5em" id="ctr-outlength" required onchange="ctr_dimensions_selected()">
 						</div>
-						<div id="ctr-dimensions_warning" style="display:none; font-size: 85%;"></div>
+						<div id="ctr-outlength_warning" style="display:none; font-size: 85%;">Допустимый вынос</div>
 						<div id="err_ctr-dimensions" style="display:none;"></div>
 					</fieldset>
 				</div>

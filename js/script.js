@@ -27,6 +27,10 @@ var thermocouple_restr_lst = new Map();     // ОГРАНИЧЕНИЯ ТЕРМО
 var thermoresistor_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ТЕРМОРЕЗИСТОРОВ
 var material_restr_lst = new Map();   // ОГРАНИЧЕНИЯ МАТЕРИАЛОВ (для температуры)
 var cabel_restr_lst = new Map();   // ОГРАНИЧЕНИЯ КАБЕЛЯ (для температуры)
+var ctr_min_length = 20; // Минимальная длина L для CTR;
+var ctr_max_length = 10000; // Максимальная длина L для CTR;
+var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
+var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
 
 
 
@@ -65,7 +69,7 @@ fetchSensorRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕН
             arr.set(obj["name"], dat);
         });;
         window[sensor_names[el] + "_restr_lst"] = arr;
-        console.log(sensor_names[el] + "_restr_lst", window[sensor_names[el] + "_restr_lst"]);
+        // console.log(sensor_names[el] + "_restr_lst", window[sensor_names[el] + "_restr_lst"]);
     }
 }).catch(error => {console.log(error);
 })
@@ -3672,11 +3676,29 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
 }
 
 function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
-    if (!Number.isNaN(parseInt($("#ctr-length").val())) && !Number.isNaN(parseInt($("#ctr-outlength").val())) && $("#ctr-diameter").val()!="not_selected"){
-        expand_next_div("ctr-outlength");
-        disable_invalid_options();
+    if (!Number.isNaN(parseInt($("#ctr-length").val())) && parseInt($("#ctr-length").val())>=ctr_min_length && parseInt($("#ctr-length").val())<=ctr_max_length){
+        $("#ctr-length_warning").prop("style", "display:none");
+    }else{
+        $("#ctr-length").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        document.getElementById("ctr-length_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_length} до ${ctr_max_length} мм</span>`;
+        $("#ctr-length_warning").prop("style", "display:block");
+    }
+    if (!Number.isNaN(parseInt($("#ctr-outlength").val())) && parseInt($("#ctr-outlength").val())>=ctr_min_outlength && parseInt($("#ctr-outlength").val())<=ctr_max_outlength){
+        $("#ctr-outlength_warning").prop("style", "display:none");
     }else{
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм</span>`;
+        $("#ctr-outlength_warning").prop("style", "display:block");
+    }
+    if ($("#ctr-diameter").val()=="not_selected"){
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
+    if ($("#ctr-diameter").val()=="not_selected" || Number.isNaN(parseInt($("#ctr-length").val())) || parseInt($("#ctr-length").val())<ctr_min_length || parseInt($("#ctr-length").val())>ctr_max_length || Number.isNaN(parseInt($("#ctr-outlength").val())) || parseInt($("#ctr-outlength").val())<ctr_min_outlength && parseInt($("#ctr-outlength").val())>ctr_max_outlength){
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        disable_invalid_options();
+        return;
+    }else{
+        expand_next_div("ctr-outlength");
         disable_invalid_options();
     }
 }
