@@ -1235,6 +1235,7 @@ function get_ctr_code_info(data){
     if(data.has("thermoresistor") && data.get("output")=="no_trand"){
         console.log("Код CT");
         sensor = $("#" + data.get("thermoresistor")).val();
+        transducer = (data.has("head")) ? "KZ/" : "";
         code = "CT/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range;
     }
     if((data.has("thermocouple") && data.get("output")=="no_trand") || (data.has("thermocouple") && data.get("output")!="no_trand" && data.get("ctr_end_range")>1100)){
