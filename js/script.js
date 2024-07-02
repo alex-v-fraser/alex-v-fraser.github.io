@@ -390,13 +390,13 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
             }
 
-            if (i-1>=2 && (code[i]=="A" || code[i]=="B" || code[i]=="C") & (['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-1]) || code[i-1].startsWith("2x"))){
+            if (i-1>=2 && (code[i]=="A" || code[i]=="B" || code[i]=="C") && (['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-1]) || code[i-1].startsWith("2x"))){
                 full_description.set(code[i], "Класс точности сенсора \"" + code[i] + "\".");
             }
-            if (i-1>=2 && (code[i]=="2" || code[i]=="3" || code[i]=="4") & ['A', 'B', 'C'].includes(code[i-1])){
+            if (i-1>=2 && (code[i]=="2" || code[i]=="3" || code[i]=="4") && ['A', 'B', 'C'].includes(code[i-1])){
                 full_description.set(code[i], "Схема соединения сенсора " + code[i] + "-х проводная.");
             }
-            if (i-1>=1 && (code[i]=="1" || code[i]=="2" || code[i]=="3") & ['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2])){
+            if (i-1>=1 && (code[i]=="1" || code[i]=="2" || code[i]=="3") && (['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2]) || code[i-1].startsWith("2x"))){
                 full_description.set(code[i], "Класс точности сенсора \"" + code[i] + "\".");
             }
             if (code[i]=="I"){
@@ -438,8 +438,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
                 full_description.set(code[i], "Кабельное исполнение типа " + code[i].split("(")[1].split(")")[0] + "<br>" + temp_desc0 + "<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
             }
-
-
             /////////////////ПРОДОЛЖИТЬ//////////////////////
         }
     }
