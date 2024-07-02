@@ -489,10 +489,18 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             i-=1;
         }
     }
-    console.log(full_description);
+
+    let success_descr = true;
+    let code_descr = [];
+    for (let i=0; i<code.length; i++){
+        code_descr[i] = [code[i], full_description.get(code[i])];
+        success_descr = (typeof full_description.get(code[i])=="undefined") ? false : true;
+    }
+    // console.log(full_description);
+    console.log(code_descr);
     console.log(code);
 
-    if (code.length>2 && full_description.size == code.length){
+    if (code.length>2 && success_descr==true){//  && full_description.size == code.length
         document.getElementById("codeError").innerHTML = "";
         var myTableDiv = document.getElementById("codeDescription");
         let table = document.createElement('table');
@@ -520,7 +528,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     tr.appendChild(td);
                 }else{
                     td.width = '600';
-                    td.innerHTML = (full_description.get(code[i]));
+                    td.innerHTML = (code_descr[i][1]); //full_description.get(code[i])
                     tr.appendChild(td);
                 }
             }
