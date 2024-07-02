@@ -17,7 +17,7 @@ var min_range = 2.5;        // мин ширина диапазона избыт
 var low_press_abs = 0;      // начало диапазона абс, кПа
 var hi_press_abs = 10000;   // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
-var low_press_diff = -2500; // начало диапазона перепад, кПа
+var low_press_diff = -160; // начало диапазона перепад, кПа
 var hi_press_diff = 2500;   // конец диапазона перепад, кПа
 var min_range_diff = 1.6;   // мин ширина диапазона перепад, кПа
 var ctr_low_temp; //ограничение начала диапазона температуры CTR
@@ -1141,7 +1141,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let plus_fluid = "";
     let minus_fluid = "";
     if (connection.startsWith("S-") || connection.startsWith("(+)S-") || (typeof minus_connection!='undefined' && minus_connection.startsWith("S-"))){
-        fluid = "-" + $("input[name=fluid]:checked").val();
+        fluid = $("input[name=fluid]:checked").val()=="AK" ? "" : "-" + $("input[name=fluid]:checked").val();
         // console.log("Добавляем жижу в код: " + fluid);
     }
     // console.log(connection);
@@ -1369,7 +1369,7 @@ function disable_invalid_options(){
     low_press_abs = 0;                              // начало диапазона абс, кПа
     hi_press_abs = 10000;                           // конец диапазона абс, кПа
     min_range_abs = full_conf.get("output")=="4_20H" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
-    low_press_diff = -2500;                         // начало диапазона перепад, кПа
+    low_press_diff = -160;                         // начало диапазона перепад, кПа
     hi_press_diff = 2500;                           // конец диапазона перепад, кПа
     min_range_diff = 1.6;                           // мин ширина диапазона перепад, кПа
     if (full_conf.get("main_dev")=='pc-28' || full_conf.get("main_dev")=='apc-2000'){
@@ -1636,6 +1636,16 @@ function disable_invalid_options(){
                 }
             })
         }
+        if (typeof full_conf.get("material")!="undefined" & (full_conf.get("material")=="hastelloy" || full_conf.get("material")=="tantal")){       // деактивация MAX-STATIC>25 для HASTELLOY и TANTAL
+            $("input[name=max-static]").each(function(){
+                if ((parseInt($(this).val())>25)){
+                    $(this).prop('disabled', true);
+                    $("label[for="+$(this).prop('id')+"]").addClass('disabled');
+                    document.getElementById("err_"+$(this).prop('id')).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                    num+=1;
+                }
+            })
+        }
         if ($("input[name=max-static]:checked").length>0 && full_conf.get("max-static")!="4"){// ОГРАНИЧЕНИЕ ДИАПАЗОНА и деактивация P и 1/4NPT елси MAX-STATIC не равно 4
             for (let els of ["1_4npt_f", "P"]){
                 for (let plmin of ["","minus-"]){
@@ -1646,7 +1656,7 @@ function disable_invalid_options(){
                     num+=1;
                 }
             }
-            low_press_diff = -1600;
+            low_press_diff = -160;
             hi_press_diff = 1600;
             document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
         }
@@ -1675,6 +1685,16 @@ function disable_invalid_options(){
             $("#capillary-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
         }
 
+        if ($("input[name=max-static]:checked").length>0 && (parseInt(full_conf.get("max-static"))>25)){///ДЕАКТИВАЦИЯ TANTAL и HASTELLOY если MAX STATIC >25
+            $("label[for=hastelloy]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+            $("#hastelloy").prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+            $("label[for=tantal]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+            $("#tantal").prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+            document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
+            document.getElementById("err_tantal").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
+            num+=2;
+        }
+
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
@@ -1686,7 +1706,7 @@ function disable_invalid_options(){
                     // console.log("min_range direct ", min_range);
                 }
 
-                low_press_diff = -hi_press_diff;
+                low_press_diff = -160;
                 document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                 document.getElementById("range_warning2").innerHTML = "";
 
@@ -1723,7 +1743,7 @@ function disable_invalid_options(){
                     console.log("min_range direct ", min_range);
                 }
 
-                low_press_diff = -hi_press_diff;
+                low_press_diff = -160;
                 document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                 document.getElementById("range_warning2").innerHTML = "";
 
@@ -2432,7 +2452,7 @@ function disable_invalid_options(){
         $("#spec_lvk").prop('checked', false);
     }
 
-    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="no_trand") || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="4_20H" && typeof full_conf.get("head")!='undefined' && full_conf.get("head")!="ctr-ALW")){ // проверка специсполнения 3.8мА
+    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="no_trand") || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="4_20H" && (typeof full_conf.get("head")!='undefined' && full_conf.get("head")!="ctr-ALW" || (typeof full_conf.get("head")=='undefined')))){ // проверка специсполнения 3.8мА
         $("label[for=spec_38]").addClass('disabled');
         $("#spec_38").prop('disabled', true);
         $("#spec_38").prop('checked', false);
