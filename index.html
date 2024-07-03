@@ -297,6 +297,9 @@
 	<div id="dialog2-confirm" title="ВНИМАНИЕ!" style="display: none">
 		<p id="dialog2-confirm-p"><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span></p>
 	</div>
+	<div id="dialog3-confirm" title="ВНИМАНИЕ!" style="display: none">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Выбранная конфгурация будет утеряна.<br>Продолжить?</p>
+	</div>
 	<div style="display: inline-block; text-align: center;">
 		<div style="display: inline-block;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
 		<h1>КОНФИГУРАТОР</h1>
@@ -1109,7 +1112,7 @@
 			<div class="code-input-container">
 				<input type="text" id="code" name="code_name" title="Для получения описания это поле должно содержать корректный код заказа" required placeholder="Код заказа" size="50">
 				<input type="button" id="code-entered-button-ok" value="Получить описание" onclick="addDescription()">
-				<input type="button" id="reset-config" value="СБРОС" onclick="resetConfig()" style="display: none;">
+				<input type="button" id="reset-config" value="СБРОС" onclick="resetButton()" style="display: none;">
 			</div>
 			<br>
 

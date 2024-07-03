@@ -2128,6 +2128,33 @@ function disable_invalid_options(){
             $("#sensor-quantity option[value=2]").prop('selected', false).attr('disabled', 'disabled');
         }
 
+
+        if ($("#sensor-quantity").val()=="2"){/// ОТКЛЮЧАЕМ 4-провода для двух сенсоров
+            if ($("#sensor-wiring-tr").val()=="4"){
+                $("#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+            }
+            $("#sensor-wiring-tr option[value=4]").attr('disabled', 'disabled');
+        }
+        if ($("#sensor-wiring-tr").val()=="4"){// ОТКЛЮЧАЕМ 2 сенсора для 4-х проводов
+            if ($("#sensor-quantity").val()=="2"){
+                $("#sensor-quantity option[value='not_selected']").prop('selected', true);
+            }
+            $("#sensor-quantity option[value=2]").attr('disabled', 'disabled');
+        }
+        if ($("select#sensor-accuracy-tr option:selected").val()=="A"){/// ОТКЛЮЧАЕМ 2-провода для класса A
+            if ($("select#sensor-wiring-tr option:selected").val()=="2"){
+                $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+            }
+            $("select#sensor-wiring-tr option[value=2]").attr('disabled','disabled');
+        }
+        if ($("select#sensor-wiring-tr option:selected").val()=="2"){/// ОТКЛЮЧАЕМ класс A для 2-проводных
+            if ($("select#sensor-accuracy-tr option:selected").val()=="A"){
+                $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+            }
+            $("select#sensor-accuracy-tr option[value=A]").attr('disabled','disabled');
+        }
+
+
         if(typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){ // ДЕАКТИВАЦИЯ СЕНСОРОВ для CTR-ALW (кроме K и Pt100)
             for (let sensor of ["thermoresistor", "thermocouple"]){
                 $("input[name="+ sensor +"]").each(function(){
@@ -3534,22 +3561,6 @@ function uncheckMaxTemp(data){
 }
 
 function showHideSensorOpts(){
-    if ($("#sensor-quantity").val()=="2"){
-        if ($("#sensor-wiring-tr").val()=="4"){
-            $("#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
-        }
-        $("#sensor-wiring-tr option[value=4]").attr('disabled', 'disabled');
-    }else{
-        $("#sensor-wiring-tr option[value=4]").removeAttr('disabled');
-    }
-    if ($("select#sensor-accuracy-tr option:selected").val()=="A"){
-        if ($("select#sensor-wiring-tr option:selected").val()=="2"){
-            $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
-        }
-        $("select#sensor-wiring-tr option[value=2]").attr('disabled','disabled');
-    }else{
-        $("select#sensor-wiring-tr option[value=2]").removeAttr('disabled');
-    }
     let no_check = false;
     $("#quantity-accuracy-wiring span:visible select").each(function(){
         if ($(this).val()=='not_selected'){
@@ -3565,8 +3576,6 @@ function showHideSensorOpts(){
         return;
     }else{///ИНАЧЕ ПОМЕТИТЬ ЗЕЛЕНЫМ, СКРЫТЬ, ОТКРЫТЬ СЛЕД. РАЗДЕЛ
         expand_next_div("quantity-accuracy-wiring");
-        // $("#quantity-accuracy-wiring").closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
-        // $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
         disable_invalid_options();
         return;
     }
@@ -3703,12 +3712,14 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
 }
 
 function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
+    let no_check = true;
     if (!Number.isNaN(parseInt($("#ctr-length").val())) && parseInt($("#ctr-length").val())>=ctr_min_length && parseInt($("#ctr-length").val())<=ctr_max_length){
         $("#ctr-length_warning").prop("style", "display:none");
     }else{
         $("#ctr-length").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         document.getElementById("ctr-length_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_length} до ${ctr_max_length} мм</span>`;
         $("#ctr-length_warning").prop("style", "display:block");
+        no_check = false;
     }
     if (!Number.isNaN(parseInt($("#ctr-outlength").val())) && parseInt($("#ctr-outlength").val())>=ctr_min_outlength && parseInt($("#ctr-outlength").val())<=ctr_max_outlength){
         $("#ctr-outlength_warning").prop("style", "display:none");
@@ -3716,11 +3727,13 @@ function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм</span>`;
         $("#ctr-outlength_warning").prop("style", "display:block");
+        no_check = false;
     }
     if ($("#ctr-diameter").val()=="not_selected"){
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        no_check = false;
     }
-    if ($("#ctr-diameter").val()=="not_selected" || Number.isNaN(parseInt($("#ctr-length").val())) || parseInt($("#ctr-length").val())<ctr_min_length || parseInt($("#ctr-length").val())>ctr_max_length || Number.isNaN(parseInt($("#ctr-outlength").val())) || parseInt($("#ctr-outlength").val())<ctr_min_outlength && parseInt($("#ctr-outlength").val())>ctr_max_outlength){
+    if (no_check == false){
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         disable_invalid_options();
         return;
@@ -3802,7 +3815,7 @@ function changeSensorQuantity(){//меняем количество сенсор
     disable_invalid_options();
 }
 
- function disableLvk(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ ОТКЛЮЧЕНИЯ Lvk
+function disableLvk(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ ОТКЛЮЧЕНИЯ Lvk
     console.log("ОТКЛЮЧИТЬ LVK или НЕТ?");
     $( "#dialog2-confirm" ).dialog({
         resizable: false,
@@ -3824,7 +3837,26 @@ function changeSensorQuantity(){//меняем количество сенсор
             }
         }
     })
- }
+}
+
+function resetButton(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ СБРОСА
+    console.log("СБРОСИТЬ КОНФИГ?");
+    $( "#dialog3-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        buttons: {
+            Продолжить: function() {
+                resetConfig();
+                $( this ).dialog( "close" );
+            },
+            Отмена: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    })
+}
 
  $(function(){//ПРИ клике на заблокированный Lvk
     $(document).on("click", "label[for='spec_lvk']", function(){
