@@ -1512,7 +1512,7 @@ function disable_invalid_options(){
             }
 
             for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC ПО ДАВЛЕНИЮ, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
-                if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
+                if (((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")) && typeof full_conf.get("cap-or-not") == "undefined"){
                     $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
                     $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                     document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ${entr[1].get("begin_range_kpa")}...${entr[1].get("end_range_kpa")} кПа, минимальная ширина ${entr[1].get("range")} кПа.</label>`;
@@ -2433,13 +2433,18 @@ function disable_invalid_options(){
         $("#hs").prop('disabled', true);
         $("#hs").prop('checked', false);
     }
-    if ((main_dev == "APC-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5) && data.get("pressure_type")=="") || (main_dev == "APR-2000" && ((data.get("end_range_kpa")<=2.5 || data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
+    if ((full_conf.get("main_dev") == "apc-2000" && ((full_conf.get("end_range_kpa")<=2.5 && full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5) && full_conf.get("pressure_type")=="") || (main_dev == "APR-2000" && ((full_conf.get("end_range_kpa")<=2.5 || full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
         // $("label[for=hs]").addClass('disabled');
-        $("#hs").prop('checked', true);
-        $("#hs").prop('disabled', true);
+        $("#hs").prop('checked', true).prop('disabled', true);
+        $("label[for=hastelloy]").addClass('disabled');
+        $("#hastelloy").prop('disabled', true).prop('checked', false);
+        document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ширина диапазона более 5кПа.</label>`;
+        num+=1;
         for (let cons of ["M", "G1_2", "g1_4", "m12_1"]){
             $("label[for=" + cons + "]").addClass('disabled');
             $("#" + cons).prop('disabled', true);
+            document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ширина диапазона более 5кПа.</label>`;
+            num+=1;
         }
     }
     if (!(full_conf.get("electrical")=="APCALW" || full_conf.get("head")=="ctr-ALW")){ // проверка специсполнения PD, SN, -50..80, HART7
