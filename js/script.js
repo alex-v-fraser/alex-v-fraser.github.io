@@ -2428,10 +2428,9 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
-    if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"  || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT"))){ // проверка HS
+    if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy" || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT")) || (full_conf.get("main_dev")=="apr-2000" && ((full_conf.has("thread") && full_conf.get("thread").startsWith("s_")) || (full_conf.has("flange") && full_conf.get("flange").startsWith("s_")) || full_conf.has("hygienic")))){ // проверка HS
         $("label[for=hs]").addClass('disabled');
-        $("#hs").prop('disabled', true);
-        $("#hs").prop('checked', false);
+        $("#hs").prop('disabled', true).prop('checked', false);
     }
     if ((full_conf.get("main_dev") == "apc-2000" && ((full_conf.get("end_range_kpa")<=2.5 && full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5) && full_conf.get("pressure_type")=="") || (main_dev == "APR-2000" && ((full_conf.get("end_range_kpa")<=2.5 || full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
         // $("label[for=hs]").addClass('disabled');
