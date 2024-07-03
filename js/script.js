@@ -492,7 +492,10 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     let code_descr = [];
     for (let i=0; i<code.length; i++){
         code_descr[i] = [code[i], full_description.get(code[i])];
-        success_descr = (typeof full_description.get(code[i])=="undefined") ? false : true;
+        if (typeof full_description.get(code[i])=="undefined"){
+            success_descr = false;
+            break;
+        }
     }
     // console.log(full_description);
     console.log(code_descr);
