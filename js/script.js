@@ -1399,6 +1399,10 @@ function disable_invalid_options(){
         })
     }
 
+    if ((typeof full_conf.get("sensor_accuracy_tr")!="undefined" && full_conf.get("sensor_accuracy_tr")=="A") || (typeof full_conf.get("sensor_accuracy_tc")!="undefined" && full_conf.get("sensor_accuracy_tr")=="1")){
+        ctr_min_length = $("#ctr-diameter").val()!="not_selected" ? parseInt($("#ctr-diameter").val())*5+30 : 45; /// МИНИМАЛЬНАЯ ДЛИНА ДЛЯ КЛАССА "A"
+    }
+
 
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){//ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ ДАВЛЕНИЕ
         for (let pair of full_conf.entries()){
