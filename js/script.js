@@ -234,19 +234,19 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Без специального исполнения.");
             }
             if (code[i].startsWith("d=")){
-                full_description.set(code[i], "Диаметр защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+                full_description.set(code[i], "Диаметр защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
             }
             if (code[i].startsWith("dvk=")){
-                full_description.set(code[i], "Диаметр термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+                full_description.set(code[i], "Диаметр термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".<br>МОНТАЖ ТОЛЬКО В ЗАЩИТНУЮ ГИЛЬЗУ!");
             }
             if (code[i].startsWith("L=")){
-                full_description.set(code[i], "Длина защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+                full_description.set(code[i], "Длина защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
             }
             if (code[i].startsWith("Lvk=")){
-                full_description.set(code[i], "Длина термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+                full_description.set(code[i], "Длина термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".<br>МОНТАЖ ТОЛЬКО В ЗАЩИТНУЮ ГИЛЬЗУ!");
             }
             if (code[i].startsWith("S=")){
-                full_description.set(code[i], "Длина наружной (выносной) части " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit);
+                full_description.set(code[i], "Длина наружной (выносной) части " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
             }
         }
 
