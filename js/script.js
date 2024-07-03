@@ -1891,6 +1891,10 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
 
+        if ($("input[name=ctr-electrical]:checked").length==0){
+            $('.head-nohead-cabel').hide(0);
+        }
+
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
                 $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
@@ -1924,6 +1928,12 @@ function disable_invalid_options(){
             }
             $("#cabel-select").prop("style", "display:none");
             $("#ctr-cabel-type-select-div").prop("style", "display:none");
+            if (full_conf.get("output")=="4_20H"){  ////если HART - деактивировать без головы (раъемы)
+                $("label[for=nohead-list]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#nohead-list").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_nohead-list").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("output")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("output")}_err_cancel${num}'>${$("label[for="+full_conf.get("output")+"]").text()}</label>`;
+                num+=1;
+            }
         }
         if (full_conf.has("cabel")){ // ЕСЛИ кабельное - деакт 4_20, 4_20H, Exd
             for (let entr of ["4_20", "4_20H", "Exd"]){
@@ -1933,10 +1943,14 @@ function disable_invalid_options(){
                 num+=1;
             }
         }
-        if (full_conf.has("nohead")){ // ДЕАКТИВАЦИЯ Exd для NoHead
+        if (full_conf.has("nohead")){ // ДЕАКТИВАЦИЯ Exd и 4_20H для NoHead
             $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
             $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
             document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+            $("label[for=4_20H]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#4_20H").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_4_20H").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
             num+=1;
         }
         if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-DAO" && full_conf.get("head")!="ctr-ALW"){///ДЕАКТИВИРОВАТЬ EXD ЕСЛИ ГОЛОВКА НЕ Exd
