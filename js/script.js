@@ -1399,7 +1399,7 @@ function disable_invalid_options(){
         })
     }
 
-    if ((typeof full_conf.get("sensor_accuracy_tr")!="undefined" && full_conf.get("sensor_accuracy_tr")=="A") || (typeof full_conf.get("sensor_accuracy_tc")!="undefined" && full_conf.get("sensor_accuracy_tr")=="1")){
+    if ((typeof full_conf.get("sensor_accuracy_tr")!="undefined" && full_conf.get("sensor_accuracy_tr")=="A") || (typeof full_conf.get("sensor_accuracy_tc")!="undefined" && full_conf.get("sensor_accuracy_tc")=="1")){
         ctr_min_length = $("#ctr-diameter").val()!="not_selected" ? parseInt($("#ctr-diameter").val())*5+30 : 45; /// МИНИМАЛЬНАЯ ДЛИНА ДЛЯ КЛАССА "A"
     }else{
         ctr_min_length = 20;
