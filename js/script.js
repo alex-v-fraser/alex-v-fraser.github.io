@@ -1903,27 +1903,50 @@ function disable_invalid_options(){
         }
 
 
-        let  tlchecked = $("#thermocouple-list").is(":checked") ? 1 : 0; //// ОТКЛЮЧИТЬ ОДНОВРЕМЕННЫЙ ВЫБОР ТЕРМОПАРЫ, Ex и 4..20
+        let  tlchecked = $("#thermocouple-list").is(":checked") ? 1 : 0;
         let  exchecked = $("#Ex").is(":checked") ? 1 : 0;
         let  checked4_20 = $("#4_20").is(":checked") ? 1 : 0;
-        if ( tlchecked + exchecked + checked4_20 == 2 ){
-            let arr = [];
+        if ( tlchecked + exchecked + checked4_20 == 2 ){//// ОТКЛЮЧИТЬ ОДНОВРЕМЕННЫЙ ВЫБОР ТЕРМОПАРЫ, Ex и 4..20
+            let arr_tec = [];
             for (let ids of ["thermocouple-list", "Ex", "4_20"]){
                 if ($("#" + ids).is(":checked")){
-                    arr.push(ids);
+                    arr_tec.push(ids);
                 }
             }
             for (let ids of ["thermocouple-list", "Ex", "4_20"]){
                 if (!$("#" + ids).is(":checked")) {
                     $("label[for="+ ids +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ
                     $("#" + ids).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНОГО
-                    for (let el of arr){
+                    for (let el of arr_tec){
                         document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
                         num+=1;
                     }
                 }
             }
         }
+
+        let nohdchecked = ($("#nohead-list").is(":checked") || $("#cabel-list").is(":checked")) ? 1 : 0;
+        let transdchecked = ($("#4_20").is(":checked") || $("#4_20H").is(":checked")) ? 1 : 0;
+        if ( tlchecked + nohdchecked + transdchecked == 2 ){//// ОТКЛЮЧИТЬ ОДНОВРЕМЕННЫЙ ВЫБОР ТЕРМОПАРЫ, БЕЗ ГОЛОВЫ и С ПРЕОБРАЗОВАТЕЛЕМ
+            let arr_tnt = [];
+            for (let ids of ["thermocouple-list", "nohead-list", "cabel-list", "4_20", "4_20H"]){
+                if ($("#" + ids).is(":checked")){
+                    arr_tnt.push(ids);
+                }
+            }
+            for (let ids of ["thermocouple-list", "nohead-list", "cabel-list", "4_20", "4_20H"]){
+                if (!$("#" + ids).is(":checked")) {
+                    $("label[for="+ ids +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ
+                    $("#" + ids).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНОГО
+                    for (let el of arr_tnt){
+                        document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
+                        num+=1;
+                        console.log(`К ${ids} Добавлено!! ${$("label[for="+el+"]").text()}`);
+                    }
+                }
+            }
+        }
+
         $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
             if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
                 $(this).prop("style", "display:none");
@@ -2509,7 +2532,7 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
-    if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy" || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT")) || (full_conf.get("main_dev")=="apr-2000" && ((full_conf.has("thread") && full_conf.get("thread").startsWith("s_")) || (full_conf.has("flange") && full_conf.get("flange").startsWith("s_")) || full_conf.has("hygienic")))){ // проверка HS
+    if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy" || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT")) || (full_conf.get("main_dev")=="apr-2000" && ((typeof full_conf.get("thread")!='undefined' && full_conf.get("thread").startsWith("s_")) || (typeof full_conf.get("flange")!="undefined" && full_conf.get("flange").startsWith("s_")) || full_conf.has("hygienic")))){ // проверка HS
         $("label[for=hs]").addClass('disabled');
         $("#hs").prop('disabled', true).prop('checked', false);
     }
