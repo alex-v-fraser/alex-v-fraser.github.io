@@ -359,8 +359,8 @@
 				</div>
 				<div class="option-to-select-list ctr" id="sensor-type-select" style="display: none;">
 					<fieldset id="sensor-type-select-field" name="sensor-type-select-field">
-						<input type="checkbox" name="sensor-type" value="thermoresistor-list" id="thermoresistor-list" class="custom-checkbox"><label for="thermoresistor-list">Термосопротивление</label><div id="eerr_thermoresistor-list"  style="display:none;"></div>
-						<input type="checkbox" name="sensor-type" value="thermocouple-list" id="thermocouple-list" class="custom-checkbox"><label for="thermocouple-list">Термопара</label><div id="eerr_thermocouple-list"  style="display:none;"></div>
+						<input type="checkbox" name="sensor-type" value="thermoresistor-list" id="thermoresistor-list" class="custom-checkbox"><label for="thermoresistor-list">Термосопротивление</label><div id="err_thermoresistor-list"  style="display:none;"></div>
+						<input type="checkbox" name="sensor-type" value="thermocouple-list" id="thermocouple-list" class="custom-checkbox"><label for="thermocouple-list">Термопара</label><div id="err_thermocouple-list"  style="display:none;"></div>
 					</fieldset>
 
 					<div class="thermoresistor-thermocouple" id="thermoresistor-select" style="display: none;">
@@ -534,7 +534,7 @@
 					<fieldset id="ctr-dimensions-select-field">
 						<div>
 							<label for="ctr-diameter">Диаметр защитного корпуса, мм: </label>
-							<select name="ctr-diameter" id="ctr-diameter" style="width: 4.5em; margin-left:0.5em" onchange="ctr_dimensions_selected()">
+							<select name="ctr-diameter" id="ctr-diameter" style="width: 4.5em; margin-left:0.5em" onchange="disable_invalid_options()">
 								<option value="not_selected" selected>---</option>
 								<option value="3">3</option>
 								<option value="6">6</option>
@@ -549,12 +549,12 @@
 						</div>
 						<div style="margin-top: 0.5em;">
 							<label for="ctr-length">Длина измерительной части, мм: </label>
-							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-length" style="width: 4.5em; margin-left:0.5em" id="ctr-length" required onchange="ctr_dimensions_selected()">
+							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-length" style="width: 4.5em; margin-left:0.5em" id="ctr-length" required onchange="disable_invalid_options()">
 						</div>
 						<div id="ctr-length_warning" style="display:none; font-size: 85%;">Допустимая длина</div>
 						<div style="margin-top: 0.5em;">
 							<label for="ctr-outlength">Длина наружной части части, мм: </label>
-							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-outlength" style="width: 4.5em" id="ctr-outlength" required onchange="ctr_dimensions_selected()">
+							<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="ctr-outlength" style="width: 4.5em" id="ctr-outlength" required onchange="disable_invalid_options()">
 						</div>
 						<div id="ctr-outlength_warning" style="display:none; font-size: 85%;">Допустимый вынос</div>
 						<div id="err_ctr-dimensions" style="display:none;"></div>

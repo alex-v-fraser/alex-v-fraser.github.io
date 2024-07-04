@@ -1277,9 +1277,9 @@ function get_ctr_code_info(data){
 function disable_invalid_options(){
     let num = 100; // НУЖНО ДЛЯ ДОБАВЛЕНИЯ id CHECKBOX_ERR_CANCEL
     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
-        if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
-            $(this).prop("style", "display:none");
-        }
+        // if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+        //     $(this).prop("style", "display:none");
+        // }
         $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
     $("#err_ctr-range").prop("innerHTML", "<span style='color: red; margin-left:1.5em'>или отмените: </span>"); // &emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'>
@@ -1297,7 +1297,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "max-static"];
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "sensor-type", "cap-or-not", "max-static"];
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -1401,7 +1401,10 @@ function disable_invalid_options(){
 
     if ((typeof full_conf.get("sensor_accuracy_tr")!="undefined" && full_conf.get("sensor_accuracy_tr")=="A") || (typeof full_conf.get("sensor_accuracy_tc")!="undefined" && full_conf.get("sensor_accuracy_tr")=="1")){
         ctr_min_length = $("#ctr-diameter").val()!="not_selected" ? parseInt($("#ctr-diameter").val())*5+30 : 45; /// МИНИМАЛЬНАЯ ДЛИНА ДЛЯ КЛАССА "A"
+    }else{
+        ctr_min_length = 20;
     }
+    checkCTRDimensions();
 
 
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){//ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ ДАВЛЕНИЕ
@@ -1899,6 +1902,35 @@ function disable_invalid_options(){
             $('.head-nohead-cabel').hide(0);
         }
 
+
+        let  tlchecked = $("#thermocouple-list").is(":checked") ? 1 : 0; //// ОТКЛЮЧИТЬ ОДНОВРЕМЕННЫЙ ВЫБОР ТЕРМОПАРЫ, Ex и 4..20
+        let  exchecked = $("#Ex").is(":checked") ? 1 : 0;
+        let  checked4_20 = $("#4_20").is(":checked") ? 1 : 0;
+        if ( tlchecked + exchecked + checked4_20 == 2 ){
+            let arr = [];
+            for (let ids of ["thermocouple-list", "Ex", "4_20"]){
+                if ($("#" + ids).is(":checked")){
+                    arr.push(ids);
+                }
+            }
+            for (let ids of ["thermocouple-list", "Ex", "4_20"]){
+                if (!$("#" + ids).is(":checked")) {
+                    $("label[for="+ ids +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ
+                    $("#" + ids).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНОГО
+                    for (let el of arr){
+                        document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
+                        num+=1;
+                    }
+                }
+            }
+        }
+        $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+            if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+                $(this).prop("style", "display:none");
+            }
+        })
+
+
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
                 $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
@@ -2127,6 +2159,15 @@ function disable_invalid_options(){
             num+=1;
         }
 
+        if (typeof full_conf.get("material")!="undefined" && (full_conf.get("material")=="sialon" || full_conf.get("material")=="ceramic")){//ЕСЛИ СИАЛОН КОРУНД - оставить только DA
+            for (let els of ["nohead-list", "cabel-list", "ctr-NA", "ctr-DAO", "ctr-PZ"]){
+                $("label[for=" + els + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+                $("#" + els).prop('disabled', true).prop("checked", false);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+                document.getElementById("err_" + els).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+
         if (typeof full_conf.get("sensor-type")!="undefined"){ //деактивация ALW если не PT100 и не терм K
             let sens_typ = full_conf.get("sensor-type").slice(0,-5);
             if (typeof full_conf.get(sens_typ)!="undefined" && (full_conf.get(sens_typ)!="tha" && full_conf.get(sens_typ)!="pt100")){
@@ -2211,6 +2252,28 @@ function disable_invalid_options(){
             $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
             $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
             document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 22мм.</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="DA"){ // ДЕАКТИВАЦИЯ СИАЛОН и КОРУНД ЕСЛИ ВЫБРАНА ГОЛОВКА НЕ DA
+            $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#ceramic").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+            num+=1;
+            document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("ctr-electrical")!="undefined" && full_conf.get("ctr-electrical")!="head-list"){ // ДЕАКТИВАЦИЯ СИАЛОН и КОРУНД ЕСЛИ ВЫБРАНО БЕЗ ГОЛОВКИ ИЛИ КАБЕЛЬ
+            $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#ceramic").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+            document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
             num+=1;
         }
 
@@ -3736,7 +3799,7 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
     next_expand.addClass("active").next().slideToggle("slow");
 }
 
-function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
+function checkCTRDimensions(){ /// ПРОВЕРКА РАЗМЕРОВ CTR
     let no_check = true;
     if (!Number.isNaN(parseInt($("#ctr-length").val())) && parseInt($("#ctr-length").val())>=ctr_min_length && parseInt($("#ctr-length").val())<=ctr_max_length){
         $("#ctr-length_warning").prop("style", "display:none");
@@ -3760,11 +3823,14 @@ function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
     }
     if (no_check == false){
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-        disable_invalid_options();
+        // disable_invalid_options();
         return;
     }else{
-        expand_next_div("ctr-outlength");
-        disable_invalid_options();
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        if ($("#ctr-dimensions-select").prev("div").hasClass("active")){
+            expand_next_div("ctr-outlength");
+        }
+        // disable_invalid_options();
     }
 }
 
