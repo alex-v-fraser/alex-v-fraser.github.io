@@ -3415,8 +3415,8 @@ $(function(){
         }
 
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
-        setTimeout(() => {  $("#approval-select").slideDown("slow"); }, 300);
-        $("#approval-select").prev("div").addClass("active");
+        setTimeout(() => {  $($(".active-option-to-select-list")[0]).slideDown("slow"); }, 300);
+        $($(".active-option-to-select-list")[0]).prev("div").addClass("active");
         disable_invalid_options();
     })
 })
@@ -3502,6 +3502,8 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     document.getElementById("code").value = "";
     document.getElementById("codeError").innerHTML = "";
     document.getElementById("codeDescription").innerHTML = "";
+    setTimeout(() => {  $($(".active-option-to-select-list")[0]).slideDown("slow"); }, 300);
+    $($(".active-option-to-select-list")[0]).prev("div").addClass("active");
 }
 
 
