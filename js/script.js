@@ -2279,7 +2279,7 @@ function disable_invalid_options(){
             num+=1;
         }
 
-        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="DA"){ // ДЕАКТИВАЦИЯ СИАЛОН и КОРУНД ЕСЛИ ВЫБРАНА ГОЛОВКА НЕ DA
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-DA"){ // ДЕАКТИВАЦИЯ СИАЛОН и КОРУНД ЕСЛИ ВЫБРАНА ГОЛОВКА НЕ DA
             $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
             $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
             $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
@@ -2303,7 +2303,7 @@ function disable_invalid_options(){
 
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="sialon"){/// ДЛЯ СИАЛОНА ДИАМЕТР ТОЛЬКО 22 и БЕЗ ПРИСОЕДИНЕНИЯ
             $("#ctr-diameter option").each(function(){
-                if ($(this).val()!="22"){
+                if ($(this).val()!="22" && $(this).val()!="not_selected"){
                     $(this).attr("disabled", "disabled");
                 }
             })
@@ -2321,7 +2321,7 @@ function disable_invalid_options(){
 
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="ceramic"){ //// ДЛЯ КОРУНДА только 10 или 15 и БЕЗ ПРИСОЕДИНЕНИЯ
             $("#ctr-diameter option").each(function(){
-                if ($(this).val()!="15" && $(this).val()!="10"){
+                if ($(this).val()!="15" && $(this).val()!="10" && $(this).val()!="not_selected"){
                     $(this).attr("disabled", "disabled");
                 }
             })
