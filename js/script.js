@@ -2792,13 +2792,11 @@ $(function (){
             }
             if (this.name=="ctr-connection-type"){ /// ПРИ ОТМЕНЕ ПРИСОЕДИНЕНИЯ CTR СПРЯТАТЬ ВСЕ СПИСКИ, отметить красным, выбор not_selected
                 console.log('Спрятать все списки ctr-connection-type, пометить красным');
-                $("div#ctr-connection-type-select span").each(function(){
+                $("div.ctr-thread-flange-hygienic").each(function(){
                     $(this).prop("style", "display:none");
                 })
                 $("div#ctr-connection-type-select").find("select option[value='not_selected']").prop('selected', true);
                 $("div#ctr-connection-type-select").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-
-
             }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
@@ -3006,12 +3004,12 @@ $(function (){
         if (this.name=="ctr-connection-type" && $(this).prop("id")!="ctr-no-connection"){ ///ПОКАЗАТЬ ВЫБОР ПРИСОЕДИНЕНИЯ CTR, скрыть другие, пометить красным
             console.log("ПОКАЗАТЬ ВЫБОР ПРИСОЕДИНЕНИЯ CTR");
             let target = $(this).prop("id").slice(0,-4) + "select";
-            $("#ctr-connection-type-select-field span").each(function(){
+            $("div.ctr-thread-flange-hygienic").each(function(){
                 if ($(this).prop("id")!=target){
                     $(this).prop("style", "display:none");
                     $(this).find("select option[value='not_selected']").prop('selected', true);
                 }else{
-                    $(this).prop("style", "display:block");
+                    $(this).prop("style", "display:block").prop("style", "margin-top: 0.4em").prop("style", "margin-bottom: 0.4em");
                 }
             })
             $("#"+$(this).prop("id").slice(0,-4)+"select").prop("style", "display:block");
@@ -3021,7 +3019,7 @@ $(function (){
         }
         if (this.name=="ctr-connection-type" && $(this).prop("id")=="ctr-no-connection"){
             $("input#ctr-outlength").prop('value', '0');
-            $("#ctr-connection-type-select-field span").each(function(){
+            $("div.ctr-thread-flange-hygienic").each(function(){
                 $(this).prop("style", "display:none");
                 $(this).find("select option[value='not_selected']").prop('selected', true);
             })
