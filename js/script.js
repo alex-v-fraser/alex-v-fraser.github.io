@@ -1939,9 +1939,10 @@ function disable_invalid_options(){
                     $("label[for="+ ids +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ
                     $("#" + ids).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНОГО
                     for (let el of arr_tnt){
-                        document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
-                        num+=1;
-                        console.log(`К ${ids} Добавлено!! ${$("label[for="+el+"]").text()}`);
+                        if (el!="4_20H" && el!="nohead-list"){
+                            document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
+                            num+=1;
+                        }
                     }
                 }
             }
