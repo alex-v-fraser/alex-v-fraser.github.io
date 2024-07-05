@@ -3429,6 +3429,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                 height: "auto",
                 width: 600,
                 modal: true,
+                dialogClass: 'custom-ui-widget-header-warning',
                 buttons: {
                     Продолжить: function() {
                         $(".active-panel-container").slideUp("slow");
@@ -3937,6 +3938,7 @@ function disableLvk(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ ОТКЛЮЧЕ�
         height: "auto",
         width: 600,
         modal: true,
+        dialogClass: 'custom-ui-widget-header-warning',
         buttons: {
             Продолжить: function() {
                 $("#dialog2-confirm input").each(function(){
@@ -3961,6 +3963,7 @@ function resetButton(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ СБРОСА
         height: "auto",
         width: 600,
         modal: true,
+        dialogClass: 'custom-ui-widget-header-warning',
         buttons: {
             Продолжить: function() {
                 resetConfig();
