@@ -1948,12 +1948,6 @@ function disable_invalid_options(){
             }
         }
 
-        $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
-            if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
-                $(this).prop("style", "display:none");
-            }
-        })
-
 
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
@@ -2698,6 +2692,11 @@ function disable_invalid_options(){
         })
     }
     ctrShowHideErrSpan();
+    $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+        if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+            $(this).prop("style", "display:none");
+        }
+    })
 }
 
 
