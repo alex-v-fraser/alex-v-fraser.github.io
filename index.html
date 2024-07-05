@@ -196,11 +196,13 @@
 			text-align: center;
 			line-height: 3.5em;
 		}
-		.pc-28-panel-container {
-			display: flex;
-			flex-direction: row;
-			border: 1px solid silver;
-			overflow: hidden;
+		@media screen and (min-width: 430px) {
+			.pc-28-panel-container {
+				display: flex;
+				flex-direction: row;
+				border: 1px solid silver;
+				overflow: hidden;
+			}
 		}
 		.panel-left {
 			flex: 0 0 auto;
@@ -286,9 +288,12 @@
 			vertical-align:middle;
 		}
 
-		/* @media screen and (max-width: 800px) {
-
-		} */
+		@media screen and (max-width: 429px) {
+			.pc-28-panel-container {
+				border: 1px solid silver;
+				overflow: hidden;
+			}
+		}
 
     </style>
 
@@ -304,9 +309,9 @@
 	<div id="dialog3-confirm" title="ВНИМАНИЕ!" style="display: none">
 		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Выбранная конфгурация будет утеряна.<br>Продолжить?</p>
 	</div>
-	<div style="display: inline-block; text-align: center;">
-		<div style="display: inline-block;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
-		<h1>КОНФИГУРАТОР</h1>
+	<div style="display:flex">
+		<div style="display: block;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
+		<div style="font-size: 200%; font-weight: bold; text-align: center; flex: 1; align-content: center; margin-right: 22%;">КОНФИГУРАТОР</div>
 	</div>
 	<div id="main-dev-select">
 		<div id="main-dev-pc-28" class="main-dev">
@@ -335,7 +340,13 @@
 		</div>
 	</div>
 
-	<h3 class="back-to-main-dev-select pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container sg-25-panel-container ctr-panel-container"  style="display:none; cursor: pointer; text-align: center;">Вернуться к выбору типа средства измерения</h3>
+	<!-- <div>
+		<svg width="30" height="30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 256 256" enable-background="new 0 0 256 256" xml:space="preserve">
+			<metadata> Svg Vector Icons : http://www.onlinewebfonts.com/icon </metadata>
+			<g><g><g><path fill="#000000" d="M246,141.7v67c0-35.4-28.7-64-64-64h-68.6v39.6l-68.6-68.6l68.6-68.6v30.5H182C217.3,77.7,246,106.4,246,141.7z M78.6,65.7V47.3L10,115.8l68.6,68.6V166l-50.2-50.2L78.6,65.7z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></g></g>
+		</svg>
+	</div> -->
+	<h3 class="back-to-main-dev-select pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container sg-25-panel-container ctr-panel-container"  style="display:none; cursor: pointer; text-align: center; padding: 0.5em; padding-left: 2em; border-radius: 5px;">Вернуться к выбору типа средства измерения</h3>
 	<h1 class="pc-28-panel-container" style="display:none;">Преобразователь давления PC-28<br></h1>
 	<h1 class="apc-2000-panel-container" style="display:none;">Преобразователь давления APC-2000<br></h1>
 	<h1 class="pr-28-panel-container" style="display:none;">Преобразователь давления PR-28<br></h1>
