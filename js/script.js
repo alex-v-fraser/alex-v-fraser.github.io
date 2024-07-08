@@ -31,7 +31,7 @@ var ctr_min_length = 20; // Минимальная длина L для CTR;
 var ctr_max_length = 10000; // Максимальная длина L для CTR;
 var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
 var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
-
+var ctr_rec_outlength = 0; // Рекомендуемая мин длина S для CTR
 
 
 
@@ -3824,6 +3824,10 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
 }
 
 function checkCTRDimensions(){ /// ПРОВЕРКА РАЗМЕРОВ CTR
+    let temp = !Number.isNaN(parseInt($("#ctr-end-range").val())) ? parseInt($("#ctr-end-range").val()) : 66;
+    ctr_rec_outlength = 130*Math.log(temp)-550>ctr_min_outlength ? 130*Math.log(temp)-550 : ctr_min_outlength;
+    console.log(temp);
+    console.log(ctr_rec_outlength);
     let no_check = true;
     if (!Number.isNaN(parseInt($("#ctr-length").val())) && parseInt($("#ctr-length").val())>=ctr_min_length && parseInt($("#ctr-length").val())<=ctr_max_length){
         $("#ctr-length_warning").prop("style", "display:none");
@@ -3837,7 +3841,7 @@ function checkCTRDimensions(){ /// ПРОВЕРКА РАЗМЕРОВ CTR
         $("#ctr-outlength_warning").prop("style", "display:none");
     }else{
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-        document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм</span>`;
+        document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм. Рекомендуется не менее ${ Math.round(ctr_rec_outlength / 10) * 10 } мм.</span>`;
         $("#ctr-outlength_warning").prop("style", "display:block");
         no_check = false;
     }
