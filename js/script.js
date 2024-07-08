@@ -3841,7 +3841,8 @@ function checkCTRDimensions(){ /// ПРОВЕРКА РАЗМЕРОВ CTR
         $("#ctr-outlength_warning").prop("style", "display:none");
     }else{
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-        document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм. Рекомендуется не менее ${ Math.round(ctr_rec_outlength / 10) * 10 } мм.</span>`;
+        let add_descrs = ($("#4_20").is(":checked") || $("#4_20H").is(":checked")) ? "Рекомендуется не менее " + Math.round(ctr_rec_outlength / 10) * 10 + " мм." : "";
+        document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм. ${ add_descrs}</span>`;
         $("#ctr-outlength_warning").prop("style", "display:block");
         no_check = false;
     }
