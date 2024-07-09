@@ -3348,6 +3348,7 @@ $(function(){
 })
 $(function(){
     $(".main-dev").click(function(){/// ПРИ ВЫБОРЕ ТИПА ПРИБОРА ОТОБРАЗИТЬ ТОЛЬКО НУЖНЫЕ option to select
+        $("#advanced-code-descr").prop("style", "display:none");
         $(this.parentElement).slideUp("slow");
         $(this).addClass("main-dev-selected");
         $(this).siblings(".main-dev").removeClass("main-dev-selected");
@@ -3444,6 +3445,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         })
                         $("div.active-option-to-select").removeClass("active-option-to-select");
                         $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
+                        // setTimeout(() => {  $("#advanced-code-descr").prop("style", "display:block"); }, 600);
                     },
                     Отмена: function() {
                         $( this ).dialog( "close" );
@@ -3463,6 +3465,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             })
             $("div.active-option-to-select").removeClass("active-option-to-select");
             $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
+            // setTimeout(() => {  $("#advanced-code-descr").prop("style", "display:block"); }, 600);
         }
     })
 })
@@ -3826,8 +3829,6 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
 function checkCTRDimensions(){ /// ПРОВЕРКА РАЗМЕРОВ CTR
     let temp = !Number.isNaN(parseInt($("#ctr-end-range").val())) ? parseInt($("#ctr-end-range").val()) : 66;
     ctr_rec_outlength = 130*Math.log(temp)-550>ctr_min_outlength ? 130*Math.log(temp)-550 : ctr_min_outlength;
-    console.log(temp);
-    console.log(ctr_rec_outlength);
     let no_check = true;
     if (!Number.isNaN(parseInt($("#ctr-length").val())) && parseInt($("#ctr-length").val())>=ctr_min_length && parseInt($("#ctr-length").val())<=ctr_max_length){
         $("#ctr-length_warning").prop("style", "display:none");
@@ -4000,3 +4001,25 @@ function resetButton(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ СБРОСА
     $(params).prop("checked", false).prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
     disable_invalid_options();
  }
+
+ $(function(){/// ТЕСТ  ADVANCED - РАСШИФРОВКИ КОДА
+    $("input[id=code-test-button-ok]").click(function(){
+        let code = $("#code-test").val();
+        main_dev = code.split("/")[0].toLowerCase().startsWith("pc-28") ? "pc-28" :
+                    code.split("/")[0].toLowerCase().startsWith("pr-28") ? "pr-28" :
+                    code.split("/")[0].toLowerCase().startsWith("apc-2") ? "apc-2000" :
+                    code.split("/")[0].toLowerCase().startsWith("apr-2") ? "apr-2000" :
+                    code.split("/")[0].toLowerCase().startsWith("ct") ? "ctr" :
+        "";
+        if (main_dev!=""){
+            $("#advanced-code-descr").prop("style", "display:none");
+            $("#main-dev-" + main_dev).trigger("click");
+            $(".active-option-to-select-list").each(function(){
+                for (let opts of code.split("/")){
+                    console.log($(this).find("input"));
+                    console.log(opts);
+                }
+            })
+        }
+    })
+})
