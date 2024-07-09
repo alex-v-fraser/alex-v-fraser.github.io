@@ -223,7 +223,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
 
         if (code[0].startsWith("CT")){
-            let ctr_unit = (typeof code[i].split("=")[1]=="undefined" || code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)==null) ? "." : " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".";
+            let ctr_unit = (typeof code[i].split("=")[1]=="undefined" || code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)==null) ? "." : " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
             if (code[i].includes("...") && code[i].endsWith("C")){
                 full_description.set(code[i], "Диапазон измерения температуры от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + "°C.");
             }
