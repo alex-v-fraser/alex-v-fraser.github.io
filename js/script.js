@@ -32,7 +32,7 @@ var ctr_max_length = 10000; // Максимальная длина L для CTR;
 var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
 var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
 var ctr_rec_outlength = 0; // Рекомендуемая мин длина S для CTR
-
+//"Все права на данный код принадлежат Фомину Александру https://github.com/alex-v-fraser"
 
 
 
