@@ -3368,6 +3368,7 @@ $(function(){
                     }
                 })
             }
+            $("label[for=capillary-cap-plus]").prop("style", "display:none");
             $("label[for=capillary-cap-minus]").prop("style", "display:none");
             $("label[for=minus-hygienic-list]").prop("style", "display:none");
         }else{
@@ -3379,6 +3380,7 @@ $(function(){
                     }
                 })
             }
+            $("label[for=capillary-cap-plus]").prop("style", "display:block");
             $("label[for=capillary-cap-minus]").prop("style", "display:block");
             $("label[for=minus-hygienic-list]").prop("style", "display:block");
         }
