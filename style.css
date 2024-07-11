@@ -276,7 +276,15 @@ img {
 }
 
 #footer {
-    position:absolute;bottom:0px;
+    position:absolute;
+    bottom:0px;
+    background-color:#FEC600;
+    width:100%;
+    text-align:center
+}
+#header {
+    position:absolute;
+    top:0px;
     background-color:#FEC600;
     width:100%;
     text-align:center
