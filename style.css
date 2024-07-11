@@ -271,3 +271,10 @@ img {
         overflow: hidden;
     }
 }
+
+#footer {
+    position:absolute;bottom:0px;
+    background-color:#FEC600;
+    width:100%;
+    text-align:center
+}
