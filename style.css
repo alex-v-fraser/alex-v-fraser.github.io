@@ -53,6 +53,7 @@ input[type="number"] {
     cursor: col-resize !important;
     right: -13px !important;
     background: url(images/vsizegrip.png) center center no-repeat #a5a4a4 !important;
+    z-index: 0 !important;
 }
 
 fieldset {
@@ -277,7 +278,7 @@ img {
 
 #footer {
     /* flex: 0 0 auto; */
-    position:absolute !important;
+    position:fixed;
     bottom:0px !important;
     background-color:#FEC600;
     width:100%;
