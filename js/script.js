@@ -3713,7 +3713,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
         // over
             tooltip_id = $(this).prop("htmlFor");
             // console.log(`/images/tooltips/${tooltip_id}_tooltip.jpg`);
-            img_path = `/images/tooltips/${tooltip_id}_tooltip.jpg`;// + ${/(jpg$|png$)/};
+            img_path = `/images/tooltips/${tooltip_id}_tooltip.png`;// + ${/(jpg$|png$)/};
             mouse = $(this);
             $.ajax({
                 type: "HEAD",
