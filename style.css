@@ -276,8 +276,9 @@ img {
 }
 
 #footer {
-    position:absolute;
-    bottom:0px;
+    /* flex: 0 0 auto; */
+    position:absolute !important;
+    bottom:0px !important;
     background-color:#FEC600;
     width:100%;
     text-align:center
