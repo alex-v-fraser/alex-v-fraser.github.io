@@ -552,7 +552,7 @@ $(document).ready(function(){
     let cpr = document.getElementById("footer");
     let lm = new Date(document.lastModified);
     lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
-    cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex Fraser.";
+    cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
     cpr.innerHTML += " Last Updated : " + lm;
 });
 

@@ -243,6 +243,9 @@ input[type=checkbox]:hover + label:hover {
 #main-dev-ctr {
     background: no-repeat center/80% url("images/2c7b09f1f26ca1ad0457853511c4a7a8.jpg");
 }
+#main-dev-thermowell {
+    background: no-repeat center/80% url("images/b7992943d061c628cae2e4263c6e4b6a.png");
+}
 *,
 *::before,
 *::after {
