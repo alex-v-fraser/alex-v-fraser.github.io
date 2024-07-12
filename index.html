@@ -873,8 +873,8 @@
 							<input type="checkbox" name="thermowell" value="OG2" id="og2" class="custom-checkbox"><label for="og2" class="tooltiped"><b>OG2</b> - Сварная цилиндрическая резьбовая</label><div id="err_og2"  style="display:none;"></div>
 							<input type="checkbox" name="thermowell" value="OG3" id="og3" class="custom-checkbox"><label for="og3" class="tooltiped"><b>OG3</b> - Сварная цилиндрическая приварная</label><div id="err_og3"  style="display:none;"></div>
 							<input type="checkbox" name="thermowell" value="T1" id="t1" class="custom-checkbox"><label for="t1" class="tooltiped"><b>T1</b> - Сварная цилиндрическая фланцевая</label><div id="err_t1"  style="display:none;"></div>
-							<input type="checkbox" name="thermowell" value="SWT" id="swt" class="custom-checkbox"><label for="swt" class="tooltiped"><b>SWT</b> - Цельноточеная коническая фланцевая</label><div id="err_swt"  style="display:none;"></div>
 							<input type="checkbox" name="thermowell" value="SW" id="sw" class="custom-checkbox"><label for="sw" class="tooltiped"><b>SW</b> - Цельноточеная коническая приварная</label><div id="err_sw"  style="display:none;"></div>
+							<input type="checkbox" name="thermowell" value="SWT" id="swt" class="custom-checkbox"><label for="swt" class="tooltiped"><b>SWT</b> - Цельноточеная коническая фланцевая</label><div id="err_swt"  style="display:none;"></div>
 							<input type="checkbox" name="thermowell" value="SWG" id="swg" class="custom-checkbox"><label for="swg" class="tooltiped"><b>SWG</b> - Цельноточеная коническая резьбовая</label><div id="err_swg"  style="display:none;"></div>
 							<input type="checkbox" name="thermowell" value="SWG1" id="swg1" class="custom-checkbox"><label for="swg1" class="tooltiped"><b>SWG1</b> - Цельноточеная цилиндрическая резьбовая</label><div id="err_swg1"  style="display:none;"></div>
 						</fieldset>
@@ -888,7 +888,7 @@
 						<fieldset id="thermowell-dimensions-select-field">
 							<div>
 								<label for="thermowell-diameter">Диаметр гильзы, мм: </label>
-								<select name="thermowell-diameter" id="thermowell-diameter" style="width: 4.5em; margin-left:0.5em" onchange="disable_invalid_options()">
+								<select name="thermowell-diameter" id="thermowell-diameter" style="width: 4.5em; margin-left: 6.1em" onchange="disable_invalid_options()">
 									<option value="not_selected" selected>---</option>
 									<option value="3">3</option>
 									<option value="6">6</option>
@@ -902,7 +902,7 @@
 							</div>
 							<div style="margin-top: 0.5em;">
 								<label for="thermowell-length">Монтажная длина гильзы, мм: </label>
-								<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="thermowell-length" style="width: 4.5em; margin-left:0.5em" id="thermowell-length" required onchange="disable_invalid_options()">
+								<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="thermowell-length" style="width: 4.5em; margin-left:1.3em" id="thermowell-length" required onchange="disable_invalid_options()">
 							</div>
 							<div id="thermowell-length_warning" style="display:none; font-size: 85%;">Допустимая длина</div>
 							<div style="margin-top: 0.5em;">
@@ -913,6 +913,77 @@
 							<div id="err_thermowell-ctr-tlength" style="display:none;"></div>
 						</fieldset>
 					</div>
+
+					<div class="option-to-select thermowell" id="thermowell-pressure-select-div" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Максимальное давление</span></div>
+					</div>
+					<div class="option-to-select-list thermowell" id="thermowell-pressure-select" style="display: none;">
+						<fieldset id="thermowell-pressure-select-field">
+							<div style="margin-top: 0.5em;">
+								<label for="thermowell-pressure">Максимальное давление, МПа: </label>
+								<input type="number" step="1" min="0" max="400000" onblur="this.value = parseFloat(this.value).toFixed(0).replace(/([0-9])/,'$1')" name="thermowell-pressure" style="width: 4.5em; margin-left:1.3em" id="thermowell-pressure" required onchange="disable_invalid_options()">
+							</div>
+							<div id="thermowell-pressure_warning" style="display:none; font-size: 85%;">Допустимое давление</div>
+							<div id="err_thermowell-pressure" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div class="option-to-select thermowell" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Тип и размер присоединения</span></div>
+					</div>
+					<div class="option-to-select-list thermowell" id="thermowell-connection-type-select" style="display: none;">
+						<fieldset id="thermowell-connection-type-select-field" name="thermowell-connection-type-select-field">
+							<div class="thermowell-thread-flange-hygienic og2 og3 t1 sw swt swg swg1" id="thermowell-therm-select" style="display: none;">
+								<span>Присоединение термометра:</span>
+								<select name="thermowell-therm-type" id="thermowell-therm-type" style="width: 5.5em;" onchange="thermowell_connection_selected()">
+									<option value="not_selected" selected>---</option>
+									<option value="G1/8">G1/8</option>
+									<option value="G1/4">G1/4</option>
+									<option value="G1/2">G1/2</option>
+									<option value="M12x1">M12x1</option>
+									<option value="M20x1,5">M20x1,5</option>
+								</select>
+							</div>
+
+							<div class="thermowell-thread-flange-hygienic og1 og2 t1 swt swg swg1" id="thermowell-flange-select" style="display: none; margin-top: 0.5em">
+								<span>Присоединение к процессу:</span>
+								<select class="og1 og2 swg swg1" name="thermowell-therm-type2" id="thermowell-therm-type2" style="display: none; width: 5.5em; margin-left:0.4em" onchange="thermowell_connection_selected()">
+									<option value="not_selected" selected>---</option>
+									<option value="G1/8">G1/8</option>
+									<option value="G1/4">G1/4</option>
+									<option value="G1/2">G1/2</option>
+									<option value="M12x1">M12x1</option>
+									<option value="M20x1,5">M20x1,5</option>
+								</select>
+								<select class="t1 swt" name="thermowell-flange-type" id="thermowell-flange-type" style="display: none; width: 5.5em; margin-left:0.4em" onchange="thermowell_connection_selected()">
+									<option value="not_selected" selected>---</option>
+									<option value="DN25">DN25</option>
+									<option value="DN50">DN50</option>
+									<option value="DN80">DN80</option>
+									<option value="DN100">DN100</option>
+								</select>
+								<select class="t1 swt" name="thermowell-flange-type-pn" id="thermowell-flange-type-pn" style="display: none; width: 4.5em;" onchange="thermowell_connection_selected()">
+									<option value="not_selected" selected>---</option>
+									<option value="PN10">PN10</option>
+									<option value="PN16">PN16</option>
+									<option value="PN25">PN25</option>
+									<option value="PN40">PN40</option>
+								</select>
+								<select class="t1 swt" name="thermowell-flange-type-typ" id="thermowell-flange-type-typ" style="display: none; width: 2.5em;" onchange="thermowell_connection_selected()">
+									<option value="not_selected" selected>---</option>
+									<option value="B">B</option>
+									<option value="C">C</option>
+									<option value="D">D</option>
+									<option value="E">E</option>
+									<option value="F">F</option>
+								</select>
+							</div>
+							<div id="thermowell-connection_warning" style="display:block;"><img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;'>Сначала выберите тип и размеры гильзы!</span></div>
+						</fieldset>
+					</div>
+
 				</div>
 			</div>
 
@@ -934,10 +1005,6 @@
 
 
 		<div class="sg-25-panel-container" style="display:none;">
-			В РАЗРАБОТКЕ!!!
-		</div>
-
-		<div class="thermowell-panel-container" style="display:none;">
 			В РАЗРАБОТКЕ!!!
 		</div>
 

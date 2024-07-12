@@ -2707,7 +2707,9 @@ function disable_invalid_options(){
             $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Завершите конфигурирование!</span>");
         })
     }
-    ctrShowHideErrSpan();
+    if (full_conf.get("main_dev") == "ctr"){
+        ctrShowHideErrSpan();
+    }
     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
         if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
             $(this).prop("style", "display:none");
@@ -4041,5 +4043,11 @@ function resetButton(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ СБРОСА
                 }
             })
         }
+    })
+})
+
+$(function(){// ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ ПОКАЗАТЬ/СКРЫТЬ ПРИСОЕДИНЕНИЯ
+    $("input[name=thermowell]").click(function(){
+        console.log("ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ");
     })
 })
