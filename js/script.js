@@ -805,6 +805,13 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             full_conf.delete("ctr_hygienic_type");
         }
     }
+    if (main_dev=="thermowell"){//ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ ГИЛЬЗЫ
+        console.log("ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ ГИЛЬЗЫ");
+        let options = ["thermowell-type", "material"];
+        for (let el of options){
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }
+    }
 
     return full_conf;
 }
@@ -1859,42 +1866,7 @@ function disable_invalid_options(){
                         }
                     }
                 }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-plus") == 'direct'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                //         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //         if (typeof document.getElementById("err_"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                //             document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get(con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get(con_type)}_err_cancel${num}'>Выбранный диапазон. Минимальная ширина для непосредственного соединения ${entr[1].get("range")} кПа.</label>`;
-                //             num+=1;
-                //         }
-                //     }
-                // }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-minus") == 'direct'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                //         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //         if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                //             document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get(con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get(con_type)}_err_cancel${num}'>Выбранный диапазон. Минимальная ширина для непосредственного соединения ${entr[1].get("range")} кПа.</label>`;
-                //             num+=1;
-                //         }
-                //     }
-                // }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-plus") == 'capillary'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range_c") !== 'undefined' && full_conf.get("range")<entr[1].get("range_c")){
-                //         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //     }
-                // }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-minus") == 'capillary'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                //         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //     }
-                // }
+
                 if (typeof full_conf.get("material")!=='undefined'){
                     if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
@@ -2451,6 +2423,10 @@ function disable_invalid_options(){
         // ################################################################################################################################################################################
     }
 
+    if (full_conf.get("main_dev")=="thermowell"){ /// ПРОВЕРКА ОПЦИЙ ГИЛЬЗЫ
+        console.log("ПРОВЕРКА ОПЦИЙ ГИЛЬЗЫ");
+        // ####################################################################################################
+    }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
         $("label[for=0_16]").prop("style", "display:block");
@@ -3411,30 +3387,21 @@ $(function(){
             $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
         })
 
-        let ctr_materials = ["aisi304", "aisi310", "aisi316", "aisi321", "inconel", "ceramic",  "sialon"]
-        if ($(".main-dev-selected").prop("id").slice(9,)=="ctr"){
-            $("#pressure-material-header").prop("style", "display:none");
-            $("#ctr-material-header").prop("style", "display:block");
-            $("input[name=material]").next("label").each(function(){
-                if (ctr_materials.includes($(this).prop("for"))){
-                    $(this).prop("style", "display:block");
-                }else{
-                    $(this).prop("style", "display:none");
-                }
-            })
-
-        }else{
-            $("#pressure-material-header").prop("style", "display:block");
-            $("#ctr-material-header").prop("style", "display:none");
-            $("input[name=material]").next("label").each(function(){
-                if (ctr_materials.includes($(this).prop("for"))){
-                    $(this).prop("style", "display:none");
-                }else{
-                    $(this).prop("style", "display:block");
-                }
-            })
-            $("label[for=aisi316]").prop("style", "display:block");
-        }
+        let main_dev_id = $(".main-dev-selected").prop("id").slice(9,);
+        $("#material-select").prev("div").find("span").each(function(){
+            if ($(this).hasClass(main_dev_id)){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
+        $("input[name=material]").next("label").each(function(){
+            if ($(this).hasClass(main_dev_id)){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        })
 
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
         setTimeout(() => {  $($(".active-option-to-select-list")[0]).slideDown("slow"); }, 300);
@@ -3745,7 +3712,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         tooltip.id = tooltip_id + "_tooltip";
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
-                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
+                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':300, 'height':300, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
                     }, 300);
                     delayed_function2 = setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 2500);
                 },
@@ -3764,7 +3731,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
 
         x = e.pageX - mouse.offset().left;
         y = e.pageY - mouse.offset().top;
-        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});;
+        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':300, 'height':300, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});;
 
     })
 })
@@ -4003,51 +3970,114 @@ function resetButton(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ СБРОСА
     })
 }
 
- $(function(){//ПРИ клике на заблокированный Lvk
+$(function(){//ПРИ клике на заблокированный Lvk
     $(document).on("click", "label[for='spec_lvk']", function(){
         if ($("#spec_lvk").is(":checked:disabled")){
             disableLvk();
         }
     })
- })
+})
 
- function uncheckExd(){
+function uncheckExd(){
     $("#Exd").prop("checked", false).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
- }
+}
 
- function changeDiameterTo22(){
-    $("#ctr-diameter option[value=not_selected]").prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-    disable_invalid_options();
- }
- function uncheckWWGN(params) {///отмена WW и GN
-    $(params).prop("checked", false).prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-    disable_invalid_options();
- }
+function changeDiameterTo22(){
+   $("#ctr-diameter option[value=not_selected]").prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+   disable_invalid_options();
+}
 
- $(function(){/// ТЕСТ  ADVANCED - РАСШИФРОВКИ КОДА
-    $("input[id=code-test-button-ok]").click(function(){
-        let code = $("#code-test").val();
-        main_dev = code.split("/")[0].toLowerCase().startsWith("pc-28") ? "pc-28" :
-                    code.split("/")[0].toLowerCase().startsWith("pr-28") ? "pr-28" :
-                    code.split("/")[0].toLowerCase().startsWith("apc-2") ? "apc-2000" :
-                    code.split("/")[0].toLowerCase().startsWith("apr-2") ? "apr-2000" :
-                    code.split("/")[0].toLowerCase().startsWith("ct") ? "ctr" :
-        "";
-        if (main_dev!=""){
-            $("#advanced-code-descr").prop("style", "display:none");
-            $("#main-dev-" + main_dev).trigger("click");
-            $(".active-option-to-select-list").each(function(){
-                for (let opts of code.split("/")){
-                    console.log($(this).find("input"));
-                    console.log(opts);
+function uncheckWWGN(params) {///отмена WW и GN
+   $(params).prop("checked", false).prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+   disable_invalid_options();
+}
+
+$(function(){/// ТЕСТ  ADVANCED - РАСШИФРОВКИ КОДА
+   $("input[id=code-test-button-ok]").click(function(){
+       let code = $("#code-test").val();
+       main_dev = code.split("/")[0].toLowerCase().startsWith("pc-28") ? "pc-28" :
+                   code.split("/")[0].toLowerCase().startsWith("pr-28") ? "pr-28" :
+                   code.split("/")[0].toLowerCase().startsWith("apc-2") ? "apc-2000" :
+                   code.split("/")[0].toLowerCase().startsWith("apr-2") ? "apr-2000" :
+                   code.split("/")[0].toLowerCase().startsWith("ct") ? "ctr" :
+       "";
+       if (main_dev!=""){
+           $("#advanced-code-descr").prop("style", "display:none");
+           $("#main-dev-" + main_dev).trigger("click");
+           $(".active-option-to-select-list").each(function(){
+               for (let opts of code.split("/")){
+                   console.log($(this).find("input"));
+                   console.log(opts);
+               }
+           })
+       }
+   })
+})
+
+$(function(){// ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ ПОКАЗАТЬ/СКРЫТЬ ПРИСОЕДИНЕНИЯ и диаметры
+    $("input[name=thermowell-type]").click(function(){
+        if ($("input[name=thermowell-type]:checked").length>0){
+            $(".thermowell-dimensions").each(function(){
+                $(this).show();
+            })
+            let idd = $("input[name=thermowell-type]:checked").prop("id");
+            $("#thermowell-diameter option").each(function(){
+                if ($(this).hasClass(idd)){
+                    $(this).show();
+                }else{
+                    $(this).hide();
                 }
             })
+            $("#thermowell-diameter option[value=not_selected]").prop("selected", true);
+            $(".thermowell-connection-type-div").each(function(){
+                if ($(this).hasClass(idd)){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            })
+            $(".thermowell-connection-type-select").each(function(){
+                if ($(this).hasClass(idd)){
+                    $(this).show().find("option[value=not_selected]").prop("selected", true);
+                }else{
+                    $(this).hide();
+                }
+            })
+            $("#thermowell-connection_warning").hide();
+            $("#thermowell-dimensions_warning").hide();
+            $("#thermowell-tlength").val('');
+            $("#thermowell-length").val('');
+        }else{
+            $(".thermowell-connection-type-div").each(function(){
+                $(this).hide();
+            })
+            $(".thermowell-dimensions").each(function(){
+                $(this).hide();
+            })
+            $("#thermowell-connection_warning").show();
+            $("#thermowell-dimensions_warning").show();
+            document.getElementById("thermowell-dimensions_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;;'>Сначала выберите тип гильзы!</span>`;
         }
     })
 })
 
-$(function(){// ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ ПОКАЗАТЬ/СКРЫТЬ ПРИСОЕДИНЕНИЯ
-    $("input[name=thermowell]").click(function(){
-        console.log("ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ");
-    })
-})
+function thermowell_connection_selected(){
+    console.log();
+}
+
+function thermowell_dimensions_selected(changed_id){
+    let thermowell_type = $("input[name=thermowell-type]:checked").val().toLowerCase();
+    console.log(changed_id);
+    let delta = (["og1", "og2", "swg", "swg1"].includes(thermowell_type)) ? 15 : thermowell_type=="og3" ? 35 : thermowell_type=="sw" ? -5 : 50;
+    if (changed_id == "thermowell-length"){
+        $("#thermowell-tlength").val(parseInt($("#thermowell-length").val()) + delta);
+    }else{
+        $("#thermowell-length").val(parseInt($("#thermowell-tlength").val()) - delta);
+    }
+    let sign_l = (["t1", "swt"].includes(thermowell_type)) ? "-" : "=";
+    let sign = delta>=0 && !(["t1", "swt"].includes(thermowell_type)) ? "+" : delta<0 && !(["t1", "swt"].includes(thermowell_type)) ? "" : ">";
+    document.getElementById("thermowell-dimensions_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;'>Внимание! Lt ${sign_l} L ${sign} ${delta} мм; L > 25 мм</span>`;
+    $("#thermowell-dimensions_warning").show(100);
+
+    disable_invalid_options();
+}
