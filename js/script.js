@@ -594,6 +594,7 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let ctr_thread_type = $("select[name=ctr-thread-type]").val()!="not_selected" ? $("select[name=ctr-fm-type]").val() + $("select[name=ctr-ph-type]").val() + "(" + $("select[name=ctr-thread-type]").val() + ")" : undefined;
     let ctr_hygienic_type = $("select[name=ctr-hygienic-type]").val()!="not_selected" ? $("select[name=ctr-hygienic-type]").val() : undefined;
     let ctr_flange_type = ($("select[name=ctr-flange-type]").val()!="not_selected" && $("select[name=ctr-flange-type-pn]").val()!="not_selected" && $("select[name=ctr-flange-type-typ]").val()!="not_selected") ? $("select[name=ctr-flange-type]").val() + $("select[name=ctr-flange-type-pn]").val() + $("select[name=ctr-flange-type-typ]").val() : undefined;
+    let thermowell_diameter = $("select[name=thermowell-diameter]").val()!="not_selected" ? $("select[name=thermowell-diameter]").val() : undefined;
 
 
     const koef = new Map([
@@ -811,6 +812,39 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         for (let el of options){
             full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
         }
+        for (let els of ["thermowell-pressure", "thermowell-length", "thermowell-tlength"]){
+            if (Number.isNaN(parseInt($("input[name=" + els + "]").val()))){
+                full_conf.set(els, undefined);
+            }else{
+                full_conf.set(els, $("input[name=" + els + "]").val());
+            }
+        }
+        console.log($("#thermowell-connection1 select:required"));
+        if ($("#thermowell-connection1 select:required").length>0){
+            if ($(" #thermowell-connection1 select").find("option[value=not_selected]:selected").length!=0){
+                full_conf.set("thermowell-connection1", undefined);
+            }else{
+                full_conf.set("thermowell-connection1", $(" #thermowell-connection1 select").val());
+            }
+        }else{
+            full_conf.delete("thermowell-connection1");
+        }
+        console.log($("#thermowell-connection2 select:required").length>0);
+        console.log($("#thermowell-connection2 select:required").find("option[value=not_selected]:selected").length);
+        if ($("#thermowell-connection2 select:required").length>0){
+            if ($("#thermowell-connection2 select:required").find("option[value=not_selected]:selected").length!=0){
+                full_conf.set("thermowell-connection2", undefined);
+            }else{
+                let element = "";
+                $("#thermowell-connection2 select:required").each(function(){
+                    element+=$(this).find("option:selected").val();
+                })
+                full_conf.set("thermowell-connection2", element);
+            }
+        }else{
+            full_conf.delete("thermowell-connection2");
+        }
+        full_conf.set("thermowell-diameter", thermowell_diameter);
     }
 
     return full_conf;
@@ -1281,11 +1315,30 @@ function get_ctr_code_info(data){
         code = "CTU-ALW/" + $("input[name=ctr-ALW-type]:checked").val() + "/" + approval + special + "d" + "=" + data.get("ctr_diameter") + "мм/L" + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + range + open_circuit;
     }
 
+    if ($("div.color-mark-field.unselected:visible").length==0){
+        document.getElementById("code").value = code;
+        $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+            minWidth: 200,
+            maxWidth: function(){return $('.code-input-container').width()-8; },
+            comfortZone: 5
+        })
+        addDescription();
+    }
+}
 
-
-
-
-                                                                                ////ПРОДОЛЖИТЬ///////////////////////////////////////////////////////////////////
+function get_thermowell_code_info(data){///ПОЛУЧЕНИЕ КОДА ЗАКАЗА ГИЛЬЗЫ
+    console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА ГИЛЬЗЫ");
+    let code = "В РАЗРАБОТКЕ!!!";
+    let type = data.get("thermowell-type").toUpperCase();
+    let diameter = data.get("thermowell-diameter");
+    let pressure = parseInt(data.get("thermowell-pressure")) + "МПа";
+    let connection1 = typeof data.get("thermowell-connection1")!='undefined' ? data.get("thermowell-connection1"): "-";
+    let connection2 = typeof data.get("thermowell-connection2")!='undefined' ? data.get("thermowell-connection2"): "-";
+    let cover = $("#spec_ptfe").is(":checked") ? "(PTFE)" :"";
+    let material = data.get("material").toUpperCase() + cover;
+    let lt = "Lt=" + data.get("thermowell-tlength") + "мм";
+    let l = "L=" + data.get("thermowell-length") + "мм";
+    code = type + "/" + diameter + "/" + pressure + "/" + connection1 + "/" + connection2 + "/" + material + "/" + lt + "/" + l;
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -2694,6 +2747,9 @@ function disable_invalid_options(){
         if (full_conf.get("main_dev") == "ctr"){
             get_ctr_code_info(full_conf);
         }
+        if (full_conf.get("main_dev") == "thermowell"){
+            get_thermowell_code_info(full_conf);
+        }
     }else{
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
             $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Завершите конфигурирование!</span>");
@@ -4056,9 +4112,9 @@ $(function(){// ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ П
             })
             $(".thermowell-connection-type-select").each(function(){
                 if ($(this).hasClass(idd)){
-                    $(this).show().find("option[value=not_selected]").prop("selected", true);
+                    $(this).show().prop("required", true).find("option[value=not_selected]").prop("selected", true);
                 }else{
-                    $(this).hide();
+                    $(this).hide().prop("required", false);
                 }
             })
             $("#thermowell-connection_warning").hide();
