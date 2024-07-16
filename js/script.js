@@ -564,7 +564,7 @@ $(document).ready(function(){
     let lm = new Date(document.lastModified);
     lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
     cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
-    cpr.innerHTML += " Last Updated : " + lm;
+    cpr.innerHTML += "<br>Last Updated : " + lm;
 });
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
@@ -2484,6 +2484,17 @@ function disable_invalid_options(){
         $("label[for=spec_38]").prop("style", "display:none");
         $("label[for=spec_375]").prop("style", "display:none");
     }
+    if (full_conf.get("main_dev") == "thermowell"){
+        $("input[name=special]").each(function(){
+            if ($(this).prop('id')=="spec_ptfe"){
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
+            }else{
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
+            }
+        })
+    }else{
+        $("label[for=spec_ptfe]").prop("style", "display:none");
+    }
 
 
     /// ПРОВЕРКА SPECIAL
@@ -2586,6 +2597,11 @@ function disable_invalid_options(){
         $("label[for=spec_375]").addClass('disabled');
         $("#spec_375").prop('disabled', true);
         $("#spec_375").prop('checked', false);
+    }
+    if (full_conf.get("thermowell-type")!="t1" && full_conf.get("thermowell-type")!="swt"){ // проверка специсполнения PTFE для гильзы
+        $("label[for=spec_ptfe]").addClass('disabled');
+        $("#spec_ptfe").prop('disabled', true);
+        $("#spec_ptfe").prop('checked', false);
     }
 
     if (full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6" && !$("input#KO").is(":checked")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk для Exd d=6
@@ -4016,6 +4032,8 @@ $(function(){/// ТЕСТ  ADVANCED - РАСШИФРОВКИ КОДА
 
 $(function(){// ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ ПОКАЗАТЬ/СКРЫТЬ ПРИСОЕДИНЕНИЯ и диаметры
     $("input[name=thermowell-type]").click(function(){
+        $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        $("#thermowell-therm-type").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         if ($("input[name=thermowell-type]:checked").length>0){
             $(".thermowell-dimensions").each(function(){
                 $(this).show();
@@ -4065,19 +4083,51 @@ function thermowell_connection_selected(){
     console.log();
 }
 
-function thermowell_dimensions_selected(changed_id){
+function thermowell_dimensions_selected(changed_id){ /// ПРОВЕРКА РАЗМЕРОВ ГИЛЬЗЫ
     let thermowell_type = $("input[name=thermowell-type]:checked").val().toLowerCase();
-    console.log(changed_id);
+    let l_max = ["sw", "swt", "swg", "swg1"].includes(thermowell_type) ? 350 : 10000;
+    let l_text = ["sw", "swt", "swg", "swg1"].includes(thermowell_type) ? "L < 350 мм" : "";
     let delta = (["og1", "og2", "swg", "swg1"].includes(thermowell_type)) ? 15 : thermowell_type=="og3" ? 35 : thermowell_type=="sw" ? -5 : 50;
-    if (changed_id == "thermowell-length"){
-        $("#thermowell-tlength").val(parseInt($("#thermowell-length").val()) + delta);
-    }else{
-        $("#thermowell-length").val(parseInt($("#thermowell-tlength").val()) - delta);
-    }
     let sign_l = (["t1", "swt"].includes(thermowell_type)) ? "-" : "=";
     let sign = delta>=0 && !(["t1", "swt"].includes(thermowell_type)) ? "+" : delta<0 && !(["t1", "swt"].includes(thermowell_type)) ? "" : ">";
-    document.getElementById("thermowell-dimensions_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;'>Внимание! Lt ${sign_l} L ${sign} ${delta} мм; L > 25 мм</span>`;
+    if (changed_id == "thermowell-length"){
+        if (delta!=50 || (delta==50 && (Number.isNaN(parseInt($("#thermowell-length").val())) || Number.isNaN(parseInt($("#thermowell-tlength").val())) || parseInt($("#thermowell-tlength").val())-parseInt($("#thermowell-length").val())<50))){
+            $("#thermowell-tlength").val(parseInt($("#thermowell-length").val()) + delta);
+        }
+    }else{
+        if (delta!=50 || (delta==50 && (Number.isNaN(parseInt($("#thermowell-length").val())) || Number.isNaN(parseInt($("#thermowell-tlength").val())) || parseInt($("#thermowell-tlength").val())-parseInt($("#thermowell-length").val())<50))){
+            $("#thermowell-length").val(parseInt($("#thermowell-tlength").val()) - delta);
+        }
+    }
+    document.getElementById("thermowell-dimensions_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;'>Внимание! Lt ${sign_l} L ${sign} ${delta} мм; L > 25 мм; ${l_text}</span>`;
     $("#thermowell-dimensions_warning").show(100);
-
+    if (!Number.isNaN(parseInt($("#thermowell-length").val())) && !Number.isNaN(parseInt($("#thermowell-tlength").val())) && $("select[name=thermowell-diameter]").val()!="not_selected" && parseInt($("#thermowell-length").val())>=25 && parseInt($("#thermowell-length").val())<=l_max) {
+        $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+    }else{
+        $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
     disable_invalid_options();
 }
+
+$(function(){
+    $(document).on("change", "#thermowell-connection-type-select select:visible", function(){
+        if ($("#thermowell-connection-type-select select:visible option[value=not_selected]:selected").length==0){
+            expand_next_div($(this).prop("id"));
+            disable_invalid_options();
+        }else{
+            $("#thermowell-connection-type-select").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+        }
+    })
+})
+$(function(){
+    $("#thermowell-pressure").change(function(){
+        if (!Number.isNaN(parseInt($(this).val())) && $(this).val()>0 && $(this).val()<40){
+            expand_next_div($(this).prop("id"));
+            disable_invalid_options();
+        }else{
+            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+        }
+    })
+})

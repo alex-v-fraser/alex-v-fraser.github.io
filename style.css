@@ -226,6 +226,9 @@ input[type=checkbox]:hover + label:hover {
     overflow: hidden;
     cursor: pointer;
 }
+.main-dev:hover {
+    border-style: groove;
+}
 #main-dev-pc-28 {
     background: no-repeat center/80% url("images/3b7f912030e372732ce4970ff6d500ca.jpg");
 }

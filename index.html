@@ -61,7 +61,7 @@
 		<div id="dialog3-confirm" title="ВНИМАНИЕ!" style="display: none">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Выбранная конфгурация будет утеряна.<br>Продолжить?</p>
 		</div>
-		<div style="display:flex">
+		<div style="display:flex; background: #FEC600">
 			<div style="display: block;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
 			<div style="font-size: 200%; font-weight: bold; text-align: center; flex: 1; align-content: center; margin-right: 22%;">КОНФИГУРАТОР</div>
 		</div>
@@ -514,7 +514,7 @@
 						<fieldset id="thermowell-connection-type-select-field" name="thermowell-connection-type-select-field">
 							<div class="thermowell-connection-type-div og2 og3 t1 sw swt swg swg1" id="thermowell-therm-select" style="display: none;">
 								<span>Присоединение термометра:</span>
-								<select class="thermowell-connection-type-select og1 og2 og3 t1 sw swt swg swg1" name="thermowell-therm-type" id="thermowell-therm-type" style="width: 5.5em;" onchange="thermowell_connection_selected()">
+								<select class="thermowell-connection-type-select og1 og2 og3 t1 sw swt swg swg1" name="thermowell-therm-type" id="thermowell-therm-type" style="width: 5.5em;">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="G1/8">G1/8</option>
 									<option value="G1/4">G1/4</option>
@@ -526,7 +526,7 @@
 
 							<div class="thermowell-connection-type-div og1 og2 t1 swt swg swg1" id="thermowell-flange-select" style="display: none; margin-top: 0.5em">
 								<span>Присоединение к процессу:</span>
-								<select class="thermowell-connection-type-select og1 og2 swg swg1" name="thermowell-therm-type2" id="thermowell-therm-type2" style="display: none; width: 5.5em; margin-left:0.4em" onchange="thermowell_connection_selected()">
+								<select class="thermowell-connection-type-select og1 og2 swg swg1" name="thermowell-therm-type2" id="thermowell-therm-type2" style="display: none; width: 5.5em; margin-left:0.4em">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="G1/8">G1/8</option>
 									<option value="G1/4">G1/4</option>
@@ -534,21 +534,21 @@
 									<option value="M12x1">M12x1</option>
 									<option value="M20x1,5">M20x1,5</option>
 								</select>
-								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type" id="thermowell-flange-type" style="display: none; width: 5.5em; margin-left:0.4em" onchange="thermowell_connection_selected()">
+								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type" id="thermowell-flange-type" style="display: none; width: 5.5em; margin-left:0.4em">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="DN25">DN25</option>
 									<option value="DN50">DN50</option>
 									<option value="DN80">DN80</option>
 									<option value="DN100">DN100</option>
 								</select>
-								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-pn" id="thermowell-flange-type-pn" style="display: none; width: 4.5em;" onchange="thermowell_connection_selected()">
+								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-pn" id="thermowell-flange-type-pn" style="display: none; width: 4.5em;">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="PN10">PN10</option>
 									<option value="PN16">PN16</option>
 									<option value="PN25">PN25</option>
 									<option value="PN40">PN40</option>
 								</select>
-								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-typ" id="thermowell-flange-type-typ" style="display: none; width: 2.5em;" onchange="thermowell_connection_selected()">
+								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-typ" id="thermowell-flange-type-typ" style="display: none; width: 2.5em;">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="B">B</option>
 									<option value="C">C</option>
@@ -960,11 +960,11 @@
 						</fieldset>
 					</div>
 
-					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr" style="display: none;">
+					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell" style="display: none;">
 						<div class="color-mark-field special" title="Set"></div>
 						<div class="option-to-select-header"><span>Специальные исполнения (опционально)</span></div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="special-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell" id="special-select" style="display: none;">
 						<fieldset id="special-select-field" name="special-select-field">
 							<input type="checkbox" name="special" value="0,16%" id="0_16" disabled class="custom-checkbox"><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа и аналоговый выход)</label><div id="err_0_16"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="0,05%" id="0_05" disabled class="custom-checkbox"><label for="0_05" class="disabled"><b>0,05%</b> - повышенная точность (только для ALW)</label><div id="err_0_05"  style="display:none;"></div>
@@ -986,6 +986,7 @@
 							<input type="checkbox" name="special" value="Lvk" id="spec_lvk" disabled class="custom-checkbox"><label for="spec_lvk" class="disabled">Открытый (заменяемый) измерительный вкладыш (для монтажа только в защитной гильзе)</label><div id="err_spec_lvk"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="Lvk" id="spec_38" disabled class="custom-checkbox"><label for="spec_38" class="disabled">Сигнал обрыва цепи сенсора: <img src='images/checkbox-4.png' alt="alt" style='border:1px solid #000000; width: 0.9em; height: 0.9em'> <b>3,8мА</b> или <img src='images/checkbox-3.png' alt="alt" style='width: 0.9em; height: 0.9em'> <b>23мА</b></label><div id="err_spec_38"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="Lvk" id="spec_375" disabled class="custom-checkbox"><label for="spec_375" class="disabled">Сигнал обрыва цепи сенсора: <img src='images/checkbox-4.png' alt="alt" style='border:1px solid #000000; width: 0.9em; height: 0.9em'> <b>3,75мА</b> или <img src='images/checkbox-3.png' alt="alt" style='width: 0.9em; height: 0.9em'> <b>21,5мА</b></label><div id="err_spec_375"  style="display:none;"></div>
+							<input type="checkbox" name="special" value="PTFE" id="spec_ptfe" disabled class="custom-checkbox"><label for="spec_ptfe" class="disabled"><b>PTFE</b> - покрытие погружной части гильзы политетрафторэтиленом (тефлон)</label><div id="err_spec_ptfe"  style="display:none;"></div>
 						</fieldset>
 					</div>
 				</div>
