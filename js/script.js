@@ -4103,6 +4103,17 @@ function thermowell_dimensions_selected(changed_id){ /// ПРОВЕРКА РАЗ
     $("#thermowell-dimensions_warning").show(100);
     if (!Number.isNaN(parseInt($("#thermowell-length").val())) && !Number.isNaN(parseInt($("#thermowell-tlength").val())) && $("select[name=thermowell-diameter]").val()!="not_selected" && parseInt($("#thermowell-length").val())>=25 && parseInt($("#thermowell-length").val())<=l_max) {
         $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        const button = document.createElement('button');
+        button.setAttribute('type', 'button');
+        button.setAttribute('id', 'thermowell-dimensions-button-ok');
+        button.textContent = 'Продолжить';
+        button.addEventListener('click', () => {
+            expand_next_div("thermowell-tlength");
+            disable_invalid_options;
+            setTimeout(() => document.getElementById("thermowell-dimensions_warning").innerHTML ='', 500) ;
+        });
+        document.getElementById("thermowell-dimensions_warning").appendChild(button);
+        // document.getElementById("thermowell-dimensions_warning").innerHTML +='<input type="button" id="thermowell-dimensions-button-ok" value="ОК" onclick="expand_next_div($(this).prop("id"))">';
     }else{
         $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
     }
