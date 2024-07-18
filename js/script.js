@@ -864,7 +864,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }
     }
     if (main_dev=="thermowell"){//ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ ГИЛЬЗЫ
-        console.log("ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ ГИЛЬЗЫ");
         let options = ["thermowell-type", "material"];
         for (let el of options){
             full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
@@ -876,7 +875,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
                 full_conf.set(els, $("input[name=" + els + "]").val());
             }
         }
-        console.log($("#thermowell-connection1 select:required"));
         if ($("#thermowell-connection1 select:required").length>0){
             if ($(" #thermowell-connection1 select").find("option[value=not_selected]:selected").length!=0){
                 full_conf.set("thermowell-connection1", undefined);
@@ -886,8 +884,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         }else{
             full_conf.delete("thermowell-connection1");
         }
-        console.log($("#thermowell-connection2 select:required").length>0);
-        console.log($("#thermowell-connection2 select:required").find("option[value=not_selected]:selected").length);
         if ($("#thermowell-connection2 select:required").length>0){
             if ($("#thermowell-connection2 select:required").find("option[value=not_selected]:selected").length!=0){
                 full_conf.set("thermowell-connection2", undefined);
@@ -1706,54 +1702,6 @@ function disable_invalid_options(){
             }
         }
     }
-
-    $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
-        if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
-            if ($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW"){
-                // $(this).prop("style", "display:block");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                // $(this).prop("style", "display:none");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-        }
-
-        if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
-            if (!($(this).prop("id")=="APCALW")){//
-                // $(this).prop("style", "display:block");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                // $(this).prop("style", "display:none");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-        }
-    })
-
-    $("input[name=output]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ВЫХОДНЫЕ СИГНАЛЫ В ЗАВИСИМОСТИ ОТ MAIN-DEV
-        if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
-            if ($(this).prop("id")=="4_20H"){
-                // $(this).prop("style", "display:block");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                // $(this).prop("style", "display:none");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-            $("label[for=no_trand]").prop("style", "display:none");
-        }
-
-        if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
-            $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            $("label[for=no_trand]").prop("style", "display:none");
-        }
-
-        if (full_conf.get("main_dev")=="ctr"){
-            if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20" || $(this).prop("id")=="no_trand"){
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-        }
-    })
 
     if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){   /// ПРОВЕРКА PR и APR
 
@@ -3177,7 +3125,9 @@ $(function (){
                 }
             }
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
-            if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
+            let $thiss_id = $(this).prop("id");
+            // if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
+            if ([add_n + "s_t"].some(word => $thiss_id.startsWith(word))){
                 let target = $(this).prop("id")  + "-cilinder-select";
                 console.log(add_n);
                 console.log(target);
@@ -3529,6 +3479,70 @@ $(function(){
                 $(this).show();
             }else{
                 $(this).hide();
+            }
+        })
+        $("input[name=output]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ВЫХОДНЫЕ СИГНАЛЫ В ЗАВИСИМОСТИ ОТ MAIN-DEV
+            if (main_dev_id=="apc-2000" || main_dev_id=="apr-2000"){
+                if ($(this).prop("id")=="4_20H"){
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+                $("label[for=no_trand]").prop("style", "display:none");
+            }
+
+            if (main_dev_id=="pc-28" || main_dev_id=="pr-28"){
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                $("label[for=no_trand]").prop("style", "display:none");
+            }
+
+            if (main_dev_id=="ctr"){
+                if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20" || $(this).prop("id")=="no_trand"){
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+            if (main_dev_id=="sg-25"){
+                if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20"){
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+        })
+        $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
+            if (main_dev_id=="apc-2000" || main_dev_id=="apr-2000"){
+                if ($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW"){
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+
+            if (main_dev_id=="pc-28" || main_dev_id=="pr-28"){
+                if (!($(this).prop("id")=="APCALW")){//
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+        })
+        $("input[name=approval]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ APPROVAL В ЗАВИСИМОСТИ ОТ MAIN-DEV
+            if (main_dev_id=="sg-25"){
+                if ($(this).prop("id")=="non_hazard" || $(this).prop("id")=="Ex"){
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
             }
         })
 
@@ -4253,5 +4267,20 @@ $(function(){
             $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             disable_invalid_options();
         }
+    })
+})
+
+$(function(){  /// ПРИ ВЫБОРЕ ГОСТА в конструкторе фланцев
+    $(document).on("change", "div.flange_standard select[name=flange_standard]", function () {
+        let constructor_id = $(this).closest("div").parent("div").prop('id');
+        let standard = $(this).find("option:selected").val();
+        $("#" + constructor_id + " option.to_check[value=not_selected]").prop("selected", true);
+        $("#"+ constructor_id + " div.to_check, span.to_check, option.to_check").each(function(){
+            if ($(this).hasClass(standard)){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        })
     })
 })

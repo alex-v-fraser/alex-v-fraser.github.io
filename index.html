@@ -62,7 +62,7 @@
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Выбранная конфгурация будет утеряна.<br>Продолжить?</p>
 		</div>
 		<div style="display:flex; background: #FEC600">
-			<div style="display: block;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
+			<div style="display: block; margin-left: 8px; margin-top: 3px;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
 			<div style="font-size: 200%; font-weight: bold; text-align: center; flex: 1; align-content: center; margin-right: 22%;">КОНФИГУРАТОР</div>
 		</div>
 		<div id="main-dev-select">
@@ -110,14 +110,14 @@
 		<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25 В РАЗРАБОТКЕ!<br></h1>
 		<h1 class="ctr-panel-container" style="display:none;">Преобразователь температуры<br></h1>
 		<h1 class="thermowell-panel-container" style="display:none;">Гильзы защитные<br></h1>
-		<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container thermowell-panel-container" style="display:none;">
+		<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container thermowell-panel-container sg-25-panel-container" style="display:none;">
 			<div class="panel-left">
 				<div id="device-options">
-					<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr" style="display:none;">
+					<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header"><span>Тип взрывозащиты</span></div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="approval-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" id="approval-select" style="display: none;">
 						<fieldset id="approval-select-field" name="approval-select-field">
 							<input type="checkbox" name="approval" value="" id="non_hazard" class="custom-checkbox"><label for="non_hazard">Общепромышленное исполнение</label><div id="err_non_hazard"  style="display:none;"></div>
 							<input type="checkbox" name="approval" value="Ex/" id="Ex" class="custom-checkbox"><label for="Ex">Искробезопасная электрическая цепь</label><div id="err_Ex"  style="display:none;"></div>
@@ -197,11 +197,11 @@
 						</fieldset>
 					</div>
 
-					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr" style="display:none;">
+					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header"><span>Выходной сигнал</span></div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr" id="output-select"  style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" id="output-select"  style="display: none;">
 						<fieldset id="output-select-field" name="output-select-field">
 							<input type="checkbox" name="output" value="PC-28/" id="4_20" class="custom-checkbox"><label for="4_20">4...20мА<br></label><div id="err_4_20"  style="display:none;"></div>
 							<input type="checkbox" name="output" value="PC-28.Smart/" id="4_20H" class="custom-checkbox"><label for="4_20H">4...20мА + HART<br></label><div id="err_4_20H"  style="display:none;"></div>
@@ -740,7 +740,7 @@
 								<input type="checkbox" name="flange" value="S-P-DN80PN40B" id="s_p_dn80" class="custom-checkbox"><label for="s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><div id="err_s_p_dn80" style="display:none;"></div>
 								<input type="checkbox" name="flange" value="S-P-DN100PN40B" id="s_p_dn100" class="custom-checkbox"><label for="s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><div id="err_s_p_dn100" style="display:none;"></div>
 								<input type="checkbox" name="flange" value="S-T-DN50PN40B" id="s_t_dn50" class="custom-checkbox"><label for="s_t_dn50"><b>S-T DN50PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_s_t_dn50" style="display:none;"></div>
-								<span id="s_t_dn50-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="s_t_dn50-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_t_dn50-cilinder-length" id="s_t_dn50-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -750,7 +750,7 @@
 									</select><br><br>
 								</span>
 								<input type="checkbox" name="flange" value="S-T-DN80PN40B" id="s_t_dn80" class="custom-checkbox"><label for="s_t_dn80"><b>S-T DN80PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_s_t_dn80" style="display:none;"></div>
-								<span id="s_t_dn80-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="s_t_dn80-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_t_dn80-cilinder-length" id="s_t_dn80-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -760,7 +760,7 @@
 									</select><br><br>
 								</span>
 								<input type="checkbox" name="flange" value="S-T-DN100PN40B" id="s_t_dn100" class="custom-checkbox"><label for="s_t_dn100"><b>S-T DN100PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_s_t_dn100" style="display:none;"></div>
-								<span id="s_t_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="s_t_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_t_dn100-cilinder-length" id="s_t_dn100-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -770,7 +770,7 @@
 									</select><br><br>
 								</span>
 								<input type="checkbox" name="flange" value="S-T-WASH-DN100PN40B" id="s_tk_wash_dn100" class="custom-checkbox"><label for="s_tk_wash_dn100"><b>S-TK-WASH DN100PN40B</b> - разделитель дистанционный фланцевый цилиндрический с системой промывания мембраны</label><div id="err_s_tk_wash_dn100" style="display:none;"></div>
-								<span id="s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_tk_wash_dn100-cilinder-length" id="s_tk_wash_dn100-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -877,7 +877,7 @@
 								<input type="checkbox" name="minus-flange" value="S-P-DN80PN40B" id="minus-s_p_dn80" class="custom-checkbox"><label for="minus-s_p_dn80"><b>S-P DN80PN40B</b> - разделитель фланцевый плоский</label><div id="err_minus-s_p_dn80" style="display:none;"></div>
 								<input type="checkbox" name="minus-flange" value="S-P-DN100PN40B" id="minus-s_p_dn100" class="custom-checkbox"><label for="minus-s_p_dn100"><b>S-P DN100PN40B</b> - разделитель фланцевый плоский</label><div id="err_minus-s_p_dn100" style="display:none;"></div>
 								<input type="checkbox" name="minus-flange" value="S-T-DN50PN40B" id="minus-s_t_dn50" class="custom-checkbox"><label for="minus-s_t_dn50"><b>S-T DN50PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_dn50" style="display:none;"></div>
-								<span id="minus-s_t_dn50-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="minus-s_t_dn50-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_t_dn50-cilinder-length" id="minus-s_t_dn50-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -887,7 +887,7 @@
 									</select><br><br>
 								</span>
 								<input type="checkbox" name="minus-flange" value="S-T-DN80PN40B" id="minus-s_t_dn80" class="custom-checkbox"><label for="minus-s_t_dn80"><b>S-T DN80PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_dn80" style="display:none;"></div>
-								<span id="minus-s_t_dn80-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="minus-s_t_dn80-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_t_dn80-cilinder-length" id="minus-s_t_dn80-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -897,7 +897,7 @@
 									</select><br><br>
 								</span>
 								<input type="checkbox" name="minus-flange" value="S-T-DN100PN40B" id="minus-s_t_dn100" class="custom-checkbox"><label for="minus-s_t_dn100"><b>S-T DN100PN40B</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_dn100" style="display:none;"></div>
-								<span id="minus-s_t_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="minus-s_t_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_t_dn100-cilinder-length" id="minus-s_t_dn100-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -907,7 +907,7 @@
 									</select><br><br>
 								</span>
 								<input type="checkbox" name="minus-flange" value="S-T-WASH-DN100PN40B" id="minus-s_tk_wash_dn100" class="custom-checkbox"><label for="minus-s_tk_wash_dn100"><b>S-TK-WASH DN100PN40B</b> - разделитель дистанционный фланцевый цилиндрический с системой промывания мембраны</label><div id="err_minus-s_tk_wash_dn100" style="display:none;"></div>
-								<span id="minus-s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Выберите длину цилиндра, мм:
+								<span id="minus-s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
 									<select name="s_tk_wash_dn100-cilinder-length" id="minus-s_tk_wash_dn100-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
@@ -1008,11 +1008,6 @@
 
 		</div>
 
-
-		<div class="sg-25-panel-container" style="display:none;">
-			В РАЗРАБОТКЕ!!!
-		</div>
-
 		<div id="advanced-code-descr" style="display:none;">
 			<input type="text" name="code-test" id="code-test" style="width: 25em" placeholder="ТЕСТ!!! Введите код продукта для расшифровки">
 			<input type="button" id="code-test-button-ok" value="ОК">
@@ -1031,6 +1026,69 @@
 				allowfullscreen="true"
 				src="https://aplisens.ru">
 			</iframe>
+		</div> -->
+		<!-- <div id="flange-constructor" style="width: 300px; margin-left: 4em;">
+			<div class="flange_standard gost ansi not_selected" style="margin-top: 0.8em;">
+				<span class="gost ansi not_selected">Стандарт фланца</span>
+				<select name="flange_standard" style="position: relative; float: right; width: 4.4em;">
+					<option value="not_selected" selected>---</option>
+					<option value="gost">ГОСТ</option>
+					<option value="ansi">ANSI</option>
+				</select>
+			</div>
+			<div class="to_check gost ansi" style="display: none; margin-top: 0.8em;">
+				<span class="to_check gost" style="display: none;">Номинальный диаметр DN, мм</span>
+				<span class="to_check ansi" style="display: none;">Номинальный диаметр ANSI, inch</span>
+				<select name="flange_pressure" style="position: relative; float: right; width: 4.4em;">
+					<option class="to_check gost ansi" value="not_selected" selected>---</option>
+					<option class="to_check gost" value="DN50" style="display: none;">50</option>
+					<option class="to_check gost" value="DN80" style="display: none;">80</option>
+					<option class="to_check gost" value="DN100" style="display: none;">100</option>
+					<option class="to_check ansi" value='2"' style="display: none;">2</option>
+					<option class="to_check ansi" value='3"' style="display: none;">3</option>
+					<option class="to_check ansi" value='4"' style="display: none;">4</option>
+				</select>
+			</div>
+			<div class="to_check gost ansi" style="display: none; margin-top: 0.8em;">
+				<span class="to_check gost" style="display: none;">Номинальное давление PN, бар</span>
+				<span class="to_check ansi" style="display: none;">Класс давления ANSI, psi</span>
+				<select name="flange_pressure" style="position: relative; float: right; width: 4.4em;">
+					<option class="to_check gost ansi" value="not_selected" selected>---</option>
+					<option class="to_check gost" value="PN10" style="display: none;">10</option>
+					<option class="to_check gost" value="PN16" style="display: none;">16</option>
+					<option class="to_check gost" value="PN25" style="display: none;">25</option>
+					<option class="to_check gost" value="PN40" style="display: none;">40</option>
+					<option class="to_check gost" value="PN63" style="display: none;">63</option>
+					<option class="to_check gost" value="PN100" style="display: none;">100</option>
+					<option class="to_check ansi" value="ANSI150" style="display: none;">150</option>
+					<option class="to_check ansi" value="ANSI300" style="display: none;">300</option>
+					<option class="to_check ansi" value="ANSI600" style="display: none;">600</option>
+					<option class="to_check ansi" value="ANSI900" style="display: none;">900</option>
+					<option class="to_check ansi" value="ANSI1500" style="display: none;">1500</option>
+					<option class="to_check ansi" value="ANSI2500" style="display: none;">2500</option>
+				</select>
+			</div>
+			<div class="to_check gost ansi" style="display: none; margin-top: 0.8em;">
+				<span class="to_check gost ansi" style="display: none;">Тип уплотнительной поверхности</span>
+				<select name="flange_type" style="position: relative; float: right; width: 4.4em;">
+					<option class="to_check gost ansi" value="not_selected" selected>---</option>
+					<option class="to_check gost" value="B" style="display: none;">B</option>
+					<option class="to_check gost" value="C" style="display: none;">C</option>
+					<option class="to_check gost" value="D" style="display: none;">D</option>
+					<option class="to_check gost" value="E" style="display: none;">E</option>
+					<option class="to_check gost" value="F" style="display: none;">F</option>
+					<option class="to_check gost" value="G" style="display: none;">G</option>
+					<option class="to_check ansi" value="FF" style="display: none;">FF</option>
+					<option class="to_check ansi" value="RF" style="display: none;">RF</option>
+					<option class="to_check ansi" value="LM" style="display: none;">LM</option>
+					<option class="to_check ansi" value="LF" style="display: none;">LF</option>
+					<option class="to_check ansi" value="SM" style="display: none;">SM</option>
+					<option class="to_check ansi" value="SF" style="display: none;">SF</option>
+					<option class="to_check ansi" value="ST" style="display: none;">ST</option>
+					<option class="to_check ansi" value="SG" style="display: none;">SG</option>
+					<option class="to_check ansi" value="RTJ" style="display: none;">RTJ</option>
+				</select>
+			</div>
 		</div> -->
 		<div id="footer" style="font-size: 83%;">
 			&copy; All rights reserved
