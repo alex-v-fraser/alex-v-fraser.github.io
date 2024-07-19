@@ -1,0 +1,300 @@
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield; /* или auto*/
+}
+
+body {
+    margin-bottom: 2.2em;
+}
+
+.ui-dialog-titlebar {
+    background: #d50c2f;
+}
+/* .ui-widget-header, */
+.ui-state-default,
+.ui-state-hover,
+.ui-button {
+    background: #CCCCCC;
+    border: 1px solid #B8B8B8;
+    color: #000;
+    font-weight: bold;
+}
+.custom-ui-widget-header-warning {
+    background: #fafdfd;
+    font-size: 1em;
+}
+
+.tooltip span.overlay {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    display: block;
+    width: 350px;
+    height: 200px;
+}
+
+/* Треугольник слева от картинки tooltip */
+/* div.tooltip:before {
+    content: ' ';
+    height: 0;
+    position: absolute;
+    width: 0;
+    right: 250px;
+    bottom: 158px;
+    border: 10px solid transparent;
+    border-right-color: #ffffff;
+} */
+
+.ui-resizable-e {
+    width: 14px !important;
+    cursor: col-resize !important;
+    right: -13px !important;
+    background: url(images/vsizegrip.png) center center no-repeat #a5a4a4 !important;
+    z-index: 0 !important;
+}
+
+fieldset {
+    text-align: justify;
+    min-width: 0;
+    /* padding: 1em; */
+    /* font:80%/1 sans-serif; */
+}
+
+.option-to-select-header {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.disabled {
+    color: darkgrey;
+}
+.option-to-select {
+    position: relative;
+    background: #e9e7e7 url(images/arrows.png) no-repeat 98% 14px;
+    padding: 10px 30px;
+    margin: 0.1em;
+    border: solid 1px #c4c4c4;
+    border-bottom: none;
+    cursor: pointer;
+    display: block;
+    direction: ltr;
+}
+.ctr-thread-flange-hygienic {
+    padding-top: 0.4em !important;
+    padding-bottom: 0.4em !important;
+}
+.option-to-select:hover {
+    background-color: #d3cece;
+}
+.option-to-select.active {
+    background-position: 98% -18px;
+    background-color: #d3cece;
+}
+.option-to-select-list {
+    display: none;
+    margin: 0;
+    padding:  5px;
+}
+input[type=checkbox] {
+    display: none;
+}
+input[type=checkbox] + label {
+    cursor: pointer;
+}
+input[type=checkbox]:hover + label:hover {
+    background-color: #f3ebeb;
+    cursor: pointer;
+    /* text-decoration: underline #000000; */
+    /* text-underline-offset: 0.2em; */
+    /* font-weight: bold; */
+}
+
+.custom-checkbox+label {
+    display: block;
+    position: relative;
+    align-items: center;
+    user-select: none;
+}
+.custom-checkbox+label::before {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+    flex-grow: 0;
+    border: 1px solid #adb5bd;
+    background: url(/images/checkbox-3.png) 0 0 no-repeat;
+    border-radius: 0.25em;
+    margin-right: 0.5em;
+}
+.custom-checkbox:disabled {
+    background-color: #e9ecef;
+}
+
+.custom-checkbox:checked+label::before {
+    content: '';
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    border: 1px solid #adb5bd;
+    background: url(/images/checkbox-4.png) 0 0 no-repeat;
+    background-size: 95%;
+}
+.err-checkbox+label {
+    margin-left: 2.8em;
+}
+
+.unselected {
+    background-color: #d50c2f;
+    font-size: 0.7em;
+    font-weight: bold;
+}
+.selected {
+    background-color: #54a931;
+    font-size: 0.7em;
+    font-weight: bold;
+}
+.special {
+    background-color: #fdad00;
+    font-size: 0.7em;
+    font-weight: bold;
+}
+.color-mark-field {
+    margin: 0;
+    padding: 0;
+    border: none;
+    position: absolute;
+    left: 0.1em;
+    top: 0;
+    bottom: 0;
+    width: 0.65em;
+    text-align: center;
+    line-height: 3.5em;
+}
+@media screen and (min-width: 430px) {
+    .pc-28-panel-container {
+        display: flex;
+        flex-direction: row;
+        border: 1px solid silver;
+        overflow: hidden;
+    }
+}
+.panel-left {
+    flex: 0 0 auto;
+    width: 41%;
+    padding: 5px;
+    min-height: 200px;
+    min-width: 415px;
+    white-space: normal;
+    }
+/* .splitter {
+    flex: 0 0 auto;
+    width: 14px;
+    background: url(images/vsizegrip.png) center center no-repeat #a5a4a4;
+    min-height: 200px;
+    cursor: col-resize;
+} */
+.panel-right {
+    flex: 1 1 auto;/* resizable */
+    padding: 10px;
+    margin-left: 10px;
+    width: 100%;
+    min-height: 200px;
+    min-width: 200px;
+    background: #eee;
+}
+#main-dev-select{
+    font-size: 100%; /*установить 0 если нужно убрать расстояние между блоками */
+    align-items: center;
+    /* text-align: center; */
+}
+.main-dev {
+    display: inline-block;
+    border: 2px solid #eee;
+    width: 250px;
+    height: 250px;
+    font-size: 20px;
+    font-weight: 900;
+    text-align: center;
+    padding-top: 11em;
+    vertical-align: bottom;
+    margin: 5px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+.main-dev:hover {
+    border-style: groove;
+}
+#main-dev-pc-28 {
+    background: no-repeat center/80% url("images/3b7f912030e372732ce4970ff6d500ca.jpg");
+}
+#main-dev-apc-2000 {
+    background: no-repeat center/80% url("images/2c4653bb4d9a48986b6fffe23cc639d0.jpg");
+}
+#main-dev-pr-28 {
+    background: no-repeat center/80% url("images/34f07ade64c1fb0e4e5f48d26cb3b18c.jpg");
+}
+#main-dev-apr-2000 {
+    background: no-repeat center/80% url("images/b0ee898cb3ba8388cfc446295866ae0b.jpg");
+}
+#main-dev-sg-25 {
+    background: no-repeat center/80% url("images/a5e7794092e8e2dd9b38e94acbe8ecc4.png");
+}
+#main-dev-ctr {
+    background: no-repeat center/80% url("images/2c7b09f1f26ca1ad0457853511c4a7a8.jpg");
+}
+#main-dev-thermowell {
+    background: no-repeat center/80% url("images/b7992943d061c628cae2e4263c6e4b6a.png");
+}
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.back-to-main-dev-select {
+    background-color: #eee;
+}
+
+.back-to-main-dev-select:hover {
+    background-color: #d3cece;
+}
+.prod-name {
+    background:#FEC600;
+    vertical-align:middle;
+}
+
+@media screen and (max-width: 429px) {
+    .pc-28-panel-container {
+        border: 1px solid silver;
+        overflow: hidden;
+    }
+}
+
+#footer {
+    /* flex: 0 0 auto; */
+    position:fixed;
+    bottom:0px !important;
+    background-color:#FEC600;
+    width:100%;
+    text-align:center;
+    margin-left: -8px;
+}
+#header {
+    position:absolute;
+    top:0px;
+    background-color:#FEC600;
+    width:100%;
+    text-align:center;
+}
