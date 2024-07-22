@@ -1653,13 +1653,13 @@ function disable_invalid_options(){
             for (let entr of window["flange_restr_lst"].entries()){
                 if (["s_p_", "s_ch_", "s_t_"].some(word => entr[1].get("name").startsWith(word))){
                     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                        console.log("Отключить", entr[1].get("name").split("_")[2]);
+                        if ($("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2] +"]").is(":selected")){
+                            // $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2] +"]")
+                            $("#flange-constructor select[name=flange_dn] option[value=not_selected]").prop("selected", true);
+                        }
                         $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2] +"]").attr("disabled", "disabled");
-                        $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2].toUpperCase() +"]").attr("disabled", "disabled");
                     }else{
-                        console.log("Отключить ERROR", entr[1].get("name").split("_")[2]);
                         $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2] +"]").removeAttr("disabled");
-                        $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2].toUpperCase() +"]").removeAttr("disabled");
                     }
                 }
             }
