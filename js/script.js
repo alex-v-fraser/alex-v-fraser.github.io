@@ -1620,6 +1620,20 @@ function disable_invalid_options(){
         }
     }
 
+    const pn_table = new Map([
+        ["PN10", 1000],
+        ["PN16", 1600],
+        ["PN25", 2500],
+        ["PN40", 4000],
+        ["PN63", 6300],
+        ["PN100", 10000],
+        ["ANSI150", 2000],
+        ["ANSI300", 5000],
+        ["ANSI600", 10000],
+        ["ANSI900", 15000],
+        ["ANSI1500", 25000]
+    ]);
+
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// ПРОВЕРКА PC и APC
         $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
             if (this.value=="1/4NPT(F)"){
@@ -1632,27 +1646,38 @@ function disable_invalid_options(){
         })
         $("#c-pr").prop("style", "display:none");
         $("label[for=c-pr]").prop("style", "display:none");
+
+        if (full_conf.has("flange") && typeof $("input[name=flange]:checked").prop("id")!="undefined" &&  ["s_p_", "s_ch_", "s_t_"].some(word => $("input[name=flange]:checked").prop("id").startsWith(word))){ /// ДЕАКТИВАЦИЯ DN PN для S_P S_CH S_T
+            ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные DN и PN
+            console.log('ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные DN и PN');
+            for (let entr of window["flange_restr_lst"].entries()){
+                if (["s_p_", "s_ch_", "s_t_"].some(word => entr[1].get("name").startsWith(word))){
+                    if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
+                        console.log("Отключить", entr[1].get("name").split("_")[2]);
+                        $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2] +"]").attr("disabled", "disabled");
+                        $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2].toUpperCase() +"]").attr("disabled", "disabled");
+                    }else{
+                        console.log("Отключить ERROR", entr[1].get("name").split("_")[2]);
+                        $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2] +"]").removeAttr("disabled");
+                        $("#flange-constructor select[name=flange_dn] option[value="+ entr[1].get("name").split("_")[2].toUpperCase() +"]").removeAttr("disabled");
+                    }
+                }
+            }
+            if ($("input[name=flange]:checked").prop("id")=="s_ch_"){
+                $("#flange-constructor select[name=flange_dn] option[value=dn100]").hide();
+                $("#flange-constructor select[name=flange_dn] option[value=DN100]").hide();
+            }
+            /// ПРОДОЛЖИТЬ ЗДЕСЬ!!!!№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№№
+        }
+
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
                 if (con_type == "flange" && ["s_p_", "s_ch_", "s_t_"].some(word => full_conf.get(con_type).startsWith(word))){
                     console.log("Вместо hi_press вставить PN");
-                    const pn_table = new Map([
-                        ["PN10", 1000],
-                        ["PN16", 1600],
-                        ["PN25", 2500],
-                        ["PN40", 4000],
-                        ["PN63", 6300],
-                        ["PN100", 10000],
-                        ["ANSI150", 98.7],
-                        ["ANSI300", 6.895],
-                        ["ANSI600", 6.895],
-                        ["ANSI900", 6.895],
-                        ["ANSI1500", 6.895],
-                    ]);
                     let pn_table_val = pn_table.get($("#flange-constructor select[name=flange_pn]").val());
                     console.log(pn_table_val);
-                    hi_press = $("#flange-constructor select[name=flange_pn]").val();
+                    hi_press = pn_table_val;
                 }else{
                     hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
                 }
@@ -1700,11 +1725,16 @@ function disable_invalid_options(){
             }
 
             for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC ПО ДАВЛЕНИЮ, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
-                if (((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")) && typeof full_conf.get("cap-or-not") == "undefined"){
-                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
-                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ${entr[1].get("begin_range_kpa")}...${entr[1].get("end_range_kpa")} кПа, минимальная ширина ${entr[1].get("range")} кПа.</label>`;
-                    num+=1;
+                if (con_type == "flange" && typeof entr[1].get("name")!="undefined" && ["s_p_", "s_ch_", "s_t_"].some(word => entr[1].get("name").startsWith(word))){ ///
+                    ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные DN и PN
+                    console.log('ДЛЯ S_P_ S_CH_ S_T_  пропуск');
+                }else{
+                    if (((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")) && typeof full_conf.get("cap-or-not") == "undefined"){
+                        $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
+                        $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ${entr[1].get("begin_range_kpa")}...${entr[1].get("end_range_kpa")} кПа, минимальная ширина ${entr[1].get("range")} кПа.</label>`;
+                        num+=1;
+                    }
                 }
                 if (typeof full_conf.get("cap-or-not") != 'undefined'){
                     if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-or-not")){
