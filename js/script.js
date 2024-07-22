@@ -17,17 +17,22 @@ var min_range = 2.5;        // мин ширина диапазона избыт
 var low_press_abs = 0;      // начало диапазона абс, кПа
 var hi_press_abs = 10000;   // конец диапазона абс, кПа
 var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
-var low_press_diff = -2500; // начало диапазона перепад, кПа
+var low_press_diff = -160; // начало диапазона перепад, кПа
 var hi_press_diff = 2500;   // конец диапазона перепад, кПа
 var min_range_diff = 1.6;   // мин ширина диапазона перепад, кПа
 var ctr_low_temp; //ограничение начала диапазона температуры CTR
 var ctr_high_temp;//ограничение конца диапазона температуры CTR
-var sensor_names = ["thermocouple", "thermoresistor", "material"];
+var sensor_names = ["thermocouple", "thermoresistor", "material", "cabel", "ctr-electrical"];///СПИСОК ОГРАНИЧЕНИЙ ДЛЯ ТЕМПЕРАТУРЫ
 var thermocouple_restr_lst = new Map();     // ОГРАНИЧЕНИЯ ТЕРМОПАР
 var thermoresistor_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ТЕРМОРЕЗИСТОРОВ
 var material_restr_lst = new Map();   // ОГРАНИЧЕНИЯ МАТЕРИАЛОВ (для температуры)
-
-
+var cabel_restr_lst = new Map();   // ОГРАНИЧЕНИЯ КАБЕЛЯ (для температуры)
+var ctr_min_length = 20; // Минимальная длина L для CTR;
+var ctr_max_length = 10000; // Максимальная длина L для CTR;
+var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
+var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
+var ctr_rec_outlength = 0; // Рекомендуемая мин длина S для CTR
+//"Все права на данный код принадлежат Фомину Александру https://github.com/alex-v-fraser"
 
 
 
@@ -64,7 +69,7 @@ fetchSensorRestrictions().then((data) => { //СОБИРАЕМ ОГРАНИЧЕН
             arr.set(obj["name"], dat);
         });;
         window[sensor_names[el] + "_restr_lst"] = arr;
-        console.log(sensor_names[el] + "_restr_lst", window[sensor_names[el] + "_restr_lst"]);
+        // console.log(sensor_names[el] + "_restr_lst", window[sensor_names[el] + "_restr_lst"]);
     }
 }).catch(error => {console.log(error);
 })
@@ -125,21 +130,32 @@ $(function(){         /////////// ИЗМЕНЯЕМАЯ ДЛИНА ПОЛЯ ВВ�
 
 $(function(){  /////  РАСКРЫТЬ-СКРЫТЬ СПИСОК ПРИ ЩЕЛЧКЕ НА ЗАГОЛОВОК
     var toDisplay = 0;
-    $(".option-to-select").click(function(){
+    $(document).on("click", "div.active-option-to-select", function(){
         $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
             if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
                 $(this).prop("style", "display:none");
             }
         })
         var $this = $(this);
-        $this
-        .next("div.option-to-select-list")
-        .slideToggle("slow")
-        .siblings("div.option-to-select-list:visible")
-        .slideUp("slow");
+        $this.next("div.option-to-select-list").slideToggle("slow").siblings("div.option-to-select-list:visible").slideUp("slow");
         $this.toggleClass("active");
         $this.siblings(".option-to-select").removeClass("active");
     })
+    // $(".option-to-select").click(function(){
+    //     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+    //         if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+    //             $(this).prop("style", "display:none");
+    //         }
+    //     })
+    //     var $this = $(this);
+    //     $this
+    //     .next("div.option-to-select-list")
+    //     .slideToggle("slow")
+    //     .siblings("div.option-to-select-list:visible")
+    //     .slideUp("slow");
+    //     $this.toggleClass("active");
+    //     $this.siblings(".option-to-select").removeClass("active");
+    // })
     .eq(toDisplay).addClass("active")
     .next().show();
 })
@@ -156,175 +172,358 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     for (let i=0; i<code.length; i++){
 
         if (typeof code[i+1]!='undefined'){
-            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="4") || (code[i].slice(-2)=="G1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-2)=="G3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1]=="см2")){
+            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i]!="OG1" && (code[i+1].slice(0,1)=="2" || code[i+1].slice(0,1)=="4" || code[i+1].slice(0,1)=="8")) || (code[i].slice(-2)=="G3" && code[i]!="OG3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1]=="см2") || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex")){
                 code.splice(i, 2, code[i] + "/" + code[i+1]);
             }
         }
     }
-    for (let i=0; i<code.length; i++){
-        if (code[i].toLowerCase().startsWith("s-") || (code[i].startsWith("(+)") && code[i]!="P") || (code[i].startsWith("(-)") && code[i]!="P")){
-            let temp = code[i].split("-");
-            code[i]= temp[0];
-            let x=i+1;
-            for (let j=1; j<temp.length; j++){
-                code.splice(x, 0, temp[j]);
-                x+=1;
-            }
-            if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
-                code.splice(i, 2, "(-)", code[i+1].slice(1,));
-            }
-            if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)"){
-                code.splice(i, 1, "(+)", code[i].slice(3,));
+    if (!code[0].startsWith("CT")){
+        for (let i=0; i<code.length; i++){
+            if (code[i].toLowerCase().startsWith("s-") || (code[i].startsWith("(+)") && code[i]!="P") || (code[i].startsWith("(-)") && code[i]!="P")){
+                let temp = code[i].split("-");
+                code[i]= temp[0];
+                let x=i+1;
+                for (let j=1; j<temp.length; j++){
+                    code.splice(x, 0, temp[j]);
+                    x+=1;
+                }
+                if (typeof code[i+1]!='undefined' && code[i]=="(" && code[i+1].startsWith(")")){
+                    code.splice(i, 2, "(-)", code[i+1].slice(1,));
+                }
+                if (code[i]=="(+)S" || code[i]=="(+)P" || code[i]=="(+)1/4NPT(F)" || code[i]=="(+)M12x1"){
+                    code.splice(i, 1, "(+)", code[i].slice(3,));
+                }
             }
         }
     }
     // console.log(code);
 
     let full_description = new Map([]);
-    for (let i=0; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
-        let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
-        let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
-        let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
-        var plus_minus = "";
 
-        if (condition1 && !condition2 && !condition3){
-            if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
-                full_description.set(code[i], "Диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
+    for (el of window["device_restr_lst"].values()){
+        if (el.get("name")==code[0] || el.get("code_name")==code[0]){
+            full_description.set(code[0], el.get("description"));
+            break;
+        }
+    }
+
+    if (["OG1", "OG2", "OG3", "T1", "SW", "SWT", "SWG", "SWG1"].some(word => code[0].startsWith(word))){///ЕСЛИ ГИЛЬЗА
+        if (code[1].includes("x")){
+            full_description.set(code[1], "Внешний диаметр гильзы: " + code[1].split("x")[0] + " мм.<br>Толщина стенки гильзы: " + code[1].split("x")[1] + " мм.");
+        }
+        if (code[1].includes("d")){
+            full_description.set(code[1], "Внешний диаметр гильзы: " + code[1].split("d")[0] + " мм.<br>Диаметр отверстия гильзы: " + code[1].split("d")[1] + " мм.");
+        }
+        if (code[2].endsWith("МПа")){
+            full_description.set(code[2], "Максимальное рабочее давление гильзы: " + code[2].match(/\d+(\,\d+)?/g)[0] + " МПа.");
+            let conn_descr = code[3]=="-" ? "Стопорный винт." : code[3];
+            let conn_descr2 = code[4]=="-" ? "Сварка." : code[4];
+            code[4] = (code[3]=="-" && code[4]=="-") ? "--" : code[4];
+            if (conn_descr2.startsWith("DN")){
+                conn_descr2 = "фланец " + conn_descr2.match(/[a-zA-Zа-яА-я]+/g)[0] + conn_descr2.match(/\d+(\,\d+)?/g)[0] + " " + conn_descr2.match(/[a-zA-Zа-яА-я]+/g)[1] + conn_descr2.match(/\d+(\,\d+)?/g)[1] + " тип " + conn_descr2.slice(-1,);
+            }
+            full_description.set(code[3], "Присоединение датчика температуры: " + conn_descr);
+            full_description.set(code[4], "Присоединение гильзы к процессу: " + conn_descr2);
+        }else{
+            let conn_descr3 = code[2]=="-" ? "Стопорный винт." : code[2];
+            let conn_descr4 = code[3]=="-" ? "Сварка." : code[3];
+            code[4] = (code[3]=="-" && code[4]=="-") ? "--" : code[4];
+            if (conn_descr3.startsWith("DN")){
+                conn_descr3 = "фланец " + conn_descr3.match(/[a-zA-Zа-яА-я]+/g)[0] + conn_descr3.match(/\d+(\,\d+)?/g)[0] + " " + conn_descr3.match(/[a-zA-Zа-яА-я]+/g)[1] + conn_descr3.match(/\d+(\,\d+)?/g)[1] + " тип " + conn_descr3.slice(-1,);
+            }
+            full_description.set(code[2], "Присоединение датчика температуры: " + conn_descr3);
+            full_description.set(code[3], "Присоединение гильзы к процессу: " + conn_descr4);
+        }
+        for (let i of [4,5,6,7]){
+            let descr1 = "";
+            let descr2;
+            let tmp_cod;
+            if (typeof code[i]!="undefined" && code[i].endsWith("(PTFE)")){
+                tmp_cod = code[i].split("(PTFE)")[0];
+                descr1 = "<br>Материал покрытия: Политетрафторэтилен (тефлон).";
             }else{
-                let units = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
-                full_description.set(code[i], "Диапазон измерения."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
+                tmp_cod =  typeof code[i]!="undefined" ? code[i] : "";
+                descr1 = "";
             }
-        }
-
-        if (condition1 && condition3){
-            if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
-                full_description.set(code[i], "Основной диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
-                full_description.set(code[i+1], "Установленный диапазон измерения абсолютного давления."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
-            }else{
-                let units_0 = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
-                let units = code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
-                full_description.set(code[i], "Основной диапазон измерения."); //  от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units_0 + "
-                full_description.set(code[i+1], "Установленный диапазон измерения."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
-            }
-        }
-
-        if (code[i].slice(0,2) == "K="){
-            full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
-        }
-
-        if (code[i].slice(0,2) == "T="){
-            full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
-        }
-
-        if (code[i].toLowerCase()=="s" || (typeof code[i-1]!='undefined' && (code[i-1]=="(-)") && (code[i]=="P" || code[i]=="1/4NPT(F)"))  || (typeof code[i-1]!='undefined' && (code[i-1]=="(+)") && (code[i]=="P" || code[i]=="1/4NPT(F)"))){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
-            let add_descr = "<br>В сборе с разделителем.";
-            if (code[i-1]=="(+)"){
-                plus_minus = "(+)";
-                add_descr = "<br>Со стороны высокого давления.";
-            }
-            if (code[i-1]=="(-)"){
-                plus_minus = "(-)";
-                add_descr = "<br>Со стороны низкого давления.";
-            }
-            let temp_code_i1 = typeof (code[i+1])!='undefined' ? code[i+1] : "";
-            let add_letter = "";
-            if (temp_code_i1.endsWith("K")){
-                add_descr += "<br>Соединение разделителя через капилляр.";
-                temp_code_i1 = temp_code_i1.slice(0,-1);
-                add_letter = "K";
-            }
-            if (temp_code_i1.endsWith("R") && temp_code_i1.length>1){
-                add_descr += "<br>С радиатором для сред измерения до 200°С.";
-                temp_code_i1 = temp_code_i1.slice(0,-1);
-                add_letter = "R";
-            }
-            if (temp_code_i1.endsWith("R2") && temp_code_i1.length>2){
-                add_descr += "<br>С радиатором для сред измерения до 250°С.";
-                temp_code_i1 = temp_code_i1.slice(0,-2);
-                add_letter = "R2";
-            }
-            if (temp_code_i1.endsWith("R3") && temp_code_i1.length>2){
-                add_descr += "<br>С радиатором для сред измерения до 310°С.";
-                temp_code_i1 = temp_code_i1.slice(0,-2);
-                add_letter = "R3";
-            }
-
-            let temp_code_v1 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3];
-            let temp_code_v2 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2];
-            let temp_code_v3 = code[i]+ "-" + temp_code_i1;
-            let temp_codes =[temp_code_v1, temp_code_v2, temp_code_v3];
-            // console.log(code[i-1]);
-            // console.log(code[i]);
-            if  ((code[i-1]=="(+)" && code[i]=="P") || (code[i-1]=="(-)" && code[i]=="P")){
-                // temp_codes=["P"];
-                for (el of window["thread_restr_lst"].values()){
-                    if (el.get("code_name")==code[i]){
-                        let temp_desc = el.get("description") + add_descr;
-                        full_description.set(plus_minus + code[i], temp_desc);
-                        // console.log("228 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
-                        break;
-                    }
+            for (el of window["material_restr_lst"].values()){
+                if (el.get("name")==tmp_cod.toLowerCase() || el.get("code_name")==tmp_cod){
+                    full_description.set(code[i], "Материал гильзы: " + el.get("description") + descr1);
                 }
             }
-            if ((code[i-1]=="(+)" && code[i]=="1/4NPT(F)") || (code[i-1]=="(-)" && code[i]=="1/4NPT(F)")){
-                // temp_codes=["1/4NPT(F)"];
-                for (el of window["thread_restr_lst"].values()){
-                    if (el.get("code_name")==code[i]){
-                        let temp_desc = el.get("description") + add_descr;
-                        full_description.set(plus_minus + code[i], temp_desc);
-                        // console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
-                        break;
-                    }
+            if (typeof code[i]!="undefined" && code[i].startsWith("L=")){
+                full_description.set(code[i], "Длина монтажной (погружной) части гильзы: " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+            }
+            if (typeof code[i]!="undefined" && code[i].startsWith("Lt=")){
+                full_description.set(code[i], "Длина монтажной (погружной) части термометра: " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+            }
+        }
+
+
+    }else{ //// ЕСЛИ НЕ ГИЛЬЗА
+
+
+        for (let i=1; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
+            let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
+            let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
+            let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
+            var plus_minus = "";
+
+            if (condition1 && !condition2 && !condition3){
+                if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
+                    full_description.set(code[i], "Диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
+                }else{
+                    // let units = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                    full_description.set(code[i], "Диапазон измерения."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
                 }
             }
-            // console.log(temp_codes);
-            let repeat_cycle = true;
-            let num_cut = 4;
-            for (els of temp_codes){
-                if (els.endsWith("-")){els=els.slice(0,-1)};
-                // console.log(els);
-                for (item of search_names){
-                    for (el of window[item + "_restr_lst"].values()){
-                        if (repeat_cycle === true && el.get("code_name") === els){
-                            code.splice(i, num_cut, els);
+
+            if (condition1 && condition3){
+                if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
+                    full_description.set(code[i], "Основной диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
+                    full_description.set(code[i+1], "Установленный диапазон измерения абсолютного давления."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
+                }else{
+                    // let units_0 = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                    // let units = code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                    full_description.set(code[i], "Основной диапазон измерения."); //  от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units_0 + "
+                    full_description.set(code[i+1], "Установленный диапазон измерения."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
+                }
+            }
+
+            if (code[0].startsWith("CT")){
+                let ctr_unit = (typeof code[i].split("=")[1]=="undefined" || code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)==null) ? "." : " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
+                if (code[i].includes("...") && code[i].endsWith("C")){
+                    full_description.set(code[i], "Диапазон измерения температуры от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + "°C.");
+                }
+                if (code[i]=="23мА" || code[i]=="21,5мА" || code[i]=="3,8мА" || code[i]=="3,75мА"){
+                    full_description.set(code[i], "Сигнал обрыва цепи сенсора " + code[i] + ".");
+                }
+                if (code[i]=="-"){
+                    full_description.set(code[i], "Без специального исполнения.");
+                }
+                if (code[i].startsWith("d=")){
+                    full_description.set(code[i], "Диаметр защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
+                }
+                if (code[i].startsWith("dvk=")){
+                    full_description.set(code[i], "Диаметр термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + "."); //<br><span style='color: red'>Монтаж ТОЛЬКО в защитную гильзу!</span>
+                }
+                if (code[i].startsWith("L=")){
+                    full_description.set(code[i], "Длина защитного корпуса " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
+                }
+                if (code[i].startsWith("Lvk=")){
+                    full_description.set(code[i], "Длина термометрической (измерительной) вставки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".<br><span style='color: red'>Монтаж ТОЛЬКО в защитную гильзу!</span>");
+                }
+                if (code[i].startsWith("S=")){
+                    full_description.set(code[i], "Длина наружной (выносной) части " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
+                }
+            }
+
+            if (code[i].slice(0,2) == "K="){
+                full_description.set(code[i], "Длина капилляра разделителя " + code[i].match(/\d+(\,\d+)?/g) + " м.");
+            }
+
+            if (code[i].slice(0,2) == "T="){
+                full_description.set(code[i], "Длина цилиндрической части разделителя " + code[i].match(/\d+(\,\d+)?/g) + " мм.");
+            }
+
+            if ((code[i].toLowerCase()=="s" && !code[0].startsWith("CT")) || (typeof code[i-1]!='undefined' && (code[i-1]=="(-)") && (code[i]=="P" || code[i]=="1/4NPT(F)" || code[i]=="M12x1"))  || (typeof code[i-1]!='undefined' && (code[i-1]=="(+)") && (code[i]=="P" || code[i]=="1/4NPT(F)" || code[i]=="M12x1"))){             //КОНСТРУКТОР ОПИСАНИЯ РАЗДЕЛИТЕЛЯ
+                let add_descr = "<br>В сборе с разделителем.";
+                if (code[i-1]=="(+)"){
+                    plus_minus = "(+)";
+                    add_descr = "<br>Со стороны высокого давления.";
+                }
+                if (code[i-1]=="(-)"){
+                    plus_minus = "(-)";
+                    add_descr = "<br>Со стороны низкого давления.";
+                }
+                let temp_code_i1 = typeof (code[i+1])!='undefined' ? code[i+1] : "";
+                let add_letter = "";
+                if (temp_code_i1.endsWith("K")){
+                    add_descr += "<br>Соединение разделителя через капилляр.";
+                    temp_code_i1 = temp_code_i1.slice(0,-1);
+                    add_letter = "K";
+                }
+                if (temp_code_i1.endsWith("R") && temp_code_i1.length>1){
+                    add_descr += "<br>С радиатором для сред измерения до 200°С.";
+                    temp_code_i1 = temp_code_i1.slice(0,-1);
+                    add_letter = "R";
+                }
+                if (temp_code_i1.endsWith("R2") && temp_code_i1.length>2){
+                    add_descr += "<br>С радиатором для сред измерения до 250°С.";
+                    temp_code_i1 = temp_code_i1.slice(0,-2);
+                    add_letter = "R2";
+                }
+                if (temp_code_i1.endsWith("R3") && temp_code_i1.length>2){
+                    add_descr += "<br>С радиатором для сред измерения до 310°С.";
+                    temp_code_i1 = temp_code_i1.slice(0,-2);
+                    add_letter = "R3";
+                }
+
+                let temp_code_v1 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2] + "-" + code[i+3];
+                let temp_code_v2 = code[i]+ "-" + temp_code_i1 + "-" + code[i+2];
+                let temp_code_v3 = code[i]+ "-" + temp_code_i1;
+                let temp_codes =[temp_code_v1, temp_code_v2, temp_code_v3];
+                // console.log(code[i-1]);
+                // console.log(code[i]);
+                if  ((code[i-1]=="(+)" && code[i]=="P") || (code[i-1]=="(-)" && code[i]=="P")){
+                    // temp_codes=["P"];
+                    for (el of window["thread_restr_lst"].values()){
+                        if (el.get("code_name")==code[i]){
                             let temp_desc = el.get("description") + add_descr;
-                            let arr = code[i].split("-");
-                            if (typeof arr[1]!='undefined'){
-                                arr[1] = arr[1] + add_letter;
-                            }
-                            code[i] = arr.join("-");
                             full_description.set(plus_minus + code[i], temp_desc);
-                            // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
-                            repeat_cycle = false;
+                            // console.log("228 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
                             break;
                         }
                     }
                 }
-                num_cut-=1;
-            }
-            code[i]=plus_minus + code[i];
-            // console.log(code[i]);
-            // console.log(code);
-        }
-
-        for (item of search_names){
-            for (el of window[item + "_restr_lst"].values()){
-                if (el.get("name")==code[i] || el.get("code_name")==code[i]){
-                    if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                        full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
-                        break;
+                if ((code[i-1]=="(+)" && code[i]=="1/4NPT(F)") || (code[i-1]=="(-)" && code[i]=="1/4NPT(F)")){
+                    // temp_codes=["1/4NPT(F)"];
+                    for (el of window["thread_restr_lst"].values()){
+                        if (el.get("code_name")==code[i]){
+                            let temp_desc = el.get("description") + add_descr;
+                            full_description.set(plus_minus + code[i], temp_desc);
+                            // console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                            break;
+                        }
                     }
-                    if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                        full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
-                        break;
-                    }
-                    full_description.set(code[i], el.get("description"));
                 }
+                if ((code[i-1]=="(+)" && code[i]=="M12x1") || (code[i-1]=="(-)" && code[i]=="M12x1")){
+                    // temp_codes=["M12x1"];
+                    for (el of window["thread_restr_lst"].values()){
+                        if (el.get("code_name")==code[i]){
+                            let temp_desc = el.get("description") + add_descr;
+                            full_description.set(plus_minus + code[i], temp_desc);
+                            // console.log("239 СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc);
+                            break;
+                        }
+                    }
+                }
+                // console.log(temp_codes);
+                let repeat_cycle = true;
+                let num_cut = 4;
+                for (els of temp_codes){
+                    if (els.endsWith("-")){els=els.slice(0,-1)};
+                    // console.log(els);
+                    for (item of search_names){
+                        for (el of window[item + "_restr_lst"].values()){
+                            if (repeat_cycle === true && el.get("code_name") === els){
+                                code.splice(i, num_cut, els);
+                                let temp_desc = el.get("description") + add_descr;
+                                let arr = code[i].split("-");
+                                if (typeof arr[1]!='undefined'){
+                                    arr[1] = arr[1] + add_letter;
+                                }
+                                code[i] = arr.join("-");
+                                full_description.set(plus_minus + code[i], temp_desc);
+                                // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
+                                repeat_cycle = false;
+                                break;
+                            }
+                        }
+                    }
+                    num_cut-=1;
+                }
+                code[i]=plus_minus + code[i];
+                // console.log(code[i]);
+                // console.log(code);
+            }
+
+            if (!(["ОG1", "OG2", "OG3", "T1", "SW", "SWT", "SWG", "SWG1", "CT"].some(word => code[0].startsWith(word)))){ //(!code[0].startsWith("CT")){
+                for (item of search_names){
+                    for (el of window[item + "_restr_lst"].values()){
+                        if (el.get("name")==code[i] || el.get("code_name")==code[i]){
+                            if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                                full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                                break;
+                            }
+                            if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                                full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                                break;
+                            }
+                            full_description.set(code[i], el.get("description"));
+                        }
+                    }
+                }
+            }
+            if(code[0].startsWith("CT")){
+                let t_code = (code[i].startsWith("2x")) ? code[i].slice(2,) : code[i];
+                let ad_descr = (code[i].startsWith("2x")) ? "<br>Количество сенсоров: 2шт." : "";
+                for (item of ["device", "approval", "output", "material", "special", "ctr-electrical", "thread", "flange", "hygienic", "cabel", "thermoresistor", "thermocouple"]){
+                    let prev_descr = item=="material" ? "Материал измерительной части:<br>" : "";
+                    for (el of window[item + "_restr_lst"].values()){
+                        if (el.get("name")==t_code || el.get("code_name")==t_code){
+                            full_description.set(code[i], prev_descr + el.get("description") + ad_descr);
+                            break;
+                        }
+                    }
+                }
+
+                if (i-1>=2 && (code[i]=="A" || code[i]=="B" || code[i]=="C") && (['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-1]) || code[i-1].startsWith("2x"))){
+                    full_description.set(code[i], "Класс точности сенсора \"" + code[i] + "\".");
+                }
+                if (i-1>=2 && (code[i]=="2" || code[i]=="3" || code[i]=="4") && ['A', 'B', 'C'].includes(code[i-1])){
+                    full_description.set(code[i], "Схема соединения сенсора " + code[i] + "-х проводная.");
+                }
+                if (i-1>=1 && (code[i]=="1" || code[i]=="2" || code[i]=="3") && (['K', 'L', 'J', 'R', 'S', 'B'].includes(code[i-1]) && !code[i-2].startsWith("2x") && !['Pt100', 'Pt1000', '100П', '1000П', '100М', '50М'].includes(code[i-2]) || code[i-1].startsWith("2x"))){
+                    full_description.set(code[i], "Класс точности сенсора \"" + code[i] + "\".");
+                }
+                if (code[i]=="I"){
+                    full_description.set(code[i], "Без монтажного присоединения.");
+                }
+                if (code[i].startsWith("FH(") || code[i].startsWith("MH(") || code[i].startsWith("MP(") || code[i].startsWith("FP(")){
+                    const fit_nut = new Map([
+                        ["FH", "неподвижная гайка"],
+                        ["MH", "неподвижный штуцер"],
+                        ["MP", "подвижный штуцер"],
+                        ["FP", "подвижная гайка"]
+                    ]);
+                    full_description.set(code[i], "Монтажное присоединение: " + fit_nut.get(code[i].slice(0,2)) + " с резьбой " + code[i].slice(3,-1));
+                }
+                if (code[i].startsWith("DN")){
+                    full_description.set(code[i], "Монтажное присоединение: фланцевое.<br>Номинальный диаметр: DN" + code[i].match(/\d+(\,\d+)?/g)[0] + "<br>Номинальное давление: PN" + code[i].match(/\d+(\,\d+)?/g)[1] + "<br>Тип уплотнительной поверхности: " + code[i].match(/[a-zA-Zа-яА-я]+/g)[2] + ".");
+                }
+                if (code[i].startsWith("DIN")){
+                    full_description.set(code[i], "Монтажное присоединение: гигеническое по DIN 11851.<br>Номинальный диаметр: DN" + code[i].match(/\d+(\,\d+)?/g)[0] + ".");
+                }
+                if (code[i].startsWith("Tri-")){
+                    full_description.set(code[i], "Монтажное присоединение: гигеническое по DIN 32676.<br>Номинальный размер: Clamp" + code[i].match(/\d+(\,\d+)?/g)[0] + ".");
+                }
+                if (code[i].startsWith("K") && code[i].includes("-") && code[i].includes("=")){
+                    let temp_desc0 = "";
+                    for (el of window["cabel_restr_lst"].values()){
+                        if (el.get("name")==(code[i].split("=")[0].split("-")[1]).toLowerCase() || el.get("code_name")==(code[i].split("=")[0].split("-")[1]).toLowerCase()){
+                            temp_desc0 = el.get("description");
+                        }
+                    }
+                    full_description.set(code[i], "Кабельное исполнение типа " + code[i].split("-")[0] + "<br>" + temp_desc0 + "<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                if (code[i].startsWith("C") && code[i].includes("(K") && code[i].includes(")=")){
+                    let temp_desc0 = "";
+                    for (el of window["cabel_restr_lst"].values()){
+                        if (el.get("name")==(code[i].split("(")[0]).slice(1,).toLowerCase() || el.get("code_name")==(code[i].split("(")[0]).slice(1,).toLowerCase()){
+                            temp_desc0 = el.get("description");
+                        }
+                    }
+                    full_description.set(code[i], "Кабельное исполнение типа " + code[i].split("(")[1].split(")")[0] + "<br>" + temp_desc0 + "<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                /////////////////ПРОДОЛЖИТЬ//////////////////////
             }
         }
     }
+
+    //console.log(window["thermoresistor_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термосопротивлений по code_name
+    //console.log(window["thermocouple_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термопар по code_name
     if (full_description.has("(+)")){full_description.delete("(+)")}
     if (full_description.has("(-)")){full_description.delete("(-)")}
+    if (full_description.has("Ex")){
+        console.log("Замена описания на EX");
+        if (!full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("ex_description")!="undefined"){
+            full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("ex_description"));
+        }
+        if (full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("exalw_description")!="undefined"){
+            full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("exalw_description"));
+        }
+    }
+
     for (let i=0; i<=code.length; i++){
         if (code[i]=="(+)" || code[i]=="(-)"){
             code.splice(i,1);
@@ -355,16 +554,22 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             code.splice(i, 2, temp_code);
             i-=1;
         }
-        // if (typeof code[i]!="undefined" && (code[i].startsWith("S-")||code[i].startsWith("(-)S-")) && !(code[i].endsWith("-DC") || code[i].endsWith("-SF"))){
-        //     full_description.set(code[i], full_description.get(code[i]) + "<br>Метрологический комплект заполнен манометрической жидкостью с диапазоном рабочих температур: -50...180°С и НЕ ПРЕДНАЗНАЧЕННОЙ ДЛЯ ВАКУУМА!");
-        //     console.log(code[i]);
-        //     console.log('добавляем в описание заправку АК');
-        // }
     }
-    console.log(full_description);
+
+    let success_descr = true;
+    let code_descr = [];
+    for (let i=0; i<code.length; i++){
+        code_descr[i] = [code[i], full_description.get(code[i])];
+        if (typeof full_description.get(code[i])=="undefined"){
+            success_descr = false;
+            break;
+        }
+    }
+    // console.log(full_description);
+    console.log(code_descr);
     console.log(code);
 
-    if (code.length>2 && full_description.size == code.length){
+    if (code.length>2 && success_descr==true){//  && full_description.size == code.length
         document.getElementById("codeError").innerHTML = "";
         var myTableDiv = document.getElementById("codeDescription");
         let table = document.createElement('table');
@@ -392,13 +597,15 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     tr.appendChild(td);
                 }else{
                     td.width = '600';
-                    td.innerHTML = (full_description.get(code[i]));
+                    td.innerHTML = (code_descr[i][1]); //full_description.get(code[i])
                     tr.appendChild(td);
                 }
             }
         }
         myTableDiv.appendChild(table);                  // ТАБЛИЦА ГОТОВА
         document.getElementById("mytable").border= "1";
+        $("#code-entered-button-ok").prop("style", "display:none");
+        $("#reset-config").prop("style", "display:inline-block");
     }else{
         document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
     }
@@ -410,6 +617,11 @@ $(document).ready(function(){
         addDescription();
       }
     });
+    let cpr = document.getElementById("footer");
+    let lm = new Date(document.lastModified);
+    lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
+    cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
+    cpr.innerHTML += "<br>Last Updated : " + lm;
 });
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
@@ -436,9 +648,11 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
     let ctr_outlength = !Number.isNaN(parseInt(document.querySelector("#ctr-outlength").value)) ? parseInt(document.querySelector("#ctr-outlength").value) : undefined;
     let ctr_cabel_length = !Number.isNaN(parseInt(document.querySelector("#ctr-cabel-length").value)) ? parseInt(document.querySelector("#ctr-cabel-length").value) : undefined;
     let ctr_cabel_type = $("input[name=ctr-cabel-type]:checked").length>0 ? $("input[name=ctr-cabel-type]:checked").val() : undefined;
-    let ctr_thread_type = $("select[name=ctr-thread-type]").val()!="not_selected" ? $("select[name=ctr-thread-type]").val() : undefined;
+    let ctr_thread_type = $("select[name=ctr-thread-type]").val()!="not_selected" ? $("select[name=ctr-fm-type]").val() + $("select[name=ctr-ph-type]").val() + "(" + $("select[name=ctr-thread-type]").val() + ")" : undefined;
     let ctr_hygienic_type = $("select[name=ctr-hygienic-type]").val()!="not_selected" ? $("select[name=ctr-hygienic-type]").val() : undefined;
     let ctr_flange_type = ($("select[name=ctr-flange-type]").val()!="not_selected" && $("select[name=ctr-flange-type-pn]").val()!="not_selected" && $("select[name=ctr-flange-type-typ]").val()!="not_selected") ? $("select[name=ctr-flange-type]").val() + $("select[name=ctr-flange-type-pn]").val() + $("select[name=ctr-flange-type-typ]").val() : undefined;
+    let thermowell_diameter = $("select[name=thermowell-diameter]").val()!="not_selected" ? $("select[name=thermowell-diameter]").val() : undefined;
+
 
     const koef = new Map([
         ["Па", 0.001],
@@ -542,14 +756,32 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             full_conf.delete("end_range_kpa");
         }
 
-        if (typeof full_conf.get("connection-type")!=='undefined'){
-            full_conf.set(full_conf.get("connection-type").slice(0,-5), $("input[name ="+ full_conf.get("connection-type").slice(0,-5) +"]:checked").prop("id"));
-            full_conf.delete("connection-type");
+        for (let plmin of ["","minus-"]){ //// СДЕЛАТЬ ЧТОБ БЫЛО flange undefined если КОНСТРУКТОР БЕЗ КЛАССА FILLED  а если FILLED - добавить DN PN тип
+            if (typeof full_conf.get(plmin + "connection-type")!=='undefined'){
+                let connection_id = $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id");
+                console.log("connection_id ", connection_id);
+                if (typeof connection_id!="undefined" && [plmin + "s_t_", plmin + "s_p_", plmin + "s_ch_"].some(word => connection_id==word)){
+                    if ($("#" + plmin + "flange-constructor").hasClass("filled")){ /// ПРИ ЗАПОЛНЕННОМ КОНСТРУКТОРЕ добавить DN в full_conf
+                        let flange_dn = $("#" + plmin + "flange-constructor select[name=flange_dn]").val().toLowerCase();
+                        let flange_pn = $("#" + plmin + "flange-constructor select[name=flange_pn]").val().toLowerCase();
+                        let flange_type = $("#" + plmin + "flange-constructor select[name=flange_type]").val().toLowerCase();
+                        full_conf.set(full_conf.get(plmin + "connection-type").slice(0,-5), $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id") + flange_dn);
+                        full_conf.delete(plmin + "connection-type");
+                    }else{
+                        full_conf.set(full_conf.get(plmin + "connection-type").slice(0,-5), undefined);
+                        full_conf.delete(plmin + "connection-type");
+                    }
+                }
+                if (typeof connection_id=="undefined" || (typeof connection_id!="undefined" && ![plmin + "s_t_", plmin + "s_p_", plmin + "s_ch_"].some(word => connection_id==word))){
+                    full_conf.set(full_conf.get(plmin + "connection-type").slice(0,-5), $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id"));
+                    full_conf.delete(plmin + "connection-type");
+                }
+            }
         }
-        if (typeof full_conf.get("minus-connection-type")!=='undefined'){
-            full_conf.set(full_conf.get("minus-connection-type").slice(0,-5), $("input[name ="+ full_conf.get("minus-connection-type").slice(0,-5) +"]:checked").prop("id"));
-            full_conf.delete("minus-connection-type");
-        }
+        // if (typeof full_conf.get("minus-connection-type")!=='undefined'){
+        //     full_conf.set(full_conf.get("minus-connection-type").slice(0,-5), $("input[name ="+ full_conf.get("minus-connection-type").slice(0,-5) +"]:checked").prop("id"));
+        //     full_conf.delete("minus-connection-type");
+        // }
         if ($("input[name=cap-or-not]:checked").prop("id")=="capillary" && !full_conf.has("capillary_length")){
             full_conf.set("capillary_length");
         }
@@ -648,6 +880,42 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             full_conf.delete("ctr_flange_type");
             full_conf.delete("ctr_hygienic_type");
         }
+    }
+    if (main_dev=="thermowell"){//ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ ГИЛЬЗЫ
+        let options = ["thermowell-type", "material"];
+        for (let el of options){
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }
+        for (let els of ["thermowell-pressure", "thermowell-length", "thermowell-tlength"]){
+            if (Number.isNaN(parseInt($("input[name=" + els + "]").val()))){
+                full_conf.set(els, undefined);
+            }else{
+                full_conf.set(els, $("input[name=" + els + "]").val());
+            }
+        }
+        if ($("#thermowell-connection1 select:required").length>0){
+            if ($(" #thermowell-connection1 select").find("option[value=not_selected]:selected").length!=0){
+                full_conf.set("thermowell-connection1", undefined);
+            }else{
+                full_conf.set("thermowell-connection1", $(" #thermowell-connection1 select").val());
+            }
+        }else{
+            full_conf.delete("thermowell-connection1");
+        }
+        if ($("#thermowell-connection2 select:required").length>0){
+            if ($("#thermowell-connection2 select:required").find("option[value=not_selected]:selected").length!=0){
+                full_conf.set("thermowell-connection2", undefined);
+            }else{
+                let element = "";
+                $("#thermowell-connection2 select:required").each(function(){
+                    element+=$(this).find("option:selected").val();
+                })
+                full_conf.set("thermowell-connection2", element);
+            }
+        }else{
+            full_conf.delete("thermowell-connection2");
+        }
+        full_conf.set("thermowell-diameter", thermowell_diameter);
     }
 
     return full_conf;
@@ -996,7 +1264,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         material = "";
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
-        if ($(this).is(":checked") && $(this).val()!="rad_cap"  && $(this).val()!="Hart7"){
+        if ($(this).is(":checked") && $(this).val()!="rad_cap" && $(this).val()!="Hart7"){
             special = special + $(this).val() + "/";
         }
     })
@@ -1004,7 +1272,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let plus_fluid = "";
     let minus_fluid = "";
     if (connection.startsWith("S-") || connection.startsWith("(+)S-") || (typeof minus_connection!='undefined' && minus_connection.startsWith("S-"))){
-        fluid = "-" + $("input[name=fluid]:checked").val();
+        fluid = $("input[name=fluid]:checked").val()=="AK" ? "" : "-" + $("input[name=fluid]:checked").val();
         // console.log("Добавляем жижу в код: " + fluid);
     }
     // console.log(connection);
@@ -1059,10 +1327,91 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
 }
 
-function get_ctr_code_info(){
+function get_ctr_code_info(data){
     console.log("Создаем код заказа CTR");
+    let code = "В_РАЗРАБОТКЕ!!!";
+    let output = data.get("output");
+    let appr = data.get("approval");
+    let sensor_quantity = data.get("sensor_quantity")=="1" ? "" : data.get("sensor_quantity")+"x";
+    let sensor;
+    let approval = appr =="Ex" ? "Ex/" : appr == "Exd" ? "Exd/" : "-/";
+    let head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : data.get("cabel").slice(4,) + "-" + data.get("ctr_cabel_type") + "=" + data.get("ctr_cabel_length") + "м";
+    let vk = $("#spec_lvk").is(":checked") ? "vk" : "";
+    let connection = data.has("ctr_thread_type") ? data.get("ctr_thread_type") : data.has("ctr_flange_type") ? data.get("ctr_flange_type") : data.has("ctr_hygienic_type") ? data.get("ctr_hygienic_type") : "I";
+    let material = window["material_restr_lst"].get(data.get("material")).get("code_name");
+    let transducer = (output=="4_20" && data.has("thermoresistor")) ? "AT/" : (output=="4_20" && data.has("thermocouple")) ? "GI-22/" : output=="4_20H" ? "LI-24G/" : "";
+    transducer = (approval=="Ex/" && transducer!="") ? transducer + "Ex/" : transducer;
+    let range = data.get("ctr_begin_range") + "..." + data.get("ctr_end_range") + "°C";
+    let open_circuit = (!$("#spec_38").is(':disabled') && !$("#spec_38").is(":checked")) ? "/23мА" : ($("#spec_38").is(":checked")) ? "/3,8мА" : (!$("#spec_375").is(':disabled') && !$("#spec_375").is(":checked")) ? "/21,5мА" :  (output=="4_20H" && $("#spec_375").is(":checked")) ? "/3,75мА" : "";
+    let special = "";
+    $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
+        if ($(this).is(":checked") && $(this).val()!="Lvk"){
+            special = special + $(this).val() + "/";
+        }
+    })
+
+
+    if (data.has("thermoresistor") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW")){
+        console.log("Код CT-R");
+        sensor = $("#" + data.get("thermoresistor")).val();
+        code = "CT-R/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range + open_circuit;
+    }
+    if (data.has("thermocouple") && data.get("output")!="no_trand" && (data.has("nohead") || data.has("head") && data.get("head")!="ctr-ALW") && data.get("ctr_end_range")<=1100){
+        console.log("Код CT-U");
+        sensor = $("#" + data.get("thermocouple")).val();
+        code = "CT-U/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range + open_circuit;
+    }
+    if(data.has("thermoresistor") && data.get("output")=="no_trand"){
+        console.log("Код CT");
+        sensor = $("#" + data.get("thermoresistor")).val();
+        transducer = (data.has("head")) ? "KZ/" : "";
+        code = "CT/" + head_nohead + "/" + approval + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tr") + "/" + data.get("sensor_wiring_tr") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/L" + vk + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + material + "/" + transducer + range;
+    }
+    if((data.has("thermocouple") && data.get("output")=="no_trand") || (data.has("thermocouple") && data.get("output")!="no_trand" && data.get("ctr_end_range")>1100)){
+        console.log("Код CTU");
+        sensor = $("#" + data.get("thermocouple")).val();
+        let s_length =  !data.has("cabel") ? "S=" + data.get("ctr_outlength") + "мм/" : "";
+        connection = connection=="I" ? "-" : connection;
+        head_nohead = data.has("head") ? data.get("head").slice(4,) : data.has("nohead") ? data.get("nohead").slice(4,) : "C" + data.get("ctr_cabel_type").toLowerCase() + "(" + data.get("cabel").slice(4,) + ")=" + data.get("ctr_cabel_length") + "м";
+        code = "CTU/" + sensor_quantity + sensor + "/" + data.get("sensor_accuracy_tc") + "/" + "d" + vk + "=" + data.get("ctr_diameter") + "мм/" + material  + "/" + "L" + vk + "=" + data.get("ctr_length") + "мм/" + s_length + connection + "/" + head_nohead + "/" + transducer + range;
+    }
+    if (data.has("thermoresistor") && data.get("head")=="ctr-ALW"){
+        console.log("Код CTR-ALW");
+        approval = approval=="-/" ? "" : approval;
+        code = "CTR-ALW/" + $("input[name=ctr-ALW-type]:checked").val() + "/" + approval + special + "d" + "=" + data.get("ctr_diameter") + "мм/L" + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + range + open_circuit;
+    }
+    if (data.has("thermocouple") && data.get("head")=="ctr-ALW"){
+        approval = approval=="-/" ? "" : approval;
+        console.log("Код CTU-ALW");
+        code = "CTU-ALW/" + $("input[name=ctr-ALW-type]:checked").val() + "/" + approval + special + "d" + "=" + data.get("ctr_diameter") + "мм/L" + "=" + data.get("ctr_length") + "мм/S=" + data.get("ctr_outlength") + "мм/" + connection + "/" + range + open_circuit;
+    }
+
     if ($("div.color-mark-field.unselected:visible").length==0){
-        document.getElementById("code").value = "В РАЗРАБОТКЕ!!!";
+        document.getElementById("code").value = code;
+        $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+            minWidth: 200,
+            maxWidth: function(){return $('.code-input-container').width()-8; },
+            comfortZone: 5
+        })
+        addDescription();
+    }
+}
+
+function get_thermowell_code_info(data){///ПОЛУЧЕНИЕ КОДА ЗАКАЗА ГИЛЬЗЫ
+    console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА ГИЛЬЗЫ");
+    let code = "";
+    let type = data.get("thermowell-type").toUpperCase();
+    let diameter = data.get("thermowell-diameter");
+    let pressure = parseInt(data.get("thermowell-pressure")) + "МПа";
+    let connection1 = typeof data.get("thermowell-connection1")!='undefined' ? data.get("thermowell-connection1"): "-";
+    let connection2 = typeof data.get("thermowell-connection2")!='undefined' ? data.get("thermowell-connection2"): "-";
+    let cover = $("#spec_ptfe").is(":checked") ? "(PTFE)" :"";
+    let material = data.get("material").toUpperCase() + cover;
+    let lt = "Lt=" + data.get("thermowell-tlength") + "мм";
+    let l = "L=" + data.get("thermowell-length") + "мм";
+    code = type + "/" + diameter + "/" + pressure + "/" + connection1 + "/" + connection2 + "/" + material + "/" + lt + "/" + l;
+    if ($("div.color-mark-field.unselected:visible").length==0){
+        document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
             minWidth: 200,
             maxWidth: function(){return $('.code-input-container').width()-8; },
@@ -1073,11 +1422,25 @@ function get_ctr_code_info(){
 }
 
 function disable_invalid_options(){
+    for (let plmin of ["", "minus-"]){
+        if ($("#" + plmin + "s_tk_wash_dn100").is(":checked")){
+            $("#" + plmin + "s_tk_wash_dn100-cilinder-select").show();
+        }else{
+            $("#" + plmin + "s_tk_wash_dn100-cilinder-select").hide();
+        }
+        if ($("input[id^=" + plmin +"s_p_]:checked, input[id^=" + plmin +"s_t_]:checked, input[id^=" + plmin +"s_ch_]:checked").length==0){
+            try {
+                document.getElementById(plmin + "flange-constructor").remove();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
     let num = 100; // НУЖНО ДЛЯ ДОБАВЛЕНИЯ id CHECKBOX_ERR_CANCEL
     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
-        if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
-            $(this).prop("style", "display:none");
-        }
+        // if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+        //     $(this).prop("style", "display:none");
+        // }
         $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
     $("#err_ctr-range").prop("innerHTML", "<span style='color: red; margin-left:1.5em'>или отмените: </span>"); // &emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'>
@@ -1095,13 +1458,17 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "cap-or-not", "max-static"];
+    let opt_names = ["main_dev", "approval", "output", "electrical", "material", "sensor-type", "cap-or-not", "max-static"];
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
             $(this).prop('disabled', false);                                                   /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
         })
     }
+    $("select option").each(function(){ /// АКТИВАЦИЯ ВСЕХ OPTION
+        $(this).removeAttr('disabled');
+    })
+
     if (typeof full_conf.get("minus-flange")!=='undefined' && full_conf.get("minus-flange")=="minus-c-pr"){
         for (let plmin of ["","minus-"]){////////присоединения плюс и минус пометить причину деактивации при включенном C
             for (let cons of ["thread", "flange", "hygienic"]){
@@ -1115,7 +1482,7 @@ function disable_invalid_options(){
         }
     }
 
-    let condition4 = (full_conf.has("thread") && (full_conf.get("thread")=='P' || full_conf.get("thread")=='minus-P')) || (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
+    let condition4 = (full_conf.has("flange") && (full_conf.get("flange")=='c-pr' || full_conf.get("flange")=='minus-c-pr'));
     // console.log(condition4);
     if (((full_conf.get("main_dev")=="pr-28" || full_conf.get("main_dev")=="apr-2000") && condition4==false) || (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apc-2000")){ //ТОЛЬКО ДЛЯ С или P присоединений
         let opt_names2 = ["cap-plus", "cap-minus", "connection-type", "minus-connection-type", "thread", "flange", "hygienic", "minus-thread", "minus-flange", "minus-hygienic"];
@@ -1128,12 +1495,17 @@ function disable_invalid_options(){
     }
 
     if (full_conf.get("main_dev")=="ctr"){
-        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "head", "nohead", "cabel", "material", "thermocouple", "thermoresistor"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
+        for (let opt_name of ["main_dev", "approval", "output", "ctr-electrical", "ctr-ALW-type", "head", "nohead", "cabel", "ctr-cabel-type", "material", "thermocouple", "thermoresistor"]){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ CTR
             $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
             $("input[name="+ opt_name +"]").each(function() {
                 $(this).prop('disabled', false);                                                    /// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ
             })
         }
+        for (let lst of ["thread", "flange", "hygienic"]){
+            $("label[for=ctr-"+lst+"-list]").removeClass('disabled');
+            $("#ctr-"+lst+"-list").prop('disabled', false);
+        }
+
     }
 
     $("input[name=special]").each(function() {/// АКТИВАЦИЯ ВСЕХ ЧЕКБОКСОВ SPECIAL
@@ -1161,7 +1533,7 @@ function disable_invalid_options(){
     low_press_abs = 0;                              // начало диапазона абс, кПа
     hi_press_abs = 10000;                           // конец диапазона абс, кПа
     min_range_abs = full_conf.get("output")=="4_20H" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
-    low_press_diff = -2500;                         // начало диапазона перепад, кПа
+    low_press_diff = -160;                         // начало диапазона перепад, кПа
     hi_press_diff = 2500;                           // конец диапазона перепад, кПа
     min_range_diff = 1.6;                           // мин ширина диапазона перепад, кПа
     if (full_conf.get("main_dev")=='pc-28' || full_conf.get("main_dev")=='apc-2000'){
@@ -1187,6 +1559,13 @@ function disable_invalid_options(){
             }
         })
     }
+
+    if ((typeof full_conf.get("sensor_accuracy_tr")!="undefined" && full_conf.get("sensor_accuracy_tr")=="A") || (typeof full_conf.get("sensor_accuracy_tc")!="undefined" && full_conf.get("sensor_accuracy_tc")=="1")){
+        ctr_min_length = $("#ctr-diameter").val()!="not_selected" ? parseInt($("#ctr-diameter").val())*5+30 : 45; /// МИНИМАЛЬНАЯ ДЛИНА ДЛЯ КЛАССА "A"
+    }else{
+        ctr_min_length = 20;
+    }
+    checkCTRDimensions();
 
 
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){//ПРОВЕРКА ЭЛЕКТРИЧЕСКОЙ ЧАСТИ ДАВЛЕНИЕ
@@ -1301,7 +1680,7 @@ function disable_invalid_options(){
             }
 
             for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC ПО ДАВЛЕНИЮ, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
-                if ((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")){
+                if (((typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")) || full_conf.get("begin_range_kpa")<entr[1].get("begin_range_kpa") || full_conf.get("end_range_kpa")>entr[1].get("end_range_kpa")) && typeof full_conf.get("cap-or-not") == "undefined"){
                     $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению THREAD или FLANGE или HYGIENIC
                     $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                     document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ${entr[1].get("begin_range_kpa")}...${entr[1].get("end_range_kpa")} кПа, минимальная ширина ${entr[1].get("range")} кПа.</label>`;
@@ -1356,58 +1735,10 @@ function disable_invalid_options(){
         }
     }
 
-    $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
-        if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
-            if ($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW"){
-                // $(this).prop("style", "display:block");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                // $(this).prop("style", "display:none");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-        }
-
-        if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
-            if (!($(this).prop("id")=="APCALW")){//
-                // $(this).prop("style", "display:block");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                // $(this).prop("style", "display:none");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-        }
-    })
-
-    $("input[name=output]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ВЫХОДНЫЕ СИГНАЛЫ В ЗАВИСИМОСТИ ОТ MAIN-DEV
-        if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="apr-2000"){
-            if ($(this).prop("id")=="4_20H"){
-                // $(this).prop("style", "display:block");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                // $(this).prop("style", "display:none");
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-            $("label[for=no_trand]").prop("style", "display:none");
-        }
-
-        if (full_conf.get("main_dev")=="pc-28" || full_conf.get("main_dev")=="pr-28"){
-            $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            $("label[for=no_trand]").prop("style", "display:none");
-        }
-
-        if (full_conf.get("main_dev")=="ctr"){
-            if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20" || $(this).prop("id")=="no_trand"){
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
-            }else{
-                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
-            }
-        }
-    })
-
     if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){   /// ПРОВЕРКА PR и APR
 
         $("input[name=thread]").each(function(){
-            if (this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
+            if (this.value=="M12x1" || this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
                 // $(this).prop("style", "display:block");
                 $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
             }else{
@@ -1428,6 +1759,16 @@ function disable_invalid_options(){
                 }
             })
         }
+        if (typeof full_conf.get("material")!="undefined" & (full_conf.get("material")=="hastelloy" || full_conf.get("material")=="tantal")){       // деактивация MAX-STATIC>25 для HASTELLOY и TANTAL
+            $("input[name=max-static]").each(function(){
+                if ((parseInt($(this).val())>25)){
+                    $(this).prop('disabled', true);
+                    $("label[for="+$(this).prop('id')+"]").addClass('disabled');
+                    document.getElementById("err_"+$(this).prop('id')).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                    num+=1;
+                }
+            })
+        }
         if ($("input[name=max-static]:checked").length>0 && full_conf.get("max-static")!="4"){// ОГРАНИЧЕНИЕ ДИАПАЗОНА и деактивация P и 1/4NPT елси MAX-STATIC не равно 4
             for (let els of ["1_4npt_f", "P"]){
                 for (let plmin of ["","minus-"]){
@@ -1438,7 +1779,7 @@ function disable_invalid_options(){
                     num+=1;
                 }
             }
-            low_press_diff = -1600;
+            low_press_diff = -160;
             hi_press_diff = 1600;
             document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
         }
@@ -1467,6 +1808,16 @@ function disable_invalid_options(){
             $("#capillary-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
         }
 
+        if ($("input[name=max-static]:checked").length>0 && (parseInt(full_conf.get("max-static"))>25)){///ДЕАКТИВАЦИЯ TANTAL и HASTELLOY если MAX STATIC >25
+            $("label[for=hastelloy]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+            $("#hastelloy").prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+            $("label[for=tantal]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+            $("#tantal").prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+            document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
+            document.getElementById("err_tantal").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
+            num+=2;
+        }
+
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
@@ -1478,7 +1829,7 @@ function disable_invalid_options(){
                     // console.log("min_range direct ", min_range);
                 }
 
-                low_press_diff = -hi_press_diff;
+                low_press_diff = -160;
                 document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                 document.getElementById("range_warning2").innerHTML = "";
 
@@ -1515,7 +1866,7 @@ function disable_invalid_options(){
                     console.log("min_range direct ", min_range);
                 }
 
-                low_press_diff = -hi_press_diff;
+                low_press_diff = -160;
                 document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                 document.getElementById("range_warning2").innerHTML = "";
 
@@ -1605,42 +1956,7 @@ function disable_invalid_options(){
                         }
                     }
                 }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-plus") == 'direct'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                //         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //         if (typeof document.getElementById("err_"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                //             document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get(con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get(con_type)}_err_cancel${num}'>Выбранный диапазон. Минимальная ширина для непосредственного соединения ${entr[1].get("range")} кПа.</label>`;
-                //             num+=1;
-                //         }
-                //     }
-                // }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-minus") == 'direct'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                //         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению БЕЗ КАПИЛЛЯРА ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //         if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                //             document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get(con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get(con_type)}_err_cancel${num}'>Выбранный диапазон. Минимальная ширина для непосредственного соединения ${entr[1].get("range")} кПа.</label>`;
-                //             num+=1;
-                //         }
-                //     }
-                // }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-plus") == 'capillary'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range_c") !== 'undefined' && full_conf.get("range")<entr[1].get("range_c")){
-                //         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //     }
-                // }
-                // if (typeof full_conf.get("range")!=='undefined' && full_conf.get("cap-minus") == 'capillary'){
-                //     // console.log("name: ", entr[0], "range: ", entr[1].get("range"), "begin_range_kpa: ", entr[1].get("begin_range_kpa"), "end_range_kpa: ", entr[1].get("end_range_kpa"));
-                //     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                //         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по давлению  С КАПИЛЛЯРОМ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                //         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                //     }
-                // }
+
                 if (typeof full_conf.get("material")!=='undefined'){
                     if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
@@ -1660,6 +1976,57 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev")=="ctr"){  /// ПРОВЕРКА опций CTR
 
+        if ($("input[name=ctr-electrical]:checked").length==0){
+            $('.head-nohead-cabel').hide(0);
+        }
+
+
+        let  tlchecked = $("#thermocouple-list").is(":checked") ? 1 : 0;
+        let  exchecked = $("#Ex").is(":checked") ? 1 : 0;
+        let  checked4_20 = $("#4_20").is(":checked") ? 1 : 0;
+        if ( tlchecked + exchecked + checked4_20 == 2 ){//// ОТКЛЮЧИТЬ ОДНОВРЕМЕННЫЙ ВЫБОР ТЕРМОПАРЫ, Ex и 4..20
+            let arr_tec = [];
+            for (let ids of ["thermocouple-list", "Ex", "4_20"]){
+                if ($("#" + ids).is(":checked")){
+                    arr_tec.push(ids);
+                }
+            }
+            for (let ids of ["thermocouple-list", "Ex", "4_20"]){
+                if (!$("#" + ids).is(":checked")) {
+                    $("label[for="+ ids +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ
+                    $("#" + ids).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНОГО
+                    for (let el of arr_tec){
+                        document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
+                        num+=1;
+                    }
+                }
+            }
+        }
+
+        let nohdchecked = ($("#nohead-list").is(":checked") || $("#cabel-list").is(":checked")) ? 1 : 0;
+        let transdchecked = ($("#4_20").is(":checked") || $("#4_20H").is(":checked")) ? 1 : 0;
+        if ( tlchecked + nohdchecked + transdchecked == 2 ){//// ОТКЛЮЧИТЬ ОДНОВРЕМЕННЫЙ ВЫБОР ТЕРМОПАРЫ, БЕЗ ГОЛОВЫ и С ПРЕОБРАЗОВАТЕЛЕМ
+            let arr_tnt = [];
+            for (let ids of ["thermocouple-list", "nohead-list", "cabel-list", "4_20", "4_20H"]){
+                if ($("#" + ids).is(":checked")){
+                    arr_tnt.push(ids);
+                }
+            }
+            for (let ids of ["thermocouple-list", "nohead-list", "cabel-list", "4_20", "4_20H"]){
+                if (!$("#" + ids).is(":checked")) {
+                    $("label[for="+ ids +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ
+                    $("#" + ids).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНОГО
+                    for (let el of arr_tnt){
+                        if (el!="4_20H" && el!="nohead-list"){
+                            document.getElementById("err_" + ids).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${el}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${el}_err_cancel${num}'>${$("label[for="+el+"]").text()}</label>`;
+                            num+=1;
+                        }
+                    }
+                }
+            }
+        }
+
+
         if (typeof full_conf.get("approval")!=='undefined' && full_conf.get("approval")=="Exd"){ /// Если  Exd оставляем только DAO и ALW и температура до 450
             for (let entr of ["ctr-NA", "ctr-DA", "ctr-PZ", "nohead-list", "cabel-list"]){
                 $("label[for="+ entr +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ в Exd типы температур
@@ -1667,6 +2034,8 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("approval")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("approval")}_err_cancel${num}'>${$("label[for="+full_conf.get("approval")+"]").text()}</label>`;
                 num+=1;
             }
+            $("#cabel-select").prop("style", "display:none");
+            $("#ctr-cabel-type-select-div").prop("style", "display:none");
             ctr_high_temp = 450 < ctr_high_temp ? 450 : ctr_high_temp;
             $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
             $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
@@ -1689,6 +2058,14 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("output")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("output")}_err_cancel${num}'>${$("label[for="+full_conf.get("output")+"]").text()}</label>`;
                 num+=1;
             }
+            $("#cabel-select").prop("style", "display:none");
+            $("#ctr-cabel-type-select-div").prop("style", "display:none");
+            if (full_conf.get("output")=="4_20H"){  ////если HART - деактивировать без головы (раъемы)
+                $("label[for=nohead-list]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#nohead-list").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_nohead-list").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("output")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("output")}_err_cancel${num}'>${$("label[for="+full_conf.get("output")+"]").text()}</label>`;
+                num+=1;
+            }
         }
         if (full_conf.has("cabel")){ // ЕСЛИ кабельное - деакт 4_20, 4_20H, Exd
             for (let entr of ["4_20", "4_20H", "Exd"]){
@@ -1697,6 +2074,22 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='cabel-list_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='cabel-list_err_cancel${num}'>${$("label[for=cabel-list]").text()}</label>`;
                 num+=1;
             }
+        }
+        if (full_conf.has("nohead")){ // ДЕАКТИВАЦИЯ Exd и 4_20H для NoHead
+            $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+            $("label[for=4_20H]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#4_20H").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_4_20H").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-DAO" && full_conf.get("head")!="ctr-ALW"){///ДЕАКТИВИРОВАТЬ EXD ЕСЛИ ГОЛОВКА НЕ Exd
+            $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+            num+=1;
         }
         if (typeof full_conf.get("head")!=="undefined" && full_conf.get("head")=="ctr-ALW"){ // ЕСЛИ ALW - только 4-20H
             for (let entr of ["4_20", "no_trand"]){
@@ -1732,18 +2125,49 @@ function disable_invalid_options(){
                         $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
                         document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
-                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}°C)</label>`;
+                        document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("thermoresistor")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("thermoresistor")}_err_cancel${num}'>${$("label[for="+full_conf.get("thermoresistor")+"]").text()} (${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("begin_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}...${window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("end_range_"+ full_conf.get("sensor_accuracy_tr").toLowerCase())}°C для класса ${full_conf.get("sensor_accuracy_tr")})</label>`;
                         num+=1;
                     }
                 }
+                $("input[name=material]").each(function() { //// ДЛЯ ВЫБРАННОГО СЕНСОРА thermoresistor, thermocouple ПОМЕЧАЕМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                    if (typeof window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("material")!="undefined" && !window[sensor + "_restr_lst"].get(full_conf.get(sensor)).get("material").includes($(this).attr("id"))){
+                        $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                        $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                        document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get(sensor)}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get(sensor)}_err_cancel${num}'>${$("label[for="+full_conf.get(sensor)+"]").text()}</label>`;
+                        num+=1;
+                    }
+                })
             }
         }
-        if (full_conf.has("material") && typeof full_conf.get("material")!='undefined'){// ОГРАНИЧИТЬ end-range ЕСЛИ ВЫБРАНО material
+        if (full_conf.has("thermocouple") && typeof full_conf.get("thermocouple")!='undefined'){ ///ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ КЛАССОВ ТОЧНОСТИ ТЕРМОПАР
+            let classes_arr = window["thermocouple_restr_lst"].get(full_conf.get("thermocouple")).get("class");
+            $("#sensor-accuracy-tc option").each(function(){
+                if ($(this).val()!='not_selected'){
+                    if (!(classes_arr.includes(parseInt($(this).val())))){
+                        $(this).attr('disabled', 'disabled');
+                        $(this).prop('selected', false);
+                    }
+                }
+            })
+        }
+        if (full_conf.has("material") && typeof full_conf.get("material")!='undefined'){//// ОГРАНИЧЕНИЕ end-range и ДЕАКТИВАЦИЯ СЕНСОРОВ ЕСЛИ ВЫБРАНО material
             ctr_high_temp = window["material_restr_lst"].get(full_conf.get("material")).get("end_range") < ctr_high_temp ? window["material_restr_lst"].get(full_conf.get("material")).get("end_range") : ctr_high_temp;
             $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
             document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
             document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()} (до ${window["material_restr_lst"].get(full_conf.get("material")).get("end_range")}°C)</label>`;
             num+=1;
+            for (let sensor of ["thermoresistor", "thermocouple"]){
+                for (let entr of window[sensor + "_restr_lst"].entries()){
+                    if (typeof full_conf.get("material")!=='undefined'){
+                        if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
+                            $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ СЕНОСОРЫ по материалу
+                            $("#"+entr[0]).prop('disabled', true);                  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                            document.getElementById("err_" +entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                            num+=1;
+                        }
+                    }
+                }
+            }
         }
 
         for (let entr of window["thermocouple_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ  thermocouple по  ТЕМПЕРАТУРЕ
@@ -1782,25 +2206,317 @@ function disable_invalid_options(){
             }
         }
 
+        for (let entr of window["cabel_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ cabel по ТЕМПЕРАТУРЕ
+            if (typeof entr[1].get("end_range") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range")){
+                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ cabel
+                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ cabel
+                document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("end_range")}_err_cancel${num}'>Температура. Допускается до ${entr[1].get("end_range")}°C.</label>`;
+                num+=1;
+            }
+        }
+
+        if (typeof full_conf.get("ctr_end_range")!='undefined' && full_conf.get("ctr_end_range")>450){///ДЕАКТИВАЦИЯ Exd для темп >450
+            $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ Exd
+            $("#Exd").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ Exd
+            document.getElementById("err_Exd").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("ctr_end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("ctr_end_range")}_err_cancel${num}'>Температура. Допускается до 450°C.</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("ctr-electrical")==="undefined" || (typeof full_conf.get("ctr-electrical")!="undefined" && full_conf.has("head")  && typeof full_conf.get("head")==="undefined") || (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-ALW")){// ОТКЛ 3мм для исполнения HEAD кроме CTR-ALW
+            if ((!full_conf.has("thermoresistor") && !full_conf.has("thermocouple")) || (full_conf.has("thermocouple") && typeof full_conf.get("thermocouple")==="undefined") || (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")!="tha" && full_conf.get("thermocouple")!="tzk") || (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2")){
+                console.log("ОТКЛ 3мм");
+                $("#ctr-diameter option[value=3]").attr('disabled', 'disabled').prop("selected", false);
+            }
+        }
+
+        if (full_conf.get("approval")=="Exd" && full_conf.get("head")=="ctr-DAO"){///ОТКЛ ДИАМЕТР 3,8 для DAO/Exd
+            $("#ctr-diameter option[value=3]").attr('disabled', 'disabled');
+            $("#ctr-diameter option[value=8]").attr('disabled', 'disabled');
+        }
+
+        if (typeof full_conf.get("sensor_quantity")!="undefined" && full_conf.get("sensor_quantity")=="2"){//деактивация ALW для 2-х сенсоров
+            $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+            $("#ctr-ALW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+            document.getElementById("err_ctr-ALW").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_quantity")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='${full_conf.get("sensor_quantity")}_err_cancel${num}'>Количество сенсоров: 2.</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("sensor_quantity")!="undefined" && full_conf.get("sensor_quantity")=="2"){//деактивация 4..20мА для 2-х сенсоров
+            $("label[for=4_20]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+            $("#4_20").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+            document.getElementById("err_4_20").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_quantity")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='${full_conf.get("sensor_quantity")}_err_cancel${num}'>Количество сенсоров: 2.</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")!="aisi316" && full_conf.get("material")!="inconel"){//деактивация ALW для НЕПОДХОДЯЩИХ МАТЕРИАЛОВ
+            $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+            $("#ctr-ALW").prop('disabled', true).prop("checked", false);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+            document.getElementById("err_ctr-ALW").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("material")!="undefined" && (full_conf.get("material")=="sialon" || full_conf.get("material")=="ceramic")){//ЕСЛИ СИАЛОН КОРУНД - оставить только DA
+            for (let els of ["nohead-list", "cabel-list", "ctr-NA", "ctr-DAO", "ctr-PZ"]){
+                $("label[for=" + els + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+                $("#" + els).prop('disabled', true).prop("checked", false);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+                document.getElementById("err_" + els).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+
+        if (typeof full_conf.get("sensor-type")!="undefined"){ //деактивация ALW если не PT100 и не терм K
+            let sens_typ = full_conf.get("sensor-type").slice(0,-5);
+            if (typeof full_conf.get(sens_typ)!="undefined" && (full_conf.get(sens_typ)!="tha" && full_conf.get(sens_typ)!="pt100")){
+                $("label[for=ctr-ALW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
+                $("#ctr-ALW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+                document.getElementById("err_ctr-ALW").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get(sens_typ)}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get(sens_typ)}_err_cancel${num}'>${$("label[for="+full_conf.get(sens_typ)+"]").text()}</label>`;
+                num+=1;
+            }
+        }
+
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){// ОТКЛ 2 сенсора и классы В, С для CTR-ALW
+            $("#sensor-quantity option[value=2]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tr option[value=B]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tr option[value=C]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tc option[value=2]").prop('selected', false).attr('disabled', 'disabled');
+            $("#sensor-accuracy-tc option[value=3]").prop('selected', false).attr('disabled', 'disabled');
+        }
+
+        if (typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20"){// ОТКЛ 2 сенсора  для 4..20мА
+            $("#sensor-quantity option[value=2]").prop('selected', false).attr('disabled', 'disabled');
+        }
 
 
+        if ($("#sensor-quantity").val()=="2"){/// ОТКЛЮЧАЕМ 4-провода для двух сенсоров
+            if ($("#sensor-wiring-tr").val()=="4"){
+                $("#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+            }
+            $("#sensor-wiring-tr option[value=4]").attr('disabled', 'disabled');
+        }
+        if ($("#sensor-wiring-tr").val()=="4"){// ОТКЛЮЧАЕМ 2 сенсора для 4-х проводов
+            if ($("#sensor-quantity").val()=="2"){
+                $("#sensor-quantity option[value='not_selected']").prop('selected', true);
+            }
+            $("#sensor-quantity option[value=2]").attr('disabled', 'disabled');
+        }
+        if ($("select#sensor-accuracy-tr option:selected").val()=="A"){/// ОТКЛЮЧАЕМ 2-провода для класса A
+            if ($("select#sensor-wiring-tr option:selected").val()=="2"){
+                $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
+            }
+            $("select#sensor-wiring-tr option[value=2]").attr('disabled','disabled');
+        }
+        if ($("select#sensor-wiring-tr option:selected").val()=="2"){/// ОТКЛЮЧАЕМ класс A для 2-проводных
+            if ($("select#sensor-accuracy-tr option:selected").val()=="A"){
+                $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+            }
+            $("select#sensor-accuracy-tr option[value=A]").attr('disabled','disabled');
+        }
 
 
+        if(typeof full_conf.get("head")!="undefined" && full_conf.get("head")=="ctr-ALW"){ // ДЕАКТИВАЦИЯ СЕНСОРОВ для CTR-ALW (кроме K и Pt100)
+            for (let sensor of ["thermoresistor", "thermocouple"]){
+                $("input[name="+ sensor +"]").each(function(){
+                    if ($(this).prop("id")!="pt100" && $(this).prop("id")!="tha"){
+                        $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ СЕНОСОРЫ по материалу
+                        $("#"+$(this).prop("id")).prop('disabled', true);                  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                        document.getElementById("err_" +$(this).prop("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+                        num+=1;
+                    }
+                })
+            }
+            if (full_conf.has("thermocouple")){
+                ctr_low_temp = -40 > ctr_low_temp ? -40 : ctr_low_temp;
+                ctr_high_temp = 550 < ctr_high_temp ? 550 : ctr_high_temp;
+                $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()} (мин -40°С)</label>`;
+                num+=1;
+            }
+            if (full_conf.has("thermoresistor")){
+                ctr_low_temp = -196 > ctr_low_temp ? -196 : ctr_low_temp;
+                ctr_high_temp = 420 < ctr_high_temp ? 420 : ctr_high_temp;
+                $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+                document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+                document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()} (до 420°С)</label>`;
+                num+=1;
+            }
+        }
 
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="22"){ // ДЕАКТИВАЦИЯ СИАЛОН если выбран диаметер не 22мм
+            $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 22мм.</label>`;
+            num+=1;
+        }
 
+        if (typeof full_conf.get("head")!="undefined" && full_conf.get("head")!="ctr-DA"){ // ДЕАКТИВАЦИЯ СИАЛОН и КОРУНД ЕСЛИ ВЫБРАНА ГОЛОВКА НЕ DA
+            $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#ceramic").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+            num+=1;
+            document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("head")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("head")}_err_cancel${num}'>${$("label[for="+full_conf.get("head")+"]").text()}</label>`;
+            num+=1;
+        }
 
+        if (typeof full_conf.get("ctr-electrical")!="undefined" && full_conf.get("ctr-electrical")!="head-list"){ // ДЕАКТИВАЦИЯ СИАЛОН и КОРУНД ЕСЛИ ВЫБРАНО БЕЗ ГОЛОВКИ ИЛИ КАБЕЛЬ
+            $("label[for=sialon]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#sialon").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#ceramic").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_sialon").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+            document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-electrical")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-electrical")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-electrical")+"]").text()}</label>`;
+            num+=1;
+        }
 
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="sialon"){/// ДЛЯ СИАЛОНА ДИАМЕТР ТОЛЬКО 22 и БЕЗ ПРИСОЕДИНЕНИЯ
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="22" && $(this).val()!="not_selected"){
+                    $(this).attr("disabled", "disabled");
+                }
+            })
+            for (let lst of ["thread", "flange", "hygienic"]){
+                $("label[for=ctr-"+lst+"-list]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+                $("#ctr-"+lst+"-list").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+                document.getElementById("err_ctr-"+lst+"-list").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                num+=1;
+                $("#ctr-"+lst+"-select").prop("style", "display:none");
+            }
+            $("#ctr-connection-type-select option[value='not_selected']").each(function(){
+                $(this).prop('selected', true);
+            })
+        }
 
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="ceramic"){ //// ДЛЯ КОРУНДА только 10 или 15 и БЕЗ ПРИСОЕДИНЕНИЯ
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="15" && $(this).val()!="10" && $(this).val()!="not_selected"){
+                    $(this).attr("disabled", "disabled");
+                }
+            })
+            for (let lst of ["thread", "flange", "hygienic"]){
+                $("label[for=ctr-"+lst+"-list]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+                $("#ctr-"+lst+"-list").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+                document.getElementById("err_ctr-"+lst+"-list").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                num+=1;
+                $("#ctr-"+lst+"-select").prop("style", "display:none");
+            }
+            $("#ctr-connection-type-select option[value='not_selected']").each(function(){
+                $(this).prop('selected', true);
+            })
+        }
 
+        if (typeof full_conf.get("ctr-connection-type")!="undefined" && full_conf.get("ctr-connection-type")!="ctr-no-connection"){///ДЕАКТИВАЦИЯ СИАЛОН И КОРУНД ЕСЛИ ВЫБРАНЫ ПРИСОЕДИНЕНИЯ
+            for (let lst of ["ceramic", "sialon"]){
+                $("label[for="+lst+"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+                $("#"+lst).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+                document.getElementById("err_"+lst).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-connection-type")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-connection-type")}_err_cancel${num}'>${$("label[for="+full_conf.get("ctr-connection-type")+"]").text()}</label>`;
+                num+=1;
+            }
+        }
 
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="10" && full_conf.get("ctr_diameter")!="15"){ // ДЕАКТИВАЦИЯ КОРУНД если выбран диаметер не 10 и не 15 мм
+            $("label[for=ceramic]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#ceramic").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 10 или 15 мм.</label>`;
+            num+=1;
+        }
+        if(typeof full_conf.get("ctr_cabel_type")!="undefined"){///ОГРАНИЧИТЬ ТЕМПЕРАТУРУ В ЗАВИСИМОСТИ ОТ КАБЕЛЯ
+            let cabel_max_temp = window["cabel_restr_lst"].get("ctr-" + full_conf.get("ctr_cabel_type").toLowerCase()).get("end_range");
+            ctr_high_temp = cabel_max_temp < ctr_high_temp ? cabel_max_temp : ctr_high_temp;
+            $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+            $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+            document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+            document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}'>${$("label[for=ctr-"+full_conf.get("ctr_cabel_type").toLowerCase()+"]").text()}</label>`;
+            num+=1;
+        }
 
+        if ($("input[name=ctr-ALW-type]:checked").val()=="WW"){ //// Для WW диаметр только 6мм
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="6"){
+                    $(this).attr("disabled", "disabled");
+                    if ($(this).is(":selected")){
+                        $("#ctr-diameter option[value='not_selected']").prop('selected', true);
+                    }
+                }
+            })
+            $("#ctr-diameter option[value='not_selected']").removeAttr("disabled");
+            $("input[name=material]").each(function(){  ////////// ДЛЯ WW только AISI316 или ALLOY600
+                if ($(this).prop("id")!="aisi316" && $(this).prop("id")!="inconel"){
+                    $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ material
+                    $("#"+$(this).prop("id")).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ material
+                    document.getElementById("err_"+$(this).prop("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='WW_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='WW_err_cancel${num}'>${$("label[for=WW]").text()}</label>`;
+                    num+=1;
+                }
+            })
+        }
+        if ($("input[name=ctr-ALW-type]:checked").val()=="KO"){ //// Для KO диаметрЫ только 9мм и 11мм
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="6" && $(this).val()!="9" && $(this).val()!="11"){
+                    $(this).attr("disabled", "disabled");
+                    if ($(this).is(":selected")){
+                        $("#ctr-diameter option[value='not_selected']").prop('selected', true);
+                    }
+                }
+            })
+            $("#ctr-diameter option[value='not_selected']").removeAttr("disabled");
+            $("input[name=material]").each(function(){  ////////// ДЛЯ KO только AISI316
+                if ($(this).prop("id")!="aisi316"){
+                    $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ material
+                    $("#"+$(this).prop("id")).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ material
+                    document.getElementById("err_"+$(this).prop("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='KO_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='KO_err_cancel${num}'>${$("label[for=KO]").text()}</label>`;
+                    num+=1;
+                }
+            })
+        }
+        if ($("input[name=ctr-ALW-type]:checked").val()=="GN"){ //// Для GN диаметрЫ только 3мм и 6мм
+            $("#ctr-diameter option").each(function(){
+                if ($(this).val()!="3" && $(this).val()!="6"){
+                    $(this).attr("disabled", "disabled");
+                    if ($(this).is(":selected")){
+                        $("#ctr-diameter option[value='not_selected']").prop('selected', true);
+                    }
+                }
+            })
+            $("#ctr-diameter option[value='not_selected']").removeAttr("disabled");
+            $("input[name=material]").each(function(){  ////////// ДЛЯ GN только AISI316 или ALLOY600
+                if ($(this).prop("id")!="aisi316" && $(this).prop("id")!="inconel"){
+                    $("label[for="+ $(this).prop("id") +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ material
+                    $("#"+$(this).prop("id")).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ material
+                    document.getElementById("err_"+$(this).prop("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='GN_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='GN_err_cancel${num}'>${$("label[for=GN]").text()}</label>`;
+                    num+=1;
+                }
+            })
+        }
 
-
-
-
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="6"){ // ДЕАКТИВАЦИЯ WW если выбран диаметер не 6 мм
+            $("label[for=WW]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#WW").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_WW").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 6 мм.</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="6" && full_conf.get("ctr_diameter")!="9" && full_conf.get("ctr_diameter")!="11"){ // ДЕАКТИВАЦИЯ KO если выбран диаметер не 6, 9 или 11 мм
+            $("label[for=KO]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#KO").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_KO").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 9 или 11 мм.</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("ctr_diameter")!="undefined" && full_conf.get("ctr_diameter")!="3" && full_conf.get("ctr_diameter")!="6"){ // ДЕАКТИВАЦИЯ GN если выбран диаметер не 3 или 6 мм
+            $("label[for=GN]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#GN").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_GN").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 3 или 6 мм.</label>`;
+            num+=1;
+        }
         // ################################################################################################################################################################################
     }
 
+    if (full_conf.get("main_dev")=="thermowell"){ /// ПРОВЕРКА ОПЦИЙ ГИЛЬЗЫ
+        console.log("ПРОВЕРКА ОПЦИЙ ГИЛЬЗЫ");
+        // ####################################################################################################
+    }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
         $("label[for=0_16]").prop("style", "display:block");
@@ -1845,6 +2561,30 @@ function disable_invalid_options(){
         $("label[for=minus_50]").prop("style", "display:none");
         $("label[for=minus_60]").prop("style", "display:none");
     }
+    if (full_conf.get("main_dev") == "ctr"){
+        $("input[name=special]").each(function(){
+            if ($(this).prop('id')=="spec_lvk" || $(this).prop('id')=="spec_38" || $(this).prop('id')=="spec_375" || $(this).prop('id')=="spec_ip67" || $(this).prop('id')=="SN"){
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
+            }else{
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
+            }
+        })
+    }else{
+        $("label[for=spec_lvk]").prop("style", "display:none");
+        $("label[for=spec_38]").prop("style", "display:none");
+        $("label[for=spec_375]").prop("style", "display:none");
+    }
+    if (full_conf.get("main_dev") == "thermowell"){
+        $("input[name=special]").each(function(){
+            if ($(this).prop('id')=="spec_ptfe"){
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
+            }else{
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
+            }
+        })
+    }else{
+        $("label[for=spec_ptfe]").prop("style", "display:none");
+    }
 
 
     /// ПРОВЕРКА SPECIAL
@@ -1880,43 +2620,42 @@ function disable_invalid_options(){
         $("label[for=rad_cap]").addClass('disabled');
         $("#rad_cap").prop('disabled', true);
     }
-    if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy"  || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT"))){ // проверка HS
+    if ((full_conf.get("main_dev") == "apc-2000" && full_conf.get("end_range_kpa")>30000) || (full_conf.get("main_dev") == "apr-2000" && full_conf.get("end_range_kpa")>1600) || full_conf.get("pressure_type")=="ABS" || full_conf.get("material") == "hastelloy" || typeof full_conf.get("range")=='undefined' || (full_conf.has("thread") && !(full_conf.get("thread")=="P" || full_conf.get("thread")=="GP" || full_conf.get("thread")=="1_2NPT")) || (full_conf.get("main_dev")=="apr-2000" && ((typeof full_conf.get("thread")!='undefined' && full_conf.get("thread").startsWith("s_")) || (typeof full_conf.get("flange")!="undefined" && full_conf.get("flange").startsWith("s_")) || full_conf.has("hygienic")))){ // проверка HS
         $("label[for=hs]").addClass('disabled');
-        $("#hs").prop('disabled', true);
-        $("#hs").prop('checked', false);
+        $("#hs").prop('disabled', true).prop('checked', false);
     }
-    if ((main_dev == "APC-2000" && ((data.get("end_range_kpa")<=2.5 && data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5) && data.get("pressure_type")=="") || (main_dev == "APR-2000" && ((data.get("end_range_kpa")<=2.5 || data.get("begin_range_kpa")>=-2.5) && data.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
+    if ((full_conf.get("main_dev") == "apc-2000" && ((full_conf.get("end_range_kpa")<=2.5 && full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5) && full_conf.get("pressure_type")=="") || (main_dev == "APR-2000" && ((full_conf.get("end_range_kpa")<=2.5 || full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
         // $("label[for=hs]").addClass('disabled');
-        $("#hs").prop('checked', true);
-        $("#hs").prop('disabled', true);
+        $("#hs").prop('checked', true).prop('disabled', true);
+        $("label[for=hastelloy]").addClass('disabled');
+        $("#hastelloy").prop('disabled', true).prop('checked', false);
+        document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ширина диапазона более 5кПа.</label>`;
+        num+=1;
         for (let cons of ["M", "G1_2", "g1_4", "m12_1"]){
             $("label[for=" + cons + "]").addClass('disabled');
             $("#" + cons).prop('disabled', true);
+            document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается ширина диапазона более 5кПа.</label>`;
+            num+=1;
         }
     }
-    if (full_conf.get("electrical")!="APCALW"){ // проверка специсполнения PD, SN, -50..80, HART7
+    if (!(full_conf.get("electrical")=="APCALW" || full_conf.get("head")=="ctr-ALW")){ // проверка специсполнения PD, SN, -50..80, HART7
         $("label[for=spec_pd]").addClass('disabled');
-        $("#spec_pd").prop('disabled', true);
-        $("#spec_pd").prop('checked', false);
+        $("#spec_pd").prop('disabled', true).prop('checked', false);
         $("label[for=SN]").addClass('disabled');
-        $("#SN").prop('disabled', true);
-        $("#SN").prop('checked', false);
+        $("#SN").prop('disabled', true).prop('checked', false);
         $("label[for=minus_50]").addClass('disabled');
-        $("#minus_50").prop('disabled', true);
-        $("#minus_50").prop('checked', false);
+        $("#minus_50").prop('disabled', true).prop('checked', false);
         $("label[for=hart7]").addClass('disabled');
-        $("#hart7").prop('disabled', true);
-        $("#hart7").prop('checked', false);
+        $("#hart7").prop('disabled', true).prop('checked', false);
     }
     if ($("#spec_ip67").is(":checked")){
         $("#spec_pd").prop('disabled', true);
         $("#spec_pd").prop('checked', false);
         $("label[for=spec_pd]").addClass('disabled');
     }
-    if (!(full_conf.get("electrical")=="APCALW" && (full_conf.get("pressure_type")=="ABS" || full_conf.get("main_dev") == "apr-2000")) || $("#spec_pd").is(":checked")){ // проверка специсполнения IP67
+    if (!((full_conf.get("electrical")=="APCALW" || full_conf.get("head")=="ctr-ALW") && (full_conf.get("pressure_type")=="ABS" || full_conf.get("main_dev") == "apr-2000" || full_conf.get("main_dev") == "ctr")) || $("#spec_pd").is(":checked")){ // проверка специсполнения IP67
         $("label[for=spec_ip67]").addClass('disabled');
-        $("#spec_ip67").prop('disabled', true);
-        $("#spec_ip67").prop('checked', false);
+        $("#spec_ip67").prop('disabled', true).prop('checked', false);
     }
     if (full_conf.get("electrical")!="APCALW" || full_conf.get("range")<1.5){ // проверка специсполнения 0.05
         $("label[for=0_05]").addClass('disabled');
@@ -1932,6 +2671,92 @@ function disable_invalid_options(){
         $("label[for=minus_60]").addClass('disabled');
         $("#minus_60").prop('disabled', true);
         $("#minus_60").prop('checked', false);
+    }
+    if (typeof full_conf.get("ctr_diameter")==='undefined' || (full_conf.get("thermoresistor")==="undefined" && full_conf.get("thermocouple")==="undefined") || (typeof full_conf.get("ctr_diameter")!='undefined' && full_conf.get("ctr_diameter") != "3" && full_conf.get("ctr_diameter") != "6") || (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")!="tha" && full_conf.get("thermocouple")!="tzk") || typeof full_conf.get("material")==='undefined' || (typeof full_conf.get("material")!='undefined' && full_conf.get("material")!="aisi316" & full_conf.get("material")!="inconel") || (typeof full_conf.get("ctr-electrical")!="undefined" && full_conf.get("ctr-electrical")!="head-list") || $("input#KO").is(":checked")){ // проверка специсполнения Lvk
+        $("label[for=spec_lvk]").addClass('disabled');
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', false);
+    }
+
+    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="no_trand") || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="4_20H" && (typeof full_conf.get("head")!='undefined' && full_conf.get("head")!="ctr-ALW" || (typeof full_conf.get("head")=='undefined')))){ // проверка специсполнения 3.8мА
+        $("label[for=spec_38]").addClass('disabled');
+        $("#spec_38").prop('disabled', true);
+        $("#spec_38").prop('checked', false);
+    }
+    if (typeof full_conf.get("output")==='undefined' || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")!="4_20H") || (typeof full_conf.get("output")!='undefined' && full_conf.get("output")=="4_20H" && typeof full_conf.get("head")!='undefined' && full_conf.get("head")=="ctr-ALW")){ // проверка специсполнения 3.75мА
+        $("label[for=spec_375]").addClass('disabled');
+        $("#spec_375").prop('disabled', true);
+        $("#spec_375").prop('checked', false);
+    }
+    if (full_conf.get("thermowell-type")!="t1" && full_conf.get("thermowell-type")!="swt"){ // проверка специсполнения PTFE для гильзы
+        $("label[for=spec_ptfe]").addClass('disabled');
+        $("#spec_ptfe").prop('disabled', true);
+        $("#spec_ptfe").prop('checked', false);
+    }
+
+    if (full_conf.get("approval")=="Exd" && full_conf.get("ctr_diameter")=="6" && !$("input#KO").is(":checked")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk для Exd d=6
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='err_cancel' value='' id='exdxx_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='uncheckExd()'><label for='exdxx_err_cancel${num}'>${$("label[for=Exd]").text()}</label>
+        <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 6мм.</label>`;
+        num+=2;
+    }
+    if (full_conf.has("thermoresistor") && full_conf.get("sensor_quantity")=="2" && full_conf.get("ctr_diameter")=="6" && full_conf.has("head")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk d=6 и 2 сенсора
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='err_cancel' value='' id='sensor_quantity_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='sensor_quantity_err_cancel${num}'>${$("label[for=sensor-quantity]").text()} 2шт.</label>
+        <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 6мм.</label>`;
+        num+=2;
+    }
+    if (full_conf.get("ctr_diameter")=="3" && full_conf.has("head")){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk для Exd d=3
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр защитного корпуса 3мм.</label>`;
+        num+=1;
+    }
+    if ($("input[name=ctr-ALW-type]:checked").val()=="WW" || $("input[name=ctr-ALW-type]:checked").val()=="GN"){//ПРИНУДИТЕЛЬНОЕ ВКЛЮЧЕНИЕ Lvk для WW или GN
+        let $err_id = $("input[name=ctr-ALW-type]:checked").prop("id");
+        console.log($err_id);
+        $("#spec_lvk").prop('disabled', true);
+        $("#spec_lvk").prop('checked', true);
+        document.getElementById("dialog2-confirm-p").innerHTML = `БУДУТ ОТМЕНЕНЫ СЛЕДУЮЩИЕ ОПЦИИ:
+        <br>
+        <input type='checkbox' name='ctr_alw_err_cancel' value='' id='${$("input[name=ctr-ALW-type]:checked").prop("id")}_err_cancel${num}' checked disabled class='custom-checkbox err-checkbox' onclick='uncheckWWGN(${$("input[name=ctr-ALW-type]:checked").prop("id")})'><label for='${$("input[name=ctr-ALW-type]:checked").prop("id")}_err_cancel${num}'>${$("label[for="+$("input[name=ctr-ALW-type]:checked").prop("id")+"]").text()}.</label>`;
+        num+=1;
+    }
+
+    if ($("#spec_lvk").is(":checked")){//ОГРАНИЧЕНИЯ МАТЕРИАЛОВ если ВЫБРАНО Lvk
+        console.log("ОГРАНИЧЕНИЯ МАТЕРИАЛОВ если ВЫБРАНО Lvk");
+        $("input[name=material]").each(function() {
+            if ($(this).prop("id")!="aisi316" && $(this).prop("id")!="inconel"){
+                $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                if ($(this).is(":checked")){
+                    $(this).prop("checked", false).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                }
+                document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='spec_lvk_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='spec_lvk_err_cancel${num}'>Открытый (заменяемый) измерительный вкладыш</label>`;
+                num+=1;
+            }
+            if (typeof full_conf.get("thermocouple")!="undefined" && full_conf.get("thermocouple")=="tha" && $(this).prop("id")=="aisi316"){
+                $("label[for=aisi316]").addClass('disabled'); ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                $("#aisi316").prop('disabled', true);         //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='spec_lvk_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='spec_lvk_err_cancel${num}'>Открытый (заменяемый) измерительный вкладыш</label>`;
+                num+=1;
+            }
+        })
+    }
+
+    if ($("#ctr-ALW").is(":checked")){
+        $("#ctr-ALW-type").prop("style", "display:block; margin-left: 1.5em");
+    }else{
+        $("#ctr-ALW-type").prop("style", "display:none");
+        $("input[name=ctr-ALW-type]:checked").prop("checked", false);
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
@@ -1959,14 +2784,26 @@ function disable_invalid_options(){
         if (full_conf.get("main_dev") == "ctr"){
             get_ctr_code_info(full_conf);
         }
+        if (full_conf.get("main_dev") == "thermowell"){
+            get_thermowell_code_info(full_conf);
+        }
     }else{
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
             $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Завершите конфигурирование!</span>");
         })
     }
-    ctrShowHideErrSpan();
+    if (full_conf.get("main_dev") == "ctr"){
+        ctrShowHideErrSpan();
+    }
+    $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+        if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
+            $(this).prop("style", "display:none");
+        }
+    })
 }
 
+
+//
 // function validate_option(name_to_check, option_name, valid_list){ /// (id выбранной опции, id проверяемой опции, подходящие варианты проверяемой опции)
 //     $("input[name="+ option_name +"]").each(function() {
 //         let option_1 = $("#"+ this.name +"-select").prev(".option-to-select").find(".option-to-select-header span").text();
@@ -1992,10 +2829,19 @@ $(function (){
                 CorPSelected($(this).prop("id"), true);
                 return;
             }
+            // if (["s_p_", "s_ch_", "s_t_", "minus-s_p_", "minus-s_ch_", "minus-s_t_"].some(word => $(this).prop("id").startsWith(word))){
+            //     $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            //     return;
+            // }
             console.log("1");
         }
         else{
             if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ СНЯТИИ ГАЛКИ типа датчика температуры
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                disable_invalid_options();
+                return;
+            }
+            if (this.name=="ctr-ALW-type"){ //ПРИ СНЯТИИ ГАЛКИ
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 disable_invalid_options();
                 return;
@@ -2052,13 +2898,11 @@ $(function (){
             }
             if (this.name=="ctr-connection-type"){ /// ПРИ ОТМЕНЕ ПРИСОЕДИНЕНИЯ CTR СПРЯТАТЬ ВСЕ СПИСКИ, отметить красным, выбор not_selected
                 console.log('Спрятать все списки ctr-connection-type, пометить красным');
-                $("div#ctr-connection-type-select span").each(function(){
+                $("div.ctr-thread-flange-hygienic").each(function(){
                     $(this).prop("style", "display:none");
                 })
                 $("div#ctr-connection-type-select").find("select option[value='not_selected']").prop('selected', true);
                 $("div#ctr-connection-type-select").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-
-
             }
             var $this = $(this.parentElement.parentElement); /// ПРИ СНЯТИИ ЧЕКБОКСА - ВЫДЕЛЯТЬ КРАСНЫМ
             $this.prev(".option-to-select").find(".color-mark-field").removeClass("selected");
@@ -2082,18 +2926,18 @@ $(function (){
                 }
                 uncheckAllConnections(data);
             }
-            if (this.name=="flange"){
-                $("#flange-select-field > span").each(function(){
-                    $(this).prop("style", "display:none");
-                    $(this).find("select option[value='not_selected']").prop('selected', true);
-                })
-            }
-            if (this.name=="minus-flange"){
-                $("#minus-flange-select-field > span").each(function(){
-                    $(this).prop("style", "display:none");
-                    $(this).find("select option[value='not_selected']").prop('selected', true);
-                })
-            }
+            // if (this.name=="flange"){
+            //     $("#flange-select-field > span").each(function(){
+            //         $(this).prop("style", "display:none");
+            //         $(this).find("select option[value='not_selected']").prop('selected', true);
+            //     })
+            // }
+            // if (this.name=="minus-flange"){
+            //     $("#minus-flange-select-field > span").each(function(){
+            //         $(this).prop("style", "display:none");
+            //         $(this).find("select option[value='not_selected']").prop('selected', true);
+            //     })
+            // }
             if (this.name=="max-static"){
                 for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки MAX-STATIC
                     for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
@@ -2192,6 +3036,9 @@ $(function (){
             return;
         }
         if (this.name=="thermoresistor" || this.name=="thermocouple"){ //После выбора терморезистора или термопары СКРЫТЬ НЕ ВЫБРАННЫЕ, отобразить остальные опции
+            $("div[id^='err_']:visible").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
+                $(this).slideUp();//.prop("style", "display:none");
+            })
             $("input[name=" + this.name + "]:not(:checked)").each(function(){
                 $("label[for="+$(this).prop('id')+"]").slideUp(); //.prop("style", "display:none");
             })
@@ -2232,7 +3079,21 @@ $(function (){
         }
 
         if(this.name=="head" || this.name=="nohead" || this.name=="cabel"){//ПРИ ВЫБОРЕ СКРЫТЬ СПИСОК, ПОКАЗАТЬ СЛЕДУЮЩИЙ
+            if ($(this).prop("id")=="ctr-ALW"){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#sensor-quantity option[value=1]").prop('selected', true);
+                $("#sensor-accuracy-tr option[value=A]").prop('selected', true);
+                $("#sensor-accuracy-tc option[value=1]").prop('selected', true);
+                disable_invalid_options();
+                return;
+            }
             expand_next_div($(this).prop("id"));
+            disable_invalid_options();
+            return;
+        }
+
+        if (this.name=="ctr-ALW-type"){
+            expand_next_div("ctr-ALW");
             disable_invalid_options();
             return;
         }
@@ -2249,12 +3110,12 @@ $(function (){
         if (this.name=="ctr-connection-type" && $(this).prop("id")!="ctr-no-connection"){ ///ПОКАЗАТЬ ВЫБОР ПРИСОЕДИНЕНИЯ CTR, скрыть другие, пометить красным
             console.log("ПОКАЗАТЬ ВЫБОР ПРИСОЕДИНЕНИЯ CTR");
             let target = $(this).prop("id").slice(0,-4) + "select";
-            $("#ctr-connection-type-select-field span").each(function(){
+            $("div.ctr-thread-flange-hygienic").each(function(){
                 if ($(this).prop("id")!=target){
                     $(this).prop("style", "display:none");
                     $(this).find("select option[value='not_selected']").prop('selected', true);
                 }else{
-                    $(this).prop("style", "display:block");
+                    $(this).prop("style", "display:block").prop("style", "margin-top: 0.4em").prop("style", "margin-bottom: 0.4em");
                 }
             })
             $("#"+$(this).prop("id").slice(0,-4)+"select").prop("style", "display:block");
@@ -2263,7 +3124,8 @@ $(function (){
             return;
         }
         if (this.name=="ctr-connection-type" && $(this).prop("id")=="ctr-no-connection"){
-            $("#ctr-connection-type-select-field span").each(function(){
+            $("input#ctr-outlength").prop('value', '0');
+            $("div.ctr-thread-flange-hygienic").each(function(){
                 $(this).prop("style", "display:none");
                 $(this).find("select option[value='not_selected']").prop('selected', true);
             })
@@ -2299,36 +3161,28 @@ $(function (){
                 }
             }
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
-            if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
-                let target = $(this).prop("id")  + "-cilinder-select";
-                console.log(add_n);
-                console.log(target);
-                $("#" + add_n + "flange-select-field > span").each(function(){
-                    if ($(this).prop("id")!=target){
-                        $(this).prop("style", "display: none");
-                        $(this).find("select option[value='not_selected']").prop('selected', true);
-                        // console.log('Установка длины тубуса как не выбрано при переключении на другой');
-                    }else{
-                        $(this).prop("style", "display: inline");
-                    }
-                })
+            let $thiss_id = $(this).prop("id");
+            // if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
+            if ([add_n + "s_t_", add_n + "s_p_", add_n + "s_ch_", add_n + "s_tk_"].some(word => $thiss_id.startsWith(word))){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+
+                // let target = $(this).prop("id")  + "-cilinder-select";
+                // console.log(add_n);
+                // console.log(target);
+                // $("#" + add_n + "flange-select-field > span").each(function(){
+                //     if ($(this).prop("id")!=target){
+                //         $(this).prop("style", "display: none");
+                //         $(this).find("select option[value='not_selected']").prop('selected', true);
+                //         // console.log('Установка длины тубуса как не выбрано при переключении на другой');
+                //     }else{
+                //         $(this).prop("style", "display: inline");
+                //     }
+                // })
                 disable_invalid_options();
                 console.log("13");
                 return;
             }else{
-                let num = $("body .active-option-to-select").index($(".active")) + 1;
-                let next_expand = $("body .active-option-to-select").eq(num);
-                $("#" + add_n + "flange-select-field > span").each(function(){
-                    $(this).prop("style", "display:none");
-                    $(this).find("select option[value='not_selected']").prop('selected', true);
-                })
-                var $this = $(this.parentElement.parentElement.parentElement).prev();
-                $this.removeClass("active");
-                $this.next("div.option-to-select-list").slideUp("slow");
-                $this.find(".color-mark-field").removeClass("unselected");
-                $this.find(".color-mark-field").addClass("selected");
-                next_expand.addClass("active");
-                next_expand.next().slideToggle("slow");
+                expand_next_div($(this).prop("id"));
                 disable_invalid_options();
                 console.log("6");
                 return;
@@ -2398,15 +3252,16 @@ $(function (){
         }
         else{
             document.getElementById("cap-or-not-length-span-err").hidden = true;
-            var $this = $(this.parentElement.parentElement);
-            let num = $("body .active-option-to-select").index($(".active")) + 1;
-            let next_expand = $("body .active-option-to-select").eq(num);
-            $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
-            $this.prev(".option-to-select").removeClass("active");
-            $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
-            $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
-            next_expand.addClass("active");
-            next_expand.next().slideToggle("slow");
+            expand_next_div($(this).prop("id"));
+            // var $this = $(this.parentElement.parentElement);
+            // let num = $("body .active-option-to-select").index($(".active")) + 1;
+            // let next_expand = $("body .active-option-to-select").eq(num);
+            // $this.slideToggle("slow").siblings("div.option-to-select-list").slideUp("slow");
+            // $this.prev(".option-to-select").removeClass("active");
+            // $this.prev(".option-to-select").find(".color-mark-field").removeClass("unselected");
+            // $this.prev(".option-to-select").find(".color-mark-field").addClass("selected");
+            // next_expand.addClass("active");
+            // next_expand.next().slideToggle("slow");
             disable_invalid_options();
             console.log("11");
         }
@@ -2593,6 +3448,8 @@ $(function(){
 })
 $(function(){
     $(".main-dev").click(function(){/// ПРИ ВЫБОРЕ ТИПА ПРИБОРА ОТОБРАЗИТЬ ТОЛЬКО НУЖНЫЕ option to select
+        $("#advanced-code-descr").prop("style", "display:none");
+        $("#approval-select").prop("style", "display:none");
         $(this.parentElement).slideUp("slow");
         $(this).addClass("main-dev-selected");
         $(this).siblings(".main-dev").removeClass("main-dev-selected");
@@ -2607,6 +3464,7 @@ $(function(){
                     }
                 })
             }
+            $("label[for=capillary-cap-plus]").prop("style", "display:none");
             $("label[for=capillary-cap-minus]").prop("style", "display:none");
             $("label[for=minus-hygienic-list]").prop("style", "display:none");
         }else{
@@ -2618,6 +3476,7 @@ $(function(){
                     }
                 })
             }
+            $("label[for=capillary-cap-plus]").prop("style", "display:block");
             $("label[for=capillary-cap-minus]").prop("style", "display:block");
             $("label[for=minus-hygienic-list]").prop("style", "display:block");
         }
@@ -2633,34 +3492,89 @@ $(function(){
             $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
         })
 
-        let ctr_materials = ["aisi304", "aisi310", "aisi316", "aisi321", "inconel", "ceramic",  "sialon"]
-        if ($(".main-dev-selected").prop("id").slice(9,)=="ctr"){
-            $("#pressure-material-header").prop("style", "display:none");
-            $("#ctr-material-header").prop("style", "display:block");
-            $("input[name=material]").next("label").each(function(){
-                if (ctr_materials.includes($(this).prop("for"))){
-                    $(this).prop("style", "display:block");
+        let main_dev_id = $(".main-dev-selected").prop("id").slice(9,);
+        $("#material-select").prev("div").find("span").each(function(){
+            if ($(this).hasClass(main_dev_id)){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        });
+        $("input[name=material]").next("label").each(function(){
+            if ($(this).hasClass(main_dev_id)){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        })
+        $("input[name=output]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ВЫХОДНЫЕ СИГНАЛЫ В ЗАВИСИМОСТИ ОТ MAIN-DEV
+            if (main_dev_id=="apc-2000" || main_dev_id=="apr-2000"){
+                if ($(this).prop("id")=="4_20H"){
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
                 }else{
-                    $(this).prop("style", "display:none");
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
                 }
-            })
+                $("label[for=no_trand]").prop("style", "display:none");
+            }
 
-        }else{
-            $("#pressure-material-header").prop("style", "display:block");
-            $("#ctr-material-header").prop("style", "display:none");
-            $("input[name=material]").next("label").each(function(){
-                if (ctr_materials.includes($(this).prop("for"))){
-                    $(this).prop("style", "display:none");
+            if (main_dev_id=="pc-28" || main_dev_id=="pr-28"){
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                $("label[for=no_trand]").prop("style", "display:none");
+            }
+
+            if (main_dev_id=="ctr"){
+                if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20" || $(this).prop("id")=="no_trand"){
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
                 }else{
-                    $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
                 }
-            })
-            $("label[for=aisi316]").prop("style", "display:block");
-        }
+            }
+            if (main_dev_id=="sg-25"){
+                if ($(this).prop("id")=="4_20H" || $(this).prop("id")=="4_20"){
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+        })
+        $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
+            if (main_dev_id=="apc-2000" || main_dev_id=="apr-2000"){
+                if ($(this).prop("id")=="PD" || $(this).prop("id")=="PZ" || $(this).prop("id")=="APCALW"){
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+
+            if (main_dev_id=="pc-28" || main_dev_id=="pr-28"){
+                if (!($(this).prop("id")=="APCALW")){//
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+        })
+        $("input[name=approval]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ APPROVAL В ЗАВИСИМОСТИ ОТ MAIN-DEV
+            if (main_dev_id=="sg-25"){
+                if ($(this).prop("id")=="non_hazard" || $(this).prop("id")=="Ex"){
+                    // $(this).prop("style", "display:block");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
+                }else{
+                    // $(this).prop("style", "display:none");
+                    $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
+                }
+            }
+        })
 
         $("."+$(".main-dev-selected").prop("id").slice(9,)+"-panel-container").slideDown("slow");
-        setTimeout(() => {  $("#approval-select").slideDown("slow"); }, 300);
-        $("#approval-select").prev("div").addClass("active");
+        setTimeout(() => {  $($(".active-option-to-select-list")[0]).slideDown("slow"); }, 300);
+        $($(".active-option-to-select-list")[0]).prev("div").addClass("active");
         disable_invalid_options();
     })
 })
@@ -2673,6 +3587,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                 height: "auto",
                 width: 600,
                 modal: true,
+                dialogClass: 'custom-ui-widget-header-warning',
                 buttons: {
                     Продолжить: function() {
                         $(".active-panel-container").slideUp("slow");
@@ -2688,6 +3603,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
                         })
                         $("div.active-option-to-select").removeClass("active-option-to-select");
                         $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
+                        // setTimeout(() => {  $("#advanced-code-descr").prop("style", "display:block"); }, 600);
                     },
                     Отмена: function() {
                         $( this ).dialog( "close" );
@@ -2707,6 +3623,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
             })
             $("div.active-option-to-select").removeClass("active-option-to-select");
             $("div.active-option-to-select-list").removeClass("active-option-to-select-list");
+            // setTimeout(() => {  $("#advanced-code-descr").prop("style", "display:block"); }, 600);
         }
     })
 })
@@ -2740,6 +3657,14 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     $("div.option-to-select-list").each(function(){
         $(this).prop("style", "display:none");
     })
+    $("label").removeClass('disabled');
+    $("#code-entered-button-ok").prop("style", "display:inline-block");
+    $("#reset-config").prop("style", "display:none");
+    document.getElementById("code").value = "";
+    document.getElementById("codeError").innerHTML = "";
+    document.getElementById("codeDescription").innerHTML = "";
+    setTimeout(() => {  $($(".active-option-to-select-list")[0]).slideDown("slow"); }, 300);
+    $($(".active-option-to-select-list")[0]).prev("div").addClass("active");
 }
 
 
@@ -2859,16 +3784,28 @@ $(function(){
     $(document).on("click", "input[name='err_cancel']", function(){
         let check_state = $(this).is(":checked");
         let $this_id = $(this).prop('id').slice(0,-14);
-        if ($("#"+$this_id).prop('name')=="thermoresistor"){
+        if ($("#"+$this_id).prop('name')=="thermoresistor" || $("#"+$this_id).prop('name')=="thermocouple"){
             $("select#sensor-accuracy-tr option[value='not_selected']").prop('selected', true);
+            $("select#sensor-accuracy-tc option[value='not_selected']").prop('selected', true);
+            $(".thermoresistor-thermocouple").hide(0);
+            $("#quantity-accuracy-wiring").hide(0);
+            $("input[name=sensor-type]:checked").prop("checked", false);
         }
-        console.log($this_id);
+        if ($("#"+$this_id).prop('name')=="thermocouple"){
+            $("select#sensor-accuracy-tc option[value='not_selected']").prop('selected', true);
+        }
+        if ( $this_id=="spec_lvk" && $("#spec_lvk:checked").prop('disabled')){///ПРИ ОТМЕНЕ ЗАБЛОКИРОВАННОГО Lvk из ДРУГОЙ ОПЦИИ
+            console.log("КЛИК НА ЗАБЛОКИРОВАННЫЙ #spec_lvk");
+            disableLvk();
+            return;
+        }
+        // console.log($this_id);
         if ($this_id=="c-pr" || $this_id=="minus-c-pr"){
             CorPSelected("c-pr", false);
         }else{
             $("input#" + $this_id).prop("checked", check_state);
         }
-        console.log($(this).closest("div"));
+        // console.log($(this).closest("div"));
         // console.log(document.getElementById($this_id).parentElement.parentElement.previousElementSibling.querySelector(".color-mark-field"));
         let $color_mark_field = document.getElementById($this_id).closest(".active-option-to-select-list").previousElementSibling.querySelector(".color-mark-field");
         let $this_checked_length = $("input[name="+$("input#" + $this_id).prop("name")+"]:checked").length;
@@ -2897,22 +3834,6 @@ function uncheckMaxTemp(data){
 }
 
 function showHideSensorOpts(){
-    if ($("#sensor-quantity").val()=="2"){
-        if ($("#sensor-wiring-tr").val()=="4"){
-            $("#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
-        }
-        $("#sensor-wiring-tr option[value=4]").attr('disabled', 'disabled');
-    }else{
-        $("#sensor-wiring-tr option[value=4]").removeAttr('disabled');
-    }
-    if ($("select#sensor-accuracy-tr option:selected").val()=="A"){
-        if ($("select#sensor-wiring-tr option:selected").val()=="2"){
-            $("select#sensor-wiring-tr option[value='not_selected']").prop('selected', true);
-        }
-        $("select#sensor-wiring-tr option[value=2]").attr('disabled','disabled');
-    }else{
-        $("select#sensor-wiring-tr option[value=2]").removeAttr('disabled');
-    }
     let no_check = false;
     $("#quantity-accuracy-wiring span:visible select").each(function(){
         if ($(this).val()=='not_selected'){
@@ -2928,8 +3849,6 @@ function showHideSensorOpts(){
         return;
     }else{///ИНАЧЕ ПОМЕТИТЬ ЗЕЛЕНЫМ, СКРЫТЬ, ОТКРЫТЬ СЛЕД. РАЗДЕЛ
         expand_next_div("quantity-accuracy-wiring");
-        // $("#quantity-accuracy-wiring").closest("div.option-to-select-list").slideUp().prev("div.option-to-select").removeClass("active").find(".color-mark-field").removeClass("unselected").addClass("selected");
-        // $("#quantity-accuracy-wiring").closest("div.option-to-select-list").next("div.active-option-to-select").addClass("active").next("div.active-option-to-select-list").slideDown();
         disable_invalid_options();
         return;
     }
@@ -2937,6 +3856,7 @@ function showHideSensorOpts(){
 
 $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ ОПЦИИ ПРИ НАВЕДЕНИИ и УДЕРЖАНИИ
     var delayed_function;
+    var delayed_function2
     var tooltip_id;
     var mouse;
     var img_path;
@@ -2961,14 +3881,15 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
                         tooltip.id = tooltip_id + "_tooltip";
                         document.querySelector("label[for="+tooltip_id+"]").appendChild(tooltip);
                         $("label[for="+tooltip_id+"]").css('z-index','999999');
-                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
+                        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':300, 'height':300, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});
                     }, 300);
-                    setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 3500);
+                    delayed_function2 = setTimeout(() => $(".tooltip").each(function(){$(this).remove()}), 2500);
                 },
             });
         }, function () {
             // out
             clearTimeout(delayed_function);
+            clearTimeout(delayed_function2);
             $(".tooltip").each(function(){$(this).remove()});
             $(this).css('z-index','');
         }
@@ -2979,7 +3900,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
 
         x = e.pageX - mouse.offset().left;
         y = e.pageY - mouse.offset().top;
-        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':250, 'height':250, 'background':'#eee url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});;
+        $("#" + tooltip_id+ "_tooltip").css({'top':y - 80, 'left':x + 30, 'display':'block', 'position':'absolute', 'width':300, 'height':300, 'background':'#ffff url('+ img_path +') center no-repeat', 'background-size':'cover', 'box-shadow':'5px 5px 30px rgba(0, 0, 0, 1)', 'border-radius':'15px'});;
 
     })
 })
@@ -2987,7 +3908,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
 $(function(){
     $("input[name=ctr-cabel-length]").change(function(){
         let cabel_length = parseInt($(this).val());
-        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100){
+        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100 || $("input[name=ctr-cabel-type]:checked").length==0){
             $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             return;
         }else{
@@ -3000,7 +3921,7 @@ $(function(){
 $(function(){
     $("input[id=ctr-cabel-length-button-ok]").click(function(){
         let cabel_length = parseInt($("input[name=ctr-cabel-length]").val());
-        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100){
+        if (Number.isNaN(cabel_length) || cabel_length<=0 || cabel_length>100 || $("input[name=ctr-cabel-type]:checked").length==0){
             $(this).closest("div.option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             return;
         }else{
@@ -3021,6 +3942,7 @@ function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
             $("#err_ctr-range").prop("style", "display:block");
         }
         $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        disable_invalid_options();
         return;
     }
     if (!Number.isNaN(ctr_begin_range) && !Number.isNaN(ctr_end_range)){
@@ -3031,6 +3953,7 @@ function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
                 $("#err_ctr-range").prop("style", "display:block");
             }
             $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
             return;
         }else{
             // console.log("ДИАПАЗОН В ДОПУСКЕ!");
@@ -3040,8 +3963,11 @@ function ctr_range_selected(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
         }
     }
     if (Number.isNaN(ctr_pressure)){
+        $("#eerr_ctr-pressure").prop("style", "display:block");
         $("#ctr-end-range").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         return;
+    }else{
+        $("#eerr_ctr-pressure").prop("style", "display:none");
     }
     expand_next_div("ctr-end-range");
     disable_invalid_options();
@@ -3058,13 +3984,41 @@ function expand_next_div(id){/// СКРЫТЬ ТЕКУЩИЙ СПИСОК, РА�
     next_expand.addClass("active").next().slideToggle("slow");
 }
 
-function ctr_dimensions_selected(){ /// ВЫБРАНЫ РАЗМЕРЫ CTR
-    if (!Number.isNaN(parseInt($("#ctr-length").val())) && !Number.isNaN(parseInt($("#ctr-outlength").val())) && $("#ctr-diameter").val()!="not_selected"){
-        expand_next_div("ctr-outlength");
-        disable_invalid_options();
+function checkCTRDimensions(){ /// ПРОВЕРКА РАЗМЕРОВ CTR
+    let temp = !Number.isNaN(parseInt($("#ctr-end-range").val())) ? parseInt($("#ctr-end-range").val()) : 66;
+    ctr_rec_outlength = 130*Math.log(temp)-550>ctr_min_outlength ? 130*Math.log(temp)-550 : ctr_min_outlength;
+    let no_check = true;
+    if (!Number.isNaN(parseInt($("#ctr-length").val())) && parseInt($("#ctr-length").val())>=ctr_min_length && parseInt($("#ctr-length").val())<=ctr_max_length){
+        $("#ctr-length_warning").prop("style", "display:none");
+    }else{
+        $("#ctr-length").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        document.getElementById("ctr-length_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_length} до ${ctr_max_length} мм</span>`;
+        $("#ctr-length_warning").prop("style", "display:block");
+        no_check = false;
+    }
+    if (!Number.isNaN(parseInt($("#ctr-outlength").val())) && parseInt($("#ctr-outlength").val())>=ctr_min_outlength && parseInt($("#ctr-outlength").val())<=ctr_max_outlength){
+        $("#ctr-outlength_warning").prop("style", "display:none");
     }else{
         $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-        disable_invalid_options();
+        let add_descrs = ($("#4_20").is(":checked") || $("#4_20H").is(":checked")) ? "Рекомендуется не менее " + Math.round(ctr_rec_outlength / 10) * 10 + " мм." : "";
+        document.getElementById("ctr-outlength_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size: 85%;'>Допускается от ${ctr_min_outlength} до ${ctr_max_outlength} мм. ${ add_descrs}</span>`;
+        $("#ctr-outlength_warning").prop("style", "display:block");
+        no_check = false;
+    }
+    if ($("#ctr-diameter").val()=="not_selected"){
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        no_check = false;
+    }
+    if (no_check == false){
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        // disable_invalid_options();
+        return;
+    }else{
+        $("#ctr-outlength").closest("div.active-option-to-select-list").prev(".active-option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        if ($("#ctr-dimensions-select").prev("div").hasClass("active")){
+            expand_next_div("ctr-outlength");
+        }
+        // disable_invalid_options();
     }
 }
 
@@ -3102,7 +4056,6 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
     console.log("ctrShowHideErrSpan");
     let ctr_begin_range = parseInt($("#ctr-begin-range").val());
     let ctr_end_range = parseInt($("#ctr-end-range").val());
-    let ctr_pressure = parseInt($("#ctr-pressure").val());
     if (Number.isNaN(ctr_begin_range) || Number.isNaN(ctr_end_range)){
         $("#ctr-range_warning").prop("style", "display:block");
         if ($("#err_ctr-range").children("input").length>0){
@@ -3113,6 +4066,7 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
     if (!Number.isNaN(ctr_begin_range) && !Number.isNaN(ctr_end_range)){
         if(ctr_begin_range < ctr_low_temp || ctr_end_range > ctr_high_temp || ctr_begin_range > ctr_high_temp || ctr_end_range < ctr_low_temp || ctr_begin_range==ctr_end_range){
             // console.log("ДИАПАЗОН НЕ В ДОПУСКЕ!");
+            $("#err_ctr-range").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             $("#ctr-range_warning").prop("style", "display:block");
             if ($("#err_ctr-range").children("input").length>0){
                 $("#err_ctr-range").prop("style", "display:block");
@@ -3120,11 +4074,11 @@ function ctrShowHideErrSpan(){ /// ПРОВЕРКА ВЫБРАННОГО ДИА�
             return;
         }else{
             // console.log("ДИАПАЗОН В ДОПУСКЕ!");
+            $("#err_ctr-range").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
             $("#ctr-range_warning").prop("style", "display:none");
             $("#err_ctr-range").prop("style", "display:none");
         }
     }
-
 }
 
 function uncheckCTRRange(){
@@ -3133,3 +4087,266 @@ function uncheckCTRRange(){
     $("#ctr-range-select").prev().find(".color-mark-field").removeClass("selected").addClass("unselected");
     disable_invalid_options();
 }
+
+function changeSensorQuantity(){//меняем количество сенсоров с 2 на 1 (для CRT-ALW)
+    $("#sensor-quantity option[value=2]").prop('selected', false);
+    $("#sensor-quantity option[value=1]").prop('selected', true);
+    disable_invalid_options();
+}
+
+function disableLvk(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ ОТКЛЮЧЕНИЯ Lvk
+    console.log("ОТКЛЮЧИТЬ LVK или НЕТ?");
+    $( "#dialog2-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        dialogClass: 'custom-ui-widget-header-warning',
+        buttons: {
+            Продолжить: function() {
+                $("#dialog2-confirm input").each(function(){
+                    console.log($(this).attr('onclick'));
+                    eval($(this).attr('onclick'));
+                })
+                $( this ).dialog( "close" );
+
+            },
+            Отмена: function() {
+                $( this ).dialog( "close" );
+                disable_invalid_options();
+            }
+        }
+    })
+}
+
+function resetButton(){///ЗАПРОС ПОДТВЕРЖДЕНИЯ СБРОСА
+    console.log("СБРОСИТЬ КОНФИГ?");
+    $( "#dialog3-confirm" ).dialog({
+        resizable: false,
+        height: "auto",
+        width: 600,
+        modal: true,
+        dialogClass: 'custom-ui-widget-header-warning',
+        buttons: {
+            Продолжить: function() {
+                resetConfig();
+                $( this ).dialog( "close" );
+            },
+            Отмена: function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    })
+}
+
+$(function(){//ПРИ клике на заблокированный Lvk
+    $(document).on("click", "label[for='spec_lvk']", function(){
+        if ($("#spec_lvk").is(":checked:disabled")){
+            disableLvk();
+        }
+    })
+})
+
+function uncheckExd(){
+    $("#Exd").prop("checked", false).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+}
+
+function changeDiameterTo22(){
+   $("#ctr-diameter option[value=not_selected]").prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+   disable_invalid_options();
+}
+
+function uncheckWWGN(params) {///отмена WW и GN
+   $(params).prop("checked", false).prop('selected', true).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+   disable_invalid_options();
+}
+
+$(function(){/// ТЕСТ  ADVANCED - РАСШИФРОВКИ КОДА
+   $("input[id=code-test-button-ok]").click(function(){
+       let code = $("#code-test").val();
+       main_dev = code.split("/")[0].toLowerCase().startsWith("pc-28") ? "pc-28" :
+                   code.split("/")[0].toLowerCase().startsWith("pr-28") ? "pr-28" :
+                   code.split("/")[0].toLowerCase().startsWith("apc-2") ? "apc-2000" :
+                   code.split("/")[0].toLowerCase().startsWith("apr-2") ? "apr-2000" :
+                   code.split("/")[0].toLowerCase().startsWith("ct") ? "ctr" :
+       "";
+       if (main_dev!=""){
+           $("#advanced-code-descr").prop("style", "display:none");
+           $("#main-dev-" + main_dev).trigger("click");
+           $(".active-option-to-select-list").each(function(){
+               for (let opts of code.split("/")){
+                   console.log($(this).find("input"));
+                   console.log(opts);
+               }
+           })
+       }
+   })
+})
+
+$(function(){// ПРИ ВЫБОРЕ ИЛИ ОТМЕНЕ ТИПА ГИЛЬЗЫ ПОКАЗАТЬ/СКРЫТЬ ПРИСОЕДИНЕНИЯ и диаметры
+    $("input[name=thermowell-type]").click(function(){
+        $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        $("#thermowell-therm-type").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        if ($("input[name=thermowell-type]:checked").length>0){
+            $(".thermowell-dimensions").each(function(){
+                $(this).show();
+            })
+            let idd = $("input[name=thermowell-type]:checked").prop("id");
+            $("#thermowell-diameter option").each(function(){
+                if ($(this).hasClass(idd)){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            })
+            $("#thermowell-diameter option[value=not_selected]").prop("selected", true);
+            $(".thermowell-connection-type-div").each(function(){
+                if ($(this).hasClass(idd)){
+                    $(this).show();
+                }else{
+                    $(this).hide();
+                }
+            })
+            $(".thermowell-connection-type-select").each(function(){
+                if ($(this).hasClass(idd)){
+                    $(this).show().prop("required", true).find("option[value=not_selected]").prop("selected", true);
+                }else{
+                    $(this).hide().prop("required", false);
+                }
+            })
+            $("#thermowell-connection_warning").hide();
+            $("#thermowell-dimensions_warning").hide();
+            $("#thermowell-tlength").val('');
+            $("#thermowell-length").val('');
+        }else{
+            $(".thermowell-connection-type-div").each(function(){
+                $(this).hide();
+            })
+            $(".thermowell-dimensions").each(function(){
+                $(this).hide();
+            })
+            $("#thermowell-connection_warning").show();
+            $("#thermowell-dimensions_warning").show();
+            document.getElementById("thermowell-dimensions_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;;'>Сначала выберите тип гильзы!</span>`;
+        }
+    })
+})
+
+function thermowell_connection_selected(){
+    console.log();
+}
+
+function thermowell_dimensions_selected(changed_id){ /// ПРОВЕРКА РАЗМЕРОВ ГИЛЬЗЫ
+    let thermowell_type = $("input[name=thermowell-type]:checked").val().toLowerCase();
+    let l_max = ["sw", "swt", "swg", "swg1"].includes(thermowell_type) ? 350 : 10000;
+    let l_text = ["sw", "swt", "swg", "swg1"].includes(thermowell_type) ? "L < 350 мм" : "";
+    let delta = (["og1", "og2", "swg", "swg1"].includes(thermowell_type)) ? 15 : thermowell_type=="og3" ? 35 : thermowell_type=="sw" ? -5 : 50;
+    let sign_l = (["t1", "swt"].includes(thermowell_type)) ? "-" : "=";
+    let sign = delta>=0 && !(["t1", "swt"].includes(thermowell_type)) ? "+" : delta<0 && !(["t1", "swt"].includes(thermowell_type)) ? "" : ">";
+    if (changed_id == "thermowell-length"){
+        if (delta!=50 || (delta==50 && (Number.isNaN(parseInt($("#thermowell-length").val())) || Number.isNaN(parseInt($("#thermowell-tlength").val())) || parseInt($("#thermowell-tlength").val())-parseInt($("#thermowell-length").val())<50))){
+            $("#thermowell-tlength").val(parseInt($("#thermowell-length").val()) + delta);
+        }
+    }else{
+        if (delta!=50 || (delta==50 && (Number.isNaN(parseInt($("#thermowell-length").val())) || Number.isNaN(parseInt($("#thermowell-tlength").val())) || parseInt($("#thermowell-tlength").val())-parseInt($("#thermowell-length").val())<50))){
+            $("#thermowell-length").val(parseInt($("#thermowell-tlength").val()) - delta);
+        }
+    }
+    document.getElementById("thermowell-dimensions_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red;'>Внимание! Lt ${sign_l} L ${sign} ${delta} мм; L > 25 мм; ${l_text}</span>`;
+    $("#thermowell-dimensions_warning").show(100);
+    if (!Number.isNaN(parseInt($("#thermowell-length").val())) && !Number.isNaN(parseInt($("#thermowell-tlength").val())) && $("select[name=thermowell-diameter]").val()!="not_selected" && parseInt($("#thermowell-length").val())>=25 && parseInt($("#thermowell-length").val())<=l_max) {
+        $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        const button = document.createElement('button');
+        button.setAttribute('type', 'button');
+        button.setAttribute('id', 'thermowell-dimensions-button-ok');
+        button.textContent = 'Продолжить';
+        button.addEventListener('click', () => {
+            expand_next_div("thermowell-tlength");
+            disable_invalid_options;
+            setTimeout(() => document.getElementById("thermowell-dimensions_warning").innerHTML ='', 500) ;
+        });
+        document.getElementById("thermowell-dimensions_warning").appendChild(button);
+        // document.getElementById("thermowell-dimensions_warning").innerHTML +='<input type="button" id="thermowell-dimensions-button-ok" value="ОК" onclick="expand_next_div($(this).prop("id"))">';
+    }else{
+        $("#thermowell-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
+    disable_invalid_options();
+}
+
+$(function(){
+    $(document).on("change", "#thermowell-connection-type-select select:visible", function(){
+        if ($("#thermowell-connection-type-select select:visible option[value=not_selected]:selected").length==0){
+            expand_next_div($(this).prop("id"));
+            disable_invalid_options();
+        }else{
+            $("#thermowell-connection-type-select").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+        }
+    })
+})
+$(function(){
+    $("#thermowell-pressure").change(function(){
+        if (!Number.isNaN(parseInt($(this).val())) && $(this).val()>0 && $(this).val()<40){
+            expand_next_div($(this).prop("id"));
+            disable_invalid_options();
+        }else{
+            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+        }
+    })
+})
+
+$(function(){  /// ПРИ ВЫБОРЕ ГОСТА в конструкторе фланцев
+    $(document).on("change", "div.flange_standard select[name=flange_standard]", function () {
+        $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        let constructor_id = $(this).closest("div").parent("div").prop('id');
+        let standard = $(this).find("option:selected").val();
+        $("#" + constructor_id + " option.to_check[value=not_selected]").prop("selected", true);
+        $("#"+ constructor_id + " div.to_check, span.to_check, option.to_check").each(function(){
+            if ($(this).hasClass(standard)){
+                $(this).show();
+            }else{
+                $(this).hide();
+            }
+        })
+        if (["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
+            $("#"+ constructor_id + " div.cilinder-select-div").show();
+        }
+    })
+})
+
+$(function(){///ВСТАВКА КОНСТРУКТОРА
+    $(document).on("click", "input[id^=s_p_], input[id^=s_t_], input[id^=s_ch_], input[id^=minus-s_p_], input[id^=minus-s_t_], input[id^=minus-s_ch_]", function(){
+        let constructor_id = $(this).prop("id").startsWith("minus-") ? "minus-flange-constructor" : "flange-constructor";
+        try {
+            document.getElementById(constructor_id).remove();
+        } catch (error) {
+            console.log(error);
+        }
+        if ($(this).is(":checked")){
+            let constructor = document.createElement("div");
+            constructor.id = constructor_id;
+            constructor.setAttribute("style", "width: 300px; margin-left: 2.5em;");
+            constructor.innerHTML = document.getElementById('flange-constructor-script').innerHTML;
+            document.querySelector("label[for="+$(this).prop("id")+"]").after(constructor);
+        }
+    })
+})
+
+$(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУКТОРА
+    $(document).on("change", "#flange-constructor select:visible, #minus-flange-constructor select:visible", function(){
+        let constructor_id = $(this).closest("div").parent("div").prop('id');
+        let flange_dn = $("#" + constructor_id + " select[name=flange_dn]").val().toLowerCase();
+        if (flange_dn != 'not_selected' && ["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
+            $("#"+ constructor_id + " div.cilinder-select-div").find("select").prop("id", $("#" + constructor_id).prev("label").prop("for") + flange_dn +"-cilinder-length");
+        }
+        if ($("#" + constructor_id).find("select:visible option[value=not_selected]:selected").length==0){
+            $("#" + constructor_id).addClass("filled");
+            expand_next_div(constructor_id);
+        }else{
+            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $("#" + constructor_id).removeClass("filled");
+        }
+        disable_invalid_options();
+    })
+})
