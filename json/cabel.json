@@ -1,0 +1,20 @@
+[
+    {
+        "name": "ctr-silicon",
+        "code_name": "silicon",
+        "description": "Кабель силиконовый.",
+        "end_range": 200
+    },
+    {
+        "name": "ctr-ptfe",
+        "code_name": "ptfe",
+        "description": "Кабель тефлоновый.",
+        "end_range": 250
+    },
+    {
+        "name": "ctr-sv",
+        "code_name": "sv",
+        "description": "Кабель стекловолоконный.",
+        "end_range": 400
+    }
+]

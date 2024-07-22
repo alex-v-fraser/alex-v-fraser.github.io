@@ -1,5 +1,10 @@
 {
     "githubPullRequests.remotes": [
         "https://github.com/alex-v-fraser/alex-v-fraser.github.io"
-    ]
+    ],
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/*/**": true
+    }
 }
