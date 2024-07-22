@@ -756,14 +756,32 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             full_conf.delete("end_range_kpa");
         }
 
-        if (typeof full_conf.get("connection-type")!=='undefined'){
-            full_conf.set(full_conf.get("connection-type").slice(0,-5), $("input[name ="+ full_conf.get("connection-type").slice(0,-5) +"]:checked").prop("id"));
-            full_conf.delete("connection-type");
+        for (let plmin of ["","minus-"]){ //// СДЕЛАТЬ ЧТОБ БЫЛО flange undefined если КОНСТРУКТОР БЕЗ КЛАССА FILLED  а если FILLED - добавить DN PN тип
+            if (typeof full_conf.get(plmin + "connection-type")!=='undefined'){
+                let connection_id = $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id");
+                console.log("connection_id ", connection_id);
+                if (typeof connection_id!="undefined" && [plmin + "s_t_", plmin + "s_p_", plmin + "s_ch_"].some(word => connection_id==word)){
+                    if ($("#" + plmin + "flange-constructor").hasClass("filled")){ /// ПРИ ЗАПОЛНЕННОМ КОНСТРУКТОРЕ добавить DN в full_conf
+                        let flange_dn = $("#" + plmin + "flange-constructor select[name=flange_dn]").val().toLowerCase();
+                        let flange_pn = $("#" + plmin + "flange-constructor select[name=flange_pn]").val().toLowerCase();
+                        let flange_type = $("#" + plmin + "flange-constructor select[name=flange_type]").val().toLowerCase();
+                        full_conf.set(full_conf.get(plmin + "connection-type").slice(0,-5), $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id") + flange_dn);
+                        full_conf.delete(plmin + "connection-type");
+                    }else{
+                        full_conf.set(full_conf.get(plmin + "connection-type").slice(0,-5), undefined);
+                        full_conf.delete(plmin + "connection-type");
+                    }
+                }
+                if (typeof connection_id=="undefined" || (typeof connection_id!="undefined" && ![plmin + "s_t_", plmin + "s_p_", plmin + "s_ch_"].some(word => connection_id==word))){
+                    full_conf.set(full_conf.get(plmin + "connection-type").slice(0,-5), $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id"));
+                    full_conf.delete(plmin + "connection-type");
+                }
+            }
         }
-        if (typeof full_conf.get("minus-connection-type")!=='undefined'){
-            full_conf.set(full_conf.get("minus-connection-type").slice(0,-5), $("input[name ="+ full_conf.get("minus-connection-type").slice(0,-5) +"]:checked").prop("id"));
-            full_conf.delete("minus-connection-type");
-        }
+        // if (typeof full_conf.get("minus-connection-type")!=='undefined'){
+        //     full_conf.set(full_conf.get("minus-connection-type").slice(0,-5), $("input[name ="+ full_conf.get("minus-connection-type").slice(0,-5) +"]:checked").prop("id"));
+        //     full_conf.delete("minus-connection-type");
+        // }
         if ($("input[name=cap-or-not]:checked").prop("id")=="capillary" && !full_conf.has("capillary_length")){
             full_conf.set("capillary_length");
         }
@@ -1404,6 +1422,20 @@ function get_thermowell_code_info(data){///ПОЛУЧЕНИЕ КОДА ЗАКА�
 }
 
 function disable_invalid_options(){
+    for (let plmin of ["", "minus-"]){
+        if ($("#" + plmin + "s_tk_wash_dn100").is(":checked")){
+            $("#" + plmin + "s_tk_wash_dn100-cilinder-select").show();
+        }else{
+            $("#" + plmin + "s_tk_wash_dn100-cilinder-select").hide();
+        }
+        if ($("input[id^=" + plmin +"s_p_]:checked, input[id^=" + plmin +"s_t_]:checked, input[id^=" + plmin +"s_ch_]:checked").length==0){
+            try {
+                document.getElementById(plmin + "flange-constructor").remove();
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    }
     let num = 100; // НУЖНО ДЛЯ ДОБАВЛЕНИЯ id CHECKBOX_ERR_CANCEL
     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
         // if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
@@ -2797,6 +2829,10 @@ $(function (){
                 CorPSelected($(this).prop("id"), true);
                 return;
             }
+            // if (["s_p_", "s_ch_", "s_t_", "minus-s_p_", "minus-s_ch_", "minus-s_t_"].some(word => $(this).prop("id").startsWith(word))){
+            //     $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            //     return;
+            // }
             console.log("1");
         }
         else{
@@ -2890,18 +2926,18 @@ $(function (){
                 }
                 uncheckAllConnections(data);
             }
-            if (this.name=="flange"){
-                $("#flange-select-field > span").each(function(){
-                    $(this).prop("style", "display:none");
-                    $(this).find("select option[value='not_selected']").prop('selected', true);
-                })
-            }
-            if (this.name=="minus-flange"){
-                $("#minus-flange-select-field > span").each(function(){
-                    $(this).prop("style", "display:none");
-                    $(this).find("select option[value='not_selected']").prop('selected', true);
-                })
-            }
+            // if (this.name=="flange"){
+            //     $("#flange-select-field > span").each(function(){
+            //         $(this).prop("style", "display:none");
+            //         $(this).find("select option[value='not_selected']").prop('selected', true);
+            //     })
+            // }
+            // if (this.name=="minus-flange"){
+            //     $("#minus-flange-select-field > span").each(function(){
+            //         $(this).prop("style", "display:none");
+            //         $(this).find("select option[value='not_selected']").prop('selected', true);
+            //     })
+            // }
             if (this.name=="max-static"){
                 for (let plmin of ["","minus-"]){          ////////СНЯТЬ ОТМЕТКИ СО ВСЕХ ПРИСОЕДИНЕНИЙ при снятии галки MAX-STATIC
                     for (let cons of ["thread", "flange", "hygienic", "connection-type"]){
@@ -3127,36 +3163,26 @@ $(function (){
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
             let $thiss_id = $(this).prop("id");
             // if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
-            if ([add_n + "s_t"].some(word => $thiss_id.startsWith(word))){
-                let target = $(this).prop("id")  + "-cilinder-select";
-                console.log(add_n);
-                console.log(target);
-                $("#" + add_n + "flange-select-field > span").each(function(){
-                    if ($(this).prop("id")!=target){
-                        $(this).prop("style", "display: none");
-                        $(this).find("select option[value='not_selected']").prop('selected', true);
-                        // console.log('Установка длины тубуса как не выбрано при переключении на другой');
-                    }else{
-                        $(this).prop("style", "display: inline");
-                    }
-                })
+            if ([add_n + "s_t_", add_n + "s_p_", add_n + "s_ch_", add_n + "s_tk_"].some(word => $thiss_id.startsWith(word))){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+
+                // let target = $(this).prop("id")  + "-cilinder-select";
+                // console.log(add_n);
+                // console.log(target);
+                // $("#" + add_n + "flange-select-field > span").each(function(){
+                //     if ($(this).prop("id")!=target){
+                //         $(this).prop("style", "display: none");
+                //         $(this).find("select option[value='not_selected']").prop('selected', true);
+                //         // console.log('Установка длины тубуса как не выбрано при переключении на другой');
+                //     }else{
+                //         $(this).prop("style", "display: inline");
+                //     }
+                // })
                 disable_invalid_options();
                 console.log("13");
                 return;
             }else{
-                let num = $("body .active-option-to-select").index($(".active")) + 1;
-                let next_expand = $("body .active-option-to-select").eq(num);
-                $("#" + add_n + "flange-select-field > span").each(function(){
-                    $(this).prop("style", "display:none");
-                    $(this).find("select option[value='not_selected']").prop('selected', true);
-                })
-                var $this = $(this.parentElement.parentElement.parentElement).prev();
-                $this.removeClass("active");
-                $this.next("div.option-to-select-list").slideUp("slow");
-                $this.find(".color-mark-field").removeClass("unselected");
-                $this.find(".color-mark-field").addClass("selected");
-                next_expand.addClass("active");
-                next_expand.next().slideToggle("slow");
+                expand_next_div($(this).prop("id"));
                 disable_invalid_options();
                 console.log("6");
                 return;
@@ -4272,6 +4298,7 @@ $(function(){
 
 $(function(){  /// ПРИ ВЫБОРЕ ГОСТА в конструкторе фланцев
     $(document).on("change", "div.flange_standard select[name=flange_standard]", function () {
+        $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         let constructor_id = $(this).closest("div").parent("div").prop('id');
         let standard = $(this).find("option:selected").val();
         $("#" + constructor_id + " option.to_check[value=not_selected]").prop("selected", true);
@@ -4282,5 +4309,44 @@ $(function(){  /// ПРИ ВЫБОРЕ ГОСТА в конструкторе ф
                 $(this).hide();
             }
         })
+        if (["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
+            $("#"+ constructor_id + " div.cilinder-select-div").show();
+        }
+    })
+})
+
+$(function(){///ВСТАВКА КОНСТРУКТОРА
+    $(document).on("click", "input[id^=s_p_], input[id^=s_t_], input[id^=s_ch_], input[id^=minus-s_p_], input[id^=minus-s_t_], input[id^=minus-s_ch_]", function(){
+        let constructor_id = $(this).prop("id").startsWith("minus-") ? "minus-flange-constructor" : "flange-constructor";
+        try {
+            document.getElementById(constructor_id).remove();
+        } catch (error) {
+            console.log(error);
+        }
+        if ($(this).is(":checked")){
+            let constructor = document.createElement("div");
+            constructor.id = constructor_id;
+            constructor.setAttribute("style", "width: 300px; margin-left: 2.5em;");
+            constructor.innerHTML = document.getElementById('flange-constructor-script').innerHTML;
+            document.querySelector("label[for="+$(this).prop("id")+"]").after(constructor);
+        }
+    })
+})
+
+$(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУКТОРА
+    $(document).on("change", "#flange-constructor select:visible, #minus-flange-constructor select:visible", function(){
+        let constructor_id = $(this).closest("div").parent("div").prop('id');
+        let flange_dn = $("#" + constructor_id + " select[name=flange_dn]").val().toLowerCase();
+        if (flange_dn != 'not_selected' && ["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
+            $("#"+ constructor_id + " div.cilinder-select-div").find("select").prop("id", $("#" + constructor_id).prev("label").prop("for") + flange_dn +"-cilinder-length");
+        }
+        if ($("#" + constructor_id).find("select:visible option[value=not_selected]:selected").length==0){
+            $("#" + constructor_id).addClass("filled");
+            expand_next_div(constructor_id);
+        }else{
+            $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            $("#" + constructor_id).removeClass("filled");
+        }
+        disable_invalid_options();
     })
 })
