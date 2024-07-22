@@ -1635,7 +1635,27 @@ function disable_invalid_options(){
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 low_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("begin_range_kpa");
-                hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
+                if (con_type == "flange" && ["s_p_", "s_ch_", "s_t_"].some(word => full_conf.get(con_type).startsWith(word))){
+                    console.log("Вместо hi_press вставить PN");
+                    const pn_table = new Map([
+                        ["PN10", 1000],
+                        ["PN16", 1600],
+                        ["PN25", 2500],
+                        ["PN40", 4000],
+                        ["PN63", 6300],
+                        ["PN100", 10000],
+                        ["ANSI150", 98.7],
+                        ["ANSI300", 6.895],
+                        ["ANSI600", 6.895],
+                        ["ANSI900", 6.895],
+                        ["ANSI1500", 6.895],
+                    ]);
+                    let pn_table_val = pn_table.get($("#flange-constructor select[name=flange_pn]").val());
+                    console.log(pn_table_val);
+                    hi_press = $("#flange-constructor select[name=flange_pn]").val();
+                }else{
+                    hi_press = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("end_range_kpa");
+                }
                 if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="capillary"){
                     min_range = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
                     console.log("min_range capillary ", min_range);
