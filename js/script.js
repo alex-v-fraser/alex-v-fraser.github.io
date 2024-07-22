@@ -3543,6 +3543,8 @@ $(function(){
                     // $(this).prop("style", "display:none");
                     $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
                 }
+            }else{
+                $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");
             }
         })
 
