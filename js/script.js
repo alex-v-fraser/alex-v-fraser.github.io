@@ -759,7 +759,6 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
         for (let plmin of ["","minus-"]){ //// СДЕЛАТЬ ЧТОБ БЫЛО flange undefined если КОНСТРУКТОР БЕЗ КЛАССА FILLED  а если FILLED - добавить DN PN тип
             if (typeof full_conf.get(plmin + "connection-type")!=='undefined'){
                 let connection_id = $("input[name ="+ full_conf.get(plmin + "connection-type").slice(0,-5) +"]:checked").prop("id");
-                console.log("connection_id ", connection_id);
                 if (typeof connection_id!="undefined" && [plmin + "s_t_", plmin + "s_p_", plmin + "s_ch_"].some(word => connection_id==word)){
                     if ($("#" + plmin + "flange-constructor").hasClass("filled")){ /// ПРИ ЗАПОЛНЕННОМ КОНСТРУКТОРЕ добавить DN в full_conf
                         let flange_dn = $("#" + plmin + "flange-constructor select[name=flange_dn]").val().toLowerCase();
@@ -1579,7 +1578,7 @@ function disable_invalid_options(){
                             temp = restr_conf_lst.get(pair[0]).get(pair[1]).get(option_names[opt]);////ПОЛУЧАЕМ ДОСТУПНЫЕ ВАРИАНТЫ ИЗ МАССИВА ОГРАНИЧЕНИЙ по каждой опции
                         }
                         catch (err){
-                            console.log(err);
+                            // console.log(err);
                         }
                         $("input[name="+ option_names[opt] +"]").each(function() {
                             if (typeof temp !== 'undefined' && !temp.includes($(this).attr("id"))){
@@ -1652,6 +1651,14 @@ function disable_invalid_options(){
                 $("#flange-constructor select[name=flange_dn] option[value=dn100]").hide();
                 $("#flange-constructor select[name=flange_dn] option[value=DN100]").hide();
             }
+            $("input[name=material]").each(function() {
+                if (!window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id")+"dn50").get("material").includes($(this).attr("id"))){
+                    $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                    $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                    document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${$("input[name=flange]:checked").prop("id")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${$("input[name=flange]:checked").prop("id")}_err_cancel${num}'>${$("label[for="+$("input[name=flange]:checked").prop("id")+"]").text()}</label>`;
+                    num+=1;
+                }
+            })
             if (typeof $("#flange-constructor select[name=flange_dn]").val()!="undefined" && $("#flange-constructor select[name=flange_dn]").val()!="not_selected" && typeof $("#flange-constructor select[name=flange_pn]").val()!="undefined" && $("#flange-constructor select[name=flange_pn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
                 let flange_id = $("input[name=flange]:checked").prop("id") + $("#flange-constructor select[name=flange_dn]").val();
                 low_press = window["flange_restr_lst"].get(flange_id).get("begin_range_kpa");
@@ -1668,29 +1675,41 @@ function disable_invalid_options(){
                 min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
-                console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", low_press);
-                console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", hi_press);
-                console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", min_range);
+                // console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", low_press);
+                // console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", hi_press);
+                // console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", min_range);
             }
 
+
+            $("#flange-constructor div.warning-error").each(function(){
+                $(this).remove();
+            })
+
             $("#flange-constructor select[name=flange_dn] option").each(function(){
-                if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range") != 'undefined' && full_conf.get("range") < window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
-                    $(this).addClass("disabled");// attr("disabled", "disabled");
+                if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val())!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range") != 'undefined' && full_conf.get("range") < window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
+                    $(this).addClass("disabled");
                     if ($(this).is(":selected")){
-                        // $("#flange-constructor select[name=flange_dn] option[value=not_selected]").prop("selected", true);
-                        //////////////////////////// ДОБАВИТЬ АХТУНГ c ДИАПАЗОНАМИ ///////////////////////////////////////
                         let warning = document.createElement("div");
-                        warning.id = "#flange-constructor-dn-error";
-                        warning.setAttribute("style", "width: 300px; margin-left: 2.5em;");
-                        warning.innerHTML = "Для " + $(this).val().toUpperCase() + " минимальная ширина диапазона " + window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range") + " кПа.";
-                        document.querySelector("label[for="+$(this).prop("id")+"]").after(warning);
-                    }else{
-                        //// СКРЫТЬ АХТУНГ //////////
+                        // warning.id = "#flange-constructor-"+$("input[name=flange]:checked").prop("id") + $(this).val()+"-error";
+                        warning.setAttribute("style", "display:inline-block;");
+                        warning.setAttribute("class", "warning-error");
+                        warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${$(this).val().toUpperCase()} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
+                        document.querySelector("#flange-constructor > div:nth-child(2)").after(warning);
                     }
                 }else{
                     $(this).removeClass("disabled");
                 }
             })
+        }
+        if (typeof full_conf.get("material")!=='undefined'){
+            for (let entr of window["flange_restr_lst"].entries()){
+                if (["s_p_dn50", "s_ch_dn50", "s_t_dn50"].some(word => entr[1].get("name").startsWith(word)) && typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
+                    $("label[for="+ entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_" +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    document.getElementById("err_" + entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                    num+=1;
+                }
+            }
         }
 
         for (let con_type of connection_types){
@@ -2897,10 +2916,6 @@ $(function (){
                 CorPSelected($(this).prop("id"), true);
                 return;
             }
-            // if (["s_p_", "s_ch_", "s_t_", "minus-s_p_", "minus-s_ch_", "minus-s_t_"].some(word => $(this).prop("id").startsWith(word))){
-            //     $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-            //     return;
-            // }
             console.log("1");
         }
         else{
@@ -3202,11 +3217,12 @@ $(function (){
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
             /// ПОКАЗАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
             if ($(this).prop('id').startsWith('s_') || $(this).prop('id').startsWith('minus-s_')){
-                // console.log("ПОКАЗАТЬ выбор манометрической жидкости при выборе");
+                console.log("ПОКАЗАТЬ выбор манометрической жидкости при выборе");
                 $("div.option-to-select.fluid-select-div").each(function(){
+                    console.log($(this));
                     $(this).prop("style", "display: block").addClass("active-option-to-select");
                     $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
-                });
+                })
             }else{
                 let condition = true;
                 for (let plmin of ["","minus-"]){          //////// Ищем отмеченные разделители
@@ -3217,7 +3233,7 @@ $(function (){
                     }
                 }
                 if(condition===true){
-                    // console.log("СКРЫТЬ выбор манометрической жидкости при выборе если нет других выбранных разделителей");
+                    console.log("СКРЫТЬ выбор манометрической жидкости при выборе если нет других выбранных разделителей");
                     $("div.option-to-select.fluid-select-div").each(function(){
                         $(this).prop("style", "display: none").removeClass("active-option-to-select");
                         $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
@@ -3234,18 +3250,9 @@ $(function (){
             if ([add_n + "s_t_", add_n + "s_p_", add_n + "s_ch_", add_n + "s_tk_"].some(word => $thiss_id.startsWith(word))){
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
 
-                // let target = $(this).prop("id")  + "-cilinder-select";
-                // console.log(add_n);
-                // console.log(target);
-                // $("#" + add_n + "flange-select-field > span").each(function(){
-                //     if ($(this).prop("id")!=target){
-                //         $(this).prop("style", "display: none");
-                //         $(this).find("select option[value='not_selected']").prop('selected', true);
-                //         // console.log('Установка длины тубуса как не выбрано при переключении на другой');
-                //     }else{
-                //         $(this).prop("style", "display: inline");
-                //     }
-                // })
+
+
+
                 disable_invalid_options();
                 console.log("13");
                 return;
