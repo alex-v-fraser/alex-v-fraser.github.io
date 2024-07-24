@@ -1624,25 +1624,6 @@ function disable_invalid_options(){
         }
     }
 
-    // const pn_table = new Map([
-    //     ["PN10", 1000],
-    //     ["PN16", 1600],
-    //     ["PN25", 2500],
-    //     ["PN40", 4000],
-    //     ["PN63", 6300],
-    //     ["PN100", 10000],
-    //     ["ANSI150", 2000],
-    //     ["ANSI300", 5000],
-    //     ["ANSI600", 10000],
-    //     ["ANSI900", 15000],
-    //     ["ANSI1500", 25000]
-    // ]);
-    // const dn_table = new Map([
-    //     ["dn50", 'ANSI 2"'],
-    //     ["dn80", 'ANSI 3"'],
-    //     ["dn100", 'ANSI 4"']
-    // ])
-
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// ПРОВЕРКА PC и APC
         $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
             if (this.value=="1/4NPT(F)"){
@@ -1685,9 +1666,6 @@ function disable_invalid_options(){
                 min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
-                // console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", low_press);
-                // console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", hi_press);
-                // console.log(window["flange_restr_lst"].get(flange_id).get("name"), ": ", min_range);
             }
 
 
@@ -1861,6 +1839,91 @@ function disable_invalid_options(){
         })
         // $("#c-pr").prop("style", "display:block");
         $("label[for=c-pr]").prop("style", "display:block");
+        for (let plmin of ["", "minus-"]){
+            if (full_conf.has(plmin + "flange") && typeof $("input[name=" + plmin + "flange]:checked").prop("id")!="undefined" &&  [plmin + "s_p_", plmin + "s_ch_", plmin + "s_t_"].some(word => $("input[name="+ plmin +"flange]:checked").prop("id").startsWith(word))){ /// ДЕАКТИВАЦИЯ DN PN для S_P S_CH S_T
+                if ($("input[name=" + plmin + "flange]:checked").prop("id")==plmin + "s_ch_"){ ///ДЛЯ S-CH спрятать DN100
+                    $("#"+ plmin + "flange-constructor select[name=flange_dn] option[value=dn100]").hide();
+                    $("#"+ plmin + "flange-constructor select[name=flange_dn] option[value=DN100]").hide();
+                }
+                $("input[name=material]").each(function() {
+                    let plus_minus = plmin=="" ? "(+)" : "(-)";
+                    let trgt = ($("input[name="+plmin+"flange]:checked").prop("id")).startsWith("minus-") ? ($("input[name="+plmin+"flange]:checked").prop("id")).slice(6,) : ($("input[name="+plmin+"flange]:checked").prop("id"));
+                    if (!window["flange_restr_lst"].get(trgt+"dn50").get("material").includes($(this).attr("id"))){
+                        $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
+                        $(this).prop('disabled', true);                               //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ MATERIAL
+                        document.getElementById("err_" + $(this).attr("id")).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${trgt}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${trgt}_err_cancel${num}'>${plus_minus}${$("label[for="+trgt+"]").text()}</label>`;
+                        num+=1;
+                    }
+                })
+                if (typeof $("#"+ plmin + "flange-constructor select[name=flange_dn]").val()!="undefined" && $("#"+ plmin + "flange-constructor select[name=flange_dn]").val()!="not_selected" && typeof $("#"+ plmin + "flange-constructor select[name=flange_pn]").val()!="undefined" && $("#"+ plmin + "flange-constructor select[name=flange_pn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
+                    let flange_id = $("input[name="+ plmin +"flange]:checked").prop("id") + $("#"+ plmin + "flange-constructor select[name=flange_dn]").val();
+                    flange_id = flange_id.startsWith("minus-") ? flange_id.slice(6,) : flange_id;
+                    low_press = window["flange_restr_lst"].get(flange_id).get("begin_range_kpa");
+                    let pn_table_val =  pn_table.get($("#"+ plmin + "flange-constructor select[name=flange_pn]").val());
+                    hi_press = pn_table_val;
+                    min_range = window["flange_restr_lst"].get(flange_id).get("range");
+                    let cap = plmin=="" ? "cap-plus" : "cap-minus";
+                    if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="capillary"){
+                        min_range_diff = typeof window["flange_restr_lst"].get(flange_id).get("range_c") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range_c") : window["flange_restr_lst"].get(flange_id).get("range");
+                    }
+                    if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="direct"){
+                        min_range_diff = typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range") : min_range;
+                    }
+                    low_press_diff = -160;
+                    document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
+                    document.getElementById("range_warning2").innerHTML = "";
+                }
+
+                $("#"+ plmin + "flange-constructor div.warning-error").each(function(){
+                    $(this).remove();
+                })
+
+                $("#"+ plmin + "flange-constructor select[name=flange_dn] option").each(function(){
+                    if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val())!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range") != 'undefined' && full_conf.get("range") < window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
+                        $(this).addClass("disabled");
+                        if ($(this).is(":selected")){
+                            let warning = document.createElement("div");
+                            warning.setAttribute("style", "display:inline-block;");
+                            warning.setAttribute("class", "warning-error");
+                            let dn = $("#"+ plmin + "flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
+                            warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
+                            document.querySelector("#"+ plmin + "flange-constructor > div:nth-child(2)").after(warning);
+                        }
+                    }else{
+                        $(this).removeClass("disabled");
+                    }
+                })
+                $("#"+ plmin + "flange-constructor select[name=flange_pn] option").each(function(){
+                    if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && pn_table.get($(this).val()) < parseInt(full_conf.get("end_range"))){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону PN
+                        $(this).addClass("disabled");
+                        if ($(this).is(":selected")){
+                            let warning = document.createElement("div");
+                            warning.setAttribute("style", "display:inline-block;");
+                            warning.setAttribute("class", "warning-error");
+                            warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${$(this).val().toUpperCase()} максимальное давление ${pn_table.get($(this).val())} кПа.</span>`;
+                            document.querySelector("#"+ plmin + "flange-constructor > div:nth-child(3)").after(warning);
+                        }
+                    }else{
+                        $(this).removeClass("disabled");
+                    }
+                })
+            }
+        }
+        if (typeof full_conf.get("material")!=='undefined'){
+            for (let entr of window["flange_restr_lst"].entries()){
+                if (["s_p_dn50", "s_ch_dn50", "s_t_dn50"].some(word => entr[1].get("name").startsWith(word)) && typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
+                    $("label[for="+ entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_" +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#"+entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    document.getElementById("err_" + entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                    num+=1;
+                    $("label[for=minus-"+ entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_" +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    $("#minus-"+entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                    document.getElementById("err_minus-" + entr[0].split("_")[0]+"_"+ entr[0].split("_")[1]+ "_").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                    num+=1;
+                }
+            }
+        }
+
 
         if (full_conf.get("range")>1600){       // деактивация MAX-STATIC по выбранному диапазону
             $("input[name=max-static]").each(function(){
@@ -1932,7 +1995,7 @@ function disable_invalid_options(){
         }
 
         for (let con_type of connection_types){
-            if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
+            if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined' && !(["s_p_", "s_ch_", "s_t_"].some(word => full_conf.get(con_type).startsWith(word)))){// КРОМЕ S_P S_CH S_T ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
                     // console.log("min_range capillary ", min_range);
@@ -1969,7 +2032,7 @@ function disable_invalid_options(){
                 }
             }
 
-            if (full_conf.has("minus-" + con_type) && typeof full_conf.get("minus-" + con_type)!='undefined'){// ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
+            if (full_conf.has("minus-" + con_type) && typeof full_conf.get("minus-" + con_type)!='undefined' && !(["minus-s_p_", "minus-s_ch_", "minus-s_t_"].some(word => full_conf.get("minus-" + con_type).startsWith(word)))){// КРОМЕ S_P S_CH S_T ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
                     console.log("min_range capillary ", min_range);
@@ -2007,80 +2070,84 @@ function disable_invalid_options(){
             }
 
             for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC по ширине диапазона, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
-                // console.log("max static kPa: "+ parseInt(full_conf.get("max-static"))*1000);
-                if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
-                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ширине диапазона THREAD или FLANGE или HYGIENIC
-                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get(con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get(con_type)}_err_cancel${num}'>Выбранный диапазон. Допустимая минимальная ширина ${entr[1].get("range")} кПа.</label>`;
-                    num+=1;
-                    $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ширине диапазона THREAD или FLANGE или HYGIENIC
-                    $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                        document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("minus-" + con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("minus-" + con_type)}_err_cancel${num}'>Выбранный диапазон. Допустимая минимальная ширина ${entr[1].get("range")} кПа.</label>`;
-                        num+=1;
-                    }
-                }
-                if (typeof full_conf.get("max-static")!='undefined' && parseInt(full_conf.get("max-static"))*1000>entr[1].get("end_range_kpa")){
-                    $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
-                    $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
-                    num+=1;
-                    $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
-                    $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                    if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                        document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
-                        num+=1;
-                    }
-                }
-
-                if (typeof full_conf.get("cap-plus") != 'undefined'){
-                    if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus")){
-                        $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                if (con_type == "flange" && typeof entr[1].get("name")!="undefined" && ["s_p_", "s_ch_", "s_t_"].some(word => entr[1].get("name").startsWith(word))){ ///
+                    ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные DN и PN
+                    // console.log('ДЛЯ S_P_ S_CH_ S_T_  пропуск');
+                }else{
+                    if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
+                        $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ширине диапазона THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-plus")+"-cap-plus]").text()}</label>`;
+                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get(con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get(con_type)}_err_cancel${num}'>Выбранный диапазон. Допустимая минимальная ширина ${entr[1].get("range")} кПа.</label>`;
                         num+=1;
-                    }
-                }
-                if (typeof full_conf.get("cap-minus") != 'undefined'){
-                    if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-minus")){
-                        $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                        $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ширине диапазона THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                            document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-minus")}-cap-minus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-minus")}-cap-minus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-minus")+"-cap-minus]").text()}</label>`;
+                            document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("minus-" + con_type)}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("minus-" + con_type)}_err_cancel${num}'>Выбранный диапазон. Допустимая минимальная ширина ${entr[1].get("range")} кПа.</label>`;
                             num+=1;
                         }
                     }
-                }
-                if (full_conf.get("cap-plus") == 'direct' && full_conf.has("max_temp_plus") && !Number.isNaN(full_conf.get("max_temp_plus"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
-                    if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp_plus")){
-                        $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                    if (typeof full_conf.get("max-static")!='undefined' && parseInt(full_conf.get("max-static"))*1000>entr[1].get("end_range_kpa")){
+                        $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='max_temp_err_cancel' value='' id='${full_conf.get("max_temp_plus")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckMaxTemp("cap-plus")'><label for='${full_conf.get("max_temp_plus")}_err_cancel${num}'>Выбрана температура ${full_conf.get("max_temp_plus")}°C. Допуcкается до ${entr[1].get("max_temp")}°С</label>`;
+                        document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
                         num+=1;
-                    }
-                }
-                if (full_conf.get("cap-minus") == 'direct' && full_conf.has("max_temp_minus") && !Number.isNaN(full_conf.get("max_temp_minus"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
-                    if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp_minus")){
-                        $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                        $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                            document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='max_temp_err_cancel' value='' id='${full_conf.get("max_temp_minus")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckMaxTemp("cap-minus")'><label for='${full_conf.get("max_temp_minus")}_err_cancel${num}'>Выбрана температура ${full_conf.get("max_temp_minus")}°C. Допуcкается до ${entr[1].get("max_temp")}°С</label>`;
+                            document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
                             num+=1;
                         }
                     }
-                }
 
-                if (typeof full_conf.get("material")!=='undefined'){
-                    if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
-                        $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                        $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        document.getElementById("err_" +entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
-                        num+=1;
-                        $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
-                        $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
-                        if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
-                            document.getElementById("err_minus-" +entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                    if (typeof full_conf.get("cap-plus") != 'undefined'){
+                        if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus")){
+                            $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                            $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                            document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-plus")+"-cap-plus]").text()}</label>`;
                             num+=1;
+                        }
+                    }
+                    if (typeof full_conf.get("cap-minus") != 'undefined'){
+                        if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-minus")){
+                            $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                            $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                            if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
+                                document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-minus")}-cap-minus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-minus")}-cap-minus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-minus")+"-cap-minus]").text()}</label>`;
+                                num+=1;
+                            }
+                        }
+                    }
+                    if (full_conf.get("cap-plus") == 'direct' && full_conf.has("max_temp_plus") && !Number.isNaN(full_conf.get("max_temp_plus"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
+                        if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp_plus")){
+                            $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                            $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                            document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='max_temp_err_cancel' value='' id='${full_conf.get("max_temp_plus")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckMaxTemp("cap-plus")'><label for='${full_conf.get("max_temp_plus")}_err_cancel${num}'>Выбрана температура ${full_conf.get("max_temp_plus")}°C. Допуcкается до ${entr[1].get("max_temp")}°С</label>`;
+                            num+=1;
+                        }
+                    }
+                    if (full_conf.get("cap-minus") == 'direct' && full_conf.has("max_temp_minus") && !Number.isNaN(full_conf.get("max_temp_minus"))){  //// ДЕАКТИВАЦИЯ DIRECT ПРИСОЕДИНЕНИЙ по ВЫБРАННОЙ ТЕМПЕРАТУРЕ
+                        if (entr[1].get("max_temp") !== 'undefined' && entr[1].get("max_temp") < full_conf.get("max_temp_minus")){
+                            $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ ПО ТЕМПЕРАТУРЕ ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                            $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                            if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
+                                document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='max_temp_err_cancel' value='' id='${full_conf.get("max_temp_minus")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckMaxTemp("cap-minus")'><label for='${full_conf.get("max_temp_minus")}_err_cancel${num}'>Выбрана температура ${full_conf.get("max_temp_minus")}°C. Допуcкается до ${entr[1].get("max_temp")}°С</label>`;
+                                num+=1;
+                            }
+                        }
+                    }
+
+                    if (typeof full_conf.get("material")!=='undefined'){
+                        if (typeof entr[1].get("material")!='undefined' && !entr[1].get("material").includes(full_conf.get("material"))){
+                            $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                            $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                            document.getElementById("err_" +entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                            num+=1;
+                            $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по материалу ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
+                            $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
+                            if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
+                                document.getElementById("err_minus-" +entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for="+full_conf.get("material")+"]").text()}</label>`;
+                                num+=1;
+                            }
                         }
                     }
                 }
