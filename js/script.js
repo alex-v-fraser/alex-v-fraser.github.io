@@ -415,34 +415,51 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                         }
                     }
                 }
-                // console.log(temp_codes);
-                let repeat_cycle = true;
-                let num_cut = 4;
-                for (els of temp_codes){
-                    if (els.endsWith("-")){els=els.slice(0,-1)};
-                    // console.log(els);
-                    for (item of search_names){
-                        for (el of window[item + "_restr_lst"].values()){
-                            if (repeat_cycle === true && el.get("code_name") === els){
-                                code.splice(i, num_cut, els);
-                                let temp_desc = el.get("description") + add_descr;
-                                let arr = code[i].split("-");
-                                if (typeof arr[1]!='undefined'){
-                                    arr[1] = arr[1] + add_letter;
+                console.log(temp_codes);
+                if (!(["S-P", "S-T", "S-Ch"].some(word => temp_codes[2]==word))){
+                    let repeat_cycle = true;
+                    let num_cut = 4;
+                    for (els of temp_codes){
+                        if (els.endsWith("-")){els=els.slice(0,-1)};
+                        // console.log(els);
+                        for (item of search_names){
+                            for (el of window[item + "_restr_lst"].values()){
+                                if (repeat_cycle === true && el.get("code_name") === els){
+                                    code.splice(i, num_cut, els);
+                                    let temp_desc = el.get("description") + add_descr;
+                                    let arr = code[i].split("-");
+                                    if (typeof arr[1]!='undefined'){
+                                        arr[1] = arr[1] + add_letter;
+                                    }
+                                    code[i] = arr.join("-");
+                                    full_description.set(plus_minus + code[i], temp_desc);
+                                    // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
+                                    repeat_cycle = false;
+                                    break;
                                 }
-                                code[i] = arr.join("-");
-                                full_description.set(plus_minus + code[i], temp_desc);
-                                // console.log("СРАБОТАЛО: "+ plus_minus + code[i], " Описание для full_description: " + temp_desc, " Разделитель: " + els);
-                                repeat_cycle = false;
-                                break;
                             }
                         }
+                        num_cut-=1;
                     }
-                    num_cut-=1;
+                }else{                                                  //// ДОБАВИТЬ РАСШИФРОВКУ S-P S-T S-Ch
+                    code.splice(i, 3, temp_codes[1]);
+                    const sp_ch_st = new Map([
+                        ["S-P", "Разделитель фланцевый плоский S-P."],
+                        ["S-T", "Разделитель фланцевый цилиндрический S-T."],
+                        ["S-Ch", "Разделитель фланцевый плоский химостойкий S-Ch."]
+                    ]);
+                    let fl_typ = temp_codes[1].split("-")[2];
+                    let sep_descr = sp_ch_st.get(temp_codes[2]);
+                    let fl_typ_descr = "";
+                    if (fl_typ.includes("DN")){
+                        fl_typ_descr = "<br>Фланец DN" + fl_typ.match(/\d+(\,\d+)?/g)[0] + " PN" + fl_typ.match(/\d+(\,\d+)?/g)[1] + ", тип " + fl_typ.match(/[a-zA-Zа-яА-я]+/g)[2] + " (ГОСТ).";
+                    }
+                    if (fl_typ.includes("ANSI")){
+                        fl_typ_descr = "<br>Фланец " + fl_typ.split("ANSI")[0] + " класс давления " + fl_typ.split("ANSI")[1].match(/\d+(\,\d+)?/g)[0] + " psi, тип " + fl_typ.split("ANSI")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + " (ANSI).";
+                    }
+                    full_description.set(plus_minus + code[i], sep_descr + fl_typ_descr + add_descr);
                 }
                 code[i]=plus_minus + code[i];
-                // console.log(code[i]);
-                // console.log(code);
             }
 
             if (!(["ОG1", "OG2", "OG3", "T1", "SW", "SWT", "SWG", "SWG1", "CT"].some(word => code[0].startsWith(word)))){ //(!code[0].startsWith("CT")){
