@@ -1847,14 +1847,12 @@ function disable_invalid_options(){
 
         $("input[name=thread]").each(function(){
             if (this.value=="M12x1" || this.value=="1/4NPT(F)" || this.value=="P" || this.value.startsWith("S-")){// ПОКАЗАТЬ 1/4NPT(F) и фланец С, скрыть штуцера PC, APC
-                // $(this).prop("style", "display:block");
                 $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
             }else{
-                // $(this).prop("style", "display:none");
                 $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
             }
         })
-        // $("#c-pr").prop("style", "display:block");
+
         $("label[for=c-pr]").prop("style", "display:block");
         for (let plmin of ["", "minus-"]){
             if (full_conf.has(plmin + "flange") && typeof $("input[name=" + plmin + "flange]:checked").prop("id")!="undefined" &&  [plmin + "s_p_", plmin + "s_ch_", plmin + "s_t_"].some(word => $("input[name="+ plmin +"flange]:checked").prop("id").startsWith(word))){ /// ДЕАКТИВАЦИЯ DN PN для S_P S_CH S_T
@@ -1911,7 +1909,7 @@ function disable_invalid_options(){
                     }
                 })
                 $("#"+ plmin + "flange-constructor select[name=flange_pn] option").each(function(){
-                    if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && pn_table.get($(this).val()) < parseInt(full_conf.get("end_range"))){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону PN
+                    if ($(this).val()!="not_selected" && typeof full_conf.get("max-static")!='undefined' && pn_table.get($(this).val()) < parseInt(full_conf.get("max-static"))*1000){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по MAX-STATIC PN
                         $(this).addClass("disabled");
                         if ($(this).is(":selected")){
                             let warning = document.createElement("div");
