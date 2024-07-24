@@ -33,6 +33,24 @@ var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
 var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
 var ctr_rec_outlength = 0; // Рекомендуемая мин длина S для CTR
 //"Все права на данный код принадлежат Фомину Александру https://github.com/alex-v-fraser"
+const pn_table = new Map([
+    ["PN10", 1000],
+    ["PN16", 1600],
+    ["PN25", 2500],
+    ["PN40", 4000],
+    ["PN63", 6300],
+    ["PN100", 10000],
+    ["ANSI150", 2000],
+    ["ANSI300", 5000],
+    ["ANSI600", 10000],
+    ["ANSI900", 15000],
+    ["ANSI1500", 25000]
+]);
+const dn_table = new Map([
+    ["dn50", '2"'],
+    ["dn80", '3"'],
+    ["dn100", '4"']
+])
 
 
 
@@ -1075,6 +1093,15 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     let s_material;
     let main_range;
     let range;
+    if (["S-P-", "S-Ch-", "S-T-"].some(word => connection==word)){
+        let dn = $("#flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($("#flange-constructor select[name=flange_dn]").val()) : $("#flange-constructor select[name=flange_dn]").val().toUpperCase();
+        connection = connection + dn + $("#flange-constructor select[name=flange_pn]").val() + $("#flange-constructor select[name=flange_type]").val();
+    }
+    if (["S-P-", "S-Ch-", "S-T-"].some(word => minus_connection==word)){
+        let minus_dn = $("#minus-flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($("#minus-flange-constructor select[name=flange_dn]").val()) : $("#minus-flange-constructor select[name=flange_dn]").val().toUpperCase();
+        minus_connection = minus_connection + minus_dn + $("#minus-flange-constructor select[name=flange_pn]").val() + $("#minus-flange-constructor select[name=flange_type]").val();
+    }
+
     const main_ranges = [
         [0, 100000, "0...100МПа"],
         [0, 60000, "0...60МПа"],
@@ -1204,6 +1231,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
             connection[1] = (data.get("max_temp")>150 && data.get("max_temp")<=200) ? connection[1] + "R" : (data.get("max_temp")>200 && data.get("max_temp")<=250) ? connection[1] + "R2" : (data.get("max_temp")>250 && data.get("max_temp")<310) ? connection[1] + "R3" : connection[1];
         }
         connection = connection.join("-");
+        console.log(connection);
     }
 
     if ((main_dev=="PR-28" || main_dev=="APR-2000") && !((connection=="P" && minus_connection=="P") || connection=="C" || connection=="C7/16")){///КОРРЕКТИРОВКА CONNECTION для PR и APR кроме C/P
@@ -1256,6 +1284,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         connection = connection.join("-");
         minus_connection = minus_connection.join("-");
     }
+
 
     if (data.get("thread")== "P" || data.get("thread")== "GP" || data.get("thread") == "CM30_2" || data.get("thread") == "CG1" || data.get("thread") == "CG1_S38" || data.get("thread") == "CG1_2"  || data.get("thread") == "G1_2"){
         material = data.get("material")=="aisi316" ? "" : $("input[name=material]:checked").val()+"/";
@@ -1595,43 +1624,24 @@ function disable_invalid_options(){
         }
     }
 
-    //СКРЫТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ и снять ее выбор
-    let fluid_on = (full_conf.has("thread") && typeof full_conf.get("thread")!="undefined" && full_conf.get("thread").startsWith("s_")) || (full_conf.has("flange") && typeof full_conf.get("flange")!='undefined' && full_conf.get("flange").startsWith("s_")) || (full_conf.has("hygienic") && typeof full_conf.get("hygienic")!='undefined' && full_conf.get("hygienic").startsWith("s_")) || (full_conf.has("minus-thread") && typeof full_conf.get("minus-thread")!='undefined' && full_conf.get("minus-thread").startsWith("minus-s_")) || (full_conf.has("minus-flange") && typeof full_conf.get("minus-flange")!='undefined' && full_conf.get("minus-flange").startsWith("minus-s_")) || (full_conf.has("minus-hygienic") && typeof full_conf.get("minus-hygienic")!='undefined' && full_conf.get("minus-hygienic").startsWith("minus-s_"));
-    if (fluid_on===false){
-        // console.log("DISABLE INVALID OPTIONS скрыть выбор манометрической жидкости");
-        $("div.option-to-select.fluid-select-div").each(function(){
-            $(this).prop("style", "display: none").removeClass("active-option-to-select");
-            $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
-        });
-        $("input[name=fluid]").each(function(){
-            $(this).prop('checked', false);
-        })
-        $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
-    }else{    ///ПРОВЕРКА МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
-        if ((typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<0 && full_conf.get("pressure_type")=="") || (typeof full_conf.get("begin_range_kpa")!='undefined' && full_conf.get("begin_range_kpa")<100 && full_conf.get("pressure_type")=="ABS") || (typeof full_conf.get("max_temp")!='undefined' && full_conf.get("max_temp")>180)  || (typeof full_conf.get("max_temp_plus")!='undefined' && full_conf.get("max_temp_plus")>180)  || (typeof full_conf.get("max_temp_minus")!='undefined' && full_conf.get("max_temp_minus")>180)){
-            $("label[for=ak20]").addClass('disabled');
-            $("#ak20").prop('disabled', true);
-            document.getElementById("err_ak20").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='ak20_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='ak20_err_cancel${num}'>Выбранный диапазон. Вакуум не допускается!.</label>`;
-            num+=1;
-        }else{
-            $("label[for=ak20]").removeClass('disabled');
-            $("#ak20").prop('disabled', false);
-        }
-    }
-
-    const pn_table = new Map([
-        ["PN10", 1000],
-        ["PN16", 1600],
-        ["PN25", 2500],
-        ["PN40", 4000],
-        ["PN63", 6300],
-        ["PN100", 10000],
-        ["ANSI150", 2000],
-        ["ANSI300", 5000],
-        ["ANSI600", 10000],
-        ["ANSI900", 15000],
-        ["ANSI1500", 25000]
-    ]);
+    // const pn_table = new Map([
+    //     ["PN10", 1000],
+    //     ["PN16", 1600],
+    //     ["PN25", 2500],
+    //     ["PN40", 4000],
+    //     ["PN63", 6300],
+    //     ["PN100", 10000],
+    //     ["ANSI150", 2000],
+    //     ["ANSI300", 5000],
+    //     ["ANSI600", 10000],
+    //     ["ANSI900", 15000],
+    //     ["ANSI1500", 25000]
+    // ]);
+    // const dn_table = new Map([
+    //     ["dn50", 'ANSI 2"'],
+    //     ["dn80", 'ANSI 3"'],
+    //     ["dn100", 'ANSI 4"']
+    // ])
 
     if (full_conf.get("main_dev")=="apc-2000" || full_conf.get("main_dev")=="pc-28"){  /// ПРОВЕРКА PC и APC
         $("input[name=thread]").each(function(){// СКРЫТЬ 1/4NPT(F) и фланец С, показать штуцера PC, APC
@@ -1693,8 +1703,24 @@ function disable_invalid_options(){
                         // warning.id = "#flange-constructor-"+$("input[name=flange]:checked").prop("id") + $(this).val()+"-error";
                         warning.setAttribute("style", "display:inline-block;");
                         warning.setAttribute("class", "warning-error");
-                        warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${$(this).val().toUpperCase()} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
+                        let dn = $("#flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
+                        warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
                         document.querySelector("#flange-constructor > div:nth-child(2)").after(warning);
+                    }
+                }else{
+                    $(this).removeClass("disabled");
+                }
+            })
+            $("#flange-constructor select[name=flange_pn] option").each(function(){
+                if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && pn_table.get($(this).val()) < parseInt(full_conf.get("end_range"))){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону PN
+                    $(this).addClass("disabled");
+                    if ($(this).is(":selected")){
+                        let warning = document.createElement("div");
+                        // warning.id = "#flange-constructor-"+$("input[name=flange]:checked").prop("id") + $(this).val()+"-error";
+                        warning.setAttribute("style", "display:inline-block;");
+                        warning.setAttribute("class", "warning-error");
+                        warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${$(this).val().toUpperCase()} максимальное давление ${pn_table.get($(this).val())} кПа.</span>`;
+                        document.querySelector("#flange-constructor > div:nth-child(3)").after(warning);
                     }
                 }else{
                     $(this).removeClass("disabled");
@@ -3215,44 +3241,10 @@ $(function (){
         }
 
         if (this.name=="thread" || this.name=="flange" || this.name=="hygienic" || this.name=="minus-thread" || this.name=="minus-flange" || this.name=="minus-hygienic") {///СКРЫВАЕМ ВЫБОР ПРИСОЕДИНЕНИЯ И ПОМЕЧАЕМ ЗЕЛЕНЫМ
-            /// ПОКАЗАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
-            if ($(this).prop('id').startsWith('s_') || $(this).prop('id').startsWith('minus-s_')){
-                console.log("ПОКАЗАТЬ выбор манометрической жидкости при выборе");
-                $("div.option-to-select.fluid-select-div").each(function(){
-                    console.log($(this));
-                    $(this).prop("style", "display: block").addClass("active-option-to-select");
-                    $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
-                })
-            }else{
-                let condition = true;
-                for (let plmin of ["","minus-"]){          //////// Ищем отмеченные разделители
-                    for (let cons of ["thread", "flange", "hygienic"]){
-                        if (typeof $("input[name=" + plmin + cons + "]:checked").prop("id")!='undefined' && $("input[name=" + plmin + cons + "]:checked").prop("id").startsWith(plmin + "s_")){
-                            condition = false;
-                        }
-                    }
-                }
-                if(condition===true){
-                    console.log("СКРЫТЬ выбор манометрической жидкости при выборе если нет других выбранных разделителей");
-                    $("div.option-to-select.fluid-select-div").each(function(){
-                        $(this).prop("style", "display: none").removeClass("active-option-to-select");
-                        $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
-                    });
-                    $("input[name=fluid]").each(function(){
-                        $(this).prop('checked', false);
-                    })
-                    $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
-                }
-            }
             let add_n = this.name.startsWith("minus") ? "minus-" : "";
             let $thiss_id = $(this).prop("id");
-            // if ($(this).prop("id")=="s_t_dn50" || $(this).prop("id")=="s_t_dn80" || $(this).prop("id")=="s_t_dn100" || $(this).prop("id")=="s_tk_wash_dn100" || $(this).prop("id")=="minus-s_t_dn50" || $(this).prop("id")=="minus-s_t_dn80" || $(this).prop("id")=="minus-s_t_dn100" || $(this).prop("id")=="minus-s_tk_wash_dn100"){
             if ([add_n + "s_t_", add_n + "s_p_", add_n + "s_ch_", add_n + "s_tk_"].some(word => $thiss_id.startsWith(word))){
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-
-
-
-
                 disable_invalid_options();
                 console.log("13");
                 return;
@@ -4426,5 +4418,27 @@ $(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУК�
             $("#" + constructor_id).removeClass("filled");
         }
         disable_invalid_options();
+    })
+})
+
+$(function(){
+    $(document).change(function(){
+        if ($("input[name=thread], input[name=flange], input[name=hygienic],input[name=minus-thread], input[name=minus-flange], input[name=minus-hygienic]").filter("input[id^=s_]:checked, input[id^=minus-s_]:checked").length>0){
+            // ПОКАЗАТЬ ВЫБОРМАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
+            $("div.option-to-select.fluid-select-div").each(function(){
+                $(this).prop("style", "display: block").addClass("active-option-to-select");
+                $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
+            })
+        }else{
+            // СПРЯТАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
+            $("div.option-to-select.fluid-select-div").each(function(){
+                $(this).prop("style", "display: none").removeClass("active-option-to-select");
+                $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+            });
+            $("input[name=fluid]").each(function(){
+                $(this).prop('checked', false);
+            })
+            $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        }
     })
 })
