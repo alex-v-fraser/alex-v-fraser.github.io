@@ -1,6 +1,7 @@
 [
  {
     "name": "s_p_dn50",
+    "ansi_name": "s_p_2inch",
     "code_name": "S-P-DN50PN40B",
     "description": "Разделитель фланцевый плоский S-P DN50 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -17,6 +18,7 @@
   },
   {
     "name": "s_p_dn80",
+    "ansi_name": "s_p_3inch",
     "code_name": "S-P-DN80PN40B",
     "description": "Разделитель фланцевый плоский S-P DN80 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -33,6 +35,7 @@
   },
   {
     "name": "s_p_dn100",
+    "ansi_name": "s_p_4inch",
     "code_name": "S-P-DN100PN40B",
     "description": "Разделитель фланцевый плоский S-P DN100 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -49,6 +52,7 @@
   },
   {
     "name": "s_t_dn50",
+    "ansi_name": "s_t_2inch",
     "code_name": "S-T-DN50PN40B",
     "description": "Разделитель фланцевый цилиндрический S-T DN50 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -65,6 +69,7 @@
   },
   {
     "name": "s_t_dn80",
+    "ansi_name": "s_t_3inch",
     "code_name": "S-T-DN80PN40B",
     "description": "Разделитель фланцевый цилиндрический S-T DN80 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -81,6 +86,7 @@
   },
   {
     "name": "s_t_dn100",
+    "ansi_name": "s_t_4inch",
     "code_name": "S-T-DN100PN40B",
     "description": "Разделитель фланцевый цилиндрический S-T DN100 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -111,6 +117,7 @@
   },
   {
     "name": "s_ch_dn50",
+    "ansi_name": "s_ch_2inch",
     "code_name": "S-Ch-DN50PN40B",
     "description": "Разделитель фланцевый плоский химостойкий S-Ch DN50 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -129,6 +136,7 @@
   },
   {
     "name": "s_ch_dn80",
+    "ansi_name": "s_ch_3inch",
     "code_name": "S-Ch-DN80PN40B",
     "description": "Разделитель фланцевый плоский химостойкий S-Ch DN80 PN40 тип B.",
     "begin_range_kpa": -101,
@@ -188,6 +196,7 @@
     ]
   },
   {
+    "name": "c-pr7_16",
     "code_name": "C7/16",
     "description": "Фланец для монтажа 3-х или 5-и ходового вентильного блока (под болты с резьбой 7/16\")."
   }

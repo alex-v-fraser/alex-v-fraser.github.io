@@ -9,6 +9,9 @@ input[type="number"] {
     appearance: textfield; /* или auto*/
 }
 
+body {
+    margin-bottom: 2.2em;
+}
 
 .ui-dialog-titlebar {
     background: #d50c2f;
