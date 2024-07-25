@@ -1483,12 +1483,9 @@ function disable_invalid_options(){
     }
     let num = 100; // НУЖНО ДЛЯ ДОБАВЛЕНИЯ id CHECKBOX_ERR_CANCEL
     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
-        // if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
-        //     $(this).prop("style", "display:none");
-        // }
         $(this).prop("innerHTML", "&emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'><span style='color: red'>&nbsp;Необходимо отменить: </span>");
     })
-    $("#err_ctr-range").prop("innerHTML", "<span style='color: red; margin-left:1.5em'>или отмените: </span>"); // &emsp;&nbsp;<img src='images/attention.png' style='width: 1.3em; height: 1.3em'>
+    $("#err_ctr-range").prop("innerHTML", "<span style='color: red; margin-left:1.5em'>или отмените: </span>");
 
     // async function getErrRangeCount(){
     //     var count = errRangeCount();
@@ -2023,6 +2020,7 @@ function disable_invalid_options(){
             if (!$("#capillary-cap-minus").is(":checked")){$("#capillary-cap-minus").trigger("click");}
             $("#capillary-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
             $("#capillary-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
+            console.log(num);
         }
 
         if ($("input[name=max-static]:checked").length>0 && (parseInt(full_conf.get("max-static"))>25)){///ДЕАКТИВАЦИЯ TANTAL и HASTELLOY если MAX STATIC >25
@@ -2078,7 +2076,7 @@ function disable_invalid_options(){
 
             if (full_conf.has("minus-" + con_type) && typeof full_conf.get("minus-" + con_type)!='undefined' && !(["minus-s_p_", "minus-s_ch_", "minus-s_t_"].some(word => full_conf.get("minus-" + con_type).startsWith(word)))){// КРОМЕ S_P S_CH S_T ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
                 low_press_diff = -160;
-                min_range_diff = window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range");
+                min_range_diff = window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
                     console.log("min_range capillary minus", min_range_diff);
@@ -2114,6 +2112,7 @@ function disable_invalid_options(){
             }
 
             for (let entr of window[con_type + "_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ THREAD или FLANGE или HYGIENIC по ширине диапазона, КАПИЛЛЯРУ и МАТЕРИАЛУ и ТЕМПЕРАТУРЕ
+                num+=1;
                 if (con_type == "flange" && typeof entr[1].get("name")!="undefined" && ["s_p_", "s_ch_", "s_t_"].some(word => entr[1].get("name").startsWith(word))){ ///
                     ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные DN и PN
                     // console.log('ДЛЯ S_P_ S_CH_ S_T_  пропуск');
@@ -2131,6 +2130,7 @@ function disable_invalid_options(){
                         }
                     }
                     if (typeof full_conf.get("max-static")!='undefined' && parseInt(full_conf.get("max-static"))*1000>entr[1].get("end_range_kpa")){
+                        num+=10000;
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
