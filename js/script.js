@@ -1678,11 +1678,8 @@ function disable_invalid_options(){
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
             }
             if (typeof $("#flange-constructor select[name=flange_pn]").val()!="undefined" && $("#flange-constructor select[name=flange_pn]").val()!="not_selected"){
-                let flange_id = $("input[name=flange]:checked").prop("id") + $("#flange-constructor select[name=flange_dn]").val();
-                low_press = window["flange_restr_lst"].get(flange_id).get("begin_range_kpa");
                 let pn_table_val =  pn_table.get($("#flange-constructor select[name=flange_pn]").val());
                 hi_press = pn_table_val;
-                min_range = window["flange_restr_lst"].get(flange_id).get("range");
                 hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
@@ -1694,16 +1691,26 @@ function disable_invalid_options(){
             })
 
             $("#flange-constructor select[name=flange_dn] option").each(function(){
-                if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val())!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range") != 'undefined' && full_conf.get("range") < window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
-                    $(this).addClass("disabled");
-                    if ($(this).is(":selected")){
-                        let warning = document.createElement("div");
-                        // warning.id = "#flange-constructor-"+$("input[name=flange]:checked").prop("id") + $(this).val()+"-error";
-                        warning.setAttribute("style", "display:inline-block;");
-                        warning.setAttribute("class", "warning-error");
-                        let dn = $("#flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
-                        warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
-                        document.querySelector("#flange-constructor > div.flange_dn").after(warning);
+                let flange_id = $("input[name=flange]:checked").prop("id") + $(this).val();
+                if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get(flange_id)!="undefined" && typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined'){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
+                    let to_compare = window["flange_restr_lst"].get(flange_id).get("range");
+                    if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="capillary"){
+                        to_compare = typeof window["flange_restr_lst"].get(flange_id).get("range_c") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range_c") : window["flange_restr_lst"].get(flange_id).get("range");
+                    }
+                    if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="direct"){
+                        to_compare = typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range") : to_compare;
+                    }
+                    if (full_conf.get("range") < to_compare){
+                        $(this).addClass("disabled");
+                        if ($(this).is(":selected")){
+                            let warning = document.createElement("div");
+                            // warning.id = "#flange-constructor-"+$("input[name=flange]:checked").prop("id") + $(this).val()+"-error";
+                            warning.setAttribute("style", "display:inline-block;");
+                            warning.setAttribute("class", "warning-error");
+                            let dn = $("#flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
+                            warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${to_compare} кПа.</span>`;
+                            document.querySelector("#flange-constructor > div.flange_dn").after(warning);
+                        }
                     }
                 }else{
                     $(this).removeClass("disabled");
@@ -1899,20 +1906,34 @@ function disable_invalid_options(){
                 })
 
                 $("#"+ plmin + "flange-constructor select[name=flange_dn] option").each(function(){
-                    if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val())!="undefined" && typeof window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range") != 'undefined' && full_conf.get("range") < window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
-                        $(this).addClass("disabled");
-                        if ($(this).is(":selected")){
-                            let warning = document.createElement("div");
-                            warning.setAttribute("style", "display:inline-block;");
-                            warning.setAttribute("class", "warning-error");
-                            let dn = $("#"+ plmin + "flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
-                            warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
-                            document.querySelector("#"+ plmin + "flange-constructor > div.flange_dn").after(warning);
+                    let cap = plmin=="" ? "cap-plus" : "cap-minus";
+                    let flange_id = $("input[name="+plmin+"flange]:checked").prop("id") + $(this).val();
+                    flange_id = flange_id.startsWith("minus-") ? flange_id.slice(6,) : flange_id;
+                    if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get(flange_id)!="undefined" && typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined'){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
+                        let to_compare = window["flange_restr_lst"].get(flange_id).get("range");
+                        if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="capillary"){
+                            to_compare = typeof window["flange_restr_lst"].get(flange_id).get("range_c") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range_c") : window["flange_restr_lst"].get(flange_id).get("range");
+                        }
+                        if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="direct"){
+                            to_compare = typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range") : to_compare;
+                        }
+                        console.log("cap=" + cap + " "+ "Мин ширина " + to_compare + "для "+ $(this).val() + full_conf.get(cap));
+                        if (full_conf.get("range") < to_compare){
+                            $(this).addClass("disabled");
+                            if ($(this).is(":selected")){
+                                let warning = document.createElement("div");
+                                warning.setAttribute("style", "display:inline-block;");
+                                warning.setAttribute("class", "warning-error");
+                                let dn = $("#"+ plmin + "flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
+                                warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${to_compare} кПа.</span>`;
+                                document.querySelector("#"+ plmin + "flange-constructor > div.flange_dn").after(warning);
+                            }
                         }
                     }else{
                         $(this).removeClass("disabled");
                     }
                 })
+
                 $("#"+ plmin + "flange-constructor select[name=flange_pn] option").each(function(){
                     if ($(this).val()!="not_selected" && typeof full_conf.get("max-static")!='undefined' && pn_table.get($(this).val()) < parseInt(full_conf.get("max-static"))*1000){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по MAX-STATIC PN
                         $(this).addClass("disabled");
@@ -4474,7 +4495,6 @@ $(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУК�
     $(document).on("change", "#flange-constructor select.required, #minus-flange-constructor select.required", function(){
         let constructor_id = $(this).closest("div").parent("div").prop('id');
         let flange_dn = $("#" + constructor_id + " select[name=flange_dn]").val().toLowerCase();
-        console.log($("#" + constructor_id).find("select.required option.disabled:selected"));
         if (flange_dn != 'not_selected' && ["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
             $("#"+ constructor_id + " div.cilinder-select-div").find("select").prop("id", $("#" + constructor_id).prev("label").prop("for") + flange_dn +"-cilinder-length");
         }
