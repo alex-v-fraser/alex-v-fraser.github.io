@@ -2020,7 +2020,6 @@ function disable_invalid_options(){
             if (!$("#capillary-cap-minus").is(":checked")){$("#capillary-cap-minus").trigger("click");}
             $("#capillary-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
             $("#capillary-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
-            console.log(num);
         }
 
         if ($("input[name=max-static]:checked").length>0 && (parseInt(full_conf.get("max-static"))>25)){///ДЕАКТИВАЦИЯ TANTAL и HASTELLOY если MAX STATIC >25
@@ -2116,6 +2115,7 @@ function disable_invalid_options(){
                 if (con_type == "flange" && typeof entr[1].get("name")!="undefined" && ["s_p_", "s_ch_", "s_t_"].some(word => entr[1].get("name").startsWith(word))){ ///
                     ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные DN и PN
                     // console.log('ДЛЯ S_P_ S_CH_ S_T_  пропуск');
+                    num+=1;
                 }else{
                     if (typeof entr[1].get("range") !== 'undefined' && full_conf.get("range")<entr[1].get("range")){
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ширине диапазона THREAD или FLANGE или HYGIENIC
@@ -2131,16 +2131,19 @@ function disable_invalid_options(){
                     }
                     if (typeof full_conf.get("max-static")!='undefined' && parseInt(full_conf.get("max-static"))*1000>entr[1].get("end_range_kpa")){
                         num+=10000;
+                        console.log(num);
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
-                        num+=1;
+                        num+=2;
+                        console.log(num);
                         $("label[for=minus-"+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                         $("#minus-"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         if (typeof document.getElementById("err_minus-"+entr[0])!="undefined" && document.getElementById("err_minus-"+entr[0])!=null){
                             document.getElementById("err_minus-"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
                             num+=1;
                         }
+                        console.log(num);
                     }
 
                     if (typeof full_conf.get("cap-plus") != 'undefined'){
