@@ -1655,10 +1655,6 @@ function disable_invalid_options(){
         $("label[for=c-pr]").prop("style", "display:none");
 
         if (full_conf.has("flange") && typeof $("input[name=flange]:checked").prop("id")!="undefined" &&  ["s_p_", "s_ch_", "s_t_"].some(word => $("input[name=flange]:checked").prop("id").startsWith(word))){ /// ДЕАКТИВАЦИЯ DN PN для S_P S_CH S_T
-            if ($("input[name=flange]:checked").prop("id")=="s_ch_"){ ///ДЛЯ S-CH спрятать DN100
-                $("#flange-constructor select[name=flange_dn] option[value=dn100]").hide();
-                $("#flange-constructor select[name=flange_dn] option[value=DN100]").hide();
-            }
             $("input[name=material]").each(function() {
                 if (!window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id")+"dn50").get("material").includes($(this).attr("id"))){
                     $("label[for="+$(this).attr("id")+"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ МАТЕРИАЛЫ
@@ -1667,11 +1663,9 @@ function disable_invalid_options(){
                     num+=1;
                 }
             })
-            if (typeof $("#flange-constructor select[name=flange_dn]").val()!="undefined" && $("#flange-constructor select[name=flange_dn]").val()!="not_selected" && typeof $("#flange-constructor select[name=flange_pn]").val()!="undefined" && $("#flange-constructor select[name=flange_pn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
+            if (typeof $("#flange-constructor select[name=flange_dn]").val()!="undefined" && $("#flange-constructor select[name=flange_dn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
                 let flange_id = $("input[name=flange]:checked").prop("id") + $("#flange-constructor select[name=flange_dn]").val();
                 low_press = window["flange_restr_lst"].get(flange_id).get("begin_range_kpa");
-                let pn_table_val =  pn_table.get($("#flange-constructor select[name=flange_pn]").val());
-                hi_press = pn_table_val;
                 min_range = window["flange_restr_lst"].get(flange_id).get("range");
                 if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="capillary"){
                     min_range = typeof window["flange_restr_lst"].get(flange_id).get("range_c") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range_c") : window["flange_restr_lst"].get(flange_id).get("range");
@@ -1679,8 +1673,17 @@ function disable_invalid_options(){
                 if (typeof full_conf.get("cap-or-not")!='undefined' && full_conf.get("cap-or-not")=="direct"){
                     min_range = typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range") : min_range;
                 }
-                hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
                 min_range_abs = min_range_abs<min_range ? min_range : min_range_abs;
+                document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
+                document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
+            }
+            if (typeof $("#flange-constructor select[name=flange_pn]").val()!="undefined" && $("#flange-constructor select[name=flange_pn]").val()!="not_selected"){
+                let flange_id = $("input[name=flange]:checked").prop("id") + $("#flange-constructor select[name=flange_dn]").val();
+                low_press = window["flange_restr_lst"].get(flange_id).get("begin_range_kpa");
+                let pn_table_val =  pn_table.get($("#flange-constructor select[name=flange_pn]").val());
+                hi_press = pn_table_val;
+                min_range = window["flange_restr_lst"].get(flange_id).get("range");
+                hi_press_abs = hi_press < hi_press_abs ? hi_press : hi_press_abs;
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
             }
@@ -1700,7 +1703,7 @@ function disable_invalid_options(){
                         warning.setAttribute("class", "warning-error");
                         let dn = $("#flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
                         warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
-                        document.querySelector("#flange-constructor > div:nth-child(2)").after(warning);
+                        document.querySelector("#flange-constructor > div.flange_dn").after(warning);
                     }
                 }else{
                     $(this).removeClass("disabled");
@@ -1715,7 +1718,7 @@ function disable_invalid_options(){
                         warning.setAttribute("style", "display:inline-block;");
                         warning.setAttribute("class", "warning-error");
                         warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${$(this).val().toUpperCase()} максимальное давление ${pn_table.get($(this).val())} кПа.</span>`;
-                        document.querySelector("#flange-constructor > div:nth-child(3)").after(warning);
+                        document.querySelector("#flange-constructor > div.flange_pn").after(warning);
                     }
                 }else{
                     $(this).removeClass("disabled");
@@ -1856,10 +1859,6 @@ function disable_invalid_options(){
         $("label[for=c-pr]").prop("style", "display:block");
         for (let plmin of ["", "minus-"]){
             if (full_conf.has(plmin + "flange") && typeof $("input[name=" + plmin + "flange]:checked").prop("id")!="undefined" &&  [plmin + "s_p_", plmin + "s_ch_", plmin + "s_t_"].some(word => $("input[name="+ plmin +"flange]:checked").prop("id").startsWith(word))){ /// ДЕАКТИВАЦИЯ DN PN для S_P S_CH S_T
-                if ($("input[name=" + plmin + "flange]:checked").prop("id")==plmin + "s_ch_"){ ///ДЛЯ S-CH спрятать DN100
-                    $("#"+ plmin + "flange-constructor select[name=flange_dn] option[value=dn100]").hide();
-                    $("#"+ plmin + "flange-constructor select[name=flange_dn] option[value=DN100]").hide();
-                }
                 $("input[name=material]").each(function() {
                     let plus_minus = plmin=="" ? "(+)" : "(-)";
                     let trgt = ($("input[name="+plmin+"flange]:checked").prop("id")).startsWith("minus-") ? ($("input[name="+plmin+"flange]:checked").prop("id")).slice(6,) : ($("input[name="+plmin+"flange]:checked").prop("id"));
@@ -1870,13 +1869,11 @@ function disable_invalid_options(){
                         num+=1;
                     }
                 })
-                if (typeof $("#"+ plmin + "flange-constructor select[name=flange_dn]").val()!="undefined" && $("#"+ plmin + "flange-constructor select[name=flange_dn]").val()!="not_selected" && typeof $("#"+ plmin + "flange-constructor select[name=flange_pn]").val()!="undefined" && $("#"+ plmin + "flange-constructor select[name=flange_pn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
+                if (typeof $("#"+ plmin + "flange-constructor select[name=flange_dn]").val()!="undefined" && $("#"+ plmin + "flange-constructor select[name=flange_dn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
                     let flange_id = $("input[name="+ plmin +"flange]:checked").prop("id") + $("#"+ plmin + "flange-constructor select[name=flange_dn]").val();
                     flange_id = flange_id.startsWith("minus-") ? flange_id.slice(6,) : flange_id;
-                    low_press = window["flange_restr_lst"].get(flange_id).get("begin_range_kpa");
-                    let pn_table_val =  pn_table.get($("#"+ plmin + "flange-constructor select[name=flange_pn]").val());
-                    hi_press = pn_table_val;
-                    min_range = window["flange_restr_lst"].get(flange_id).get("range");
+                    low_press_diff = -160;
+                    min_range_diff = window["flange_restr_lst"].get(flange_id).get("range");
                     let cap = plmin=="" ? "cap-plus" : "cap-minus";
                     if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="capillary"){
                         min_range_diff = typeof window["flange_restr_lst"].get(flange_id).get("range_c") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range_c") : window["flange_restr_lst"].get(flange_id).get("range");
@@ -1884,7 +1881,15 @@ function disable_invalid_options(){
                     if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="direct"){
                         min_range_diff = typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range") : min_range;
                     }
+                    document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
+                    document.getElementById("range_warning2").innerHTML = "";
+                }
+                if (typeof $("#"+ plmin + "flange-constructor select[name=flange_pn]").val()!="undefined" && $("#"+ plmin + "flange-constructor select[name=flange_pn]").val()!="not_selected"){//ЕСЛИ ВЫБРАН DN PN - установить диапазон
+                    let flange_id = $("input[name="+ plmin +"flange]:checked").prop("id") + $("#"+ plmin + "flange-constructor select[name=flange_dn]").val();
+                    flange_id = flange_id.startsWith("minus-") ? flange_id.slice(6,) : flange_id;
                     low_press_diff = -160;
+                    let pn_table_val =  pn_table.get($("#"+ plmin + "flange-constructor select[name=flange_pn]").val());
+                    hi_press_diff = pn_table_val;
                     document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                     document.getElementById("range_warning2").innerHTML = "";
                 }
@@ -1902,7 +1907,7 @@ function disable_invalid_options(){
                             warning.setAttribute("class", "warning-error");
                             let dn = $("#"+ plmin + "flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
                             warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${dn} мин. ширина диапазона ${window["flange_restr_lst"].get($("input[name=flange]:checked").prop("id") + $(this).val()).get("range")} кПа.</span>`;
-                            document.querySelector("#"+ plmin + "flange-constructor > div:nth-child(2)").after(warning);
+                            document.querySelector("#"+ plmin + "flange-constructor > div.flange_dn").after(warning);
                         }
                     }else{
                         $(this).removeClass("disabled");
@@ -1916,7 +1921,7 @@ function disable_invalid_options(){
                             warning.setAttribute("style", "display:inline-block;");
                             warning.setAttribute("class", "warning-error");
                             warning.innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red; font-size:90%;'>Для ${$(this).val().toUpperCase()} максимальное давление ${pn_table.get($(this).val())} кПа.</span>`;
-                            document.querySelector("#"+ plmin + "flange-constructor > div:nth-child(3)").after(warning);
+                            document.querySelector("#"+ plmin + "flange-constructor > div.flange_pn").after(warning);
                         }
                     }else{
                         $(this).removeClass("disabled");
@@ -2011,16 +2016,18 @@ function disable_invalid_options(){
 
         for (let con_type of connection_types){
             if (full_conf.has(con_type) && typeof full_conf.get(con_type)!='undefined' && !(["s_p_", "s_ch_", "s_t_"].some(word => full_conf.get(con_type).startsWith(word)))){// КРОМЕ S_P S_CH S_T ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
+                low_press_diff = -160;
+                min_range_diff = window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range");
-                    // console.log("min_range capillary ", min_range);
+                    console.log("min_range capillary ", min_range);
                 }
                 if (typeof full_conf.get("cap-plus")!='undefined' && full_conf.get("cap-plus")=="direct"){
-                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") : min_range;
-                    // console.log("min_range direct ", min_range);
+                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get(con_type)).get("range") : min_range_diff;
+                    console.log("min_range direct ", min_range);
                 }
 
-                low_press_diff = -160;
+
                 document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                 document.getElementById("range_warning2").innerHTML = "";
 
@@ -2048,16 +2055,16 @@ function disable_invalid_options(){
             }
 
             if (full_conf.has("minus-" + con_type) && typeof full_conf.get("minus-" + con_type)!='undefined' && !(["minus-s_p_", "minus-s_ch_", "minus-s_t_"].some(word => full_conf.get("minus-" + con_type).startsWith(word)))){// КРОМЕ S_P S_CH S_T ОГРАНИЧИТЬ ДИАПАЗОН и МАТЕРИАЛ и ТЕМПЕРАТУРУ ЕСЛИ ВЫБРАНО ПРИСОЕДИНЕНИЕ THREAD или FLANGE или HYGIENIC
+                low_press_diff = -160;
+                min_range_diff = window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type)).get("range");
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="capillary"){
                     min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range_c") : window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range");
-                    console.log("min_range capillary ", min_range);
+                    console.log("min_range capillary minus", min_range_diff);
                 }
                 if (typeof full_conf.get("cap-minus")!='undefined' && full_conf.get("cap-minus")=="direct"){
-                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") : min_range;
-                    console.log("min_range direct ", min_range);
+                    min_range_diff = typeof window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") != 'undefined' ? window[con_type + "_restr_lst"].get(full_conf.get("minus-" + con_type).slice(6,)).get("range") : min_range_diff;
+                    console.log("min_range direct minus", min_range_diff);
                 }
-
-                low_press_diff = -160;
                 document.getElementById("range_warning1").innerHTML = low_press_diff.toLocaleString() + " ... " + hi_press_diff.toLocaleString() + " кПа и минимальная ширина " + min_range_diff + " кПа (перепад давления).";
                 document.getElementById("range_warning2").innerHTML = "";
 
@@ -3417,66 +3424,37 @@ $(function (){
     })
 })
 
-function range_selected(){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВАЕТ ДИАПАЗОН ЕСЛИ ВСЕ ОК
+function range_selected(data){ //ПРОВЕРКА ДИАПАЗОНА + СКРЫВАЕТ ДИАПАЗОН ЕСЛИ ВСЕ ОК
     let begin_range = parseFloat(document.querySelector("#begin-range").value);
     let end_range = parseFloat(document.querySelector("#end-range").value);
     let units = document.querySelector("#pressure-unit-select").value;
     let press_type = document.querySelector("#pressure-type").value;
-    if (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range){
-        let full_conf = get_full_config();
-        let num = $("body .active-option-to-select").index($(".active")) + 1;
-        let next_expand = $("body .active-option-to-select").eq(num);
+    let full_conf = get_full_config();
+    let cond1 = (units!='not_selected' && press_type!='not_selected' && !Number.isNaN(begin_range) && !Number.isNaN(end_range) && end_range!=begin_range);
+    let cond2 = (press_type == "" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range);
+    let cond3 = (press_type == "ABS" && full_conf.get("begin_range_kpa")>=low_press_abs && full_conf.get("end_range_kpa")<=hi_press_abs && full_conf.get("range")>=min_range_abs);
+    let cond4 = (press_type == "diff" && full_conf.get("begin_range_kpa")>=low_press_diff && full_conf.get("end_range_kpa")<=hi_press_diff && full_conf.get("range")>=min_range_diff);
+    if (cond1==true && (cond2==true || cond3==true || cond4==true)){
+        if (data==true){
+            expand_next_div("range-select");
+            disable_invalid_options();
+        }else{
+            $("#range-select").prev().find(".color-mark-field").removeClass("unselected").addClass("selected");
+        }
 
-        if (press_type == "" && full_conf.get("begin_range_kpa")>=low_press && full_conf.get("end_range_kpa")<=hi_press && full_conf.get("range")>=min_range){
-            next_expand.addClass("active").next().slideToggle("slow");
-            $("#range-select").prev().removeClass("active");
-            $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
-            $("#range-select").prev().find(".color-mark-field").addClass("selected");
-            $("#range-select").slideUp("slow");
-            disable_invalid_options();
-            return;
-        }
-        if (press_type == "ABS" && full_conf.get("begin_range_kpa")>=low_press_abs && full_conf.get("end_range_kpa")<=hi_press_abs && full_conf.get("range")>=min_range_abs){
-            next_expand.addClass("active").next().slideToggle("slow");
-            $("#range-select").prev().removeClass("active");
-            $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
-            $("#range-select").prev().find(".color-mark-field").addClass("selected");
-            $("#range-select").slideUp("slow");
-            disable_invalid_options();
-            return;
-        }
-        if(press_type == "diff" && full_conf.get("begin_range_kpa")>=low_press_diff && full_conf.get("end_range_kpa")<=hi_press_diff && full_conf.get("range")>=min_range_diff){
-            next_expand.addClass("active").next().slideToggle("slow");
-            $("#range-select").prev().removeClass("active");
-            $("#range-select").prev().find(".color-mark-field").removeClass("unselected");
-            $("#range-select").prev().find(".color-mark-field").addClass("selected");
-            $("#range-select").slideUp("slow");
-            disable_invalid_options();
-            return;
-        }
-        else{
-            $("#range-select").prev().find(".color-mark-field").removeClass("selected");
-            $("#range-select").prev().find(".color-mark-field").addClass("unselected");
-            document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
-            document.getElementById("code").value = "";
-            try{
-                document.querySelector("table").remove();
-            }catch (err){console.log(err);}
-            return;
-            // disable_invalid_options();
-        }
+        return;
     }else{
-        $("#range-select").prev().find(".color-mark-field").removeClass("selected");
-        $("#range-select").prev().find(".color-mark-field").addClass("unselected");
+        $("#range-select").prev().find(".color-mark-field").removeClass("selected").addClass("unselected");
         document.getElementById("codeError").innerHTML = "Код заказа некорректный или неполный";
         document.getElementById("code").value = "";
         try{
             document.querySelector("table").remove();
         }catch (err){console.log(err);}
+        if (data==true){
+            disable_invalid_options();
+        }
         return;
-        // disable_invalid_options();
     }
-
 }
 
 
@@ -4451,6 +4429,7 @@ $(function(){  /// ПРИ ВЫБОРЕ ГОСТА в конструкторе ф
     $(document).on("change", "div.flange_standard select[name=flange_standard]", function () {
         $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
         let constructor_id = $(this).closest("div").parent("div").prop('id');
+        let plmin = constructor_id.startsWith("minus-") ? "minus-" : "";
         let standard = $(this).find("option:selected").val();
         $("#" + constructor_id + " option.to_check[value=not_selected]").prop("selected", true);
         $("#"+ constructor_id + " div.to_check, span.to_check, option.to_check").each(function(){
@@ -4462,7 +4441,14 @@ $(function(){  /// ПРИ ВЫБОРЕ ГОСТА в конструкторе ф
         })
         if (["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
             $("#"+ constructor_id + " div.cilinder-select-div").show();
+            $("#"+ constructor_id + " select[name=cilinder-length]").addClass("required");
         }
+
+        if ($("input[name=" + plmin + "flange]:checked").prop("id")==plmin + "s_ch_"){ ///ДЛЯ S-CH спрятать DN100
+            $("#"+ constructor_id + " select[name=flange_dn] option[value=dn100]").hide();
+            $("#"+ constructor_id + " select[name=flange_dn] option[value=DN100]").hide();
+        }
+        disable_invalid_options();
     })
 })
 
@@ -4485,14 +4471,14 @@ $(function(){///ВСТАВКА КОНСТРУКТОРА
 })
 
 $(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУКТОРА
-    $(document).on("change", "#flange-constructor select:visible, #minus-flange-constructor select:visible", function(){
+    $(document).on("change", "#flange-constructor select.required, #minus-flange-constructor select.required", function(){
         let constructor_id = $(this).closest("div").parent("div").prop('id');
         let flange_dn = $("#" + constructor_id + " select[name=flange_dn]").val().toLowerCase();
-        console.log($("#" + constructor_id).find("select:visible option.disabled:selected"));
+        console.log($("#" + constructor_id).find("select.required option.disabled:selected"));
         if (flange_dn != 'not_selected' && ["s_t_", "minus-s_t_"].some(word => $("#" + constructor_id).prev("label").prop("for").startsWith(word))){
             $("#"+ constructor_id + " div.cilinder-select-div").find("select").prop("id", $("#" + constructor_id).prev("label").prop("for") + flange_dn +"-cilinder-length");
         }
-        if ($("#" + constructor_id).find("select:visible option[value=not_selected]:selected").length==0 && $("#" + constructor_id).find("select:visible option.disabled:selected").length==0){
+        if ($("#" + constructor_id).find("select.required option[value=not_selected]:selected").length==0 && $("#" + constructor_id).find("select.required option.disabled:selected").length==0){
             $("#" + constructor_id).addClass("filled");
             expand_next_div(constructor_id);
         }else{
@@ -4500,6 +4486,7 @@ $(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУК�
             $("#" + constructor_id).removeClass("filled");
         }
         disable_invalid_options();
+        range_selected(false);
     })
 })
 
@@ -4521,6 +4508,18 @@ $(function(){
                 $(this).prop('checked', false);
             })
             $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        }
+
+        for (let plmin of ["", "minus-"]){
+            if (typeof $("#"+plmin+"flange-constructor")!="undefined"){
+                if ($("#"+plmin+"flange-constructor").find("select.required option[value=not_selected]:selected").length==0 && $("#"+plmin+"flange-constructor").find("select.required option.disabled:selected").length==0){
+                    $("#"+plmin+"flange-constructor").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+                    $("#"+plmin+"flange-constructor").addClass("filled");
+                }else{
+                    $("#"+plmin+"flange-constructor").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    $("#"+plmin+"flange-constructor").removeClass("filled");
+                }
+            }
         }
     })
 })

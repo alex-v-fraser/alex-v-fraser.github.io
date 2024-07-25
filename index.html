@@ -401,9 +401,9 @@
 					</div>
 					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="range-select" style="display: none;">
 						<fieldset class="range">
-							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="begin-range" style="width: 4em" id="begin-range" required onchange="range_selected()">
-							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="end-range" style="width: 4em" id="end-range" required onchange="range_selected()">
-							<select name="pressure-unit" id="pressure-unit-select" onchange="range_selected()">
+							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="begin-range" style="width: 4em" id="begin-range" required onchange="range_selected(true)">
+							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="end-range" style="width: 4em" id="end-range" required onchange="range_selected(true)">
+							<select name="pressure-unit" id="pressure-unit-select" onchange="range_selected(true)">
 								<option value="not_selected" selected>--Не выбрано--</option>
 								<option value="Па">Па</option>
 								<option value="кПа">кПа</option>
@@ -414,7 +414,7 @@
 								<option value="кгс/см2">кгс/см2</option>
 								<option value="psi">psi</option>
 							</select>
-							<select name="pressure-type" id="pressure-type" onchange="range_selected()">
+							<select name="pressure-type" id="pressure-type" onchange="range_selected(true)">
 								<option value="not_selected" selected>--Не выбрано--</option>
 								<option value="">избыточное</option>
 								<option value="ABS">абсолютное</option>
@@ -972,10 +972,10 @@
 					<option value="ansi">ANSI</option>
 				</select>
 			</div>
-			<div class="to_check gost ansi" style="display: none;">
+			<div class="flange_dn to_check gost ansi" style="display: none;">
 				<span class="to_check gost" style="display: none;">Номинальный диаметр DN, мм</span>
 				<span class="to_check ansi" style="display: none;">Номинальный диаметр ANSI, inch</span>
-				<select name="flange_dn" style="position: relative; float: right; width: 4.4em;">
+				<select class="required" name="flange_dn" style="position: relative; float: right; width: 4.4em;">
 					<option class="to_check gost ansi" value="not_selected" selected>---</option>
 					<option class="to_check gost" value="dn50" style="display: none;">50</option>
 					<option class="to_check gost" value="dn80" style="display: none;">80</option>
@@ -985,10 +985,10 @@
 					<option class="to_check ansi" value="dn100" style="display: none;">4</option>
 				</select>
 			</div>
-			<div class="to_check gost ansi" style="display: none; margin-top: 0.8em;">
+			<div class="flange_pn to_check gost ansi" style="display: none; margin-top: 0.8em;">
 				<span class="to_check gost" style="display: none;">Номинальное давление PN, бар</span>
 				<span class="to_check ansi" style="display: none;">Класс давления ANSI, psi</span>
-				<select name="flange_pn" style="position: relative; float: right; width: 4.4em;">
+				<select class="required" name="flange_pn" style="position: relative; float: right; width: 4.4em;">
 					<option class="to_check gost ansi" value="not_selected" selected>---</option>
 					<option class="to_check gost" value="PN10" style="display: none;">10</option>
 					<option class="to_check gost" value="PN16" style="display: none;">16</option>
@@ -1006,7 +1006,7 @@
 			</div>
 			<div class="to_check gost ansi" style="display: none; margin-top: 0.8em; margin-bottom: 0.8em;">
 				<span class="to_check gost ansi" style="display: none;">Тип уплотнительной поверхности</span>
-				<select name="flange_type" style="position: relative; float: right; width: 4.4em;">
+				<select class="required" name="flange_type" style="position: relative; float: right; width: 4.4em;">
 					<option class="to_check gost ansi" value="not_selected" selected>---</option>
 					<option class="to_check gost" value="B" style="display: none;">B</option>
 					<option class="to_check gost" value="C" style="display: none;">C</option>
