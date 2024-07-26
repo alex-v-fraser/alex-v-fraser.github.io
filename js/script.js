@@ -3034,6 +3034,25 @@ function disable_invalid_options(){
 $(function (){
     $("input:checkbox").click(function(){ /// СКРЫВАЕМ АКТИВНУЮ ОПЦИЮ ПОСЛЕ ВЫБОРА, ОТКРЫВАЕМ СЛЕДУЮЩУЮ
         if ($(this).is(':checked') && this.name!="special") { /// ТОЛЬКО ОДИН ОТМЕЧЕННЫЙ ЧЕКБОКС (кроме special)
+
+            if ($("input[name=thread], input[name=flange], input[name=hygienic],input[name=minus-thread], input[name=minus-flange], input[name=minus-hygienic]").filter("input[id^=s_]:checked, input[id^=minus-s_]:checked").length>0){
+                // ПОКАЗАТЬ ВЫБОРМАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
+                $("div.option-to-select.fluid-select-div").each(function(){
+                    $(this).prop("style", "display: block").addClass("active-option-to-select");
+                    $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
+                })
+            }else{
+                // СПРЯТАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
+                $("div.option-to-select.fluid-select-div").each(function(){
+                    $(this).prop("style", "display: none").removeClass("active-option-to-select");
+                    $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
+                });
+                $("input[name=fluid]").each(function(){
+                    $(this).prop('checked', false);
+                })
+                $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            }
+
             $(this).siblings("input:checkbox").prop('checked', false);
             if (this.name=="max-static"){
                 MaxStaticChecked();
@@ -4503,24 +4522,6 @@ $(function(){ // ОТСЛЕЖИВАНИЕ ЗАПОЛНЕНИЯ КОНСТРУК�
 
 $(function(){
     $(document).change(function(){
-        if ($("input[name=thread], input[name=flange], input[name=hygienic],input[name=minus-thread], input[name=minus-flange], input[name=minus-hygienic]").filter("input[id^=s_]:checked, input[id^=minus-s_]:checked").length>0){
-            // ПОКАЗАТЬ ВЫБОРМАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
-            $("div.option-to-select.fluid-select-div").each(function(){
-                $(this).prop("style", "display: block").addClass("active-option-to-select");
-                $(this).next("div.option-to-select-list").addClass("active-option-to-select-list");
-            })
-        }else{
-            // СПРЯТАТЬ ВЫБОР МАНОМЕТРИЧЕСКОЙ ЖИДКОСТИ
-            $("div.option-to-select.fluid-select-div").each(function(){
-                $(this).prop("style", "display: none").removeClass("active-option-to-select");
-                $(this).next("div.option-to-select-list").prop("style", "display: none").removeClass("active-option-to-select-list");
-            });
-            $("input[name=fluid]").each(function(){
-                $(this).prop('checked', false);
-            })
-            $("div.fluid-select-div").find(".color-mark-field").removeClass("selected").addClass("unselected");
-        }
-
         for (let plmin of ["", "minus-"]){
             if (typeof $("#"+plmin+"flange-constructor")!="undefined"){
                 if ($("#"+plmin+"flange-constructor").find("select.required option[value=not_selected]:selected").length==0 && $("#"+plmin+"flange-constructor").find("select.required option.disabled:selected").length==0){
