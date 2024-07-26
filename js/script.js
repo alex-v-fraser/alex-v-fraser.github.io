@@ -2135,7 +2135,7 @@ function disable_invalid_options(){
                         }
                     }
                     if (typeof full_conf.get("max-static")!='undefined' && parseInt(full_conf.get("max-static"))*1000>entr[1].get("end_range_kpa")){
-                        num+=10000;
+                        num+=1;
                         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по MAX-STATIC THREAD или FLANGE или HYGIENIC
                         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                         document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
@@ -2149,10 +2149,7 @@ function disable_invalid_options(){
                     }
 
                     if (typeof full_conf.get("cap-plus") != 'undefined'){
-                        if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus") && !(["M", "G1_2"].some(word => entr[0]==word))){
-                            if (entr[0]=="P"){
-                                console.log("ОТРАБОТАЛО: ", num);
-                            }
+                        if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus")){
                             $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                             $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                             document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-plus")+"-cap-plus]").text()}</label>`;
@@ -3958,7 +3955,7 @@ $(function(){
             disableLvk();
             return;
         }
-        // console.log($this_id);
+        console.log($this_id);
         if ($this_id=="c-pr" || $this_id=="minus-c-pr"){
             CorPSelected("c-pr", false);
         }else{
