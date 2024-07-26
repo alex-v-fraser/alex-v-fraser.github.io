@@ -2016,8 +2016,13 @@ function disable_invalid_options(){
             $("#direct-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ непосредственных присоединений
             document.getElementById("err_direct-cap-minus").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("max-static")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("max-static")}_err_cancel${num}'>${$("label[for="+full_conf.get("max-static")+"]").text()}</label>`;
             num+=1;
-            if (!$("#capillary-cap-plus").is(":checked")){$("#capillary-cap-plus").trigger("click");}
-            if (!$("#capillary-cap-minus").is(":checked")){$("#capillary-cap-minus").trigger("click");}
+            if ($("#capillary-cap-plus").prop("checked") == false || $("#capillary-cap-minus").prop("checked") == false){
+                $("#capillary-cap-plus").prop("checked", true);
+                $("#cap-plus-length-span").removeAttr("hidden");
+                $("#capillary-cap-minus").prop("checked", true);
+                $("#cap-minus-length-span").removeAttr("hidden");
+                full_conf = get_full_config();
+            }
             $("#capillary-cap-minus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
             $("#capillary-cap-plus").prop('disabled', true);             //// ДЕАКТИВАЦИЯ капилляра (кнопки)
         }
@@ -2144,9 +2149,10 @@ function disable_invalid_options(){
                     }
 
                     if (typeof full_conf.get("cap-plus") != 'undefined'){
-                        // console.log(num);
-                        // console.log(!(["M", "G1_2", "P"].some(word => entr[0]==word)));
-                        if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus") && !(["M", "G1_2", "P"].some(word => entr[0]==word))){
+                        if (typeof entr[1].get("cap-or-not") != 'undefined' && entr[1].get("cap-or-not") != full_conf.get("cap-plus") && !(["M", "G1_2"].some(word => entr[0]==word))){
+                            if (entr[0]=="P"){
+                                console.log("ОТРАБОТАЛО: ", num);
+                            }
                             $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ с капилляром ВАРИАНТЫ THREAD или FLANGE или HYGIENIC
                             $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ THREAD или FLANGE или HYGIENIC
                             document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cap-plus")}-cap-plus_err_cancel${num}'>${$("label[for="+full_conf.get("cap-plus")+"-cap-plus]").text()}</label>`;
