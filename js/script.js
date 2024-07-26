@@ -159,21 +159,6 @@ $(function(){  /////  РАСКРЫТЬ-СКРЫТЬ СПИСОК ПРИ ЩЕЛЧ
         $this.toggleClass("active");
         $this.siblings(".option-to-select").removeClass("active");
     })
-    // $(".option-to-select").click(function(){
-    //     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
-    //         if (($(this).find("input[name=err_cancel]:checked").length==0) || ($(this).closest("div.active-option-to-select-list").css("display")!="block")){
-    //             $(this).prop("style", "display:none");
-    //         }
-    //     })
-    //     var $this = $(this);
-    //     $this
-    //     .next("div.option-to-select-list")
-    //     .slideToggle("slow")
-    //     .siblings("div.option-to-select-list:visible")
-    //     .slideUp("slow");
-    //     $this.toggleClass("active");
-    //     $this.siblings(".option-to-select").removeClass("active");
-    // })
     .eq(toDisplay).addClass("active")
     .next().show();
 })
@@ -652,13 +637,11 @@ $(document).ready(function(){
         addDescription();
       }
     });
-    let cpr = document.getElementById("footer");
-    let lm = new Date(document.lastModified);
-    lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
-    cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
-    cpr.innerHTML += "<br>Last Updated : " + lm;
-    // var fff = `<?php date( "F d Y H:i:s.", getlastmod() ); ?>`;
-    // console.log(fff);
+    // let cpr = document.getElementById("footer");
+    // let lm = new Date(document.lastModified);
+    // lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
+    // cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
+    // cpr.innerHTML += "<br>Last Updated : " + lm;
 });
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
@@ -4553,22 +4536,27 @@ $(function(){
 })
 
 $(function(){
-    $(document).change(function(){
+    function last_modified(){ /// ПОЛУЧАЕМ ДАТУ ПОСЛЕДНЕГО ИЗМЕНЕНИЯ
         var list = ["/index.html", "/js/script.js", "/style.css"];
-        var times_modified = new Date();
+        var lm = new Date();
         list.forEach(function(url) {
             var xhr = $.ajax({
                 url: url,
                 success: function() {
-                    let lm = new Date(xhr.getResponseHeader("Last-Modified"));
-                    lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
-                    if (times_modified<lm){
-                        times_modified = lm;
+                    let tmp = new Date(xhr.getResponseHeader("Last-Modified"));
+                    tmp= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(tmp);
+                    if (lm < tmp){
+                        lm = tmp;
                     };
                 }
             });
         });
-        times_modified = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(times_modified);
-        console.log(times_modified);
-    })
+        lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
+        let cpr = document.getElementById("footer");
+        cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
+        cpr.innerHTML += "<br>Last Updated : " + lm;
+    }
+    window.addEventListener('load', function () {
+        last_modified();
+    });
 })
