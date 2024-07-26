@@ -33,7 +33,7 @@ var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
 var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
 var ctr_rec_outlength = 0; // Рекомендуемая мин длина S для CTR
 //"Все права на данный код принадлежат Фомину Александру https://github.com/alex-v-fraser"
-const pn_table = new Map([
+var pn_table = new Map([
     ["PN10", 1000],
     ["PN16", 1600],
     ["PN25", 2500],
@@ -46,11 +46,11 @@ const pn_table = new Map([
     ["ANSI900", 15000],
     ["ANSI1500", 25000]
 ]);
-const dn_table = new Map([
+var dn_table = new Map([
     ["dn50", '2"'],
     ["dn80", '3"'],
     ["dn100", '4"']
-])
+]);
 
 
 
@@ -123,7 +123,7 @@ fetchRestrictions().then((data) => {///СОЗДАЕМ МАССИВ ОГРАНИ�
        restr_conf_list.set(option_names[el], restr_option_list);
     }
     restr_conf_lst = restr_conf_list;
-    console.log("Массив ограничений: ", restr_conf_lst);
+    // console.log("Массив ограничений: ", restr_conf_lst);
 }).catch(error => {console.log(error);
 })
 
@@ -657,6 +657,8 @@ $(document).ready(function(){
     lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
     cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
     cpr.innerHTML += "<br>Last Updated : " + lm;
+    // var fff = `<?php date( "F d Y H:i:s.", getlastmod() ); ?>`;
+    // console.log(fff);
 });
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
@@ -4547,5 +4549,26 @@ $(function(){
                 }
             }
         }
+    })
+})
+
+$(function(){
+    $(document).change(function(){
+        var list = ["/index.html", "/js/script.js", "/style.css"];
+        var times_modified = new Date();
+        list.forEach(function(url) {
+            var xhr = $.ajax({
+                url: url,
+                success: function() {
+                    let lm = new Date(xhr.getResponseHeader("Last-Modified"));
+                    lm= Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
+                    if (times_modified<lm){
+                        times_modified = lm;
+                    };
+                }
+            });
+        });
+        times_modified = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(times_modified);
+        console.log(times_modified);
     })
 })
