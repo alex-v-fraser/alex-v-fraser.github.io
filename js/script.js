@@ -638,13 +638,11 @@ $(document).ready(function(){
       }
     });
     // let lm = new Date(document.lastModified);
-    let lm = new Date("2024-07-26T15:00");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
-    // console.log(lm);
-    lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
-    let cpr = document.getElementById("footer");
-
-    cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
-    cpr.innerHTML += "<br>Last Updated : " + lm;
+    // let lm = new Date("2024-07-26T15:00");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+    // lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
+    // let cpr = document.getElementById("footer");
+    // cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
+    // cpr.innerHTML += "<br>Last Updated : " + lm;
 });
 
 function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ КОНФИГУРАЦИИ
@@ -4538,47 +4536,3 @@ $(function(){
         }
     })
 })
-
-
-// import { Octokit } from "octokit";
-// import { Octokit } from "https://esm.sh/octokit";
-// const octokit = new Octokit({});
-
-/* <script type="module">
-import { Octokit, App } from "https://esm.sh/octokit";
-const octokit = new Octokit({});
-
-
-
-async function getChangedDate({owner, repo}) {
-    let filesChanged = []
-    try {
-        const iterator = octokit.paginate.iterator("GET /repos/{owner}/{repo}/commit/", {
-            owner: owner,
-            repo: repo,
-            per_page: 100,
-            headers: {
-                "x-github-api-version": "2022-11-28",
-            },
-        });
-
-        for await (const {data} of iterator) {
-            filesChanged = [...filesChanged, ...data.map(fileData => fileData.lastmodified)];
-        }
-    } catch (error) {
-        if (error.response) {
-        console.error(`Error! Status: ${error.response.status}. Message: ${error.response.data.message}`)
-        }
-        console.error(error)
-    }
-    console.log
-    return filesChanged
-}
-
-
-$(function(){
-    $(document).ready(function(){
-        getChangedDate("alex-v-fraser", "alex-v-fraser.github.io");
-    })
-})
-</script> */
