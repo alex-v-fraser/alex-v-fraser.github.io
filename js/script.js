@@ -1459,9 +1459,9 @@ function disable_invalid_options(){
         }else{
             $("#" + plmin + "s_tk_wash_dn100-cilinder-select").hide();
         }
-        if ($("input[id^=" + plmin +"s_p_]:checked, input[id^=" + plmin +"s_t_]:checked, input[id^=" + plmin +"s_ch_]:checked").length==0){
+        if ($("input[name="+ plmin +"flange][id^=" + plmin +"s_p_]:checked, input[name="+ plmin +"flange][id^=" + plmin +"s_t_]:checked, input[name="+ plmin +"flange][id^=" + plmin +"s_ch_]:checked").length==0){
             try {
-                document.getElementById(plmin + "flange-constructor").remove();
+                $("#" + plmin + "flange-constructor").remove();
             } catch (error) {
                 console.log(error);
             }
