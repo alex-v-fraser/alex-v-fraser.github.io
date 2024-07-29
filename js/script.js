@@ -1466,6 +1466,10 @@ function disable_invalid_options(){
                 console.log(error);
             }
         }
+
+        $("#"+plmin+"flange-constructor select[name=flange_dn] option").each(function(){
+            $(this).removeClass("disabled");
+        })
     }
     let num = 100; // НУЖНО ДЛЯ ДОБАВЛЕНИЯ id CHECKBOX_ERR_CANCEL
     $("div[id^='err_']").each(function(){  ////ПРЯЧЕМ ВСЕ ERR_CANCEL ЧЕКБОКСЫ
@@ -1673,7 +1677,7 @@ function disable_invalid_options(){
                 $(this).remove();
             })
 
-            $("#flange-constructor select[name=flange_dn] option").each(function(){
+            $("#flange-constructor select[name=flange_dn] option").each(function(){/// ДЕАКТИВАЦИЯ  DN по ширине диапазона
                 let flange_id = $("input[name=flange]:checked").prop("id") + $(this).val();
                 if ($(this).val()!="not_selected" && typeof full_conf.get("range")!="undefined" && typeof window["flange_restr_lst"].get(flange_id)!="undefined" && typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined'){ ///ДЛЯ S_P_ S_CH_ S_T_  отключить недоступные по диапазону DN
                     let to_compare = window["flange_restr_lst"].get(flange_id).get("range");
@@ -1687,7 +1691,6 @@ function disable_invalid_options(){
                         $(this).addClass("disabled");
                         if ($(this).is(":selected")){
                             let warning = document.createElement("div");
-                            // warning.id = "#flange-constructor-"+$("input[name=flange]:checked").prop("id") + $(this).val()+"-error";
                             warning.setAttribute("style", "display:inline-block;");
                             warning.setAttribute("class", "warning-error");
                             let dn = $("#flange-constructor select[name=flange_standard]").val()=="ansi" ? dn_table.get($(this).val()) : $(this).val().toUpperCase();
@@ -1900,7 +1903,7 @@ function disable_invalid_options(){
                         if (typeof full_conf.get(cap)!='undefined' && full_conf.get(cap)=="direct"){
                             to_compare = typeof window["flange_restr_lst"].get(flange_id).get("range") != 'undefined' ? window["flange_restr_lst"].get(flange_id).get("range") : to_compare;
                         }
-                        console.log("cap=" + cap + " "+ "Мин ширина " + to_compare + "для "+ $(this).val() + full_conf.get(cap));
+                        // console.log("cap=" + cap + " "+ "Мин ширина " + to_compare + "для "+ $(this).val() + full_conf.get(cap));
                         if (full_conf.get("range") < to_compare){
                             $(this).addClass("disabled");
                             if ($(this).is(":selected")){
