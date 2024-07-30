@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-07-30T11:30");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-07-30T13:00");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -46,7 +46,7 @@
 							lm_git = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm_git);
 							// console.log(lm_git);
 							if (lm_git > lm){
-								document.getElementById("footer").innerHTML += " Доступна новая версия от " + lm_git;
+								document.getElementById("footer").innerHTML += " Доступно обновление от " + lm_git;
 							}
 						}
 					);
@@ -159,6 +159,17 @@
 		<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container thermowell-panel-container sg-25-panel-container" style="display:none;">
 			<div class="panel-left">
 				<div id="device-options">
+					<div  class="option-to-select sg-25" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Тип измерительного элемента</span></div>
+					</div>
+					<div class="option-to-select-list sg-25" id="sg-type-select" style="display: none;">
+						<fieldset id="sg-type-select-field" name="sg-type-select-field">
+							<input type="checkbox" name="sg-type" value="SG-25" id="sg-25" class="custom-checkbox"><label for="sg-25" class="tooltiped">SG-25</label><div id="err_sg-25"  style="display:none;"></div>
+							<input type="checkbox" name="sg-type" value="SG-25S" id="sg-25s" class="custom-checkbox"><label for="sg-25s" class="tooltiped">SG-25S</label><div id="err_sg-25s"  style="display:none;"></div>
+						</fieldset>
+					</div>
+
 					<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header"><span>Тип взрывозащиты</span></div>
@@ -441,11 +452,11 @@
 						</fieldset>
 					</div>
 
-					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000" style="display:none;">
+					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 sg-25" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header"><span>Диапазон измерения</span></div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000" id="range-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 sg-25" id="range-select" style="display: none;">
 						<fieldset class="range">
 							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="begin-range" style="width: 4em" id="begin-range" required onchange="range_selected(true)">
 							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="end-range" style="width: 4em" id="end-range" required onchange="range_selected(true)">
@@ -607,29 +618,30 @@
 						</fieldset>
 					</div>
 
-					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell" style="display:none;">
+					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header">
 							<span class="pc-28 apc-2000 pr-28 apr-2000" id="pressure-material-header" style="display: none;">Материал смачиваемых частей</span>
 							<span class="ctr" id="ctr-material-header" style="display: none;">Материал защитного корпуса</span>
 							<span class="thermowell" id="thermowell-material-header" style="display: none;">Материал гильзы</span>
+							<span class="sg-25" id="sg-25-material-header" style="display: none;">Материал корпуса</span>
 						</div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell" id="material-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" id="material-select" style="display: none;">
 						<fieldset id="material-select-field" name="material-select-field">
 							<input type="checkbox" name="material" value="" id="12x18h10t" class="custom-checkbox"><label class="thermowell" for="12x18h10t">12X18H10T</label><div id="err_12x18h10t"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="aisi304" class="custom-checkbox"><label class="ctr thermowell" for="aisi304">AISI304</label><div id="err_aisi304"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="aisi310" class="custom-checkbox"><label class="ctr" for="aisi310">AISI310</label><div id="err_aisi310"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 ctr thermowell" for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="aisi321" class="custom-checkbox"><label class="ctr thermowell" for="aisi321">AISI321</label><div id="err_aisi321"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="inconel" class="custom-checkbox"><label class="ctr" for="inconel">Alloy 600</label><div id="err_inconel"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="ceramic" class="custom-checkbox"><label class="ctr" for="ceramic">Корунд</label><div id="err_ceramic"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="sialon" class="custom-checkbox"><label class="ctr" for="sialon">Сиалон</label><div id="err_sialon"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="AU" id="au" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="au">Золото</label><div id="err_au"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="hastelloy">Hastelloy С276</label><div id="err_hastelloy"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 sg-25" for="hastelloy">Hastelloy С276</label><div id="err_hastelloy"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="Ni" id="nickel" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="nickel">Никель</label><div id="err_nickel"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="Monel" id="monel" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="monel">Монель</label><div id="err_monel"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="Ti" id="titan" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="titan">Титан</label><div id="err_titan"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="Ti" id="tytan" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 sg-25" for="tytan">Титан</label><div id="err_tytan"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="Ta" id="tantal" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="tantal">Тантал</label><div id="err_tantal"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="PTFE" id="ptfe" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="ptfe">Фторопласт-4 (политетрафторэтилен)</label><div id="err_ptfe"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="DLC" id="dlc" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="dlc">DLC</label><div id="err_dlc"  style="display:none;"></div>
