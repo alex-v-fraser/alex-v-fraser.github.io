@@ -18,6 +18,12 @@
         "end_range": 800
     },
     {
+        "name": "aisi316",
+        "code_name": "AISI316(M)",
+        "description": "Тонкая мембрана разделителя из стали нержавеющая коррозионно-стойкой AISI316.",
+        "end_range": 800
+    },
+    {
         "name": "aisi321",
         "code_name": "AISI321",
         "description": "Сталь нержавеющая коррозионно-стойкая AISI321.",

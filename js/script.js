@@ -401,7 +401,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     }
                 }
                 console.log(temp_codes);
-                if (!(["S-P", "S-T", "S-Ch"].some(word => temp_codes[2]==word))){
+                if (!(["S-P", "S-T", "S-Ch"].some(word => temp_codes[2]==word)) || (temp_codes[2]=="S-T" && temp_codes[1]=="S-T-WASH")){
                     let repeat_cycle = true;
                     let num_cut = 4;
                     for (els of temp_codes){
@@ -3589,20 +3589,14 @@ $(function(){
 $(function(){
     $("select[id*='cilinder-length']").change(function(){
         if ($(this).val()!="not_selected"){
-            var $this = $(this.parentElement.parentElement.parentElement.parentElement).prev();
-            $this.removeClass("active");
-            $this.next("div.option-to-select-list").slideUp("slow");
-            $this.find(".color-mark-field").removeClass("unselected");
-            $this.find(".color-mark-field").addClass("selected");
-            $("div#special-select").slideDown("Slow");
-            $("div#special-select").prev("div").addClass("active");
+            console.log($(this).prop("id"));
+            expand_next_div($(this).prop("id"));
             disable_invalid_options();
             console.log("14");
             return;
         }else{
             var $this = $(this.parentElement.parentElement.parentElement.parentElement).prev();
-            $this.find(".color-mark-field").addClass("unselected");
-            $this.find(".color-mark-field").removeClass("selected");
+            $this.find(".color-mark-field").removeClass("selected").addClass("unselected");
             disable_invalid_options();
             console.log("15");
         }
