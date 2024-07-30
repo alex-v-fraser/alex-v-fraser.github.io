@@ -1973,7 +1973,7 @@ function disable_invalid_options(){
             })
         }
         if ($("input[name=max-static]:checked").length>0 && full_conf.get("max-static")!="4"){// ОГРАНИЧЕНИЕ ДИАПАЗОНА и деактивация P и 1/4NPT елси MAX-STATIC не равно 4
-            for (let els of ["1_4npt_f", "P"]){
+            for (let els of ["1_4npt_f", "P", "m12_1"]){
                 for (let plmin of ["","minus-"]){
                     $("label[for="+ plmin + els +"]").addClass('disabled');  ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ штуцера
                     $("#" + plmin + els).prop('disabled', true);             //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
