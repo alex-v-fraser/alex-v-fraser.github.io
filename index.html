@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-07-30T16:30");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-07-31T17:30");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -215,7 +215,7 @@
 						<fieldset id="quantity-accuracy-wiring" style="display: none;">
 							<span id="sensor-quantity-span" style="display: none;" class="thermocouple thermoresistor">
 								<label for="sensor-quantity" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block;">Количество сенсоров </label>
-								<select name="sensor-quantity" id="sensor-quantity" onchange="showHideSensorOpts()">
+								<select class="select-css-1" name="sensor-quantity" id="sensor-quantity" onchange="showHideSensorOpts()">
 									<option value="not_selected" selected>-Не выбрано-</option>
 									<option value="1">1</option>
 									<option value="2">2</option>
@@ -224,7 +224,7 @@
 
 							<span id="sensor-accuracy-tc-span" style="display: none" class="thermocouple">
 								<label for="sensor-accuracy-tc" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Класс допуска </label>
-								<select name="sensor-accuracy-tc" id="sensor-accuracy-tc" style="margin-left: 3.5em" onchange="showHideSensorOpts()">
+								<select class="select-css-1" name="sensor-accuracy-tc" id="sensor-accuracy-tc" style="margin-left: 3.5em" onchange="showHideSensorOpts()">
 									<option value="not_selected" selected>-Не выбрано-</option>
 									<option value="1">1</option>
 									<option value="2">2</option>
@@ -234,7 +234,7 @@
 
 							<span id="sensor-accuracy-tr-span" style="display: none" class="thermoresistor">
 								<label for="sensor-accuracy-tr" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block;">Класс допуска </label>
-								<select name="sensor-accuracy-tr" id="sensor-accuracy-tr" style="margin-left: 3.5em" onchange="showHideSensorOpts()">
+								<select class="select-css-1" name="sensor-accuracy-tr" id="sensor-accuracy-tr" style="margin-left: 3.5em" onchange="showHideSensorOpts()">
 									<option value="not_selected" selected>-Не выбрано-</option>
 									<option value="A">A</option>
 									<option value="B">B</option>
@@ -244,7 +244,7 @@
 
 							<span id="sensor-wiring-tr-span" style="display: none" class="thermoresistor">
 								<label for="sensor-wiring-tr" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block;">Схема соединения </label>
-								<select name="sensor-wiring-tr" id="sensor-wiring-tr" style="margin-left: 1.5em" onchange="showHideSensorOpts()">
+								<select class="select-css-1" name="sensor-wiring-tr" id="sensor-wiring-tr" style="margin-left: 1.5em" onchange="showHideSensorOpts()">
 									<option value="not_selected" selected>-Не выбрано-</option>
 									<option value="2">2-х провод.</option>
 									<option value="3">3-х провод.</option>
@@ -363,7 +363,7 @@
 						<fieldset id="ctr-dimensions-select-field">
 							<div>
 								<label for="ctr-diameter">Диаметр защитного корпуса, мм: </label>
-								<select name="ctr-diameter" id="ctr-diameter" style="width: 4.5em; margin-left:0.5em" onchange="disable_invalid_options()">
+								<select class="select-css-1" name="ctr-diameter" id="ctr-diameter" style="width: 4.5em; margin-left:0.5em" onchange="disable_invalid_options()">
 									<option value="not_selected" selected>---</option>
 									<option value="3">3</option>
 									<option value="6">6</option>
@@ -460,7 +460,7 @@
 						<fieldset class="range">
 							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="begin-range" style="width: 4em" id="begin-range" required onchange="range_selected(true)">
 							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="end-range" style="width: 4em" id="end-range" required onchange="range_selected(true)">
-							<select name="pressure-unit" id="pressure-unit-select" onchange="range_selected(true)">
+							<select class="select-css-1" name="pressure-unit" id="pressure-unit-select" onchange="range_selected(true)">
 								<option value="not_selected" selected>--Не выбрано--</option>
 								<option value="Па">Па</option>
 								<option value="кПа">кПа</option>
@@ -471,7 +471,7 @@
 								<option value="кгс/см2">кгс/см2</option>
 								<option value="psi">psi</option>
 							</select>
-							<select name="pressure-type" id="pressure-type" onchange="range_selected(true)">
+							<select class="select-css-1" name="pressure-type" id="pressure-type" onchange="range_selected(true)">
 								<option value="not_selected" selected>--Не выбрано--</option>
 								<option value="">избыточное</option>
 								<option value="ABS">абсолютное</option>
@@ -509,7 +509,7 @@
 						<fieldset id="thermowell-dimensions-select-field">
 							<div class="thermowell-dimensions" style="display: none;">
 								<label for="thermowell-diameter">Диаметр гильзы D, мм: </label>
-								<select name="thermowell-diameter" id="thermowell-diameter" style="width: 4.5em; margin-left: 6.2em" onchange="disable_invalid_options()">
+								<select class="select-css-1" name="thermowell-diameter" id="thermowell-diameter" style="width: 4.5em; margin-left: 6.2em" onchange="disable_invalid_options()">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option class="og1 og2 og3 t1" value="6x1">6x1</option>
 									<option class="og1 og2 og3 t1" value="8x1">8x1</option>
@@ -571,7 +571,7 @@
 						<fieldset id="thermowell-connection-type-select-field" name="thermowell-connection-type-select-field">
 							<div class="thermowell-connection-type-div og2 og3 t1 sw swt swg swg1" id="thermowell-connection1" style="display: none;">
 								<span>Присоединение термометра:</span>
-								<select class="thermowell-connection-type-select og2 og3 t1 sw swt swg swg1" name="thermowell-therm-type" id="thermowell-therm-type" style="width: 5.5em;">
+								<select class="select-css-1 thermowell-connection-type-select og2 og3 t1 sw swt swg swg1" name="thermowell-therm-type" id="thermowell-therm-type" style="width: 5.5em;">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="G1/8">G1/8</option>
 									<option value="G1/4">G1/4</option>
@@ -583,7 +583,7 @@
 
 							<div class="thermowell-connection-type-div og1 og2 t1 swt swg swg1" id="thermowell-connection2" style="display: none; margin-top: 0.5em">
 								<span>Присоединение к процессу:</span>
-								<select class="thermowell-connection-type-select og1 og2 swg swg1" name="thermowell-therm-type2" id="thermowell-therm-type2" style="display: none; width: 5.5em; margin-left:0.4em">
+								<select class="select-css-1 thermowell-connection-type-select og1 og2 swg swg1" name="thermowell-therm-type2" id="thermowell-therm-type2" style="display: none; width: 5.5em; margin-left:0.4em">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="G1/8">G1/8</option>
 									<option value="G1/4">G1/4</option>
@@ -591,21 +591,21 @@
 									<option value="M12x1">M12x1</option>
 									<option value="M20x1,5">M20x1,5</option>
 								</select>
-								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-dn" id="thermowell-flange-type-dn" style="display: none; width: 5.5em; margin-left:0.4em">
+								<select class="select-css-1 thermowell-connection-type-select t1 swt" name="thermowell-flange-type-dn" id="thermowell-flange-type-dn" style="display: none; width: 5.5em; margin-left:0.4em">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="DN25">DN25</option>
 									<option value="DN50">DN50</option>
 									<option value="DN80">DN80</option>
 									<option value="DN100">DN100</option>
 								</select>
-								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-pn" id="thermowell-flange-type-pn" style="display: none; width: 4.5em;">
+								<select class="select-css-1 thermowell-connection-type-select t1 swt" name="thermowell-flange-type-pn" id="thermowell-flange-type-pn" style="display: none; width: 4.5em;">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="PN10">PN10</option>
 									<option value="PN16">PN16</option>
 									<option value="PN25">PN25</option>
 									<option value="PN40">PN40</option>
 								</select>
-								<select class="thermowell-connection-type-select t1 swt" name="thermowell-flange-type-typ" id="thermowell-flange-type-typ" style="display: none; width: 2.5em;">
+								<select class="select-css-1 thermowell-connection-type-select t1 swt" name="thermowell-flange-type-typ" id="thermowell-flange-type-typ" style="display: none; width: 2.5em;">
 									<option class="og1 og2 og3 t1 sw swt swg swg1" value="not_selected" selected>---</option>
 									<option value="B">B</option>
 									<option value="C">C</option>
@@ -648,6 +648,42 @@
 						</fieldset>
 					</div>
 
+					<div class="option-to-select sg-25" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Тип и длина кабеля</span></div>
+					</div>
+					<div class="option-to-select-list sg-25" id="sg-cabel-select" style="display: none;">
+						<fieldset id="sg-cabel-select-field" name="sg-cabel-select-field">
+							<label for="sg-env-temp">Температура измеряемой среды, °С:</label>
+							<input type="number" name="sg-env-temp" style="width: 4em; margin-left:4.4em" id="sg-env-temp" min="-15" max="100" placeholder="до 100">
+							<div>
+								<div style="margin-top:0.8em">
+									<span>Тип кабеля:</span>
+									<select class="select-css-1" name="sg-cabel-type" id="sg-cabel-type" style="width: 11.1em; margin-left:0.4em">
+										<option class="" value="not_selected" selected>--Не выбрано--</option>
+										<option value="PU">PU (полиуретановый)</option>
+										<option value="ETFE">ETFE (фторопласт-40)</option>
+										<option value="ETFER"><b>ETFER (фторопласт-40)</b></option>
+									</select>
+									<label for="sg-cabel-length" style="margin-left:0.1em"> длина, м:</label>
+									<input type="number" name="sg-cabel-length" style="width: 4em" id="sg-cabel-length" min="3" max="300" placeholder="3...300">
+								</div>
+								<div style="margin-top:0.8em">
+									<span>Фторопластовая оболочка:</span>
+									<select class="select-css-1" name="sg-pfte-type" id="sg-pfte-type" style="width: 3.8em; margin-left:0.1em">
+										<option class="" value="not_selected" selected>-?-</option>
+										<option value="with-ptfe">Требуется</option>
+										<option value="no-ptfe">Не требуется</option>
+									</select>
+									<label for="sg-ptfe-length" style="margin-left:0.1em"> длина, м:</label>
+									<input type="number" name="sg-ptfe-length" style="width: 4em" id="sg-ptfe-length" min="3" max="300" placeholder="3...300">
+
+								</div>
+
+							</div>
+						</fieldset>
+					</div>
+
 					<div class="option-to-select ctr" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header"><span>Тип и размер присоединения</span></div>
@@ -658,7 +694,7 @@
 							<input type="checkbox" name="ctr-connection-type" value="ctr-thread-list" id="ctr-thread-list" class="custom-checkbox"><label for="ctr-thread-list">Резьбовое</label><div id="err_ctr-thread-list"  style="display:none;"></div>
 							<div class="ctr-thread-flange-hygienic" id="ctr-thread-select" style="display: none;">
 								<label for="ctr-thread-type" style="margin-left: 1.4em;">Тип и размер:</label>
-								<select name="ctr-thread-type" id="ctr-thread-type" style="width: 5.5em;" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-thread-type" id="ctr-thread-type" style="width: 5.5em;" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="G1/8">G1/8</option>
 									<option value="G1/4">G1/4</option>
@@ -666,12 +702,12 @@
 									<option value="M12x1">M12x1</option>
 									<option value="M20x1,5">M20x1,5</option>
 								</select>
-								<select name="ctr-fm-type" id="ctr-fm-type" style="width: 2.8em;" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-fm-type" id="ctr-fm-type" style="width: 2.8em;" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="M">M (наруж.)</option>
 									<option value="F">F (внутр.)</option>
 								</select>
-								<select name="ctr-ph-type" id="ctr-ph-type" style="width: 2.8em;" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-ph-type" id="ctr-ph-type" style="width: 2.8em;" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="P">P (подвиж.)</option>
 									<option value="H">H (неподв.)</option>
@@ -681,20 +717,20 @@
 							<input type="checkbox" name="ctr-connection-type" value="ctr-flange-list" id="ctr-flange-list" class="custom-checkbox"><label for="ctr-flange-list">Фланцевое</label><div id="err_ctr-flange-list"  style="display:none;"></div>
 							<div class="ctr-thread-flange-hygienic" id="ctr-flange-select" style="display: none;">
 								<label for="ctr-flange-type" style="margin-left: 1.4em;">Тип и размер:</label>
-								<select name="ctr-flange-type" id="ctr-flange-type" style="width: 4.5em;" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-flange-type" id="ctr-flange-type" style="width: 4.5em;" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="DN25">DN25</option>
 									<option value="DN50">DN50</option>
 									<option value="DN80">DN80</option>
 								</select>
-								<select name="ctr-flange-type-pn" id="ctr-flange-type-pn" style="width: 4.5em;" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-flange-type-pn" id="ctr-flange-type-pn" style="width: 4.5em;" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="PN10">PN10</option>
 									<option value="PN16">PN16</option>
 									<option value="PN25">PN25</option>
 									<option value="PN40">PN40</option>
 								</select>
-								<select name="ctr-flange-type-typ" id="ctr-flange-type-typ" style="width: 2.5em;" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-flange-type-typ" id="ctr-flange-type-typ" style="width: 2.5em;" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="B">B</option>
 									<option value="C">C</option>
@@ -707,7 +743,7 @@
 							<input type="checkbox" name="ctr-connection-type" value="ctr-hygienic-list" id="ctr-hygienic-list" class="custom-checkbox"><label for="ctr-hygienic-list">Гигиеническое</label><div id="err_ctr-hygienic-list"  style="display:none;"></div>
 							<div class="ctr-thread-flange-hygienic" id="ctr-hygienic-select" style="display: none;">
 								<label for="ctr-hygienic-type" style="margin-left: 1.4em;">Тип и размер:</label>
-								<select name="ctr-hygienic-type" id="ctr-hygienic-type" style="width: 6em; margin-left:0.5em" onchange="ctr_connection_selected()">
+								<select class="select-css-1" name="ctr-hygienic-type" id="ctr-hygienic-type" style="width: 6em; margin-left:0.5em" onchange="ctr_connection_selected()">
 									<option value="not_selected" selected>---</option>
 									<option value="Tri-Clamp1">Tri-Clamp1"</option>
 									<option value="Tri-Clamp1,5">Tri-Clamp1,5"</option>
@@ -799,7 +835,7 @@
 								<input type="checkbox" name="flange" value="S-T-" id="s_t_" class="custom-checkbox"><label for="s_t_"><b>S-T</b> - разделитель фланцевый цилиндрический</label><div id="err_s_t_" style="display:none;"></div>
 								<input type="checkbox" name="flange" value="S-T-WASH-DN100PN40B" id="s_tk_wash_dn100" class="custom-checkbox"><label for="s_tk_wash_dn100"><b>S-TK-WASH DN100PN40B</b> - разделитель дистанционный фланцевый цилиндрический с системой промывания мембраны</label><div id="err_s_tk_wash_dn100" style="display:none;"></div>
 								<span id="s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
-									<select name="s_tk_wash_dn100-cilinder-length" id="s_tk_wash_dn100-cilinder-length">
+									<select class="select-css-1" name="s_tk_wash_dn100-cilinder-length" id="s_tk_wash_dn100-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
 										<option value="100">100</option>
@@ -904,7 +940,7 @@
 								<input type="checkbox" name="minus-flange" value="S-T-" id="minus-s_t_" class="custom-checkbox"><label for="minus-s_t_"><b>S-T</b> - разделитель фланцевый цилиндрический</label><div id="err_minus-s_t_" style="display:none;"></div>
 								<input type="checkbox" name="minus-flange" value="S-T-WASH-DN100PN40B" id="minus-s_tk_wash_dn100" class="custom-checkbox"><label for="minus-s_tk_wash_dn100"><b>S-TK-WASH DN100PN40B</b> - разделитель дистанционный фланцевый цилиндрический с системой промывания мембраны</label><div id="err_minus-s_tk_wash_dn100" style="display:none;"></div>
 								<span id="minus-s_tk_wash_dn100-cilinder-select" hidden><br>&emsp;&emsp;&emsp;Длина цилиндра, мм:
-									<select name="s_tk_wash_dn100-cilinder-length" id="minus-s_tk_wash_dn100-cilinder-length">
+									<select class="select-css-1" name="s_tk_wash_dn100-cilinder-length" id="minus-s_tk_wash_dn100-cilinder-length">
 										<option value="not_selected" selected>--Не выбрано--</option>
 										<option value="50">50</option>
 										<option value="100">100</option>

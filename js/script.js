@@ -637,6 +637,16 @@ $(document).ready(function(){
         addDescription();
       }
     });
+    $(document).on('change', function(){/////////NOT_SELECTED КРАСНЫМ
+        $('.select-css, .select-css-1').each(function(){
+            var selectedValue = $(this).val();
+            if(selectedValue === 'not_selected'){
+                $(this).removeClass("select-css").addClass("select-css-1");
+            }else{
+                $(this).removeClass("select-css-1").addClass("select-css");
+            }
+        });
+    });
     // let lm = new Date(document.lastModified);
     // let lm = new Date("2024-07-26T15:00");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
     // lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
