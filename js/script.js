@@ -2745,6 +2745,11 @@ function disable_invalid_options(){
         console.log("ПРОВЕРКА ОПЦИЙ ГИЛЬЗЫ");
         // ####################################################################################################
     }
+    if (full_conf.get("main_dev")=="sg-25"){                                                       ///// ПРОВЕРКА ОПЦИЙ ЗОНДОВ SG-25
+
+
+
+    }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
         $("label[for=0_16]").prop("style", "display:block");
@@ -4544,8 +4549,8 @@ $(function(){
     })
 })
 $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБЕЛЯ ЗОНДА В ЗАВИСИМОСТИ ОТ ТЕМПЕРАТУРЫ
-    $("#sg-env-temp").change(function(){
-        if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
+    $("#sg-env-temp, select#sg-cabel-type, select#sg-ptfe-type, #sg-cabel-select-field").change(function(){
+        if (Number.isNaN(parseInt($("#sg-env-temp").val())) || parseInt($("#sg-env-temp").val())>$("#sg-env-temp").prop("max") || parseInt($("#sg-env-temp").val())<$("#sg-env-temp").prop("min")){
             $("#sg-cabel-div").slideUp("slow");
             $("select#sg-cabel-type option[value=not_selected").prop('selected', true);
             $("select#sg-ptfe-type option[value=not_selected").prop('selected', true);
@@ -4555,31 +4560,74 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
             $("#sg-ptfe-length").prop("value", "").hide(300).removeClass("required");
         }else{
             $("#sg-cabel-div").slideDown("slow");
+            if (parseInt($("#sg-env-temp").val())>40){///ПРИ температуре больше 40 отключить PU кабель
+                $("select#sg-cabel-type option[value='PU']").addClass('disabled');
+                $("select#sg-cabel-type option[value='ETFER']").addClass('disabled');
+            }else{
+                $("select#sg-cabel-type option[value='PU']").removeClass('disabled');
+                $("select#sg-cabel-type option[value='ETFER']").removeClass('disabled');
+            }
+            if (parseInt($("#sg-env-temp").val())>75){///ПРИ температуре больше 75 обязательно PTFE оболочка
+                $("select#sg-ptfe-type option[value=no-ptfe]").addClass('disabled');
+            }else{
+                $("select#sg-ptfe-type option[value=no-ptfe]").removeClass('disabled');
+            }
+
+            if ($("select#sg-cabel-type").val()!='not_selected' && !$("select#sg-cabel-type").find("option:selected").hasClass("disabled")){
+                $("#sg-cabel-type-error").hide();
+                $("label[for=sg-cabel-length]").show(300);
+                $("#sg-cabel-length").show(300);
+            }else{
+                $("label[for=sg-cabel-length]").hide();
+                $("#sg-cabel-length").prop("value", "").hide();
+                if ($("select#sg-cabel-type").val()=='not_selected'){
+                    $("#sg-cabel-type-error").hide();
+                }else{
+                    $("#sg-cabel-type-error").show(300);
+                }
+            }
+
+            if ($("select#sg-ptfe-type").val()=='not_selected'){
+                $("#sg-ptfe-length-error").hide();
+                $("label[for=sg-ptfe-length]").hide();
+                $("#sg-ptfe-length").prop("value", "").hide().removeClass("required");
+            }
+            if ($("select#sg-ptfe-type").val()=='with-ptfe' && !$("select#sg-ptfe-type").find("option:selected").hasClass("disabled")){
+                $("#sg-ptfe-length-error").hide();
+                $("label[for=sg-ptfe-length]").show(300);
+                $("#sg-ptfe-length").show(300).addClass("required");
+            }
+            if ($("select#sg-ptfe-type").val()=='with-ptfe' && $("select#sg-ptfe-type").find("option:selected").hasClass("disabled")){
+                $("label[for=sg-ptfe-length]").hide();
+                $("#sg-ptfe-length").hide().removeClass("required");
+                $("#sg-ptfe-length-error").show(300);
+            }
+            if ($("select#sg-ptfe-type").val()=='no-ptfe' && !$("select#sg-ptfe-type").find("option:selected").hasClass("disabled")){
+                $("#sg-ptfe-length-error").hide();
+                $("label[for=sg-ptfe-length]").hide();
+                $("#sg-ptfe-length").hide().removeClass("required");
+            }
+            if ($("select#sg-ptfe-type").val()=='no-ptfe' && $("select#sg-ptfe-type").find("option:selected").hasClass("disabled")){
+                $("label[for=sg-ptfe-length]").hide();
+                $("#sg-ptfe-length").hide().removeClass("required");
+                $("#sg-ptfe-length-error").show(300);
+            }
         }
     })
-    $("select#sg-cabel-type").change(function(){
-        if ($(this).val()!='not_selected'){
-            $("label[for=sg-cabel-length]").show(300);
-            $("#sg-cabel-length").show(300);
-        }else{
-            $("label[for=sg-cabel-length]").hide(300);
-            $("#sg-cabel-length").prop("value", "").hide(300);
-        }
-    })
-    $("select#sg-ptfe-type").change(function(){
-        if ($(this).val()=='with-ptfe'){
-            $("label[for=sg-ptfe-length]").show(300);
-            $("#sg-ptfe-length").show(300).addClass("required");
-        }else{
-            $("label[for=sg-ptfe-length]").hide(300);
-            $("#sg-ptfe-length").prop("value", "").hide(300).removeClass("required");
-        }
-    })
+})
+
+$(function(){
     $("#sg-cabel-select-field").change(function(){
         let filled = true;
+        // if ($("#sg-ptfe-length-error").not(":visible") && $("#sg-cabel-type-error").not(":visible")){
+        //     filled = false;
+        // }
         if ($("#sg-cabel-select-field").find("select option[value=not_selected]:selected").length!=0){
             filled = false;
-        };
+        }
+        if ($("#sg-cabel-select-field").find("select option[class=disabled]:selected").length!=0){
+            filled = false;
+        }
         $("#sg-cabel-select-field").find("input[class=required]").each(function(){
             if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
                 filled = false;
