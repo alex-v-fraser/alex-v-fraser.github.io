@@ -28,7 +28,7 @@ var thermoresistor_restr_lst = new Map();   // ОГРАНИЧЕНИЯ ТЕРМО
 var material_restr_lst = new Map();   // ОГРАНИЧЕНИЯ МАТЕРИАЛОВ (для температуры)
 var cabel_restr_lst = new Map();   // ОГРАНИЧЕНИЯ КАБЕЛЯ (для температуры)
 var ctr_min_length = 20; // Минимальная длина L для CTR;
-var ctr_max_length = 10000; // Максимальная длина L для CTR;
+var ctr_max_length = 12000; // Максимальная длина L для CTR;
 var ctr_min_outlength = 0; // Минимальный вынос S для CTR;
 var ctr_max_outlength = 500; // Максимальный вынос S для CTR;
 var ctr_rec_outlength = 0; // Рекомендуемая мин длина S для CTR
@@ -4540,6 +4540,57 @@ $(function(){
                     $("#"+plmin+"flange-constructor").removeClass("filled");
                 }
             }
+        }
+    })
+})
+$(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБЕЛЯ ЗОНДА В ЗАВИСИМОСТИ ОТ ТЕМПЕРАТУРЫ
+    $("#sg-env-temp").change(function(){
+        if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
+            $("#sg-cabel-div").slideUp("slow");
+            $("select#sg-cabel-type option[value=not_selected").prop('selected', true);
+            $("select#sg-ptfe-type option[value=not_selected").prop('selected', true);
+            $("label[for=sg-cabel-length]").hide(300);
+            $("#sg-cabel-length").prop("value", "").hide(300);
+            $("label[for=sg-ptfe-length]").hide(300);
+            $("#sg-ptfe-length").prop("value", "").hide(300).removeClass("required");
+        }else{
+            $("#sg-cabel-div").slideDown("slow");
+        }
+    })
+    $("select#sg-cabel-type").change(function(){
+        if ($(this).val()!='not_selected'){
+            $("label[for=sg-cabel-length]").show(300);
+            $("#sg-cabel-length").show(300);
+        }else{
+            $("label[for=sg-cabel-length]").hide(300);
+            $("#sg-cabel-length").prop("value", "").hide(300);
+        }
+    })
+    $("select#sg-ptfe-type").change(function(){
+        if ($(this).val()=='with-ptfe'){
+            $("label[for=sg-ptfe-length]").show(300);
+            $("#sg-ptfe-length").show(300).addClass("required");
+        }else{
+            $("label[for=sg-ptfe-length]").hide(300);
+            $("#sg-ptfe-length").prop("value", "").hide(300).removeClass("required");
+        }
+    })
+    $("#sg-cabel-select-field").change(function(){
+        let filled = true;
+        if ($("#sg-cabel-select-field").find("select option[value=not_selected]:selected").length!=0){
+            filled = false;
+        };
+        $("#sg-cabel-select-field").find("input[class=required]").each(function(){
+            if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
+                filled = false;
+            }
+        });
+        if (filled==true){
+            expand_next_div("sg-env-temp");
+            disable_invalid_options();
+        }else{
+            $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
         }
     })
 })

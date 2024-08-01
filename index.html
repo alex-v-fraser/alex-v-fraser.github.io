@@ -655,8 +655,8 @@
 					<div class="option-to-select-list sg-25" id="sg-cabel-select" style="display: none;">
 						<fieldset id="sg-cabel-select-field" name="sg-cabel-select-field">
 							<label for="sg-env-temp">Температура измеряемой среды, °С:</label>
-							<input type="number" name="sg-env-temp" style="width: 4em; margin-left:4.4em" id="sg-env-temp" min="-15" max="100" placeholder="до 100">
-							<div>
+							<input type="number" class="required" name="sg-env-temp" style="width: 4em; margin-left:4.4em" id="sg-env-temp" min="-15" max="100" placeholder="до 100">
+							<div id="sg-cabel-div" style="display: none;">
 								<div style="margin-top:0.8em">
 									<span>Тип кабеля:</span>
 									<select class="select-css-1" name="sg-cabel-type" id="sg-cabel-type" style="width: 11.1em; margin-left:0.4em">
@@ -665,19 +665,18 @@
 										<option value="ETFE">ETFE (фторопласт-40)</option>
 										<option value="ETFER"><b>ETFER (фторопласт-40)</b></option>
 									</select>
-									<label for="sg-cabel-length" style="margin-left:0.1em"> длина, м:</label>
-									<input type="number" name="sg-cabel-length" style="width: 4em" id="sg-cabel-length" min="3" max="300" placeholder="3...300">
+									<label for="sg-cabel-length" style="display: none; margin-left:0.1em"> длина, м:</label>
+									<input type="number" class="required" name="sg-cabel-length" style="display: none; width: 4em" id="sg-cabel-length" min="3" max="300" placeholder="3...300">
 								</div>
 								<div style="margin-top:0.8em">
 									<span>Фторопластовая оболочка:</span>
-									<select class="select-css-1" name="sg-pfte-type" id="sg-pfte-type" style="width: 3.8em; margin-left:0.1em">
+									<select class="select-css-1" name="sg-ptfe-type" id="sg-ptfe-type" style="width: 3.8em; margin-left:0.1em">
 										<option class="" value="not_selected" selected>-?-</option>
 										<option value="with-ptfe">Требуется</option>
 										<option value="no-ptfe">Не требуется</option>
 									</select>
-									<label for="sg-ptfe-length" style="margin-left:0.1em"> длина, м:</label>
-									<input type="number" name="sg-ptfe-length" style="width: 4em" id="sg-ptfe-length" min="3" max="300" placeholder="3...300">
-
+									<label for="sg-ptfe-length" style="display: none; margin-left:0.1em"> длина, м:</label>
+									<input type="number" name="sg-ptfe-length" style="display: none; width: 4em" id="sg-ptfe-length" min="3" max="300" placeholder="3...300">
 								</div>
 
 							</div>
