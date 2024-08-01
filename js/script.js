@@ -57,7 +57,7 @@ var dn_table = new Map([
 
 async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ option_names (ЭЛЕКТРИКА)
     const data = await Promise.all(option_names.map(async url => {
-        const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
+        const resp = await fetch("json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
     return data;
@@ -65,7 +65,7 @@ async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГР�
 
 async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ДЛЯ connection_types
     const data = await Promise.all(search_names.map(async url => {
-        const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
+        const resp = await fetch("json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
     return data;
@@ -73,7 +73,7 @@ async function fetchConnectRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА 
 
 async function fetchSensorRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГРАНИЧЕНИЙ ДЛЯ сенсоров CTR
     const data = await Promise.all(sensor_names.map(async url => {
-        const resp = await fetch("/json/"+ url +".json", {cache: "no-store"});
+        const resp = await fetch("json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
     return data;
@@ -4032,7 +4032,7 @@ $(function(){ /// ПОКАЗАТЬ КАРТИНКУ ДЛЯ ВЫБИРАЕМОЙ 
         // over
             tooltip_id = $(this).prop("htmlFor");
             // console.log(`/images/tooltips/${tooltip_id}_tooltip.jpg`);
-            img_path = `/images/tooltips/${tooltip_id}_tooltip.png`;// + ${/(jpg$|png$)/};
+            img_path = `images/tooltips/${tooltip_id}_tooltip.png`;// + ${/(jpg$|png$)/};
             mouse = $(this);
             $.ajax({
                 type: "HEAD",
