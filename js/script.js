@@ -52,6 +52,10 @@ var dn_table = new Map([
     ["dn100", '4"']
 ]);
 
+var sg_table = new Map([ ////КАРТА ДЕАКТИВАЦИИ ОПЦИЙ ЗОНДОВ
+    ["sg-type", new Map([["sg-25", "tytan"], ["sg-25s", "hastelloy"]])],
+    ["output", new Map([["4_20", "tytan"], ["4_20H", "hastelloy"]])]
+])
 
 
 
@@ -60,6 +64,7 @@ async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГР�
         const resp = await fetch("json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
+    console.log(data);
     return data;
 }
 
@@ -2782,7 +2787,17 @@ function disable_invalid_options(){
             }
         })
 
-        if (typeof full_conf.get("output")!="undefined" && full_conf.get("output")!="4_20H"){
+        console.log(sg_table.get("sg-type"));
+        console.log(sg_table.get("output"));
+        ////////////////////////////////////////////////////////////////////////////////////////////          ПРОДОЛЖИТЬ             //////////////////////////////////////////////////////////////////////
+
+        if (typeof full_conf.get("sg-type")!="undefined" && full_conf.get("sg-type")=="sg-25"){
+            $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
+            $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ТИПУ SG
+            document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='sg-25_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='sg-25_err_cancel${num}'>${$("label[for=sg-25]").text()}</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20"){
             $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
             $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ВЫХОДНОМУ СИГНАЛУ
             document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='4_20_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='4_20_err_cancel${num}'>${$("label[for=4_20]").text()}</label>`;
@@ -2793,11 +2808,9 @@ function disable_invalid_options(){
             $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ВЗРЫВОЗАЩИТЕ
             document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='Ex_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='Ex_err_cancel${num}'>${$("label[for=Ex]").text()}</label>`;
             num+=1;
-        }
-        if (typeof full_conf.get("sg-type")!="undefined" && full_conf.get("sg-type")!="sg-25s"){
-            $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
-            $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ТИПУ SG
-            document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='sg-25_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='sg-25_err_cancel${num}'>${$("label[for=sg-25]").text()}</label>`;
+            $("label[for=hastelloy]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
+            $("#hastelloy").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ  HASTELLOY ПО ВЗРЫВОЗАЩИТЕ
+            document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='Ex_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='Ex_err_cancel${num}'>${$("label[for=Ex]").text()}</label>`;
             num+=1;
         }
         if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 156.9 || full_conf.get("range") < 15.70 || full_conf.get("end_range_kpa") > 157) || full_conf.get("begin_range_kpa") < 0){
