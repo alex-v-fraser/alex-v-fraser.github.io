@@ -64,7 +64,6 @@ async function fetchRestrictions() { /// ПОЛУЧЕНИЕ СПИСКА ОГР�
         const resp = await fetch("json/"+ url +".json", {cache: "no-store"});
         return resp.json();
     }));
-    console.log(data);
     return data;
 }
 
@@ -975,6 +974,20 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             full_conf.delete("begin_range_kpa");
             full_conf.delete("end_range_kpa");
         }
+        for (let el of ["sg-local-display", "sg-cabel-type", "sg-ptfe-type"]){
+            if ($("#" + el).val()!='not_selected'){
+                full_conf.set(el, $("#" + el).val());
+            }else{
+                full_conf.set(el, undefined);
+            }
+        }
+        $("#sg-cabel-select-field").find("input[class=required]").each(function(){
+            if (!Number.isNaN(parseInt($(this).val()))){
+                full_conf.set(this.name, $(this).val());
+            }else{
+                full_conf.set(this.name, undefined);
+            }
+        })
     }
     return full_conf;
 }
@@ -1479,6 +1492,56 @@ function get_thermowell_code_info(data){///ПОЛУЧЕНИЕ КОДА ЗАКА�
     let lt = "Lt=" + data.get("thermowell-tlength") + "мм";
     let l = "L=" + data.get("thermowell-length") + "мм";
     code = type + "/" + diameter + "/" + pressure + "/" + connection1 + "/" + connection2 + "/" + material + "/" + lt + "/" + l;
+    if ($("div.color-mark-field.unselected:visible").length==0){
+        document.getElementById("code").value = code;
+        $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+            minWidth: 200,
+            maxWidth: function(){return $('.code-input-container').width()-8; },
+            comfortZone: 5
+        })
+        addDescription();
+    }
+}
+
+function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА ЗОНДА
+    console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА ЗОНДА");
+    let code = "В_РАЗРАБОТКЕ!";
+    let sg_type = data.get("sg-type").toUpperCase();
+    let output = data.get("output")=="4_20H" ? ".Smart/" : "/";
+    let approval = data.get("approval")=="Ex" ? "Ex/" : "";
+    let material = data.get("material")=="aisi316" ? "" : data.get("material") + "/";
+
+    const main_ranges_sg = [
+        [0, 98.071, "0...10мH2O"],
+        [0, 980.71, "0...100мH2O"]
+    ];
+    main_range = "";
+    if (data.get("output")=="4_20H" && data.get("sg-local-display")=="no"){
+        if (data.get("material")=="aisi316"){
+            let min_main_range = [-200000, 200000, ""];
+            for (el of main_ranges_sg){
+                if (data.get("begin_range_kpa")>=el[0] && data.get("begin_range_kpa")<=el[1] && data.get("end_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                    if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
+                        min_main_range = el;
+                    }
+                }
+            }
+            main_range = min_main_range[2] + "/";
+        }
+        if (data.get("material")=="tytan"){
+            main_range = "0...16мH2O/";
+        }
+    }
+
+
+    console.log(main_range);
+    range = (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/";
+    console.log(range);
+    range = (data.get("output")=="4_20H" && ((range=="0...10мH2O/" || range=="0...100мH2O/") && data.get("material")!="tytan" || data.get("material")=="tytan" && range=="0...16мH2O/")) ? "" : range;
+
+
+    code = sg_type + output + material + approval + main_range + range;
+
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -2848,6 +2911,13 @@ function disable_invalid_options(){
                 num+=1;
             }
         }
+
+        if ($("select#sg-local-display").val()=="yes"){
+            $("label[for=4_20]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ HASTELLOY
+            $("#4_20").prop('disabled', true);            //// ДЕАКТИВАЦИЯ HASTELLOY ПО ДИАПАЗОНУ
+            document.getElementById("err_4_20").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${$("select#sg-local-display").val()}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheck_sg_display()'><label for='${$("select#sg-local-display").val()}_err_cancel${num}'>Местная индикация.</label>`;
+            num+=1;
+        }
     }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
@@ -3114,7 +3184,7 @@ function disable_invalid_options(){
 
     ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
     for (let x of full_conf.values()){
-        if (typeof x === 'undefined'){
+        if (typeof x === 'undefined' || $("div.color-mark-field.unselected:visible").length!=0){
             check_flag = false;
             console.log("НЕПОЛНАЯ КОНФИГУРАЦИЯ!");
             document.getElementById("code").value = "";
@@ -3137,6 +3207,9 @@ function disable_invalid_options(){
         }
         if (full_conf.get("main_dev") == "thermowell"){
             get_thermowell_code_info(full_conf);
+        }
+        if (full_conf.get("main_dev") == "sg-25"){
+            get_sg_code_info(full_conf);
         }
     }else{
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
@@ -3197,6 +3270,7 @@ $(function (){
             }
             if (main_dev=="sg-25" && this.name=="output"){
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#sg-local-display-error").hide();
                 disable_invalid_options();
                 return;
             }
@@ -4779,7 +4853,7 @@ $(function(){
 
 $(function(){// ПОКАЗ СКРЫТИЕ ВЫБОРА ДИСПЛЕЯ ДЛЯ ЗОНДА SG
     $("#sg-local-display").change(function(){
-        if ($(this).val()!="not_selected" && !$(this).find("option:selected").hasClass("disabled")){
+        if ($(this).val()!="not_selected" && !$(this).find("option:selected").hasClass("disabled") && $("input[name=output]:checked").length>0){
             expand_next_div("sg-local-display");
             disable_invalid_options();
         }else{
@@ -4804,3 +4878,8 @@ $(function(){// ПОКАЗ СКРЫТИЕ ВЫБОРА ДИСПЛЕЯ ДЛЯ З�
     })
 })
 
+function uncheck_sg_display(){
+    $("select#sg-local-display option[value=not_selected]").prop("selected", true);
+    $("#sg-local-display-error").hide();
+    disable_invalid_options();
+}
