@@ -1515,6 +1515,11 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
         [0, 98.071, "0...10мH2O"],
         [0, 980.71, "0...100мH2O"]
     ];
+    const main_ranges_sg_display = [
+        [0, 24.521, "0...2,5мH2O"],
+        [0, 98.071, "0...10мH2O"],
+        [0, 196.14, "0...20мH2O"]
+    ];
     main_range = "";
     if (data.get("output")=="4_20H" && data.get("sg-local-display")=="no"){
         if (data.get("material")=="aisi316"){
@@ -1532,15 +1537,38 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
             main_range = "0...16мH2O/";
         }
     }
+    if (data.get("sg-local-display")=="yes"){
+        let min_main_range = [-200000, 200000, ""];
+            for (el of main_ranges_sg_display){
+                if (data.get("begin_range_kpa")>=el[0] && data.get("begin_range_kpa")<=el[1] && data.get("end_range_kpa")>=el[0] && data.get("end_range_kpa")<=el[1]){
+                    if (Math.abs(el[1]-el[0])< Math.abs(min_main_range[1]-min_main_range[0])){
+                        min_main_range = el;
+                    }
+                }
+            }
+            main_range = min_main_range[2] + "/";
+    }
 
 
     console.log(main_range);
     range = (data.get("begin_range")).toString().split('.').join(',') + "..." + (data.get("end_range")).toString().split('.').join(',') + data.get("units") + data.get("pressure_type") + "/";
     console.log(range);
-    range = (data.get("output")=="4_20H" && ((range=="0...10мH2O/" || range=="0...100мH2O/") && data.get("material")!="tytan" || data.get("material")=="tytan" && range=="0...16мH2O/")) ? "" : range;
+    range = (data.get("output")=="4_20H" && data.get("sg-local-display")=="no" && (((range=="0...10мH2O/" || range=="0...100мH2O/") && data.get("material")!="tytan") || (data.get("material")=="tytan" && range=="0...16мH2O/"))) ? "" : range;
+    range = (data.get("sg-local-display")=="yes" && (range=="0...2,5мH2O/" || range=="0...10мH2O/" || range=="0...20мH2O/")) ? "" : range;
+    let sg_ptfe = data.get("sg-ptfe-type")=="with-ptfe" ? "/PTFE-L=" + data.get("sg-ptfe-length") + "м" : "";
 
+    if (data.get("sg-local-display")=="no" && parseInt(data.get("sg-env-temp"))<=80){
+        code = sg_type + output + material + approval + main_range + range + data.get("sg-cabel-type") + "-L=" + data.get("sg-cabel-length") + "м" + sg_ptfe;
+    }
 
-    code = sg_type + output + material + approval + main_range + range;
+    if (data.get("sg-local-display")=="no" && parseInt(data.get("sg-env-temp"))>80){
+        code = sg_type + output  + "100/" + material + approval + range + "ETFE+PTFE-L=" + data.get("sg-cabel-length") + "м/PU-L=" + data.get("sg-add-cabel-length") + "м";
+    }
+
+    if (data.get("sg-local-display")=="yes"){
+        material = data.get("material")!="aisi316" ? "/" + data.get("material") + "/" : "/";
+        code = "APC-2000ALW-L/" + approval +  sg_type + material + main_range + range + data.get("sg-cabel-type") + "-L=" + data.get("sg-cabel-length") + "м" + sg_ptfe;
+    }
 
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
@@ -2837,6 +2865,7 @@ function disable_invalid_options(){
         // ####################################################################################################
     }
     if (full_conf.get("main_dev")=="sg-25"){                                                       ///// ПРОВЕРКА ОПЦИЙ ЗОНДОВ SG-25
+        $("#sg-env-temp").prop('max', 100).prop("placeholder", "до 100");
         low_press = 0;
         hi_press = full_conf.get("output")=="4_20H" ? 1000 : 5000;
         min_range = full_conf.get("output")=="4_20H" ? 10 : 8;   // мин ширина диапазона SG, кПа
@@ -2884,6 +2913,13 @@ function disable_invalid_options(){
             num+=1;
         }
 
+        if (typeof full_conf.get("sg-env-temp")!="undefined" && parseInt(full_conf.get("sg-env-temp"))>40){ //// ДЕАКТИВАЦИЯ HASTELLOY ПО ТЕМПЕРАТУРЕ
+            $("label[for=hastelloy]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ HASTELLOY
+            $("#hastelloy").prop('disabled', true);            //// ДЕАКТИВАЦИЯ HASTELLOY ПО ДИАПАЗОНУ
+            document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='sg-env-temp_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheck_sg_env_temp()'><label for='sg-env-temp_err_cancel${num}'>Температура. Допускается -30...40°С</label>`;
+            num+=1;
+        }
+
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="tytan"){ /// ДЛЯ ТИТАНА ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT
             low_press = 0;
             hi_press = 157;
@@ -2898,11 +2934,13 @@ function disable_invalid_options(){
             }
         }
 
-        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="hastelloy"){ /// ДЛЯ HASTELLY ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="hastelloy"){ /// ДЛЯ HASTELLOY ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT, ТЕМПЕРАТУРУ
             low_press = 0;
             hi_press = 197;
             min_range = 19.61;
             document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...20 мH2O) и минимальная ширина " + min_range + " кПа (2 мH2O).";
+
+            $("#sg-env-temp").prop('max', 40).prop("placeholder", "до 40");
 
             for (let els of ["sg-25s", "4_20H", "Ex"]){
                 $("label[for=" + els + "]").addClass('disabled');
@@ -2918,6 +2956,7 @@ function disable_invalid_options(){
             document.getElementById("err_4_20").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${$("select#sg-local-display").val()}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheck_sg_display()'><label for='${$("select#sg-local-display").val()}_err_cancel${num}'>Местная индикация.</label>`;
             num+=1;
         }
+
     }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
@@ -4883,3 +4922,30 @@ function uncheck_sg_display(){
     $("#sg-local-display-error").hide();
     disable_invalid_options();
 }
+
+function uncheck_sg_env_temp(){
+    $("#sg-env-temp").val('');
+    $("#sg-cabel-div").slideUp("slow");
+    $("select#sg-cabel-type option[value=not_selected").prop('selected', true);
+    $("select#sg-ptfe-type option[value=not_selected").prop('selected', true);
+    $("label[for=sg-cabel-length]").hide(300);
+    $("#sg-cabel-length").prop("value", "").hide(300);
+    $("label[for=sg-ptfe-length]").hide(300);
+    $("#sg-ptfe-length").prop("value", "").hide(300).removeClass("required");
+    $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    disable_invalid_options();
+}
+
+$(function(){
+    $("#sg-cabel-length, #sg-ptfe-length").change(function(){
+        console.log($(this).prop("id"));
+        if (parseInt($("#sg-env-temp").val())>80){
+            if ($(this).prop("id")=="sg-cabel-length"){
+                $("#sg-ptfe-length").val($(this).val());
+            }
+            if ($(this).prop("id")=="sg-ptfe-length"){
+                $("#sg-cabel-length").val($(this).val());
+            }
+        }
+    })
+})
