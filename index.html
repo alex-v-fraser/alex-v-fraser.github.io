@@ -262,6 +262,14 @@
 						<fieldset id="output-select-field" name="output-select-field">
 							<input type="checkbox" name="output" value="PC-28/" id="4_20" class="custom-checkbox"><label for="4_20">4...20мА<br></label><div id="err_4_20"  style="display:none;"></div>
 							<input type="checkbox" name="output" value="PC-28.Smart/" id="4_20H" class="custom-checkbox"><label for="4_20H">4...20мА + HART<br></label><div id="err_4_20H"  style="display:none;"></div>
+							<div id="sg-local-display-div" style="display: none; margin-top: 0.8em;">
+								<span style="margin-left: 1.5em;">Местная индикация:</span>
+								<select class="select-css-1" name="sg-local-display" id="sg-local-display" style="width: 8.5em; margin-left:0.1em">
+									<option class="" value="not_selected" selected>-Не выбрано-</option>
+									<option value="yes">Требуется</option>
+									<option value="no">Не требуется</option>
+								</select>
+							</div>
 							<input type="checkbox" name="output" value="PC-28.Modbus/" id="modbus" class="custom-checkbox"><label for="modbus">Modbus RTU<br></label><div id="err_modbus"  style="display:none;"></div>
 							<input type="checkbox" name="output" value="PC-28.B 0...2В/" id="0_2" class="custom-checkbox"><label for="0_2">0...2В<br></label><div id="err_0_2"  style="display:none;"></div>
 							<input type="checkbox" name="output" value="PC-28.B 0,4...2В/" id="04_2" class="custom-checkbox"><label for="04_2">0,4...2В<br></label><div id="err_04_2"  style="display:none;"></div>

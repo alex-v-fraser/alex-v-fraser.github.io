@@ -2787,22 +2787,16 @@ function disable_invalid_options(){
             }
         })
 
-        console.log(sg_table.get("sg-type"));
-        console.log(sg_table.get("output"));
-        ////////////////////////////////////////////////////////////////////////////////////////////          ПРОДОЛЖИТЬ             //////////////////////////////////////////////////////////////////////
+        for (let opts of ["sg-type", "output"]){ // ДЕАКТИВАЦИЯ ТИТАНА ИЛИ HASTELLOY по типу SG или OUTPUT
+            if (typeof full_conf.get(opts)!="undefined"){
+                let disab = sg_table.get(opts).get(full_conf.get(opts));
+                $("label[for="+ disab +"]").addClass('disabled');
+                $("#"+ disab).prop('disabled', true);
+                document.getElementById("err_" + disab).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get(opts)}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get(opts)}_err_cancel${num}'>${$("label[for="+full_conf.get(opts)+"]").text()}</label>`;
+                num+=1;
+            }
+        }
 
-        if (typeof full_conf.get("sg-type")!="undefined" && full_conf.get("sg-type")=="sg-25"){
-            $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
-            $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ТИПУ SG
-            document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='sg-25_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='sg-25_err_cancel${num}'>${$("label[for=sg-25]").text()}</label>`;
-            num+=1;
-        }
-        if (typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20"){
-            $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
-            $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ВЫХОДНОМУ СИГНАЛУ
-            document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='4_20_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='4_20_err_cancel${num}'>${$("label[for=4_20]").text()}</label>`;
-            num+=1;
-        }
         if (typeof full_conf.get("approval")!="undefined" && full_conf.get("approval")=="Ex"){
             $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
             $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ВЗРЫВОЗАЩИТЕ
@@ -2813,16 +2807,24 @@ function disable_invalid_options(){
             document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='Ex_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='Ex_err_cancel${num}'>${$("label[for=Ex]").text()}</label>`;
             num+=1;
         }
-        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 156.9 || full_conf.get("range") < 15.70 || full_conf.get("end_range_kpa") > 157) || full_conf.get("begin_range_kpa") < 0){
+
+        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 157|| full_conf.get("range") < 15.68 || full_conf.get("end_range_kpa") > 157) || full_conf.get("begin_range_kpa") < 0){
             $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
-            $("#tytan").prop('disabled', true);                                 //// ДЕАКТИВАЦИЯ ТИТАНА ПО ДИАПАЗОНУ
+            $("#tytan").prop('disabled', true);            //// ДЕАКТИВАЦИЯ ТИТАНА ПО ДИАПАЗОНУ
             document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается 0...16 мH2O, минимальная ширина 1,6 мH2O.</label>`;
             num+=1;
         }
+        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 197|| full_conf.get("range") < 19.61 || full_conf.get("end_range_kpa") > 197) || full_conf.get("begin_range_kpa") < 0){
+            $("label[for=hastelloy]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ HASTELLOY
+            $("#hastelloy").prop('disabled', true);            //// ДЕАКТИВАЦИЯ HASTELLOY ПО ДИАПАЗОНУ
+            document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается 0...16 мH2O, минимальная ширина 1,6 мH2O.</label>`;
+            num+=1;
+        }
+
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="tytan"){ /// ДЛЯ ТИТАНА ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT
             low_press = 0;
             hi_press = 157;
-            min_range = 15.7;
+            min_range = 15.68;
             document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...16 мH2O) и минимальная ширина " + min_range + " кПа (1,6 мH2O).";
 
             for (let els of ["sg-25", "4_20", "Ex"]){
@@ -2832,7 +2834,20 @@ function disable_invalid_options(){
                 num+=1;
             }
         }
-////////////////////////////////////////////////////////////////////////////////////////////              ПРОДОЛЖИТЬ             /////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="hastelloy"){ /// ДЛЯ HASTELLY ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT
+            low_press = 0;
+            hi_press = 197;
+            min_range = 19.61;
+            document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...20 мH2O) и минимальная ширина " + min_range + " кПа (2 мH2O).";
+
+            for (let els of ["sg-25s", "4_20H", "Ex"]){
+                $("label[for=" + els + "]").addClass('disabled');
+                $("#" + els).prop('disabled', true);
+                document.getElementById("err_" + els).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='hastelloy_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='hastelloy_err_cancel${num}'>${$("label[for=hastelloy]").text()}</label>`;
+                num+=1;
+            }
+        }
     }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
@@ -3178,6 +3193,11 @@ $(function (){
             $(this).siblings("input:checkbox").prop('checked', false);
             if (this.name=="max-static"){
                 MaxStaticChecked();
+                return;
+            }
+            if (main_dev=="sg-25" && $(this).prop("id")=="4_20H"){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                disable_invalid_options();
                 return;
             }
             if ($(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-c-pr"){ //$(this).prop("id")=="P" ||  || $(this).prop("id")=="minus-P"
@@ -3936,6 +3956,7 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     $("label").removeClass('disabled');
     $("#code-entered-button-ok").prop("style", "display:inline-block");
     $("#reset-config").prop("style", "display:none");
+    $("#sg-local-display-div").prop("style", "display:none");
     document.getElementById("code").value = "";
     document.getElementById("codeError").innerHTML = "";
     document.getElementById("codeDescription").innerHTML = "";
@@ -4752,3 +4773,24 @@ $(function(){
         }
     })
 })
+
+$(function(){// ПОКАЗ СКРЫТИЕ ВЫБОРА ДИСПЛЕЯ ДЛЯ ЗОНДА SG
+    $("#sg-local-display").change(function(){
+        if ($(this).val()!="not_selected"){
+            expand_next_div("sg-local-display");
+            disable_invalid_options();
+        }else{
+            $("#sg-local-display").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+        }
+    })
+    $("input[name=output]").change(function(){
+        if (main_dev=="sg-25" && $("#4_20H").is(":checked")){
+            $("#sg-local-display-div").slideDown("slow");
+        }else{
+            $("#sg-local-display-div").slideUp("slow");
+            $("select#sg-local-display option[value=not_selected]").prop("selected", true);
+        }
+    })
+})
+
