@@ -3195,7 +3195,7 @@ $(function (){
                 MaxStaticChecked();
                 return;
             }
-            if (main_dev=="sg-25" && $(this).prop("id")=="4_20H"){
+            if (main_dev=="sg-25" && this.name=="output"){
                 $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
                 disable_invalid_options();
                 return;
@@ -3831,6 +3831,9 @@ $(function(){
                 }else{
                     $("label[for=" + $(this).prop("id") + "]").prop("style", "display:none");
                 }
+                $("#sg-local-display-div").show();
+            }else{
+                $("#sg-local-display-div").hide();
             }
         })
         $("input[name=electrical]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ ЭЛЕКТРИЧЕСКИЕ ПРИСОЕДИНЕНИЯ В ЗАВИСИМОСТИ ОТ MAIN-DEV
@@ -3956,7 +3959,7 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     $("label").removeClass('disabled');
     $("#code-entered-button-ok").prop("style", "display:inline-block");
     $("#reset-config").prop("style", "display:none");
-    $("#sg-local-display-div").prop("style", "display:none");
+    $("#sg-local-display-div").hide();
     document.getElementById("code").value = "";
     document.getElementById("codeError").innerHTML = "";
     document.getElementById("codeDescription").innerHTML = "";
@@ -4776,20 +4779,27 @@ $(function(){
 
 $(function(){// ПОКАЗ СКРЫТИЕ ВЫБОРА ДИСПЛЕЯ ДЛЯ ЗОНДА SG
     $("#sg-local-display").change(function(){
-        if ($(this).val()!="not_selected"){
+        if ($(this).val()!="not_selected" && !$(this).find("option:selected").hasClass("disabled")){
             expand_next_div("sg-local-display");
             disable_invalid_options();
         }else{
             $("#sg-local-display").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             disable_invalid_options();
         }
+        if ($(this).find("option:selected").hasClass("disabled")){
+            $("#sg-local-display-error").show(300);
+        }else{
+            $("#sg-local-display-error").hide();
+        }
     })
     $("input[name=output]").change(function(){
-        if (main_dev=="sg-25" && $("#4_20H").is(":checked")){
-            $("#sg-local-display-div").slideDown("slow");
-        }else{
-            $("#sg-local-display-div").slideUp("slow");
+        if (main_dev=="sg-25" && $("#4_20").is(":checked")){
             $("select#sg-local-display option[value=not_selected]").prop("selected", true);
+            $("select#sg-local-display option[value=yes]").addClass("disabled");
+
+        }else{
+            $("select#sg-local-display option[value=not_selected]").prop("selected", true);
+            $("select#sg-local-display option[value=yes]").removeClass("disabled");
         }
     })
 })
