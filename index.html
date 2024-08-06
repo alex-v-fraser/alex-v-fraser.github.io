@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-06T13:35");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-06T15:40");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -677,7 +677,7 @@
 									<span id="sg-cabel-type-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> только до 40°C</span> </span>
 									<span id="sg-cabel-type-hast-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> недоступно для Hastelloy</span></span>
 									<label for="sg-cabel-length" style="display: none; margin-left:0.1em"> длина, м:</label>
-									<input type="number" class="required" name="sg-cabel-length" style="display: none; width: 4em" id="sg-cabel-length" min="3" max="300" placeholder="3...300">
+									<input type="number" class="required" name="sg-cabel-length" style="display: none; width: 4em" id="sg-cabel-length" min="3" max="500" placeholder="3...500">
 								</div>
 								<div style="margin-top:0.8em">
 									<span>Фторопластовая оболочка:</span>
@@ -689,7 +689,7 @@
 									<span id="sg-ptfe-length-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> только до 70°C</span></span>
 									<span id="sg-ptfe-length-hast-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> недоступно для Hastelloy</span></span>
 									<label for="sg-ptfe-length" style="display: none; margin-left:0.1em"> длина, м:</label>
-									<input type="number" name="sg-ptfe-length" style="display: none; width: 4em" id="sg-ptfe-length" min="3" max="300" placeholder="3...300">
+									<input type="number" name="sg-ptfe-length" style="display: none; width: 4em" id="sg-ptfe-length" min="3" max="500" placeholder="3...500">
 								</div>
 								<div id="sg-add-cabel-length-div" style="display: none; margin-top:0.8em;">
 									<span>Кабель от усилителя сигнала:</span>

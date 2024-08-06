@@ -17,7 +17,7 @@
     },
     {
         "name": "Ex",
-        "description": "Искробезопасное исполнение.<br><a href='https://aplisens.ru/downloads/certificates/Сертификат%20Ех%20ДД%20до%2016.07.2024.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>",
+        "description": "Искробезопасное исполнение.",
         "electrical": [
             "PD",
             "PPD",
@@ -39,7 +39,7 @@
     },
     {
         "name": "Exd",
-        "description": "Взрывонепроницаемая оболочка.<br><a href='https://aplisens.ru/downloads/certificates/Сертификат%20Ех%20ДД%20до%2016.07.2024.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>",
+        "description": "Взрывонепроницаемая оболочка.",
         "electrical": [
             "APCALW",
             "FL_M20_1_5",

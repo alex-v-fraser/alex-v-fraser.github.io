@@ -574,11 +574,26 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     if (full_description.has("(-)")){full_description.delete("(-)")}
     if (full_description.has("Ex")){
         console.log("Замена описания на EX");
+        console.log(full_description);
         if (!full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("ex_description")!="undefined"){
             full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("ex_description"));
         }
         if (full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("exalw_description")!="undefined"){
             full_description.set([...full_description][0][0], device_restr_lst.get([...full_description][0][0]).get("exalw_description"));
+        }
+    }
+    for (let apr of ["Ex", "Exd"]){
+        if (full_description.has(apr)){
+            let ex_exd = (apr == "Ex") ? "Искробезопасное исполнение." : (apr == "Exd") ? "Взрывонепроницаемая оболочка." : "";
+            if (["PC-28", "PR-28", "APC-2", "APR-2", "SG-25"].some(word => code[0].startsWith(word))){
+                full_description.set(apr, ex_exd + "<br><a href='ex_certs/pressure_ex_cert.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>");
+            }
+            if (code[0]=="CTR" || code[0]=="CTU"){
+                full_description.set(apr, ex_exd + "<br><a href='ex_certs/ctr_ctu_ex_cert.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>");
+            }
+            if (code[0].startsWith("CT") && code[0]!="CTR" && code[0]!="CTU"){
+                full_description.set(apr, ex_exd + "<br><a href='ex_certs/ct_ex_cert.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>");
+            }
         }
     }
 
@@ -3011,6 +3026,13 @@ function disable_invalid_options(){
                 document.getElementById("err_" + els).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='hastelloy_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='hastelloy_err_cancel${num}'>${$("label[for=hastelloy]").text()}</label>`;
                 num+=1;
             }
+        }
+
+        if (typeof full_conf.get("sg-type")!="undefined" && full_conf.get("sg-type")=="sg-25s" && typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20"){
+            low_press = 0;
+            hi_press = hi_press > 197 ? 197 : hi_press;
+            min_range = min_range < 19.61 ? 19.61 : min_range;
+            document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...20 мH2O) и минимальная ширина " + min_range + " кПа (2 мH2O).";
         }
 
         if ($("select#sg-local-display").val()=="yes"){
