@@ -16,7 +16,7 @@ var hi_press = 100000;      // конец диапазона избыт, кПа
 var min_range = 2.5;        // мин ширина диапазона избыт, кПа
 var low_press_abs = 0;      // начало диапазона абс, кПа
 var hi_press_abs = 10000;   // конец диапазона абс, кПа
-var min_range_abs = 20.0;   // мин ширина диапазона абс, кПа
+var min_range_abs = 40.0;   // мин ширина диапазона абс, кПа
 var low_press_diff = -160; // начало диапазона перепад, кПа
 var hi_press_diff = 2500;   // конец диапазона перепад, кПа
 var min_range_diff = 1.6;   // мин ширина диапазона перепад, кПа
@@ -1748,7 +1748,7 @@ function disable_invalid_options(){
     min_range = full_conf.get("output")=="4_20H" ? 0.1 : 2.5;   // мин ширина диапазона избыт, кПа
     low_press_abs = 0;                              // начало диапазона абс, кПа
     hi_press_abs = 10000;                           // конец диапазона абс, кПа
-    min_range_abs = full_conf.get("output")=="4_20H" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
+    min_range_abs = full_conf.get("output")=="4_20H" ? 10 : 40.0;   // мин ширина диапазона абс, кПа
     low_press_diff = -160;                         // начало диапазона перепад, кПа
     hi_press_diff = 2500;                           // конец диапазона перепад, кПа
     min_range_diff = 1.6;                           // мин ширина диапазона перепад, кПа
@@ -3568,7 +3568,7 @@ $(function (){
                 min_range = main_dev=="apc-2000" ? 0.1 : 2.5;        // мин ширина диапазона избыт, кПа
                 low_press_abs = 0;      // начало диапазона абс, кПа
                 hi_press_abs = 10000;    // конец диапазона абс, кПа
-                min_range_abs = main_dev=="apc-2000" ? 10 : 20.0;   // мин ширина диапазона абс, кПа
+                min_range_abs = main_dev=="apc-2000" ? 10 : 40.0;   // мин ширина диапазона абс, кПа
                 document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + "кПа (избыточное давление).";
                 document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + "кПа (абсолютное давление).";;
                 console.log("33");
@@ -5055,6 +5055,16 @@ $(function(){
             if ($(this).prop("id")=="sg-ptfe-length"){
                 $("#sg-cabel-length").val($(this).val());
             }
+        }
+    })
+})
+
+$(function(){
+    $(':input[type="number"]').change(function(){
+        if (parseInt($(this).val()) < parseInt($(this).prop("min")) || parseInt($(this).val()) > parseInt($(this).prop("max")) || Number.isNaN(parseInt($(this).val()))){
+            $(this).css("color", "red").css("borderColor", "red");
+        }else{
+            $(this).css("color", "black").css("borderColor", "black");
         }
     })
 })
