@@ -279,7 +279,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 if (code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].endsWith("ABS")){
                     full_description.set(code[i], "Диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
                 }else{
-                    // let units = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
                     full_description.set(code[i], "Диапазон измерения."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
                 }
             }
@@ -289,8 +288,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     full_description.set(code[i], "Основной диапазон измерения абсолютного давления."); // от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
                     full_description.set(code[i+1], "Установленный диапазон измерения абсолютного давления."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0].slice(0,-3) + "
                 }else{
-                    // let units_0 = code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
-                    // let units = code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="мH" ? "мH2O" : code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0]=="ммH" ? "ммH2O" :  code[i+1].split("...")[1].match(/[a-zA-Zа-яА-я]+/g)[0];
                     full_description.set(code[i], "Основной диапазон измерения."); //  от " + code[i].split("...")[0] + " до " + code[i].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units_0 + "
                     full_description.set(code[i+1], "Установленный диапазон измерения."); // от " + code[i+1].split("...")[0] + " до " + code[i+1].split("...")[1].match(/\d+(\,\d+)?/g)[0] + " " + units + "
                 }
@@ -451,7 +448,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 code[i]=plus_minus + code[i];
             }
 
-            if (!(["ОG1", "OG2", "OG3", "T1", "SW", "SWT", "SWG", "SWG1", "CT"].some(word => code[0].startsWith(word)))){ //(!code[0].startsWith("CT")){
+            //if (!(["ОG1", "OG2", "OG3", "T1", "SW", "SWT", "SWG", "SWG1", "CT"].some(word => code[0].startsWith(word)))){ //(!code[0].startsWith("CT")){
                 for (item of search_names){
                     for (el of window[item + "_restr_lst"].values()){
                         if (el.get("name")==code[i] || el.get("code_name")==code[i]){
@@ -467,7 +464,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                         }
                     }
                 }
-            }
+            //}
             if(code[0].startsWith("CT")){
                 let t_code = (code[i].startsWith("2x")) ? code[i].slice(2,) : code[i];
                 let ad_descr = (code[i].startsWith("2x")) ? "<br>Количество сенсоров: 2шт." : "";
@@ -529,8 +526,45 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     }
                     full_description.set(code[i], "Кабельное исполнение типа " + code[i].split("(")[1].split(")")[0] + "<br>" + temp_desc0 + "<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
                 }
-                /////////////////ПРОДОЛЖИТЬ//////////////////////
             }
+            if(code[0]=="APC-2000ALW-L"){
+                if (code[i].startsWith("SG-25")){
+                    full_description.set(code[i], "Измерительный элемент, встроенный в корпус зонда " + code[i] + ".");
+                }
+            }
+            if (code[0]=="APC-2000ALW-L" || code[0].startsWith("SG-25")){
+                if (code[i]=="tytan"){
+                    full_description.set(code[i], "Корпус и мембрана зонда выполнены из титана.");
+                }
+                if (code[i].startsWith("ETFE-L=")){
+                    full_description.set(code[i], "Кабель с изоляцией из ETFE (этилентетрафторэтилен).<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                if (code[i].startsWith("ETFER-L=")){
+                    full_description.set(code[i], "Кабель с изоляцией из ETFE (этилентетрафторэтилен) для нефтепродуктов до 40°С.<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                if (code[i].startsWith("PU-L=") && code[1]!="100"){
+                    full_description.set(code[i], "Кабель с полиуретановой изоляцией для воды до 40°С.<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                if (code[i].startsWith("PU-L=") && code[1]=="100"){
+                    full_description.set(code[i], "Кабель с полиуретановой изоляцией (от блока вынесенной электроники до соединительной монтажной коробки).<br>Длина кабеля " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                if (code[i].startsWith("PTFE-L=")){
+                    full_description.set(code[i], "Защитная оболочка кабеля из фторопласта-4 (политетрафторэтилен).<br>Длина оболочки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+                if (code[i].startsWith("ETFE+PTFE-L=")){
+                    full_description.set(code[i], "Кабель с изоляцией из ETFE в защитной фторопластовой оболочке.<br>Длина кабеля и оболочки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
+                }
+            }
+            if (code[0]=="SG-25S.Smart" && code[i]=="hastelloy"){
+                full_description.set(code[i], "Мембрана зонда выполнена из сплава Hastelloy C276.");
+            }
+            if ((code[0]=="SG-25" || code[0]=="APC-2000ALW-L") && code[i]=="hastelloy"){
+                full_description.set(code[i], "Корпус и мембрана зонда выполнены из сплава Hastelloy C276.");
+            }
+            if ((code[0]=="SG-25.Smart" || code[0]=="SG-25S.Smart") && code[i]=="100"){
+                full_description.set(code[i], "Зонд с вынесенной электроникой для измерения уровня горячих сред с температурой до 100°С.");
+            }
+
         }
     }
 
@@ -2900,13 +2934,13 @@ function disable_invalid_options(){
             num+=1;
         }
 
-        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 157|| full_conf.get("range") < 15.68 || full_conf.get("end_range_kpa") > 157) || full_conf.get("begin_range_kpa") < 0){
+        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 157 || full_conf.get("range") < 15.68 || full_conf.get("end_range_kpa") > 157 || full_conf.get("begin_range_kpa") < 0)){
             $("label[for=tytan]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ ТИТАН
             $("#tytan").prop('disabled', true);            //// ДЕАКТИВАЦИЯ ТИТАНА ПО ДИАПАЗОНУ
             document.getElementById("err_tytan").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается 0...16 мH2O, минимальная ширина 1,6 мH2O.</label>`;
             num+=1;
         }
-        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 197|| full_conf.get("range") < 19.61 || full_conf.get("end_range_kpa") > 197) || full_conf.get("begin_range_kpa") < 0){
+        if (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 197 || full_conf.get("range") < 19.61 || full_conf.get("end_range_kpa") > 197 || full_conf.get("begin_range_kpa") < 0)){
             $("label[for=hastelloy]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ HASTELLOY
             $("#hastelloy").prop('disabled', true);            //// ДЕАКТИВАЦИЯ HASTELLOY ПО ДИАПАЗОНУ
             document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Допускается 0...16 мH2O, минимальная ширина 1,6 мH2O.</label>`;
@@ -2915,15 +2949,38 @@ function disable_invalid_options(){
 
         if (typeof full_conf.get("sg-env-temp")!="undefined" && parseInt(full_conf.get("sg-env-temp"))>40){ //// ДЕАКТИВАЦИЯ HASTELLOY ПО ТЕМПЕРАТУРЕ
             $("label[for=hastelloy]").addClass('disabled');    ////ПОМЕЧАЕМ СЕРЫМ HASTELLOY
-            $("#hastelloy").prop('disabled', true);            //// ДЕАКТИВАЦИЯ HASTELLOY ПО ДИАПАЗОНУ
+            $("#hastelloy").prop('disabled', true);            //// ДЕАКТИВАЦИЯ HASTELLOY ПО ТЕМПЕРАТУРЕ
             document.getElementById("err_hastelloy").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='sg-env-temp_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheck_sg_env_temp()'><label for='sg-env-temp_err_cancel${num}'>Температура. Допускается -30...40°С</label>`;
             num+=1;
         }
+        if (typeof full_conf.get("sg-env-temp")!="undefined" && parseInt(full_conf.get("sg-env-temp"))>80){ //// ЕСЛИ t>80 - Ограничить диапазон, только 4_20H, только AISI316
+            low_press = 0;
+            hi_press = hi_press > 150 ? 150 : hi_press;
+            min_range = min_range < 19.61 ? 19.61 : min_range;
+            document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...15 мH2O) и минимальная ширина " + min_range + " кПа (2 мH2O).";
+
+            for (let els of ["tytan", "4_20"]){
+                $("label[for=" + els + "]").addClass('disabled');
+                $("#" + els).prop('disabled', true);
+                document.getElementById("err_" + els).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='sg-env-temp_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheck_sg_env_temp()'><label for='sg-env-temp_err_cancel${num}'>Температура. Доступно до 80°С</label>`;
+                num+=1;
+            }
+        }
+
+        let condit1 = (typeof full_conf.get("range")!="undefined" && (full_conf.get("range") > 150 || full_conf.get("range") < 19.61 || full_conf.get("end_range_kpa") > 150 || full_conf.get("begin_range_kpa") < 0));
+        let condit2 = (typeof full_conf.get("material")!="undefined" && full_conf.get("material")!="aisi316");
+        let condit3 = (typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20");
+        if (condit1==true || condit2==true || condit3==true){ ///ОРГАНИЧЕНИЕ ТЕМПЕРАТУРЫ ПО ДИАПАЗОНУ, выходу, материалу для 100 град
+            if ($("#sg-env-temp").prop('max')>80){
+                $("#sg-env-temp").prop('max', 80).prop("placeholder", "до 80");
+            }
+        }
+
 
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="tytan"){ /// ДЛЯ ТИТАНА ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT
             low_press = 0;
-            hi_press = 157;
-            min_range = 15.68;
+            hi_press = hi_press > 157 ? 157 : hi_press;
+            min_range = min_range < 15.68 ? 15.68 : min_range;
             document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...16 мH2O) и минимальная ширина " + min_range + " кПа (1,6 мH2O).";
 
             for (let els of ["sg-25", "4_20", "Ex"]){
@@ -2936,8 +2993,8 @@ function disable_invalid_options(){
 
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")=="hastelloy"){ /// ДЛЯ HASTELLOY ОГРАНИЧИТЬ ДИАПАЗОН, SG-TYPE, OUTPUT, ТЕМПЕРАТУРУ
             low_press = 0;
-            hi_press = 197;
-            min_range = 19.61;
+            hi_press = hi_press > 197 ? 197 : hi_press;
+            min_range = min_range < 19.61 ? 19.61 : min_range;
             document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа (0...20 мH2O) и минимальная ширина " + min_range + " кПа (2 мH2O).";
 
             $("#sg-env-temp").prop('max', 40).prop("placeholder", "до 40");
@@ -4789,7 +4846,7 @@ $(function(){
     })
 })
 $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБЕЛЯ ЗОНДА В ЗАВИСИМОСТИ ОТ ТЕМПЕРАТУРЫ
-    $("#sg-env-temp, select#sg-cabel-type, select#sg-ptfe-type, #sg-cabel-select-field").change(function(){
+    $("#sg-env-temp, select#sg-cabel-type, select#sg-ptfe-type, #sg-cabel-select-field, #material-select-field").change(function(){
         if (Number.isNaN(parseInt($("#sg-env-temp").val())) || parseInt($("#sg-env-temp").val())>$("#sg-env-temp").prop("max") || parseInt($("#sg-env-temp").val())<$("#sg-env-temp").prop("min")){
             $("#sg-cabel-div").slideUp("slow");
             $("select#sg-cabel-type option[value=not_selected").prop('selected', true);
@@ -4800,7 +4857,12 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
             $("#sg-ptfe-length").prop("value", "").hide(300).removeClass("required");
         }else{
             $("#sg-cabel-div").slideDown("slow");
-            if (parseInt($("#sg-env-temp").val())>40){///ПРИ температуре больше 40 отключить PU кабель
+            if ($("#hastelloy").is(":checked")){ //если HASTELLOY - откл PTFE оболочку
+                $("select#sg-ptfe-type option[value=with-ptfe]").addClass('disabled');
+            }else{
+                $("select#sg-ptfe-type option[value=with-ptfe]").removeClass('disabled');
+            }
+            if (parseInt($("#sg-env-temp").val())>40 || $("#hastelloy").is(":checked")){///ПРИ температуре больше 40 или при выбранном HASTELLOY отключить PU кабель
                 $("select#sg-cabel-type option[value='PU']").addClass('disabled');
                 $("select#sg-cabel-type option[value='ETFER']").addClass('disabled');
             }else{
@@ -4822,6 +4884,7 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
 
             if ($("select#sg-cabel-type").val()!='not_selected' && !$("select#sg-cabel-type").find("option:selected").hasClass("disabled")){
                 $("#sg-cabel-type-error").hide();
+                $("#sg-cabel-type-hast-error").hide();
                 $("label[for=sg-cabel-length]").show(300);
                 $("#sg-cabel-length").show(300);
             }else{
@@ -4829,13 +4892,16 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
                 $("#sg-cabel-length").prop("value", "").hide();
                 if ($("select#sg-cabel-type").val()=='not_selected'){
                     $("#sg-cabel-type-error").hide();
+                    $("#sg-cabel-type-hast-error").hide();
                 }else{
-                    $("#sg-cabel-type-error").show(300);
+                    if (parseInt($("#sg-env-temp").val())>40){$("#sg-cabel-type-error").show(300);}
+                    if ($("#hastelloy").is(":checked")){$("#sg-cabel-type-hast-error").show(300);}
                 }
             }
 
             if ($("select#sg-ptfe-type").val()=='not_selected'){
                 $("#sg-ptfe-length-error").hide();
+                $("#sg-ptfe-length-hast-error").hide();
                 $("label[for=sg-ptfe-length]").hide();
                 $("#sg-ptfe-length").prop("value", "").hide().removeClass("required");
             }
@@ -4847,10 +4913,12 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
             if ($("select#sg-ptfe-type").val()=='with-ptfe' && $("select#sg-ptfe-type").find("option:selected").hasClass("disabled")){
                 $("label[for=sg-ptfe-length]").hide();
                 $("#sg-ptfe-length").prop("value", "").hide().removeClass("required");
-                $("#sg-ptfe-length-error").show(300);
+                if (parseInt($("#sg-env-temp").val())>70){$("#sg-ptfe-length-error").show(300);}
+                if ($("#hastelloy").is(":checked")){$("#sg-ptfe-length-hast-error").show(300);}
             }
             if ($("select#sg-ptfe-type").val()=='no-ptfe' && !$("select#sg-ptfe-type").find("option:selected").hasClass("disabled")){
                 $("#sg-ptfe-length-error").hide();
+                $("#sg-ptfe-length-hast-error").hide();
                 $("label[for=sg-ptfe-length]").hide();
                 $("#sg-ptfe-length").prop("value", "").hide().removeClass("required");
             }
@@ -4923,7 +4991,7 @@ function uncheck_sg_display(){
     disable_invalid_options();
 }
 
-function uncheck_sg_env_temp(){
+function uncheck_sg_env_temp(){  // ОТМЕНА ВЫБОРА ТЕМПЕРАТУРЫ SG
     $("#sg-env-temp").val('');
     $("#sg-cabel-div").slideUp("slow");
     $("select#sg-cabel-type option[value=not_selected").prop('selected', true);
@@ -4937,7 +5005,7 @@ function uncheck_sg_env_temp(){
 }
 
 $(function(){
-    $("#sg-cabel-length, #sg-ptfe-length").change(function(){
+    $("#sg-cabel-length, #sg-ptfe-length").change(function(){//// ОДНОВРЕМЕННАЯ ОДИНАКОВАЯ ДЛИНА PTFE и ETFE при t>80
         console.log($(this).prop("id"));
         if (parseInt($("#sg-env-temp").val())>80){
             if ($(this).prop("id")=="sg-cabel-length"){
