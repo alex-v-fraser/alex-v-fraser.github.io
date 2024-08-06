@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-06T15:40");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-06T16:03");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -130,7 +130,7 @@
 			</div>
 			<div id="main-dev-sg-25" class="main-dev">
 				<div class="img-hold"></div>
-				<div class="prod-name">SG-25</div>
+				<div class="prod-name">SG-25 (APC-2000ALW-L)</div>
 			</div>
 			<div id="main-dev-ctr" class="main-dev">
 				<div class="img-hold"></div>
@@ -153,7 +153,7 @@
 		<h1 class="apc-2000-panel-container" style="display:none;">Преобразователь давления APC-2000<br></h1>
 		<h1 class="pr-28-panel-container" style="display:none;">Преобразователь давления PR-28<br></h1>
 		<h1 class="apr-2000-panel-container" style="display:none;">Преобразователь давления APR-2000(2200)<br></h1>
-		<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25 В РАЗРАБОТКЕ!<br></h1>
+		<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25 (APC-2000ALW-L)<br></h1>
 		<h1 class="ctr-panel-container" style="display:none;">Преобразователь температуры<br></h1>
 		<h1 class="thermowell-panel-container" style="display:none;">Гильзы защитные<br></h1>
 		<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container thermowell-panel-container sg-25-panel-container" style="display:none;">
