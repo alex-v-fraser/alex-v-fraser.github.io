@@ -1554,7 +1554,7 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
         [0, 98.071, "0...10мH2O"],
         [0, 196.14, "0...20мH2O"]
     ];
-    main_range = "";
+    let main_range = "";
     if (data.get("output")=="4_20H" && data.get("sg-local-display")=="no"){
         if (data.get("material")=="aisi316"){
             let min_main_range = [-200000, 200000, ""];
@@ -1590,9 +1590,15 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
     range = (data.get("output")=="4_20H" && data.get("sg-local-display")=="no" && (((range=="0...10мH2O/" || range=="0...100мH2O/") && data.get("material")!="tytan") || (data.get("material")=="tytan" && range=="0...16мH2O/"))) ? "" : range;
     range = (data.get("sg-local-display")=="yes" && (range=="0...2,5мH2O/" || range=="0...10мH2O/" || range=="0...20мH2O/")) ? "" : range;
     let sg_ptfe = data.get("sg-ptfe-type")=="with-ptfe" ? "/PTFE-L=" + data.get("sg-ptfe-length") + "м" : "";
+    let special = ($("#spec_sg_hastelloy").is(":checked") && ((sg_type + output) =="SG-25S.Smart/")) ? "hastelloy/" : "";
+    $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
+        if ($(this).is(":checked") && $(this).val()!="Hastelloy"){
+            special = special + $(this).val() + "/";
+        }
+    })
 
     if (data.get("sg-local-display")=="no" && parseInt(data.get("sg-env-temp"))<=80){
-        code = sg_type + output + material + approval + main_range + range + data.get("sg-cabel-type") + "-L=" + data.get("sg-cabel-length") + "м" + sg_ptfe;
+        code = sg_type + output + special + material + approval + main_range + range + data.get("sg-cabel-type") + "-L=" + data.get("sg-cabel-length") + "м" + sg_ptfe;
     }
 
     if (data.get("sg-local-display")=="no" && parseInt(data.get("sg-env-temp"))>80){
