@@ -2921,6 +2921,8 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev")=="sg-25"){                                                       ///// ПРОВЕРКА ОПЦИЙ ЗОНДОВ SG-25
         $("#sg-env-temp").prop('max', 100).prop("placeholder", "до 100");
+        $("#sg-cabel-length").prop('min', 3).prop('max', 500).prop("placeholder", "3...500");
+        $("#sg-ptfe-length").prop('min', 3).prop('max', 500).prop("placeholder", "3...500");
         low_press = 0;
         hi_press = full_conf.get("output")=="4_20H" ? 1000 : 5000;
         min_range = full_conf.get("output")=="4_20H" ? 10 : 8;   // мин ширина диапазона SG, кПа
@@ -2934,6 +2936,17 @@ function disable_invalid_options(){
             }
         })
 
+
+        if (typeof full_conf.get("range")!="undefined"){/// УСТАНОВКА МИНИМАЛЬНОЙ ДЛИНЫ КАБЕЛЯ если выбран диапазон
+            let l_min = Math.round(full_conf.get("range")/9.807 + 0.6);
+            $("#sg-cabel-length").prop('min', l_min).prop("placeholder", l_min + "...500");
+
+        }
+        if (!Number.isNaN(parseInt($("#sg-cabel-length").val()))){/// УСТАНОВКА МАКСИМАЛЬНОЙ ДЛИНЫ PTFE оболочки равной длине кабеля
+            let l_max = parseInt($("#sg-cabel-length").val());
+            $("#sg-ptfe-length").prop('max', l_max).prop("placeholder", "3..." + l_max);
+
+        }
         for (let opts of ["sg-type", "output"]){ // ДЕАКТИВАЦИЯ ТИТАНА ИЛИ HASTELLOY по типу SG или OUTPUT
             if (typeof full_conf.get(opts)!="undefined"){
                 let disab = sg_table.get(opts).get(full_conf.get(opts));
