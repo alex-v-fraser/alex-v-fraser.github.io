@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-06T17:22");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-07T10:54");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -466,7 +466,7 @@
 						<div class="option-to-select-header"><span>Диапазон измерения</span></div>
 					</div>
 					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 sg-25" id="range-select" style="display: none;">
-						<fieldset class="range">
+						<fieldset class="range" id="range-select-field">
 							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="begin-range" style="width: 4em" id="begin-range" required onchange="range_selected(true)">
 							<input type="number" step="0.1" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="end-range" style="width: 4em" id="end-range" required onchange="range_selected(true)">
 							<select class="select-css-1" name="pressure-unit" id="pressure-unit-select" onchange="range_selected(true)">
@@ -664,7 +664,7 @@
 					<div class="option-to-select-list sg-25" id="sg-cabel-select" style="display: none;">
 						<fieldset id="sg-cabel-select-field" name="sg-cabel-select-field">
 							<label for="sg-env-temp">Температура измеряемой среды, °С:</label>
-							<input type="number" class="required" name="sg-env-temp" style="width: 4em; margin-left:4.4em" id="sg-env-temp" min="-15" max="100" placeholder="до 100">
+							<input type="number" class="required" onblur="this.value = parseInt(this.value)" name="sg-env-temp" style="width: 4em; margin-left:4.4em" id="sg-env-temp" min="-15" max="100" placeholder="до 100">
 							<div id="sg-cabel-div" style="display: none;">
 								<div style="margin-top:0.8em">
 									<span>Тип кабеля:</span>
@@ -677,7 +677,7 @@
 									<span id="sg-cabel-type-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> только до 40°C</span> </span>
 									<span id="sg-cabel-type-hast-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> недоступно для Hastelloy</span></span>
 									<label for="sg-cabel-length" style="display: none; margin-left:0.1em"> длина, м:</label>
-									<input type="number" class="required" name="sg-cabel-length" style="display: none; width: 4em" id="sg-cabel-length" min="3" max="500" placeholder="3...500">
+									<input type="number" class="required" onblur="this.value = parseInt(this.value)" name="sg-cabel-length" style="display: none; width: 4em" id="sg-cabel-length" min="3" max="500" placeholder="3...500">
 								</div>
 								<div style="margin-top:0.8em">
 									<span>Фторопластовая оболочка:</span>
@@ -689,12 +689,12 @@
 									<span id="sg-ptfe-length-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> только до 70°C</span></span>
 									<span id="sg-ptfe-length-hast-error" style="display: none;"><img src='images/attention.png' style='width: 1.1em; height: 1.1em'><span style='color: red'> недоступно для Hastelloy</span></span>
 									<label for="sg-ptfe-length" style="display: none; margin-left:0.1em"> длина, м:</label>
-									<input type="number" name="sg-ptfe-length" style="display: none; width: 4em" id="sg-ptfe-length" min="3" max="500" placeholder="3...500">
+									<input type="number" onblur="this.value = parseInt(this.value)" name="sg-ptfe-length" style="display: none; width: 4em" id="sg-ptfe-length" min="3" max="500" placeholder="3...500">
 								</div>
 								<div id="sg-add-cabel-length-div" style="display: none; margin-top:0.8em;">
 									<span>Кабель от усилителя сигнала:</span>
 									<label for="sg-add-cabel-length" style="margin-left:2.3em"> длина, м:</label>
-									<input type="number" name="sg-add-cabel-length" style="width: 4em" id="sg-add-cabel-length" min="3" max="300" placeholder="3...300">
+									<input type="number" onblur="this.value = parseInt(this.value)" name="sg-add-cabel-length" style="width: 4em" id="sg-add-cabel-length" min="3" max="300" placeholder="3...300">
 								</div>
 							</div>
 						</fieldset>

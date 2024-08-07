@@ -1617,7 +1617,7 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
     }
 
     if (data.get("sg-local-display")=="no" && parseInt(data.get("sg-env-temp"))>80){
-        code = sg_type + output  + "100/" + material + approval + range + "ETFE+PTFE-L=" + data.get("sg-cabel-length") + "м/PU-L=" + data.get("sg-add-cabel-length") + "м";
+        code = sg_type + output  + "100/" + special + material + approval + main_range + range + "ETFE+PTFE-L=" + data.get("sg-cabel-length") + "м/PU-L=" + data.get("sg-add-cabel-length") + "м";
     }
 
     if (data.get("sg-local-display")=="yes"){
@@ -2921,8 +2921,24 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev")=="sg-25"){                                                       ///// ПРОВЕРКА ОПЦИЙ ЗОНДОВ SG-25
         $("#sg-env-temp").prop('max', 100).prop("placeholder", "до 100");
-        $("#sg-cabel-length").prop('min', 3).prop('max', 500).prop("placeholder", "3...500");
-        $("#sg-ptfe-length").prop('min', 3).prop('max', 500).prop("placeholder", "3...500");
+        if (typeof full_conf.get("range")=="undefined"){
+            $("#sg-cabel-length").prop('min', 3).prop('max', 500).prop("placeholder", "3...500");
+        }else{                                                  /// УСТАНОВКА МИНИМАЛЬНОЙ ДЛИНЫ КАБЕЛЯ если выбран диапазон
+            let l_min = Math.round(full_conf.get("range")/9.807 + 0.6);
+            let l_max = $("#sg-cabel-length").prop("max");
+            let p_holder = l_min + "..." + l_max;
+            $("#sg-cabel-length").prop('min', l_min).prop("placeholder", p_holder);
+            $("#sg-ptfe-length").prop('min', l_min).prop("placeholder", p_holder);
+        }
+        if (typeof full_conf.get("sg-cabel-length")=="undefined"){
+            $("#sg-ptfe-length").prop('min', 3).prop('max', 500).prop("placeholder", "3...500");
+        }else{
+            let l_min_p = $("#sg-ptfe-length").prop("min");
+            let l_max_p = full_conf.get("sg-cabel-length");
+            let p_holder_p = l_min_p + "..." + l_max_p;
+            $("#sg-ptfe-length").prop('max', l_max_p).prop("placeholder", p_holder_p);
+        }
+
         low_press = 0;
         hi_press = full_conf.get("output")=="4_20H" ? 1000 : 5000;
         min_range = full_conf.get("output")=="4_20H" ? 10 : 8;   // мин ширина диапазона SG, кПа
@@ -2936,17 +2952,6 @@ function disable_invalid_options(){
             }
         })
 
-
-        if (typeof full_conf.get("range")!="undefined"){/// УСТАНОВКА МИНИМАЛЬНОЙ ДЛИНЫ КАБЕЛЯ если выбран диапазон
-            let l_min = Math.round(full_conf.get("range")/9.807 + 0.6);
-            $("#sg-cabel-length").prop('min', l_min).prop("placeholder", l_min + "...500");
-
-        }
-        if (!Number.isNaN(parseInt($("#sg-cabel-length").val()))){/// УСТАНОВКА МАКСИМАЛЬНОЙ ДЛИНЫ PTFE оболочки равной длине кабеля
-            let l_max = parseInt($("#sg-cabel-length").val());
-            $("#sg-ptfe-length").prop('max', l_max).prop("placeholder", "3..." + l_max);
-
-        }
         for (let opts of ["sg-type", "output"]){ // ДЕАКТИВАЦИЯ ТИТАНА ИЛИ HASTELLOY по типу SG или OUTPUT
             if (typeof full_conf.get(opts)!="undefined"){
                 let disab = sg_table.get(opts).get(full_conf.get(opts));
@@ -3318,6 +3323,13 @@ function disable_invalid_options(){
     }
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
+    $(':input[type="number"]').each(function(){
+        if (parseInt($(this).val()) < parseInt($(this).prop("min")) || parseInt($(this).val()) > parseInt($(this).prop("max")) || Number.isNaN(parseInt($(this).val()))){
+            $(this).css("color", "red").css("borderColor", "red");
+        }else{
+            $(this).css("color", "black").css("borderColor", "black");
+        }
+    })
 
     ///ПРОВЕРКА ПОЛНОТЫ КОНФИГУРАЦИИ
     for (let x of full_conf.values()){
@@ -4170,7 +4182,6 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     $("label").removeClass('disabled');
     $("#code-entered-button-ok").prop("style", "display:inline-block");
     $("#reset-config").prop("style", "display:none");
-    $("#sg-local-display-div").hide();
     document.getElementById("code").value = "";
     document.getElementById("codeError").innerHTML = "";
     document.getElementById("codeDescription").innerHTML = "";
@@ -4973,11 +4984,14 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
 })
 
 $(function(){
-    $("#sg-cabel-select-field").change(function(){
+    $("#sg-cabel-select-field, #range-select-field").change(function(){
+        if (!Number.isNaN(parseInt($("#sg-cabel-length").val()))){/// УСТАНОВКА МАКСИМАЛЬНОЙ ДЛИНЫ PTFE оболочки равной длине кабеля
+            let l_min = (parseInt($("#sg-env-temp").val())>80) ? parseInt($("#sg-cabel-length").val()) : $("#sg-ptfe-length").prop("min");
+            let l_max = parseInt($("#sg-cabel-length").val());
+            let p_holder = l_min + "..." + l_max;
+            $("#sg-ptfe-length").prop('max', l_max).prop("placeholder", p_holder);
+        }
         let filled = true;
-        // if ($("#sg-ptfe-length-error").not(":visible") && $("#sg-cabel-type-error").not(":visible")){
-        //     filled = false;
-        // }
         if ($("#sg-cabel-select-field").find("select option[value=not_selected]:selected").length!=0){
             filled = false;
         }
@@ -4990,8 +5004,10 @@ $(function(){
             }
         });
         if (filled==true){
-            expand_next_div("sg-env-temp");
-            disable_invalid_options();
+            if ($("#sg-cabel-select").is(":visible")){
+                expand_next_div("sg-env-temp");
+                disable_invalid_options();
+            }
         }else{
             $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
             disable_invalid_options();
@@ -5047,7 +5063,6 @@ function uncheck_sg_env_temp(){  // ОТМЕНА ВЫБОРА ТЕМПЕРАТУ
 
 $(function(){
     $("#sg-cabel-length, #sg-ptfe-length").change(function(){//// ОДНОВРЕМЕННАЯ ОДИНАКОВАЯ ДЛИНА PTFE и ETFE при t>80
-        console.log($(this).prop("id"));
         if (parseInt($("#sg-env-temp").val())>80){
             if ($(this).prop("id")=="sg-cabel-length"){
                 $("#sg-ptfe-length").val($(this).val());
@@ -5055,16 +5070,6 @@ $(function(){
             if ($(this).prop("id")=="sg-ptfe-length"){
                 $("#sg-cabel-length").val($(this).val());
             }
-        }
-    })
-})
-
-$(function(){
-    $(':input[type="number"]').change(function(){
-        if (parseInt($(this).val()) < parseInt($(this).prop("min")) || parseInt($(this).val()) > parseInt($(this).prop("max")) || Number.isNaN(parseInt($(this).val()))){
-            $(this).css("color", "red").css("borderColor", "red");
-        }else{
-            $(this).css("color", "black").css("borderColor", "black");
         }
     })
 })
