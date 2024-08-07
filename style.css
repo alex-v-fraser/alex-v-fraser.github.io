@@ -217,6 +217,7 @@ input[type=checkbox]:hover + label:hover {
 .main-dev {
     display: inline-block;
     border: 2px solid #eee;
+    border-radius: .5em;
     width: 250px;
     height: 250px;
     font-size: 20px;
@@ -230,7 +231,15 @@ input[type=checkbox]:hover + label:hover {
     cursor: pointer;
 }
 .main-dev:hover {
-    border-style: groove;
+    /* border-style: groove; */
+    z-index: 999;
+    box-shadow: 3px 3px 30px rgb(73, 73, 73);
+    -webkit-transform: scale(1.03);
+    -moz-transform: scale(1.03);
+    -o-transform: scale(1.03);
+    transform: scale(1.03);
+    transition: all 0.3s;
+    -webkit-transition: all 0.3s
 }
 #main-dev-pc-28 {
     background: no-repeat center/80% url("images/3b7f912030e372732ce4970ff6d500ca.jpg");
