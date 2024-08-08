@@ -555,7 +555,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     full_description.set(code[i], "Кабель с изоляцией из ETFE в защитной фторопластовой оболочке.<br>Длина кабеля и оболочки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
                 }
             }
-            if (code[0]=="SG-25S.Smart" && code[i]=="hastelloy"){
+            if ((code[0]=="SG-25S.Smart" || code[0]=="SG-25S") && code[i]=="hastelloy"){
                 full_description.set(code[i], "Мембрана зонда выполнена из сплава Hastelloy C276.");
             }
             if ((code[0]=="SG-25" || code[0]=="APC-2000ALW-L") && code[i]=="hastelloy"){
@@ -1605,7 +1605,7 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
     range = (data.get("output")=="4_20H" && data.get("sg-local-display")=="no" && (((range=="0...10мH2O/" || range=="0...100мH2O/") && data.get("material")!="tytan") || (data.get("material")=="tytan" && range=="0...16мH2O/"))) ? "" : range;
     range = (data.get("sg-local-display")=="yes" && (range=="0...2,5мH2O/" || range=="0...10мH2O/" || range=="0...20мH2O/")) ? "" : range;
     let sg_ptfe = data.get("sg-ptfe-type")=="with-ptfe" ? "/PTFE-L=" + data.get("sg-ptfe-length") + "м" : "";
-    let special = ($("#spec_sg_hastelloy").is(":checked") && ((sg_type + output) =="SG-25S.Smart/")) ? "hastelloy/" : "";
+    let special = ($("#spec_sg_hastelloy").is(":checked") && ((sg_type + output) =="SG-25S.Smart/" || (sg_type + output) =="SG-25S/")) ? "hastelloy/" : "";
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
         if ($(this).is(":checked") && $(this).val()!="Hastelloy"){
             special = special + $(this).val() + "/";
@@ -2476,6 +2476,23 @@ function disable_invalid_options(){
                 document.getElementById("err_" +entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='cabel-list_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='cabel-list_err_cancel${num}'>${$("label[for=cabel-list]").text()}</label>`;
                 num+=1;
             }
+            if (["ctr-K1", "ctr-K2"].some(word => full_conf.get("cabel")==word)){
+                console.log("ОСТАВИТЬ ТОЛЬКО БЕЗ ПРИСОЕДИИЕНИЯ");
+                for (let entr of ["thread", "flange", "hygienic"]){
+                    $("label[for=ctr-"+ entr +"-list]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                    $("#ctr-"+ entr + "-list").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                    document.getElementById("err_ctr-" + entr  + "-list").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("cabel")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("cabel")}_err_cancel${num}'>${$("label[for=" + full_conf.get("cabel") + "]").text()}</label>`;
+                    num+=1;
+                }
+            }
+        }
+        if (typeof full_conf.get("ctr-connection-type")!="undefined" && full_conf.get("ctr-connection-type")!="ctr-no-connection"){
+            for (let entr of ["ctr-K1", "ctr-K2"]){
+                $("label[for="+ entr).addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#"+ entr).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + entr).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("ctr-connection-type")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("ctr-connection-type")}_err_cancel${num}'>${$("label[for=" + full_conf.get("ctr-connection-type") + "]").text()}</label>`;
+                num+=1;
+            }
         }
         if (full_conf.has("nohead")){ // ДЕАКТИВАЦИЯ Exd и 4_20H для NoHead
             $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
@@ -2603,19 +2620,21 @@ function disable_invalid_options(){
             if (typeof entr[1].get("end_range") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range")){
                 $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ material
                 $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ material
-                document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("end_range")}_err_cancel${num}'>Температура. Допускается до ${entr[1].get("end_range")}°C.</label>`;
-                num+=1;
+                if (document.getElementById("err_"+entr[0])!=null){
+                    document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("end_range")}_err_cancel${num}'>Температура. Допускается до ${entr[1].get("end_range")}°C.</label>`;
+                    num+=1;
+                }
             }
         }
 
-        for (let entr of window["cabel_restr_lst"].entries()){   // ДЕКАТИВАЦИЯ cabel по ТЕМПЕРАТУРЕ
-            if (typeof entr[1].get("end_range") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range")){
-                $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ cabel
-                $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ cabel
-                document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("end_range")}_err_cancel${num}'>Температура. Допускается до ${entr[1].get("end_range")}°C.</label>`;
-                num+=1;
-            }
-        }
+        // for (let entr of window["cabel_restr_lst"].entries()){                                                                   // ДЕКАТИВАЦИЯ cabel по ТЕМПЕРАТУРЕ
+        //     if (typeof entr[1].get("end_range") !== 'undefined' && full_conf.get("ctr_end_range")>entr[1].get("end_range")){
+        //         $("label[for="+ entr[0] +"]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ по ТЕМПЕРАТУРЕ cabel
+        //         $("#"+entr[0]).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ cabel
+        //         document.getElementById("err_"+entr[0]).innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("end_range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckCTRRange()'><label for='${full_conf.get("end_range")}_err_cancel${num}'>Температура. Допускается до ${entr[1].get("end_range")}°C.</label>`;
+        //         num+=1;
+        //     }
+        // }
 
         if (typeof full_conf.get("ctr_end_range")!='undefined' && full_conf.get("ctr_end_range")>450){///ДЕАКТИВАЦИЯ Exd для темп >450
             $("label[for=Exd]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЙ Exd
@@ -2826,15 +2845,15 @@ function disable_invalid_options(){
             document.getElementById("err_ceramic").innerHTML += `<input type='checkbox' name='ctr_diameter_err_cancel' value='' id='ctr_diameter_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeDiameterTo22()'><label for='ctr_diameter_err_cancel${num}'>Диаметр. Доступно только 10 или 15 мм.</label>`;
             num+=1;
         }
-        if(typeof full_conf.get("ctr_cabel_type")!="undefined"){///ОГРАНИЧИТЬ ТЕМПЕРАТУРУ В ЗАВИСИМОСТИ ОТ КАБЕЛЯ
-            let cabel_max_temp = window["cabel_restr_lst"].get("ctr-" + full_conf.get("ctr_cabel_type").toLowerCase()).get("end_range");
-            ctr_high_temp = cabel_max_temp < ctr_high_temp ? cabel_max_temp : ctr_high_temp;
-            $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
-            $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
-            document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
-            document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}'>${$("label[for=ctr-"+full_conf.get("ctr_cabel_type").toLowerCase()+"]").text()}</label>`;
-            num+=1;
-        }
+        // if(typeof full_conf.get("ctr_cabel_type")!="undefined"){///ОГРАНИЧИТЬ ТЕМПЕРАТУРУ В ЗАВИСИМОСТИ ОТ КАБЕЛЯ
+        //     let cabel_max_temp = window["cabel_restr_lst"].get("ctr-" + full_conf.get("ctr_cabel_type").toLowerCase()).get("end_range");
+        //     ctr_high_temp = cabel_max_temp < ctr_high_temp  ? cabel_max_temp : ctr_high_temp;
+        //     $("input[name=ctr-begin-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+        //     $("input[name=ctr-end-range]").prop('min', ctr_low_temp).prop('max', ctr_high_temp);
+        //     document.getElementById("ctr-range_warning").innerHTML = `<img src='images/attention.png' style='width: 1.3em; height: 1.3em'> <span style='color:red'>Выберите диапазон от ${ctr_low_temp} до ${ctr_high_temp}°C</span>`;
+        //     document.getElementById("err_ctr-range").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='ctr-${full_conf.get("ctr_cabel_type").toLowerCase()}_err_cancel${num}'>${$("label[for=ctr-"+full_conf.get("ctr_cabel_type").toLowerCase()+"]").text()}</label>`;
+        //     num+=1;
+        // }
 
         if ($("input[name=ctr-ALW-type]:checked").val()=="WW"){ //// Для WW диаметр только 6мм
             $("#ctr-diameter option").each(function(){

@@ -2,19 +2,19 @@
     {
         "name": "ctr-silicon",
         "code_name": "silicon",
-        "description": "Кабель силиконовый.",
+        "description": "Кабель силиконовый (рабочая температура до 200°С).",
         "end_range": 200
     },
     {
         "name": "ctr-ptfe",
         "code_name": "ptfe",
-        "description": "Кабель тефлоновый.",
+        "description": "Кабель тефлоновый (рабочая температура до 250°С).",
         "end_range": 250
     },
     {
         "name": "ctr-sv",
         "code_name": "sv",
-        "description": "Кабель стекловолоконный.",
+        "description": "Кабель стекловолоконный (рабочая температура до 400°С).",
         "end_range": 400
     }
 ]
