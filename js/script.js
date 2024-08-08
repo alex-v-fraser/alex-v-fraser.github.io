@@ -179,7 +179,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     for (let i=0; i<code.length; i++){
 
         if (typeof code[i+1]!='undefined'){
-            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i]!="OG1" && (code[i+1].slice(0,1)=="2" || code[i+1].slice(0,1)=="4" || code[i+1].slice(0,1)=="8")) || (code[i].slice(-2)=="G3" && code[i]!="OG3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1]=="см2") || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex")){
+            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i]!="OG1" && (code[i+1].slice(0,1)=="2" || code[i+1].slice(0,1)=="4" || code[i+1].slice(0,1)=="8")) || (code[i].slice(-2)=="G3" && code[i]!="OG3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1].startsWith("см2")) || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex")){
                 code.splice(i, 2, code[i] + "/" + code[i+1]);
             }
         }
