@@ -274,6 +274,9 @@ input[type=checkbox]:hover + label:hover {
 #main-dev-thermowell {
     background: no-repeat center/80% url("images/b7992943d061c628cae2e4263c6e4b6a.png");
 }
+#main-dev-pem-1000 {
+    background: no-repeat center/80% url("images/pem-1000-main.png");
+}
 *,
 *::before,
 *::after {

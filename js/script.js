@@ -5092,3 +5092,79 @@ $(function(){
         }
     })
 })
+
+$(function(){
+    $("#pem-1000-q_nom").change(function(){ /// ПРИ ВЫБОРЕ НОМИНАЛЬНОГО РАСХОДА ОСТАВЛЯЕМ ПОДХОДЯЩИЕ DN, остальные прячем
+        let q_nom = parseFloat($(this).val());
+        let v_nom = 0;
+        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max"))){
+            console.log("Q_NOM НЕ ОК!!!");
+            $("#pem-1000-dn-div").slideUp("slow");
+            $("#pem-1000-range-div").slideUp("slow");
+            $("select#pem-1000-dn-select option[value=not_selected]").prop("selected", true);
+            $("#pem-1000-begin-range").val("");
+            $("#pem-1000-end-range").val("");
+        }else{
+            console.log("Q_NOM ОК!!!");
+            $("#pem-1000-dn-div").slideDown("slow");
+            $("select#pem-1000-dn-select option").each(function(){
+                if ($(this).val()!="not_selected"){
+                    let dn = parseInt($(this).val());
+                    v_nom = (353.677 * q_nom)/(dn**2);
+                    if (v_nom>2 && v_nom<6){
+                        console.log("Для v_nom: ", v_nom, " подходит DN: ", dn);
+                        $(this).show();
+                    }else{
+                        $(this).hide();
+                        if ($(this).prop("selected")==true){
+                            $("select#pem-1000-dn-select option[value=not_selected]").prop("selected", true);
+                            $("#pem-1000-range-div").slideUp("slow");
+                            $("#pem-1000-begin-range").val("");
+                            $("#pem-1000-end-range").val("");
+                        }
+                    }
+                }
+            })
+        }
+        disable_invalid_options();
+    })
+})
+$(function(){
+    $("select#pem-1000-dn-select").change(function () { //// При выборе DN считаем и устанавливаем МИН и МАКС расход в ДИАПАЗОН
+        let dn = parseInt($(this).val());
+        if (!Number.isNaN(dn)){
+            $("#pem-1000-range-div").slideDown("slow");
+            let q_min = ((0.3*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+            let q_max = ((6*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+            $("#pem-1000-begin-range").prop("min", q_min).prop("max", q_max).prop("placeholder", "от " + q_min.split(".").join(",")).val("");
+            $("#pem-1000-end-range").prop("min", q_min).prop("max", q_max).prop("placeholder", "до " + q_max.split(".").join(",")).val("");
+        }else{
+            $("#pem-1000-range-div").slideUp("slow");
+        }
+        disable_invalid_options();
+    });
+})
+
+$(function(){
+    $("#pem-1000-range-select-field").change(function(){
+        let filled = true;
+        if ($("#pem-1000-range-select-field").find("select option[value=not_selected]:selected").length!=0){
+            filled = false;
+        }
+        $("#pem-1000-range-select-field").find("input").each(function(){
+            if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
+                filled = false;
+            }
+        });
+        if (filled==true){
+            if ($("#pem-1000-range-select-field").is(":visible")){
+                expand_next_div("pem-1000-q_nom");
+                disable_invalid_options();
+            }
+        }else{
+            $("#pem-1000-q_nom").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+            disable_invalid_options();
+        }
+    })
+})
+
