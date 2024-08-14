@@ -183,6 +183,10 @@
 						<fieldset id="pem-1000-type-select-field" name="pem-1000-type-select-field">
 							<input type="checkbox" name="pem-1000-type" value="ALW" id="pem-1000alw" class="custom-checkbox"><label for="pem-1000alw" class="tooltiped"><b>ALW</b> - компактное</label><div id="err_pem-1000alw"  style="display:none;"></div>
 							<input type="checkbox" name="pem-1000-type" value="NW" id="pem-1000nw" class="custom-checkbox"><label for="pem-1000nw" class="tooltiped"><b>NW</b> - раздельное</label><div id="err_pem-1000nw"  style="display:none;"></div>
+							<div id="pem-1000-cabel-length-div" style="display: none">
+								<label for="pem-1000-cabel-length" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Длина кабеля, м</label>
+								<input type="number" step="1" name="pem-1000-cabel-length" id="pem-1000-cabel-length" min="8" max="50" placeholder="8...50" style="width: 3.5em" required onchange="pem_cabel_changed()">
+							</div>
 						</fieldset>
 					</div>
 
@@ -194,7 +198,7 @@
 						<fieldset id="pem-1000-range-select-field" name="pem-1000-range-select-field">
 							<label for="pem-1000-q_nom" style="margin-top: 0.5em; display: inline-block">Номинальный расход, м³/ч:</label>
 							<input type="number" step="0.001" name="pem-1000-q_nom" id="pem-1000-q_nom" min="0.6" max="11500" placeholder="0,6...11500" style="width: 5.5em; margin-left: 0.1em;" required>
-							<div id="pem-1000-dn-div" style="display: none; margin-top: 0.5em;">
+							<div id="pem-1000-dn-div" style="margin-top: 0.5em;">
 								<span id="pem-1000-dn-span">Номинальный диаметр DN</span>
 								<select class="select-css-1" name="pem-1000-dn-select" id="pem-1000-dn-select" style="margin-left: 0.1em; width: 5.5em;">
 									<option value="not_selected" selected>----?----</option>
@@ -220,11 +224,20 @@
 									<option value="800">800</option>
 									<option value="1000">1000</option>
 								</select>
+								<span id="pem-1000-pn-span">PN</span>
+								<select class="select-css-1" name="pem-1000-pn-select" id="pem-1000-pn-select" style="width: 5.5em;">
+									<option value="not_selected" selected>---</option>
+									<option value="PN10">10</option>
+									<option value="PN16">16</option>
+									<option value="PN25">25</option>
+									<option value="PN40">40</option>
+								</select>
+								<div id="eerr_pem-1000-dn" style="display: none;"></div>
 							</div>
 							<div id="pem-1000-range-div" style="display: none; margin-top: 0.5em">
 								<label for="pem-1000-begin-range">Диапазон измерения, м³/ч: </label>
 								<input type="number" step="0.001" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="pem-1000-begin-range" id="pem-1000-begin-range" style="width: 5.5em; margin-left:0.5em" required>
-								<span>...</span>
+								<span style="margin-left: 0.2em; margin-right: 0.2em;">...</span>
 								<input type="number" step="0.001" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="pem-1000-end-range" id="pem-1000-end-range" style="width: 5.5em" required>
 							</div>
 

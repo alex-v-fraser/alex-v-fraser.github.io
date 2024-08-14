@@ -3080,6 +3080,16 @@ function disable_invalid_options(){
         }
 
     }
+    if (full_conf.get("main_dev")=="pem-1000"){ // ПРОВЕРКА ОПЦИЙ РАСХОДОМЕРА
+        let dn = parseInt($("select#pem-1000-dn-select").val());
+        let q_nom_valid = q_nom_calc(dn);
+        $("#pem-1000-q_nom").prop("min", q_nom_valid[0]).prop("max", q_nom_valid[1]).prop("placeholder", q_nom_valid[0].toString().split(".").join(",") + "..." + q_nom_valid[1].toString().split(".").join(","));
+        if ($("#pem-1000nw").is(":checked")){
+            $("#pem-1000-cabel-length-div").slideDown("slow");
+        }else{
+            $("#pem-1000-cabel-length-div").slideUp("slow");
+        }
+    }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
         $("label[for=0_16]").prop("style", "display:block");
@@ -3343,7 +3353,7 @@ function disable_invalid_options(){
 
     $("div.color-mark-field.special.unselected").removeClass("unselected");
     $(':input[type="number"]').each(function(){
-        if (parseInt($(this).val()) < parseInt($(this).prop("min")) || parseInt($(this).val()) > parseInt($(this).prop("max")) || Number.isNaN(parseInt($(this).val()))){
+        if (parseFloat($(this).val()) < parseFloat($(this).prop("min")) || parseFloat($(this).val()) > parseFloat($(this).prop("max")) || Number.isNaN(parseInt($(this).val()))){
             $(this).css("color", "red").css("borderColor", "red");
         }else{
             $(this).css("color", "black").css("borderColor", "black");
@@ -3444,6 +3454,11 @@ $(function (){
             }
             if ($(this).prop("id")=="c-pr" || $(this).prop("id")=="minus-c-pr"){ //$(this).prop("id")=="P" ||  || $(this).prop("id")=="minus-P"
                 CorPSelected($(this).prop("id"), true);
+                return;
+            }
+            if ($(this).prop("id")=="pem-1000nw"){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                disable_invalid_options();
                 return;
             }
             console.log("1");
@@ -4171,7 +4186,7 @@ $(function(){       // ПРИ ВОЗВРАТЕ В ГЛАВНОЕ МЕНЮ
 
 function resetConfig(){///СБРОС КОНФИГУРАТОРА
     console.log("СБРОС КОНФИГУРАТОРА");
-    for (let classes of ['.thread-flange-hygienic', '.minus-thread-flange-hygienic', '.thermoresistor-thermocouple', '.head-nohead-cabel']) {
+    for (let classes of ['.thread-flange-hygienic', '.minus-thread-flange-hygienic', '.thermoresistor-thermocouple', '.head-nohead-cabel', '#eerr_pem-1000-dn', '#pem-1000-range-div']) {
         $(classes).hide(0);
     }
     $('body input:checkbox:checked').each(function(){
@@ -4183,7 +4198,7 @@ function resetConfig(){///СБРОС КОНФИГУРАТОРА
     for (let ids of ["cap-or-not-radiator-select", "cap-plus-radiator-select", "cap-minus-radiator-select", "cap-or-not-length-span", "cap-plus-length-span", "cap-minus-length-span", "cap-or-not-radiator-select-err", "cap-plus-radiator-select-err", "cap-minus-radiator-select-err", "cap-or-not-length-span-err", "cap-plus-length-span-err", "cap-minus-length-span-err"]){
         document.getElementById(ids).hidden = true;
     }
-    for (let ids of ["ctr-flange-select", "ctr-thread-select", "ctr-hygienic-select", "quantity-accuracy-wiring"]){
+    for (let ids of ["ctr-flange-select", "ctr-thread-select", "ctr-hygienic-select", "quantity-accuracy-wiring", "pem-1000-cabel-length-div"]){
         $("#"+ids).prop("style", "display:none");
     }
     $("select option[value='not_selected']").each(function(){
@@ -5094,55 +5109,50 @@ $(function(){
 })
 
 $(function(){
-    $("#pem-1000-q_nom").change(function(){ /// ПРИ ВЫБОРЕ НОМИНАЛЬНОГО РАСХОДА ОСТАВЛЯЕМ ПОДХОДЯЩИЕ DN, остальные прячем
-        let q_nom = parseFloat($(this).val());
-        let v_nom = 0;
-        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max"))){
-            console.log("Q_NOM НЕ ОК!!!");
-            $("#pem-1000-dn-div").slideUp("slow");
-            $("#pem-1000-range-div").slideUp("slow");
-            $("select#pem-1000-dn-select option[value=not_selected]").prop("selected", true);
-            $("#pem-1000-begin-range").val("");
-            $("#pem-1000-end-range").val("");
-        }else{
-            console.log("Q_NOM ОК!!!");
-            $("#pem-1000-dn-div").slideDown("slow");
+    $("#pem-1000-q_nom, select#pem-1000-dn-select").change(function(){ /// ПРИ ВЫБОРЕ НОМИНАЛЬНОГО РАСХОДА ОСТАВЛЯЕМ ПОДХОДЯЩИЕ DN, остальные class disabled, при выборе DN расчет расхода
+        let filled = true;
+        let q_nom = parseFloat($("#pem-1000-q_nom").val());
+        let dn = parseInt($("select#pem-1000-dn-select").val());
+        let q_nom_valid = q_nom_calc(dn);
+        let q_min = ((0.3*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+        $("#pem-1000-q_nom").prop("min", q_nom_valid[0]).prop("max", q_nom_valid[1]).prop("placeholder", q_nom_valid[0] + "..." + q_nom_valid[1]);
+        $("#eerr_pem-1000-dn").prop("innerHTML", `<img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;Допустимый номинальный расход ${q_nom_valid[0].toString().split(".").join(",")}...${q_nom_valid[1].toString().split(".").join(",")} м³/ч.</span>`);
+        $("#pem-1000-begin-range").prop("min", 0).prop("max", q_nom_valid[1]).prop("placeholder", "от 0").val("");
+        $("#pem-1000-end-range").prop("min", q_min).prop("max", q_nom_valid[1]).prop("placeholder", "до " + q_nom_valid[1].toString().split(".").join(",")).val("");
+        if (!Number.isNaN(q_nom)){
             $("select#pem-1000-dn-select option").each(function(){
                 if ($(this).val()!="not_selected"){
-                    let dn = parseInt($(this).val());
-                    v_nom = (353.677 * q_nom)/(dn**2);
+                    let v_nom = (353.677 * q_nom)/(($(this).val())**2);
                     if (v_nom>2 && v_nom<6){
-                        console.log("Для v_nom: ", v_nom, " подходит DN: ", dn);
-                        $(this).show();
+                        $(this).removeClass("disabled");
                     }else{
-                        $(this).hide();
-                        if ($(this).prop("selected")==true){
-                            $("select#pem-1000-dn-select option[value=not_selected]").prop("selected", true);
-                            $("#pem-1000-range-div").slideUp("slow");
-                            $("#pem-1000-begin-range").val("");
-                            $("#pem-1000-end-range").val("");
-                        }
+                        $(this).addClass("disabled");
                     }
                 }
             })
-        }
-        disable_invalid_options();
-    })
-})
-$(function(){
-    $("select#pem-1000-dn-select").change(function () { //// При выборе DN считаем и устанавливаем МИН и МАКС расход в ДИАПАЗОН
-        let dn = parseInt($(this).val());
-        if (!Number.isNaN(dn)){
-            $("#pem-1000-range-div").slideDown("slow");
-            let q_min = ((0.3*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
-            let q_max = ((6*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
-            $("#pem-1000-begin-range").prop("min", q_min).prop("max", q_max).prop("placeholder", "от " + q_min.split(".").join(",")).val("");
-            $("#pem-1000-end-range").prop("min", q_min).prop("max", q_max).prop("placeholder", "до " + q_max.split(".").join(",")).val("");
         }else{
+            $("select#pem-1000-dn-select option").each(function(){
+                if ($(this).val()!="not_selected"){
+                    $(this).removeClass("disabled");
+                }
+            })
+        }
+        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")) || $("select#pem-1000-dn-select").val()=="not_selected" || $("select#pem-1000-dn-select option:selected").hasClass("disabled")){
+            filled = false;
+        }
+        if (filled === true) {
+            $("#eerr_pem-1000-dn").slideUp("slow");
+            $("#pem-1000-range-div").slideDown("slow");
+        }else{
+            if ($("select#pem-1000-dn-select").val()!="not_selected"){
+                $("#eerr_pem-1000-dn").slideDown("slow");
+            }else{
+                $("#eerr_pem-1000-dn").slideUp("slow");
+            }
             $("#pem-1000-range-div").slideUp("slow");
         }
         disable_invalid_options();
-    });
+    })
 })
 
 $(function(){
@@ -5152,8 +5162,9 @@ $(function(){
             filled = false;
         }
         $("#pem-1000-range-select-field").find("input").each(function(){
-            if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
+            if (Number.isNaN(parseInt($(this).val())) || parseFloat($(this).val()) > parseFloat($(this).prop("max")) || parseFloat($(this).val()) < parseFloat($(this).prop("min"))){
                 filled = false;
+                return;
             }
         });
         if (filled==true){
@@ -5168,3 +5179,24 @@ $(function(){
     })
 })
 
+function q_nom_calc(dn){// РАСЧЕТ ДИАПАЗОНА НОМИНАЛЬНОГО РАСХОДА для DN
+    let q_min;
+    let q_max;
+    if (!Number.isNaN(dn)){
+        q_min = ((2*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+        q_max = ((6*(dn**2))/353.677).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+    }else{
+        q_min = 0.6;
+        q_max = 11500;
+    }
+    return [q_min, q_max];
+}
+
+function pem_cabel_changed(){
+    if (!Number.isNaN(parseInt($("#pem-1000-cabel-length").val())) && parseInt($("#pem-1000-cabel-length").val()) >= parseInt($("#pem-1000-cabel-length").prop("min")) && parseInt($("#pem-1000-cabel-length").val()) <= parseInt($("#pem-1000-cabel-length").prop("max"))){
+        expand_next_div("pem-1000-cabel-length");
+    }else{
+        $("#pem-1000-cabel-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
+    disable_invalid_options();
+}
