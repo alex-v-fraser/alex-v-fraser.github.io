@@ -427,7 +427,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                         }
                         num_cut-=1;
                     }
-                }else{                                                  //// ДОБАВИТЬ РАСШИФРОВКУ S-P S-T S-Ch
+                }else{
                     code.splice(i, 3, temp_codes[1]);
                     const sp_ch_st = new Map([
                         ["S-P", "Разделитель фланцевый плоский S-P."],
@@ -1038,6 +1038,24 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             }
         })
     }
+    if (main_dev=="pem-1000"){//ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ РАСХОДОМЕРА
+        let pem_begin_range = Number.isNaN(parseInt($("#pem-1000-begin-range").val())) ? undefined : parseFloat($("#pem-1000-begin-range").val()).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+        let pem_end_range = Number.isNaN(parseInt($("#pem-1000-end-range").val())) ? undefined : parseFloat($("#pem-1000-end-range").val()).toFixed(2).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+        let dn_pn = $("#pem-1000-dn-select").val()=="not_selected" || $("#pem-1000-pn-select").val()=="not_selected" ? undefined : "DN" + $("#pem-1000-dn-select").val() + $("#pem-1000-pn-select").val();
+        let pem_cabel_length = Number.isNaN(parseInt($("#pem-1000-cabel-length").val())) ? undefined : parseInt($("#pem-1000-cabel-length").val());
+        let options = ["pem-1000-type", "pem-1000-connection", "material", "pem-1000-futter", "pem-1000-power"];
+        for (let el of options){
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }
+        for (let el of ["pem_begin_range", "pem_end_range", "dn_pn"]){
+            full_conf.set(el, eval(el));
+        }
+        if (full_conf.get("pem-1000-type")=="pem-1000nw"){
+            full_conf.set("pem_cabel_length", pem_cabel_length);
+        }else{
+            full_conf.delete("pem_cabel_length");
+        }
+    }
     return full_conf;
 }
 
@@ -1458,7 +1476,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
     }
 }
 
-function get_ctr_code_info(data){
+function get_ctr_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА CTR
     console.log("Создаем код заказа CTR");
     let code = "В_РАЗРАБОТКЕ!!!";
     let output = data.get("output");
@@ -1635,7 +1653,21 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
         addDescription();
     }
 }
+function get_pem_code_info(data){/// ПОЛУЧЕНИЕ КОДА РАСХОДОМЕРА
+    console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА РАСХОДОМЕРА");
+    let code = "В_РАЗРАБОТКЕ!";
 
+
+    if ($("div.color-mark-field.unselected:visible").length==0){
+        document.getElementById("code").value = code;
+        $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+            minWidth: 200,
+            maxWidth: function(){return $('.code-input-container').width()-8; },
+            comfortZone: 5
+        })
+        addDescription();
+    }
+}
 function disable_invalid_options(){
     for (let plmin of ["", "minus-"]){
         if ($("#" + plmin + "s_tk_wash_dn100").is(":checked")){
@@ -3169,6 +3201,21 @@ function disable_invalid_options(){
     }else{
         $("label[for=spec_sg_hastelloy]").prop("style", "display:none");
     }
+    if (full_conf.get("main_dev") == "pem-1000"){
+        $("input[name=special]").each(function(){
+            if ($(this).prop('id').startsWith("pem-")){
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
+            }else{
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
+            }
+        })
+    }else{
+        $("input[name=special]").each(function(){
+            if ($(this).prop('id').startsWith("pem-")){
+                $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
+            }
+        })
+    }
 
 
     /// ПРОВЕРКА SPECIAL
@@ -3217,7 +3264,6 @@ function disable_invalid_options(){
         $("#hs").prop('disabled', true).prop('checked', false);
     }
     if ((full_conf.get("main_dev") == "apc-2000" && ((full_conf.get("end_range_kpa")<=2.5 && full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5) && full_conf.get("pressure_type")=="") || (main_dev == "APR-2000" && ((full_conf.get("end_range_kpa")<=2.5 || full_conf.get("begin_range_kpa")>=-2.5) && full_conf.get("range")<=5))){ // принудительное включение HS для низких диапазонов и отключение недоступных штуцеров
-        // $("label[for=hs]").addClass('disabled');
         $("#hs").prop('checked', true).prop('disabled', true);
         $("label[for=hastelloy]").addClass('disabled');
         $("#hastelloy").prop('disabled', true).prop('checked', false);
@@ -3388,6 +3434,9 @@ function disable_invalid_options(){
         }
         if (full_conf.get("main_dev") == "sg-25"){
             get_sg_code_info(full_conf);
+        }
+        if (full_conf.get("main_dev") == "pem-1000"){
+            get_pem_code_info(full_conf);
         }
     }else{
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL

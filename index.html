@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-13T15:49");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-14T17:13");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -241,6 +241,18 @@
 								<input type="number" step="0.001" onblur="this.value = parseFloat(this.value).toFixed(3).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1')" name="pem-1000-end-range" id="pem-1000-end-range" style="width: 5.5em" required>
 							</div>
 
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select pem-1000" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Тип присоединения</span></div>
+					</div>
+					<div class="option-to-select-list pem-1000" id="pem-1000-connection-select" style="display: none;">
+						<fieldset id="pem-1000-connection-select-field" name="pem-1000-connection-select-field">
+							<input type="checkbox" name="pem-1000-connection" value="" id="pem-flange" class="custom-checkbox"><label for="pem-flange">Фланцевое по DIN EN 1092-1:2010 type B1</label><div id="err_pem-flange"  style="display:none;"></div>
+							<input type="checkbox" name="pem-1000-connection" value=".DIN11851" id="pem-din" class="custom-checkbox"><label for="pem-din">Гигиеническое резьбовое по DIN 11851 (только PN 16)</label><div id="err_pem-din"  style="display:none;"></div>
+							<input type="checkbox" name="pem-1000-connection" value="-Tri-Clamp" id="pem-clamp" class="custom-checkbox"><label for="pem-clamp">Гигиеническое  Tri-Clamp по DIN 32676 (только PN 16)</label><div id="err_pem-clamp"  style="display:none;"></div>
 						</fieldset>
 					</div>
 
@@ -701,33 +713,57 @@
 						</fieldset>
 					</div>
 
-					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" style="display:none;">
+					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25 pem-1000" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header">
 							<span class="pc-28 apc-2000 pr-28 apr-2000" id="pressure-material-header" style="display: none;">Материал смачиваемых частей</span>
 							<span class="ctr" id="ctr-material-header" style="display: none;">Материал защитного корпуса</span>
 							<span class="thermowell" id="thermowell-material-header" style="display: none;">Материал гильзы</span>
 							<span class="sg-25" id="sg-25-material-header" style="display: none;">Материал корпуса</span>
+							<span class="pem-1000" id="pem-1000-material-header" style="display: none;">Материал электродов</span>
 						</div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" id="material-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25 pem-1000" id="material-select" style="display: none;">
 						<fieldset id="material-select-field" name="material-select-field">
 							<input type="checkbox" name="material" value="" id="12x18h10t" class="custom-checkbox"><label class="thermowell" for="12x18h10t">12X18H10T</label><div id="err_12x18h10t"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="aisi304" class="custom-checkbox"><label class="ctr thermowell" for="aisi304">AISI304</label><div id="err_aisi304"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="aisi310" class="custom-checkbox"><label class="ctr" for="aisi310">AISI310</label><div id="err_aisi310"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="" id="aisi316" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25 pem-1000" for="aisi316">AISI316</label><div id="err_aisi316"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="aisi321" class="custom-checkbox"><label class="ctr thermowell" for="aisi321">AISI321</label><div id="err_aisi321"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="inconel" class="custom-checkbox"><label class="ctr" for="inconel">Alloy 600</label><div id="err_inconel"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="ceramic" class="custom-checkbox"><label class="ctr" for="ceramic">Корунд</label><div id="err_ceramic"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="" id="sialon" class="custom-checkbox"><label class="ctr" for="sialon">Сиалон</label><div id="err_sialon"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="AU" id="au" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="au">Золото</label><div id="err_au"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 sg-25" for="hastelloy">Hastelloy С276</label><div id="err_hastelloy"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="Hastelloy" id="hastelloy" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 sg-25  pem-1000" for="hastelloy">Hastelloy С276</label><div id="err_hastelloy"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="Ni" id="nickel" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="nickel">Никель</label><div id="err_nickel"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="Monel" id="monel" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="monel">Монель</label><div id="err_monel"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="Ti" id="tytan" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 sg-25" for="tytan">Титан</label><div id="err_tytan"  style="display:none;"></div>
-							<input type="checkbox" name="material" value="Ta" id="tantal" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="tantal">Тантал</label><div id="err_tantal"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="Ti" id="tytan" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000 sg-25  pem-1000" for="tytan">Титан</label><div id="err_tytan"  style="display:none;"></div>
+							<input type="checkbox" name="material" value="Ta" id="tantal" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000  pem-1000" for="tantal">Тантал</label><div id="err_tantal"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="PTFE" id="ptfe" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="ptfe">Фторопласт-4 (политетрафторэтилен)</label><div id="err_ptfe"  style="display:none;"></div>
 							<input type="checkbox" name="material" value="DLC" id="dlc" class="custom-checkbox"><label class="pc-28 apc-2000 pr-28 apr-2000" for="dlc">DLC</label><div id="err_dlc"  style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select pem-1000" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Футеровка</span></div>
+					</div>
+					<div class="option-to-select-list pem-1000" id="pem-1000-futter-select" style="display: none;">
+						<fieldset id="pem-1000-futter-select-field" name="pem-1000-futter-select-field">
+							<input type="checkbox" name="pem-1000-futter" value="" id="futter-rubber" class="custom-checkbox"><label for="futter-rubber">Резина</label><div id="err_futter-rubber"  style="display:none;"></div>
+							<input type="checkbox" name="pem-1000-futter" value="" id="futter-ptfe" class="custom-checkbox"><label for="futter-ptfe"><b>PTFE</b> - фторопласт-4</label><div id="err_futter-ptfe"  style="display:none;"></div>
+							<input type="checkbox" name="pem-1000-futter" value="" id="futter-pfa" class="custom-checkbox"><label for="futter-pfa"><b>PFA</b> - фторопласт-50</label><div id="err_futter-pfa"  style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select pem-1000" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Питание</span></div>
+					</div>
+					<div class="option-to-select-list pem-1000" id="pem-1000-power-select" style="display: none;">
+						<fieldset id="pem-1000-power-select-field" name="pem-1000-power-select-field">
+							<input type="checkbox" name="pem-1000-power" value="AC" id="power-ac" class="custom-checkbox"><label for="power-ac"><b>AC</b> - 90...260 В, 50Гц, 15ВА</label><div id="err_power-ac"  style="display:none;"></div>
+							<input type="checkbox" name="pem-1000-power" value="DC" id="power-dc" class="custom-checkbox"><label for="power-dc"><b>DC</b> - 10...36 В, 15Вт</label><div id="err_power-dc"  style="display:none;"></div>
 						</fieldset>
 					</div>
 
@@ -1080,11 +1116,11 @@
 						</fieldset>
 					</div>
 
-					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" style="display: none;">
+					<div class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25 pem-1000" style="display: none;">
 						<div class="color-mark-field special" title="Set"></div>
 						<div class="option-to-select-header"><span>Специальные исполнения (опционально)</span></div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25" id="special-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr thermowell sg-25 pem-1000" id="special-select" style="display: none;">
 						<fieldset id="special-select-field" name="special-select-field">
 							<input type="checkbox" name="special" value="0,16%" id="0_16" disabled class="custom-checkbox"><label for="0_16" class="disabled"><b>0,16%</b> - повышенная точность (только для диапазона более 40кПа и аналоговый выход)</label><div id="err_0_16"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="0,05%" id="0_05" disabled class="custom-checkbox"><label for="0_05" class="disabled"><b>0,05%</b> - повышенная точность (только для ALW)</label><div id="err_0_05"  style="display:none;"></div>
@@ -1108,6 +1144,9 @@
 							<input type="checkbox" name="special" value="Lvk" id="spec_375" disabled class="custom-checkbox"><label for="spec_375" class="disabled">Сигнал обрыва цепи сенсора: <img src='images/checkbox-4.png' alt="alt" style='border:1px solid #000000; width: 0.9em; height: 0.9em'> <b>3,75мА</b> или <img src='images/checkbox-3.png' alt="alt" style='width: 0.9em; height: 0.9em'> <b>21,5мА</b></label><div id="err_spec_375"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="PTFE" id="spec_ptfe" disabled class="custom-checkbox"><label for="spec_ptfe" class="disabled"><b>PTFE</b> - покрытие погружной части гильзы политетрафторэтиленом (тефлон)</label><div id="err_spec_ptfe"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="Hastelloy" id="spec_sg_hastelloy" disabled class="custom-checkbox"><label for="spec_sg_hastelloy" class="disabled"><b>Hastelloy</b> - мембрана из сплава Hastelloy C276</label><div id="err_spec_sg_hastelloy"  style="display:none;"></div>
+							<input type="checkbox" name="special" value="SN" id="pem-sn" disabled class="custom-checkbox"><label for="pem-sn" class="disabled"><b>SN</b> - корпус из нержавеющей стали AISI304</label><div id="err_pem-sn"  style="display:none;"></div>
+							<input type="checkbox" name="special" value="IP67" id="pem-ip67" disabled class="custom-checkbox"><label for="pem-ip67" class="disabled"><b>IP67</b> - степень защиты корпуса индикатора</label><div id="err_pem-ip67"  style="display:none;"></div>
+							<input type="checkbox" name="special" value="IP68" id="pem-ip68" disabled class="custom-checkbox"><label for="pem-ip68" class="disabled"><b>IP68</b> - степень защиты корпуса преобразователя</label><div id="err_pem-ip68"  style="display:none;"></div>
 						</fieldset>
 					</div>
 				</div>
