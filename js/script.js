@@ -1655,9 +1655,24 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
 }
 function get_pem_code_info(data){/// ПОЛУЧЕНИЕ КОДА РАСХОДОМЕРА
     console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА РАСХОДОМЕРА");
-    let code = "В_РАЗРАБОТКЕ!";
+    let code = "";
+    let pem_type = data.get("pem-1000-type").toUpperCase();
+    let dn_pn = data.get("dn_pn");
+    let connection = $("#" + data.get("pem-1000-connection")).val();
+    let range = data.get("pem_begin_range") + "..." + data.get("pem_end_range") + "м³/ч";
+    let material = data.get("material")=="aisi316" ? data.get("material").toUpperCase() : data.get("material")[0].toUpperCase() + data.get("material").slice(1,);
+    let futter = $("#" + data.get("pem-1000-futter")).val();
+    let power = $("#" + data.get("pem-1000-power")).val();
+    let cabel = data.has("pem_cabel_length") ? "/L=" + data.get("pem_cabel_length") + "м" : "";
+    let special = "";
+    $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
+        if ($(this).is(":checked")){
+            special += "/" + $(this).val();
+        }
+    })
 
 
+    code = pem_type + "/" + dn_pn + connection + "/" + range + "/" + material + "/" + futter + "/Modbus/" + power + special + cabel;
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -1706,7 +1721,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "sg-type", "approval", "output", "electrical", "material", "sensor-type", "cap-or-not", "max-static"];
+    let opt_names = ["main_dev", "sg-type", "approval", "output", "electrical", "material", "sensor-type", "cap-or-not", "max-static", "pem-1000-connection", "pem-1000-futter"];
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -3120,6 +3135,50 @@ function disable_invalid_options(){
             $("#pem-1000-cabel-length-div").slideDown("slow");
         }else{
             $("#pem-1000-cabel-length-div").slideUp("slow");
+        }
+        if ($("#pem-1000-dn-select").val()!="not_selected" & (parseInt($("#pem-1000-dn-select").val())<15 || parseInt($("#pem-1000-dn-select").val())>100)){
+            for (let cons of ["pem-din", "pem-clamp"]){                                                 ////если DN<15 или DN>100 - деактивировать гигиенические
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='eerr_cancel' value='' id='pem-1000-dn_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='remove_pem_dn()'><label for='pem-1000-dn_err_cancel${num}'>Номинальный диаметр. Доступно DN15...DN100</label>`;
+                num+=1;
+            }
+        }
+        if ($("#pem-1000-pn-select").val()!="not_selected" & $("#pem-1000-pn-select").val()!="PN16"){
+            for (let cons of ["pem-din", "pem-clamp"]){                                                 ////если PN!=16 - деактивировать гигиенические
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='eerr_cancel' value='' id='pem-1000-pn_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='remove_pem_pn()'><label for='pem-1000-pn_err_cancel${num}'>Номинальное давление. Будет выбрано PN16</label>`;
+                num+=1;
+            }
+        }
+
+
+        // <img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;Недоступно для гигиенического типа.</span>
+
+        if (typeof full_conf.get("pem-1000-connection")!="undefined" && full_conf.get("pem-1000-connection")!="pem-flange"){/// ЕСЛИ ГИГИЕНА - ОТКЛЮЧИТЬ DN PN
+            $("select#pem-1000-dn-select option").each(function(){
+                if ($(this).val()!="not_selected" && (parseInt($(this).val()) < 15 || parseInt($(this).val()) > 100)){
+                    $(this).addClass("disabled_hyg");
+                }
+            })
+            $("select#pem-1000-pn-select option").each(function(){
+                if ($(this).val()!="not_selected" && $(this).val()!="PN16"){
+                    $(this).addClass("disabled_hyg");
+                }
+            })
+
+            ///////////////////      ЗДЕСЬ  ДОБАВИТЬ ТОЛЬКО PFA, резину и PTFE ОТКЛЮЧИТЬ //////////////////////////////////
+
+        }else{
+            $("select#pem-1000-dn-select option").each(function(){
+                $(this).removeClass("disabled_hyg");
+            })
+            $("select#pem-1000-pn-select option").each(function(){
+                $(this).removeClass("disabled_hyg");
+            })
+
+            ///////////////////    ЗДЕСЬ ОТКЛЮЧИТЬ  PFA, ОСТАВИТЬ РЕЗИНУ и PTFE   //////////////////////////////////
         }
     }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
@@ -5158,7 +5217,7 @@ $(function(){
 })
 
 $(function(){
-    $("#pem-1000-q_nom, select#pem-1000-dn-select").change(function(){ /// ПРИ ВЫБОРЕ НОМИНАЛЬНОГО РАСХОДА ОСТАВЛЯЕМ ПОДХОДЯЩИЕ DN, остальные class disabled, при выборе DN расчет расхода
+    $("#pem-1000-q_nom, select#pem-1000-dn-select, select#pem-1000-pn-select").change(function(){ /// ПРИ ВЫБОРЕ НОМИНАЛЬНОГО РАСХОДА ОСТАВЛЯЕМ ПОДХОДЯЩИЕ DN, остальные class disabled, при выборе DN расчет расхода
         let filled = true;
         let q_nom = parseFloat($("#pem-1000-q_nom").val());
         let dn = parseInt($("select#pem-1000-dn-select").val());
@@ -5186,17 +5245,30 @@ $(function(){
                 }
             })
         }
-        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")) || $("select#pem-1000-dn-select").val()=="not_selected" || $("select#pem-1000-dn-select option:selected").hasClass("disabled")){
+        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")) || $("select#pem-1000-dn-select").val()=="not_selected" || $("select#pem-1000-dn-select option:selected").hasClass("disabled") || $("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")){
             filled = false;
         }
         if (filled === true) {
             $("#eerr_pem-1000-dn").slideUp("slow");
+            $("#eerr_pem-1000-hyg").slideUp("slow");
             $("#pem-1000-range-div").slideDown("slow");
         }else{
-            if ($("select#pem-1000-dn-select").val()!="not_selected"){
+            if ($("select#pem-1000-dn-select").val()!="not_selected" && (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")))){
                 $("#eerr_pem-1000-dn").slideDown("slow");
             }else{
                 $("#eerr_pem-1000-dn").slideUp("slow");
+            }
+            let hyg_warn1 = "<img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;";
+            let hyg_warn2 =  ($("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg")) ? "DN" + $("select#pem-1000-dn-select").val() : "";
+            let hyg_warn3 =  ($("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")) ? $("select#pem-1000-pn-select").val() : "";
+            let hyg_warn_and = hyg_warn2!="" && hyg_warn3!="" ? " и " : "";
+            let hyg_warn4 = " недоступно в гигиеническом исполнении."
+            let hyg_warn =  hyg_warn1 + hyg_warn2 + hyg_warn_and +  hyg_warn3 +  hyg_warn4;
+
+            if ($("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")){
+                $("#eerr_pem-1000-hyg").prop("innerHTML", hyg_warn).slideDown("slow");
+            }else{
+                $("#eerr_pem-1000-hyg").slideUp("slow").prop("innerHTML","");
             }
             $("#pem-1000-range-div").slideUp("slow");
         }
@@ -5247,5 +5319,17 @@ function pem_cabel_changed(){
     }else{
         $("#pem-1000-cabel-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
     }
+    disable_invalid_options();
+}
+
+function remove_pem_dn(){
+    $("select#pem-1000-dn-select option[value=not_selected]").prop("selected", true);
+    $("#eerr_pem-1000-dn").slideUp("slow");
+    $("#pem-1000-range-div").slideUp("slow");
+    $("#pem-1000-dn-select").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    disable_invalid_options();
+}
+function remove_pem_pn(){
+    $("select#pem-1000-pn-select option[value=PN16]").prop("selected", true);
     disable_invalid_options();
 }

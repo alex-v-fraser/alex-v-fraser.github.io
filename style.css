@@ -71,7 +71,7 @@ fieldset {
     font-weight: bold;
 }
 
-.disabled {
+.disabled, .disabled_hyg{
     color: darkgrey;
 }
 .option-to-select {
