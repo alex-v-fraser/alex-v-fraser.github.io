@@ -209,7 +209,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
-    console.log(code);
+    // console.log(code);
 
     let full_description = new Map([]);
 
@@ -579,7 +579,13 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     full_description.set(code[i], "Материал электродов: " + code[i] + ".");
                 }
                 if (["Резина", "резина", "PTFE", "PFA"].some(word => code[i]==word)){
-                    full_description.set(code[i], "Футеровка: " + code[i] + ".");
+                    let pem_med_temp = new Map([
+                        ["Резина", "-5...90°C"],
+                        ["резина", "-5...90°C"],
+                        ["PTFE", "-25...130°C"],
+                        ["PFA", "-25...130°C"]
+                    ]);
+                    full_description.set(code[i], "Футеровка: " + code[i] + ".<br>Диапазон температур среды измерения: " + pem_med_temp.get(code[i]));
                 }
                 if (code[i]=="Modbus" || code[i]=="modbus"){
                     full_description.set(code[i], "Интерфейс RS-485,<br>Протокол Modbus RTU.");
