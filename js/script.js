@@ -55,7 +55,13 @@ var dn_table = new Map([
 var sg_table = new Map([ ////КАРТА ДЕАКТИВАЦИИ ОПЦИЙ ЗОНДОВ
     ["sg-type", new Map([["sg-25", "tytan"], ["sg-25s", "hastelloy"]])],
     ["output", new Map([["4_20", "tytan"], ["4_20H", "hastelloy"]])]
-])
+]);
+
+var futer_dn = new Map([ ////КАРТА ДЕАКТИВАЦИИ DN по футеровке
+    ["futter-rubber", [40, 1000]],
+    ["futter-ptfe", [10, 500]],
+    ["futter-pfa", [15, 100]],
+]);
 
 
 
@@ -1670,9 +1676,7 @@ function get_pem_code_info(data){/// ПОЛУЧЕНИЕ КОДА РАСХОДО�
             special += "/" + $(this).val();
         }
     })
-
-
-    code = pem_type + "/" + dn_pn + connection + "/" + range + "/" + material + "/" + futter + "/Modbus/" + power + special + cabel;
+    code = pem_type + special + "/" + dn_pn + connection + "/" + range + "/" + material + "/" + futter + "/Modbus/" + power + cabel;
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -3152,9 +3156,34 @@ function disable_invalid_options(){
                 num+=1;
             }
         }
-
-
-        // <img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;Недоступно для гигиенического типа.</span>
+        if (typeof full_conf.get("pem-1000-futter")!="undefined" && full_conf.get("pem-1000-futter")!="futter-pfa"){ //// ЕСЛИ НЕ PFA - деактивировать гигиенические
+            for (let cons of ["pem-din", "pem-clamp"]){
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("pem-1000-futter")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("pem-1000-futter")}_err_cancel${num}'>${$("label[for=" + full_conf.get("pem-1000-futter") + "]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if (typeof full_conf.get("pem-1000-futter")!="undefined" && full_conf.get("pem-1000-futter")=="futter-pfa"){////если PFA отключить flange, tytan, hastelloy, tantal
+            for (let cons of ["pem-flange", "hastelloy", "tytan", "tantal"]){
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("pem-1000-futter")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("pem-1000-futter")}_err_cancel${num}'>${$("label[for=" + full_conf.get("pem-1000-futter") + "]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")!="aisi316"){ //// ЕСЛИ НЕ 316 - деактивировать гигиенические и PFA
+            for (let cons of ["pem-din", "pem-clamp"]){
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for=" + full_conf.get("material") + "]").text()}</label>`;
+                num+=1;
+            }
+            $("label[for=futter-pfa]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#futter-pfa").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_futter-pfa").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("material")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("material")}_err_cancel${num}'>${$("label[for=" + full_conf.get("material") + "]").text()}</label>`;
+            num+=1;
+        }
 
         if (typeof full_conf.get("pem-1000-connection")!="undefined" && full_conf.get("pem-1000-connection")!="pem-flange"){/// ЕСЛИ ГИГИЕНА - ОТКЛЮЧИТЬ DN PN
             $("select#pem-1000-dn-select option").each(function(){
@@ -3167,9 +3196,12 @@ function disable_invalid_options(){
                     $(this).addClass("disabled_hyg");
                 }
             })
-
-            ///////////////////      ЗДЕСЬ  ДОБАВИТЬ ТОЛЬКО PFA, резину и PTFE ОТКЛЮЧИТЬ //////////////////////////////////
-
+            for (let cons of ["futter-rubber", "futter-ptfe", "hastelloy", "tytan", "tantal"]){////если гигиена отключить резину, ptfe, tytan, hastelloy, tantal
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("pem-1000-connection")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("pem-1000-connection")}_err_cancel${num}'>${$("label[for=" + full_conf.get("pem-1000-connection") + "]").text()}</label>`;
+                num+=1;
+            }
         }else{
             $("select#pem-1000-dn-select option").each(function(){
                 $(this).removeClass("disabled_hyg");
@@ -3177,9 +3209,67 @@ function disable_invalid_options(){
             $("select#pem-1000-pn-select option").each(function(){
                 $(this).removeClass("disabled_hyg");
             })
-
-            ///////////////////    ЗДЕСЬ ОТКЛЮЧИТЬ  PFA, ОСТАВИТЬ РЕЗИНУ и PTFE   //////////////////////////////////
         }
+
+
+////////////////////           ФУТЕРОВКИ и DN              ///////////////////////////////////////////////////////////////////////////////////////////
+
+        $("select#pem-1000-dn-select option").each(function(){
+            $(this).removeClass("disabled_fut");
+        })
+        if (typeof full_conf.get("pem-1000-futter")!="undefined"){ /// ЕСЛИ выбрана футеровка  - ОТКЛЮЧИТЬ DN
+            let min_dn_fut = futer_dn.get(full_conf.get("pem-1000-futter"))[0];
+            let max_dn_fut = futer_dn.get(full_conf.get("pem-1000-futter"))[1];
+            $("select#pem-1000-dn-select option").each(function(){
+                if ($(this).val()!="not_selected" && (parseInt($(this).val()) < min_dn_fut || parseInt($(this).val()) > max_dn_fut)){
+                    $(this).addClass("disabled_fut");
+                }
+            })
+        }
+
+        if ($("#pem-1000-dn-select").val()!="not_selected"){  /// ЕСЛИ ВЫБРАН DN - ОТКЛЮЧАЕМ ФУТЕРОВКИ
+            console.log("ЕСЛИ ВЫБРАН DN - ОТКЛЮЧАЕМ ФУТЕРОВКИ");
+            let dn_chosen = parseInt($("#pem-1000-dn-select").val());
+            for (let cons of ["futter-rubber", "futter-ptfe", "futter-pfa"]){       //// - деактивировать ФУТЕРОВКИ
+                let min_dn_avail = futer_dn.get(cons)[0];
+                let max_dn_avail = futer_dn.get(cons)[1];
+                if (dn_chosen < min_dn_avail || dn_chosen > max_dn_avail){
+                    $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                    $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                    document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='eerr_cancel' value='' id='pem-1000-dn_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='remove_pem_dn()'><label for='pem-1000-dn_err_cancel${num}'>Номинальный диаметр. Доступно DN${min_dn_avail}...DN${max_dn_avail}</label>`;
+                    num+=1;
+                }
+            }
+        }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+        if (typeof full_conf.get("pem-1000-connection")!="undefined" && full_conf.get("pem-1000-connection")=="pem-flange"){/// ЕСЛИ НЕ ГИГИЕНА - ОТКЛ PFA
+            $("label[for=futter-pfa]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#futter-pfa").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_futter-pfa").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("pem-1000-connection")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("pem-1000-connection")}_err_cancel${num}'>${$("label[for=" + full_conf.get("pem-1000-connection") + "]").text()}</label>`;
+            num+=1;
+        }
+
+        let hyg_warn1 = "<img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;";
+        let hyg_warn2 =  ($("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg")) ? "DN" + $("select#pem-1000-dn-select").val() : "";
+        let hyg_warn3 =  ($("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")) ? $("select#pem-1000-pn-select").val() : "";
+        let hyg_warn_and = hyg_warn2!="" && hyg_warn3!="" ? " и " : "";
+        let hyg_warn4 = " недоступно в гигиеническом исполнении."
+        let hyg_warn =  hyg_warn1 + hyg_warn2 + hyg_warn_and +  hyg_warn3 +  hyg_warn4;
+        if ($("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")){
+            $("#eerr_pem-1000-hyg").prop("innerHTML", hyg_warn).slideDown("slow");
+        }else{$("#eerr_pem-1000-hyg").slideUp("slow").prop("innerHTML","");}
+        let fut_warn = "<img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;DN" + $("select#pem-1000-dn-select").val() + " недоступно в футеровке " + $("input[name=pem-1000-futter]:checked").val() + ".";
+        if ($("select#pem-1000-dn-select option:selected").hasClass("disabled_fut")){
+            $("#eerr_pem-1000-fut").prop("innerHTML", fut_warn).slideDown("slow");
+        }else{$("#eerr_pem-1000-fut").slideUp("slow").prop("innerHTML","");}
+
+
     }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
@@ -3278,6 +3368,10 @@ function disable_invalid_options(){
 
 
     /// ПРОВЕРКА SPECIAL
+    if (full_conf.get("pem-1000-futter") != "futter-ptfe" && full_conf.get("pem-1000-futter") != "futter-pfa"){
+        $("label[for=pem-wt]").addClass('disabled');
+        $("#pem-wt").prop('checked', false).prop('disabled', true);
+    }
     if (full_conf.get("material") != "aisi316" && full_conf.get("material") != "hastelloy"){
         $("label[for=spec_sg_hastelloy]").addClass('disabled');
         $("#spec_sg_hastelloy").prop('checked', false).prop('disabled', true);
@@ -5245,30 +5339,19 @@ $(function(){
                 }
             })
         }
-        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")) || $("select#pem-1000-dn-select").val()=="not_selected" || $("select#pem-1000-dn-select option:selected").hasClass("disabled") || $("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")){
+        if (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")) || $("select#pem-1000-dn-select").val()=="not_selected" || $("select#pem-1000-dn-select option:selected").hasClass("disabled") || $("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-dn-select option:selected").hasClass("disabled_fut")){
             filled = false;
         }
         if (filled === true) {
             $("#eerr_pem-1000-dn").slideUp("slow");
             $("#eerr_pem-1000-hyg").slideUp("slow");
+            $("#eerr_pem-1000-fut").slideUp("slow");
             $("#pem-1000-range-div").slideDown("slow");
         }else{
             if ($("select#pem-1000-dn-select").val()!="not_selected" && (Number.isNaN(q_nom) || q_nom < parseFloat($("#pem-1000-q_nom").prop("min")) || q_nom > parseFloat($("#pem-1000-q_nom").prop("max")))){
                 $("#eerr_pem-1000-dn").slideDown("slow");
             }else{
                 $("#eerr_pem-1000-dn").slideUp("slow");
-            }
-            let hyg_warn1 = "<img src='images/attention.png' style='width: 1.3em; height: 1.3em; position: relative; top:3px'><span style='color: red'>&nbsp;";
-            let hyg_warn2 =  ($("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg")) ? "DN" + $("select#pem-1000-dn-select").val() : "";
-            let hyg_warn3 =  ($("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")) ? $("select#pem-1000-pn-select").val() : "";
-            let hyg_warn_and = hyg_warn2!="" && hyg_warn3!="" ? " и " : "";
-            let hyg_warn4 = " недоступно в гигиеническом исполнении."
-            let hyg_warn =  hyg_warn1 + hyg_warn2 + hyg_warn_and +  hyg_warn3 +  hyg_warn4;
-
-            if ($("select#pem-1000-dn-select option:selected").hasClass("disabled_hyg") || $("select#pem-1000-pn-select option:selected").hasClass("disabled_hyg")){
-                $("#eerr_pem-1000-hyg").prop("innerHTML", hyg_warn).slideDown("slow");
-            }else{
-                $("#eerr_pem-1000-hyg").slideUp("slow").prop("innerHTML","");
             }
             $("#pem-1000-range-div").slideUp("slow");
         }
@@ -5325,6 +5408,7 @@ function pem_cabel_changed(){
 function remove_pem_dn(){
     $("select#pem-1000-dn-select option[value=not_selected]").prop("selected", true);
     $("#eerr_pem-1000-dn").slideUp("slow");
+    $("#eerr_pem-1000-fut").slideUp("slow");
     $("#pem-1000-range-div").slideUp("slow");
     $("#pem-1000-dn-select").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
     disable_invalid_options();
