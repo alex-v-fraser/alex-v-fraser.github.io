@@ -185,12 +185,12 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     for (let i=0; i<code.length; i++){
 
         if (typeof code[i+1]!='undefined'){
-            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i]!="OG1" && (code[i+1].slice(0,1)=="2" || code[i+1].slice(0,1)=="4" || code[i+1].slice(0,1)=="8")) || (code[i].slice(-2)=="G3" && code[i]!="OG3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1].startsWith("см2")) || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex")){
+            if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i]!="OG1" && (code[i+1].slice(0,1)=="2" || code[i+1].slice(0,1)=="4" || code[i+1].slice(0,1)=="8")) || (code[i].slice(-2)=="G3" && code[i]!="OG3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1].startsWith("см2")) || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex") || ((code[i].endsWith("м3") || code[i].endsWith("м³")) && code[i+1]=="ч")){
                 code.splice(i, 2, code[i] + "/" + code[i+1]);
             }
         }
     }
-    if (!code[0].startsWith("CT")){
+    if (["PC-", "PR-", "APC-", "APR-"].some(word => code[0].startsWith(word))){        ///////  ЕСЛИ ДАВЛЕНИЕ
         for (let i=0; i<code.length; i++){
             if (code[i].toLowerCase().startsWith("s-") || (code[i].startsWith("(+)") && code[i]!="P") || (code[i].startsWith("(-)") && code[i]!="P")){
                 let temp = code[i].split("-");
@@ -209,7 +209,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             }
         }
     }
-    // console.log(code);
+    console.log(code);
 
     let full_description = new Map([]);
 
@@ -274,11 +274,10 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
 
     }else{ //// ЕСЛИ НЕ ГИЛЬЗА
 
-
         for (let i=1; i<code.length; i++){// ЗДЕСЬ ПОИСК ОПИСАНИЯ И ДОБАВЛЕНИЕ В MAP name + description
-            let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")));
-            let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS")));
-            let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS")));
+            let condition1 = (code[i].includes("...") && (code[i].endsWith("Па") || code[i].endsWith("кПа") || code[i].endsWith("бар") || code[i].endsWith("МПа") || code[i].endsWith("мH2O") || code[i].endsWith("ммH2O") || code[i].endsWith("кгс/см2") || code[i].endsWith("psi")  || code[i].endsWith("ABS")  || code[i].endsWith("м3/ч") || code[i].endsWith("м³/ч")));
+            let condition2 = (i>0 && code[i-1].includes("...") && (code[i-1].endsWith("Па") || code[i-1].endsWith("кПа") || code[i-1].endsWith("бар") || code[i-1].endsWith("МПа") || code[i-1].endsWith("мH2O") || code[i-1].endsWith("ммH2O") || code[i-1].endsWith("кгс/см2") || code[i-1].endsWith("psi")  || code[i-1].endsWith("ABS") || code[i].endsWith("м3/ч") || code[i].endsWith("м³/ч")));
+            let condition3 = (i<code.length-1 && code[i+1].includes("...") && (code[i+1].endsWith("Па") || code[i+1].endsWith("кПа") || code[i+1].endsWith("бар") || code[i+1].endsWith("МПа") || code[i+1].endsWith("мH2O") || code[i+1].endsWith("ммH2O") || code[i+1].endsWith("кгс/см2") || code[i+1].endsWith("psi")  || code[i+1].endsWith("ABS") || code[i].endsWith("м3/ч") || code[i].endsWith("м³/ч")));
             var plus_minus = "";
 
             if (condition1 && !condition2 && !condition3){
@@ -324,6 +323,12 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
                 if (code[i].startsWith("S=")){
                     full_description.set(code[i], "Длина наружной (выносной) части " + code[i].split("=")[1].match(/\d+(\,\d+)?/g)[0] + ctr_unit + ".");
+                }
+            }
+            if (code[0].startsWith("PEM-1000")){
+                if (code[i].startsWith("DN")){
+                    let pem_connection = code[i].endsWith("DIN11851") ? "гигиеническое резьбовое по DIN 11851" : code[i].endsWith("Tri-Clamp") ? "гигиеническое  Tri-Clamp по DIN 32676" : "фланцевое по DIN EN 1092-1:2010 type B1";
+                    full_description.set(code[i], "Номинальный диаметр: DN" + code[i].match(/\d+(\,\d+)?/g)[0] + ",<br>Номинальное давление: PN" + code[i].match(/\d+(\,\d+)?/g)[1] + ",<br>Тип присоединения: " + pem_connection + ".");
                 }
             }
 
@@ -454,23 +459,22 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 code[i]=plus_minus + code[i];
             }
 
-            //if (!(["ОG1", "OG2", "OG3", "T1", "SW", "SWT", "SWG", "SWG1", "CT"].some(word => code[0].startsWith(word)))){ //(!code[0].startsWith("CT")){
-                for (item of search_names){
-                    for (el of window[item + "_restr_lst"].values()){
-                        if (el.get("name")==code[i] || el.get("code_name")==code[i]){
-                            if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                                full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
-                                break;
-                            }
-                            if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
-                                full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
-                                break;
-                            }
-                            full_description.set(code[i], el.get("description"));
+            for (item of search_names){
+                for (el of window[item + "_restr_lst"].values()){
+                    if (el.get("name")==code[i] || el.get("code_name")==code[i]){
+                        if (code[i].includes("PC-28") && !(code[i]=="PC-28.Modbus" || code[i]=="PC-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                            full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                            break;
                         }
+                        if (code[i].includes("PR-28") && !(code[i]=="PR-28.Modbus" || code[i]=="PR-28.Smart") && !(code.includes("0...10В") || code.includes("0,4...2В") || code.includes("0...2В"))){
+                            full_description.set(code[i], el.get("description") + "<br>Выходной сигнал 4...20мА.");
+                            break;
+                        }
+                        full_description.set(code[i], el.get("description"));
                     }
                 }
-            //}
+            }
+
             if(code[0].startsWith("CT")){
                 let t_code = (code[i].startsWith("2x")) ? code[i].slice(2,) : code[i];
                 let ad_descr = (code[i].startsWith("2x")) ? "<br>Количество сенсоров: 2шт." : "";
@@ -570,8 +574,44 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             if ((code[0]=="SG-25.Smart" || code[0]=="SG-25S.Smart") && code[i]=="100"){
                 full_description.set(code[i], "Зонд с вынесенной электроникой для измерения уровня горячих сред с температурой до 100°С.");
             }
-
+            if (code[0].startsWith("PEM-1000")){
+                if (["AISI316", "Hastelloy", "Tytan", "Tantal", "Титан", "Тантал"].some(word => code[i]==word)){
+                    full_description.set(code[i], "Материал электродов: " + code[i] + ".");
+                }
+                if (["Резина", "резина", "PTFE", "PFA"].some(word => code[i]==word)){
+                    full_description.set(code[i], "Футеровка: " + code[i] + ".");
+                }
+                if (code[i]=="Modbus" || code[i]=="modbus"){
+                    full_description.set(code[i], "Интерфейс RS-485,<br>Протокол Modbus RTU.");
+                }
+                if (code[i]=="AC"){
+                    full_description.set(code[i], "Питание: 90...260 В, 50 Гц, 15 ВА.");
+                }
+                if (code[i]=="DC"){
+                    full_description.set(code[i], "Питание: 10...36 В, 15 Вт.");
+                }
+                if (code[i].startsWith("L=")){
+                    full_description.set(code[i], "Длина кабеля от преобразователя до индикатора: " + code[i].match(/\d+(\,\d+)?/g)[0] + " м.");
+                }
+                if (code[i]=="IP67"){
+                    full_description.set(code[i], "Cтепень защиты корпуса индикатора IP67.");
+                }
+                if (code[i]=="IP68"){
+                    full_description.set(code[i], "Cтепень защиты корпуса преобразователя IP68.");
+                }
+                if (code[i]=="WT"){
+                    full_description.set(code[i], "Для сред измерения с температурой до 130°С.");
+                }
+            }
         }
+    }
+
+    if (code[0]=="PEM-1000NW" || code[0]=="PEM-1000ALW"){ //// ЗАМЕНА ОПИСАНИЯ РАСХОДОМЕРА по классу IP
+        console.log([...full_description][0][0]);
+        console.log([...full_description][0][1]);
+        let pem_ind_ip = full_description.has("IP67") ? "" : "<br>Степень защиты корпуса индикатора: IP66.";
+        let pem_ind_td = full_description.has("IP68") ? "" : "<br>Степень защиты корпуса преобразователя: IP67.";
+        full_description.set([...full_description][0][0], full_description.get([...full_description][0][0]) + pem_ind_ip + pem_ind_td);
     }
 
     //console.log(window["thermoresistor_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термосопротивлений по code_name
