@@ -1603,7 +1603,7 @@ function get_thermowell_code_info(data){///ПОЛУЧЕНИЕ КОДА ЗАКА�
     let code = "";
     let type = data.get("thermowell-type").toUpperCase();
     let diameter = data.get("thermowell-diameter");
-    let pressure = type =="OG2" && parseInt(data.get("thermowell-pressure"))<=6.3 ? "" : parseInt(data.get("thermowell-pressure")) + "МПа/";
+    let pressure = type =="OG2" && parseFloat(data.get("thermowell-pressure"))<=6.3 ? "" : parseFloat(data.get("thermowell-pressure")).toFixed(1).toString().split(".").join(",") + "МПа/";
     let connection1 = typeof data.get("thermowell-connection1")!='undefined' ? data.get("thermowell-connection1"): "-";
     let connection2 = typeof data.get("thermowell-connection2")!='undefined' ? data.get("thermowell-connection2"): "-";
     let cover = $("#spec_ptfe").is(":checked") ? "(PTFE)" :"";
