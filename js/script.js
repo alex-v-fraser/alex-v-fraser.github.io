@@ -1603,14 +1603,14 @@ function get_thermowell_code_info(data){///ПОЛУЧЕНИЕ КОДА ЗАКА�
     let code = "";
     let type = data.get("thermowell-type").toUpperCase();
     let diameter = data.get("thermowell-diameter");
-    let pressure = parseInt(data.get("thermowell-pressure")) + "МПа";
+    let pressure = type =="OG2" && parseInt(data.get("thermowell-pressure"))<=6.3 ? "" : parseInt(data.get("thermowell-pressure")) + "МПа/";
     let connection1 = typeof data.get("thermowell-connection1")!='undefined' ? data.get("thermowell-connection1"): "-";
     let connection2 = typeof data.get("thermowell-connection2")!='undefined' ? data.get("thermowell-connection2"): "-";
     let cover = $("#spec_ptfe").is(":checked") ? "(PTFE)" :"";
-    let material = data.get("material").toUpperCase() + cover;
+    let material = data.get("material")=="12x18h10t" ? "12Х18Н10Т" + cover : data.get("material").toUpperCase() + cover;
     let lt = "Lt=" + data.get("thermowell-tlength") + "мм";
     let l = "L=" + data.get("thermowell-length") + "мм";
-    code = type + "/" + diameter + "/" + pressure + "/" + connection1 + "/" + connection2 + "/" + material + "/" + lt + "/" + l;
+    code = type + "/" + diameter + "/" + pressure + connection1 + "/" + connection2 + "/" + material + "/" + lt + "/" + l;
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
