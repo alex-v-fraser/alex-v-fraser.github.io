@@ -212,20 +212,20 @@ input[type=checkbox]:hover + label:hover {
 #main-dev-select{
     font-size: 100%; /*установить 0 если нужно убрать расстояние между блоками */
     align-items: center;
-    /* text-align: center; */
+    text-align: center;
 }
 .main-dev {
     display: inline-block;
     border: 2px solid #eee;
     border-radius: .5em;
-    width: 250px;
-    height: 250px;
-    font-size: 20px;
+    width: 300px;
+    height: 300px;
+    font-size: 25px;
     font-weight: 900;
     text-align: center;
-    padding-top: 11em;
+    padding-top: 10.7em;
     vertical-align: bottom;
-    margin: 5px;
+    margin: 20px;
     position: relative;
     overflow: hidden;
     cursor: pointer;
@@ -236,10 +236,10 @@ input[type=checkbox]:hover + label:hover {
     /* border-style: groove; */
     z-index: 999;
     box-shadow: 3px 3px 35px rgb(73, 73, 73); /* inset 0px 0px 0px rgb(255, 255, 255), */
-    -webkit-transform: scale(1.03);
-    -moz-transform: scale(1.03);
-    -o-transform: scale(1.03);
-    transform: scale(1.03);
+    -webkit-transform: scale(1.04);
+    -moz-transform: scale(1.04);
+    -o-transform: scale(1.04);
+    transform: scale(1.04);
     transition: all 0.3s;
     -webkit-transition: all 0.3s
 }
@@ -276,6 +276,9 @@ input[type=checkbox]:hover + label:hover {
 }
 #main-dev-pem-1000 {
     background: no-repeat center/80% url("images/pem-1000-main.png");
+}
+#main-dev-apis {
+    background: no-repeat center/80% url("images/apis-main.png");
 }
 *,
 *::before,

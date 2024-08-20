@@ -4363,7 +4363,7 @@ $(function(){
             }
         })
         $("input[name=approval]").each(function(){ /// СКРЫВАЕМ НЕНУЖНЫЕ APPROVAL В ЗАВИСИМОСТИ ОТ MAIN-DEV
-            if (main_dev_id=="sg-25"){
+            if (main_dev_id=="sg-25" || main_dev_id=="apis"){
                 if ($(this).prop("id")=="non_hazard" || $(this).prop("id")=="Ex"){
                     // $(this).prop("style", "display:block");
                     $("label[for=" + $(this).prop("id") + "]").prop("style", "display:block");

@@ -5,12 +5,12 @@
 		<meta charset="UTF-8">
 		<meta name="robots" content="all"> <!--  content="noindex, nofollow" -->
 		<meta name="keywords" content="APLISENS configurator АПЛИСЕНС конфигуратор">
-		<meta name="description" content="Конфигуратор преобразователей давления и температуры APLISENS (АПЛИСЕНС). Работает в тестовом режиме.">
+		<meta name="description" content="Конфигуратор гидростатических преобразователей давления (в т.ч. дифференциального давления и уровня), температуры, защитных гильз для датчиков температуры, расходомеров электромагнитных и электропневматических позиционеров производства APLISENS (АПЛИСЕНС). Работает в тестовом режиме.">
 		<meta name="author" content="Фомин Александр">
 		<meta name="copyright" content="Все права на данный код принадлежат Фомину Александру https://github.com/alex-v-fraser">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-		<title>APLISENS CONFIGURATOR АПЛИСЕНС КОНФИГУРАТОР</title>
+		<title>КОНФИГУРАТОР АПЛИСЕНС APLISENS CONFIGURATOR</title>
 
 		<!-- <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script> -->
 		<!-- <script src="https://code.jquery.com/jquery-3.7.1.js"></script> -->
@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-19T13:30");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-20T11:28");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -109,7 +109,7 @@
 		</div>
 		<div style="display:flex; background: #FEC600">
 			<div style="display: block; margin-left: 8px; margin-top: 3px;" title="На главную страницу www.aplisens.ru"><a href="https://aplisens.ru"><img src="images/logo.png" alt="Здесь лого"></a></div>
-			<div style="font-size: 200%; font-weight: bold; text-align: center; flex: 1; align-content: center; margin-right: 22%;">КОНФИГУРАТОР</div>
+			<div style="font-size: 200%; font-weight: bold; text-align: center; flex: 1; align-content: center; margin-right: 11%;">КОНФИГУРАТОР</div>
 		</div>
 		<div id="main-dev-select">
 			<div id="main-dev-pc-28" class="main-dev">
@@ -144,6 +144,10 @@
 				<div class="img-hold"></div>
 				<div class="prod-name">PEM-1000</div>
 			</div>
+			<div id="main-dev-apis" class="main-dev">
+				<div class="img-hold"></div>
+				<div class="prod-name">APIS</div>
+			</div>
 		</div>
 
 		<!-- <div>
@@ -152,7 +156,7 @@
 				<g><g><g><path fill="#000000" d="M246,141.7v67c0-35.4-28.7-64-64-64h-68.6v39.6l-68.6-68.6l68.6-68.6v30.5H182C217.3,77.7,246,106.4,246,141.7z M78.6,65.7V47.3L10,115.8l68.6,68.6V166l-50.2-50.2L78.6,65.7z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></g></g>
 			</svg>
 		</div> -->
-		<h3 class="back-to-main-dev-select pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container sg-25-panel-container ctr-panel-container thermowell-panel-container pem-1000-panel-container"  style="display:none; cursor: pointer; text-align: center; padding: 0.5em; padding-left: 2em; border-radius: 5px;">Вернуться к выбору типа средства измерения</h3>
+		<h3 class="back-to-main-dev-select pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container sg-25-panel-container ctr-panel-container thermowell-panel-container pem-1000-panel-container apis-panel-container"  style="display:none; cursor: pointer; text-align: center; padding: 0.5em; padding-left: 2em; border-radius: 5px;">Вернуться к выбору типа средства измерения</h3>
 		<h1 class="pc-28-panel-container" style="display:none;">Преобразователь давления PC-28<br></h1>
 		<h1 class="apc-2000-panel-container" style="display:none;">Преобразователь давления APC-2000<br></h1>
 		<h1 class="pr-28-panel-container" style="display:none;">Преобразователь давления PR-28<br></h1>
@@ -160,8 +164,10 @@
 		<h1 class="sg-25-panel-container" style="display:none;">Преобразователь давления SG-25 (APC-2000ALW-L)<br></h1>
 		<h1 class="ctr-panel-container" style="display:none;">Преобразователь температуры<br></h1>
 		<h1 class="thermowell-panel-container" style="display:none;">Гильзы защитные<br></h1>
-		<h1 class="pem-1000-panel-container" style="display:none;">Расходомер PEM-1000<br></h1>
-		<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container thermowell-panel-container sg-25-panel-container pem-1000-panel-container" style="display:none;">
+		<h1 class="pem-1000-panel-container" style="display:none;">Расходомер электромагнитный PEM-1000<br></h1>
+		<h1 class="apis-panel-container" style="display:none;">Позиционер электропневматический APIS<br></h1>
+
+		<div class="pc-28-panel-container apc-2000-panel-container pr-28-panel-container apr-2000-panel-container ctr-panel-container thermowell-panel-container sg-25-panel-container pem-1000-panel-container apis-panel-container" style="display:none;">
 			<div class="panel-left">
 				<div id="device-options">
 					<div  class="option-to-select sg-25" style="display:none;">
@@ -258,15 +264,55 @@
 						</fieldset>
 					</div>
 
-					<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" style="display:none;">
+					<div  class="option-to-select pc-28 apc-2000 pr-28 apr-2000 ctr sg-25 apis" style="display:none;">
 						<div class="color-mark-field unselected" title="Set"></div>
 						<div class="option-to-select-header"><span>Тип взрывозащиты</span></div>
 					</div>
-					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr sg-25" id="approval-select" style="display: none;">
+					<div class="option-to-select-list pc-28 apc-2000 pr-28 apr-2000 ctr sg-25 apis" id="approval-select" style="display: none;">
 						<fieldset id="approval-select-field" name="approval-select-field">
 							<input type="checkbox" name="approval" value="" id="non_hazard" class="custom-checkbox"><label for="non_hazard">Общепромышленное исполнение</label><div id="err_non_hazard"  style="display:none;"></div>
-							<input type="checkbox" name="approval" value="Ex/" id="Ex" class="custom-checkbox"><label for="Ex">Искробезопасная электрическая цепь</label><div id="err_Ex"  style="display:none;"></div>
-							<input type="checkbox" name="approval" value="Exd/" id="Exd" class="custom-checkbox"><label for="Exd">Взрывонепроницаемая оболочка</label><div id="err_Exd"  style="display:none;"></div>
+							<input type="checkbox" name="approval" value="Ex/" id="Ex" class="custom-checkbox"><label for="Ex">Искробезопасная электрическая цепь</label><div id="err_Ex" style="display:none;"></div>
+							<input type="checkbox" name="approval" value="Exd/" id="Exd" class="custom-checkbox"><label for="Exd">Взрывонепроницаемая оболочка</label><div id="err_Exd" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Тип привода</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="actuator-select" style="display: none;">
+						<fieldset id="actuator-select-field" name="actuator-select-field">
+							<input type="checkbox" name="actuator" value="1" id="straight-act" class="custom-checkbox"><label for="straight-act">Прямого действия</label><div id="err_straight-act" style="display:none;"></div>
+							<input type="checkbox" name="actuator" value="2" id="dual-act" class="custom-checkbox"><label for="dual-act">Двойного действия</label><div id="err_dual-act" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Способ монтажа</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="apis-mount-select" style="display: none;">
+						<fieldset id="apis-mount-select-field" name="apis-mount-select-field">
+							<input type="checkbox" name="apis-mount" value="0" id="apis-mount0" class="custom-checkbox"><label for="apis-mount0">На приводе с встроенным резистивным датчиком положения</label><div id="err_apis-mount0" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="1" id="apis-mount1" class="custom-checkbox"><label for="apis-mount1">Вне привода с внешним резистивным датчиком положения (IP54)</label><div id="err_apis-mount1" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="2" id="apis-mount2" class="custom-checkbox"><label for="apis-mount2">Вне привода с внешним резистивным датчиком положения (IP67)</label><div id="err_apis-mount2" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="3" id="apis-mount3" class="custom-checkbox"><label for="apis-mount3">Вне привода с внешним магнитным датчиком положения (IP67)</label><div id="err_apis-mount3" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="4" id="apis-mount4" class="custom-checkbox"><label for="apis-mount4">Вне привода с внешним резистивным датчиком положения (IP65)</label><div id="err_apis-mount4" style="display:none;"></div>
+							<div id="apis-cabel-length-div" style="display: none">
+								<label for="apis-cabel-length" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Длина кабеля, м</label>
+								<input type="number" step="1" name="apis-cabel-length" id="apis-cabel-length" min="0" max="15" placeholder="0...15" style="width: 3.5em" required onblur="this.value = parseInt(this.value)">
+							</div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Аналоговый датчик положения</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="apis-position-select" style="display: none;">
+						<fieldset id="apis-position-select-field" name="apis-position-select-field">
+							<input type="checkbox" name="apis-position" value="00" id="no_position_sens" class="custom-checkbox"><label for="no_position_sens">Без датчика положения</label><div id="err_no_position_sens" style="display:none;"></div>
+							<input type="checkbox" name="apis-position" value="20" id="with_position_sens" class="custom-checkbox"><label for="with_position_sens">С датчиком положения 4...20мА</label><div id="err_with_position_sens" style="display:none;"></div>
 						</fieldset>
 					</div>
 
