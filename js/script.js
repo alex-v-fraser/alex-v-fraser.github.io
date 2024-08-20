@@ -543,7 +543,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 }
             }
             if (code[0]=="APC-2000ALW-L" || code[0].startsWith("SG-25")){
-                if (code[i]=="tytan"){
+                if (code[i].toLowerCase()=="tytan"){
                     full_description.set(code[i], "Корпус и мембрана зонда выполнены из титана.");
                 }
                 if (code[i].startsWith("ETFE-L=")){
@@ -565,10 +565,10 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                     full_description.set(code[i], "Кабель с изоляцией из ETFE в защитной фторопластовой оболочке.<br>Длина кабеля и оболочки " + code[i].split("=")[1].match(/\d+(\,\d+)?/g) + " " + code[i].split("=")[1].match(/[a-zA-Zа-яА-я]+/g)[0] + ".");
                 }
             }
-            if ((code[0]=="SG-25S.Smart" || code[0]=="SG-25S") && code[i]=="hastelloy"){
+            if ((code[0]=="SG-25S.Smart" || code[0]=="SG-25S") && code[i].toLowerCase()=="hastelloy"){
                 full_description.set(code[i], "Мембрана зонда выполнена из сплава Hastelloy C276.");
             }
-            if ((code[0]=="SG-25" || code[0]=="APC-2000ALW-L") && code[i]=="hastelloy"){
+            if ((code[0]=="SG-25" || code[0]=="APC-2000ALW-L") && code[i].toLowerCase()=="hastelloy"){
                 full_description.set(code[i], "Корпус и мембрана зонда выполнены из сплава Hastelloy C276.");
             }
             if ((code[0]=="SG-25.Smart" || code[0]=="SG-25S.Smart") && code[i]=="100"){
@@ -1628,7 +1628,7 @@ function get_sg_code_info(data){ /// ПОЛУЧЕНИЕ КОДА ЗАКАЗА З
     let sg_type = data.get("sg-type").toUpperCase();
     let output = data.get("output")=="4_20H" ? ".Smart/" : "/";
     let approval = data.get("approval")=="Ex" ? "Ex/" : "";
-    let material = data.get("material")=="aisi316" ? "" : data.get("material") + "/";
+    let material = data.get("material")=="aisi316" ? "" : data.get("material").replace(/^\w/, c => c.toUpperCase()) + "/";  //.replace(/^\w/, c => c.toUpperCase())
 
     const main_ranges_sg = [
         [0, 98.071, "0...10мH2O"],
@@ -5228,8 +5228,14 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
                     $("#sg-cabel-type-error").hide();
                     $("#sg-cabel-type-hast-error").hide();
                 }else{
-                    if (parseInt($("#sg-env-temp").val())>40){$("#sg-cabel-type-error").show(300);}
-                    if ($("#hastelloy").is(":checked")){$("#sg-cabel-type-hast-error").show(300);}
+                    if (parseInt($("#sg-env-temp").val())>40){
+                        $("#sg-cabel-type-error").show(300);
+                        $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    }
+                    if ($("#hastelloy").is(":checked")){
+                        $("#sg-cabel-type-hast-error").show(300);
+                        $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                    }
                 }
             }
 
