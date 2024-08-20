@@ -184,6 +184,24 @@ input[type=checkbox]:hover + label:hover {
         border: 1px solid silver;
         overflow: hidden;
     }
+    .main-dev {
+        margin: 20px;
+    }
+    #footer {
+        font-size: 83%;
+    }
+}
+@media screen and (max-width: 429px) {
+    .pc-28-panel-container {
+        border: 1px solid silver;
+        overflow: hidden;
+    }
+    .main-dev {
+        margin: 5px;
+    }
+    #footer {
+        font-size: 50%;
+    }
 }
 .panel-left {
     flex: 0 0 auto;
@@ -225,7 +243,7 @@ input[type=checkbox]:hover + label:hover {
     text-align: center;
     padding-top: 10.7em;
     vertical-align: bottom;
-    margin: 20px;
+    /* margin: 20px; */
     position: relative;
     overflow: hidden;
     cursor: pointer;
@@ -300,13 +318,6 @@ img {
 .prod-name {
     background:#FEC600;
     vertical-align:middle;
-}
-
-@media screen and (max-width: 429px) {
-    .pc-28-panel-container {
-        border: 1px solid silver;
-        overflow: hidden;
-    }
 }
 
 #footer {
