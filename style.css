@@ -185,7 +185,7 @@ input[type=checkbox]:hover + label:hover {
         overflow: hidden;
     }
     .main-dev {
-        margin: 20px;
+        margin: 30px 15px 0px 15px;
     }
     #footer {
         font-size: 83%;
@@ -197,7 +197,7 @@ input[type=checkbox]:hover + label:hover {
         overflow: hidden;
     }
     .main-dev {
-        margin: 5px;
+        margin: 5px 5px 0px 5px;
     }
     #footer {
         font-size: 50%;
