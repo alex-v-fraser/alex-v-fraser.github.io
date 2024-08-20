@@ -1465,7 +1465,7 @@ function get_code_info(data){ // ПОЛУЧЕНИЕ КОДА ЗАКАЗА - пр
         material = "";
     }
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
-        if ($(this).is(":checked") && $(this).val()!="rad_cap" && $(this).val()!="Hart7"){
+        if ($(this).is(":checked") && $(this).val()!="rad_cap" && $(this).val()!="Hart7" && $(this).val()!="Hastelloy"){
             special = special + $(this).val() + "/";
         }
     })
