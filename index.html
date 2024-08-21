@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-21T10:56");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-21T12:25");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -313,6 +313,56 @@
 						<fieldset id="apis-position-select-field" name="apis-position-select-field">
 							<input type="checkbox" name="apis-position" value="00" id="no_position_sens" class="custom-checkbox"><label for="no_position_sens">Без датчика положения</label><div id="err_no_position_sens" style="display:none;"></div>
 							<input type="checkbox" name="apis-position" value="20" id="with_position_sens" class="custom-checkbox"><label for="with_position_sens">С датчиком положения 4...20мА</label><div id="err_with_position_sens" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Пневматические присоединения</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="apis-connection-select" style="display: none;">
+						<fieldset id="apis-connection-select-field" name="apis-connection-select-field">
+							<input type="checkbox" name="apis-connection" value="1" id="apis-connection1" class="custom-checkbox"><label for="apis-connection1">Под медные трубки Ø6 мм (материал: никелир. латунь)</label><div id="err_apis-connection1" style="display:none;"></div>
+							<input type="checkbox" name="apis-connection" value="2" id="apis-connection2" class="custom-checkbox"><label for="apis-connection2">Под нерж. трубки Ø6 мм (материал: нерж. сталь)</label><div id="err_apis-connection2" style="display:none;"></div>
+							<input type="checkbox" name="apis-connection" value="3" id="apis-connection3" class="custom-checkbox"><label for="apis-connection3">Под полиэтиленовые трубки Ø6 мм (быстросъемные)</label><div id="err_apis-connection3" style="display:none;"></div>
+							<input type="checkbox" name="apis-connection" value="4" id="apis-connection4" class="custom-checkbox"><label for="apis-connection4">Под медные трубки Ø8 мм (материал: никелир. латунь)</label><div id="err_apis-connection4" style="display:none;"></div>
+							<input type="checkbox" name="apis-connection" value="5" id="apis-connection5" class="custom-checkbox"><label for="apis-connection5">Под нерж. трубки Ø8 мм (материал: нерж. сталь)</label><div id="err_apis-connection5" style="display:none;"></div>
+							<input type="checkbox" name="apis-connection" value="6" id="apis-connection6" class="custom-checkbox"><label for="apis-connection6">Под полиэтиленовые трубки Ø8 мм (быстросъемные)</label><div id="err_apis-connection6" style="display:none;"></div>
+							<input type="checkbox" name="apis-connection" value="7" id="apis-connection7" class="custom-checkbox"><label for="apis-connection7">Под полиэтиленовые трубки Ø6 мм (ERMETO)</label><div id="err_apis-connection7" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Манометры Ø40 мм</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="apis-manometer-select" style="display: none;">
+						<fieldset id="apis-manometer-select-field" name="apis-manometer-select-field">
+							<input type="checkbox" name="apis-manometer" value="1" id="apis-manometer1" class="custom-checkbox"><label for="apis-manometer1">Стандарт (корпус: углер. сталь, механизм: латунь)</label><div id="err_apis-manometer1" style="display:none;"></div>
+							<input type="checkbox" name="apis-manometer" value="2" id="apis-manometer2" class="custom-checkbox"><label for="apis-manometer2">Спец. исполнение (корпус: нерж. сталь, механизм: латунь)</label><div id="err_apis-manometer2" style="display:none;"></div>
+							<input type="checkbox" name="apis-manometer" value="3" id="apis-manometer3" class="custom-checkbox"><label for="apis-manometer3">Спец. исполнение (корпус: нерж. сталь, механизм: нерж. сталь)</label><div id="err_apis-manometer3" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Кабельный ввод</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="apis-cabel-entry-select" style="display: none;">
+						<fieldset id="apis-cabel-entry-select-field" name="apis-cabel-entry-select-field">
+							<input type="checkbox" name="apis-cabel-entry" value="1" id="apis-cabel-entry1" class="custom-checkbox"><label for="apis-cabel-entry1">Полиамидный для кабеля Ø4...9мм</label><div id="err_apis-cabel-entry1" style="display:none;"></div>
+							<input type="checkbox" name="apis-cabel-entry" value="2" id="apis-cabel-entry2" class="custom-checkbox"><label for="apis-cabel-entry2">Никелированная латунь для кабеля Ø4...9мм</label><div id="err_apis-cabel-entry2" style="display:none;"></div>
+						</fieldset>
+					</div>
+
+					<div  class="option-to-select apis" style="display:none;">
+						<div class="color-mark-field unselected" title="Set"></div>
+						<div class="option-to-select-header"><span>Монтажный комплект</span></div>
+					</div>
+					<div class="option-to-select-list apis" id="apis-mount-kit-select" style="display: none;">
+						<fieldset id="apis-mount-kit-select-field" name="apis-mount-kit-select-field">
+							<input type="checkbox" name="apis-mount-kit" value="1" id="apis-mount-kit1" class="custom-checkbox"><label for="apis-mount-kit1">Без монтажного комплекта</label><div id="err_apis-mount-kit1" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount-kit" value="2" id="apis-mount-kit2" class="custom-checkbox"><label for="apis-mount-kit2">С монтажным комплектом</label><div id="err_apis-mount-kit2" style="display:none;"></div>
 						</fieldset>
 					</div>
 

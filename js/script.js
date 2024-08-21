@@ -1108,6 +1108,18 @@ function get_full_config(){  ///// ПОЛУЧАЕМ МАССИВ ПОЛНОЙ К
             full_conf.delete("pem_cabel_length");
         }
     }
+    if (main_dev=="apis"){//ПОЛУЧАЕМ МАССИВ КОНФИГУРАЦИИ APIS
+        let apis_cabel_length = Number.isNaN(parseInt($("#apis-cabel-length").val())) ? undefined : parseInt($("#apis-cabel-length").val());
+        let options = ["actuator", "approval", "apis-mount", "apis-position", "apis-connection", "apis-manometer", "apis-cabel-entry", "apis-mount-kit"];
+        for (let el of options){
+            full_conf.set(el, $("input[name="+ el +"]:checked").prop("id"));
+        }
+        if (typeof full_conf.get("apis-mount")!="undefined" && full_conf.get("apis-mount")!="apis-mount0"){
+            full_conf.set("apis-cabel-length", apis_cabel_length);
+        }else{
+            full_conf.delete("apis-cabel-length");
+        }
+    }
     return full_conf;
 }
 
@@ -1723,6 +1735,19 @@ function get_pem_code_info(data){/// ПОЛУЧЕНИЕ КОДА РАСХОДО�
         }
     })
     code = pem_type + special + "/" + dn_pn + connection + "/" + range + "/" + material + "/" + futter + "/Modbus/" + power + cabel;
+    if ($("div.color-mark-field.unselected:visible").length==0){
+        document.getElementById("code").value = code;
+        $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
+            minWidth: 200,
+            maxWidth: function(){return $('.code-input-container').width()-8; },
+            comfortZone: 5
+        })
+        addDescription();
+    }
+}
+function get_apis_code_info(data){/// ПОЛУЧЕНИЕ КОДА APIS
+    console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА APIS");
+    let code = "В_РАЗРАБОТКЕ!"
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -3317,6 +3342,9 @@ function disable_invalid_options(){
 
 
     }
+    if (full_conf.get("main_dev")=="apis"){ /// ПРОВЕРКА ОПЦИЙ APIS
+        console.log("ПРОВЕРКА ОПЦИЙ APIS");
+    }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
         $("label[for=0_16]").prop("style", "display:block");
@@ -3636,6 +3664,9 @@ function disable_invalid_options(){
         }
         if (full_conf.get("main_dev") == "pem-1000"){
             get_pem_code_info(full_conf);
+        }
+        if (full_conf.get("main_dev") == "apis"){
+            get_apis_code_info(full_conf);
         }
     }else{
         $("fieldset#special-select-field div[id^='err_']").each(function(){  ////ERR_CANCEL для SPECIAL
