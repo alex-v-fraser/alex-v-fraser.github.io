@@ -1748,6 +1748,17 @@ function get_pem_code_info(data){/// ПОЛУЧЕНИЕ КОДА РАСХОДО�
 function get_apis_code_info(data){/// ПОЛУЧЕНИЕ КОДА APIS
     console.log("ПОЛУЧЕНИЕ КОДА ЗАКАЗА APIS");
     let code = "В_РАЗРАБОТКЕ!"
+    let actuator =  $("#" + data.get("actuator")).val();
+    let mount = $("#" + data.get("apis-mount")).val();
+    let length = typeof data.get("apis-cabel-length") == "undefined" ? "00" : (typeof data.get("apis-cabel-length") != "undefined" && data.get("apis-cabel-length") < 10) ? "0" + data.get("apis-cabel-length").toString() : data.get("apis-cabel-length");
+    let approval = data.get("approval")=="non_hazard" ? "St" : "Ex";
+    let position_sensor = $("#" + data.get("apis-position")).val();
+    let connection = $("#" + data.get("apis-connection")).val();
+    let manometer = $("#" + data.get("apis-manometer")).val();
+    let cabel_entry = $("#" + data.get("apis-cabel-entry")).val();
+    let mount_kit = $("#" + data.get("apis-mount-kit")).val();
+
+    code = "APIS-" + actuator + "X" + mount + "-D" + length + "-R" + approval + "-IHE-T" + position_sensor + "-P" + connection + "-M" + manometer + "-W" + cabel_entry + "-A" + mount_kit;
     if ($("div.color-mark-field.unselected:visible").length==0){
         document.getElementById("code").value = code;
         $('#code').autoGrowInput({ /// ИЗМЕНЯЕМ ДЛИНУ ПОЛЯ ВВОДА
@@ -1796,7 +1807,7 @@ function disable_invalid_options(){
     let check_flag = true;
     let full_conf = get_full_config();
     console.log("Выбранная конфигурация ", full_conf);
-    let opt_names = ["main_dev", "sg-type", "approval", "output", "electrical", "material", "sensor-type", "cap-or-not", "max-static", "pem-1000-connection", "pem-1000-futter"];
+    let opt_names = ["main_dev", "sg-type", "approval", "output", "electrical", "material", "sensor-type", "cap-or-not", "max-static", "pem-1000-connection", "pem-1000-futter", "actuator", "apis-mount", "apis-position", "apis-connection", "apis-manometer", "apis-cabel-entry", "apis-mount-kit"];
     for (let opt_name of opt_names){ ///СНЯТИЕ ВСЕХ ОГРАНИЧЕНИЙ
         $("#"+ opt_name + "-select-field").find("label.disabled").removeClass('disabled'); /// СНИМАЕМ ОТМЕТКУ СЕРЫМ со всех чекбоксов
         $("input[name="+ opt_name +"]").each(function() {
@@ -3344,6 +3355,48 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev")=="apis"){ /// ПРОВЕРКА ОПЦИЙ APIS
         console.log("ПРОВЕРКА ОПЦИЙ APIS");
+        if ($("#apis-mount-select-field input:checkbox:checked").length > 0 && $("input[name=apis-mount]:checked").val() != "0"){///Отобразить или скрыть длину кабеля APIS
+            $("#apis-cabel-length-div").slideDown("slow");
+        }else{
+            $("#apis-cabel-length-div").slideUp("slow");
+            $("#apis-cabel-length").prop("value", "");
+        }
+        if (typeof full_conf.get("approval")!="undefined" && full_conf.get("approval")=="Ex"){ // Для APIS EX отключить магнитн дат положения и полиамид ввод
+            for (let cons of ["apis-mount3", "apis-cabel-entry1"]){
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("approval")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("approval")}_err_cancel${num}'>${$("label[for=" + full_conf.get("approval") + "]").text()}</label>`;
+                num+=1;
+            }
+        }
+        if(typeof full_conf.get("apis-cabel-entry")!="undefined" && full_conf.get("apis-cabel-entry")=="apis-cabel-entry1"){ ///ЕСЛИ ПОЛИАМИД - ОТКЛ Ex
+            $("label[for=Ex]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#Ex").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_Ex").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("apis-cabel-entry")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("apis-cabel-entry")}_err_cancel${num}'>${$("label[for=" + full_conf.get("apis-cabel-entry") + "]").text()}</label>`;
+            num+=1;
+        }
+        if(typeof full_conf.get("apis-mount")!="undefined" && full_conf.get("apis-mount")=="apis-mount3"){ ///ЕСЛИ МАГНИТ ДАТЧИК- ОТКЛ Ex
+            $("label[for=Ex]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+            $("#Ex").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+            document.getElementById("err_Ex").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("apis-mount")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("apis-mount")}_err_cancel${num}'>${$("label[for=" + full_conf.get("apis-mount") + "]").text()}</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("actuator")!="undefined" && full_conf.get("actuator")=="straight-act"){ // Для прямого привода отключить монтаж 1-3
+            for (let cons of ["apis-mount1", "apis-mount2", "apis-mount3"]){
+                $("label[for=" + cons + "]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#" + cons).prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_" + cons).innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("actuator")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("actuator")}_err_cancel${num}'>${$("label[for=" + full_conf.get("actuator") + "]").text()}</label>`;
+                num+=1;
+            }
+        }
+        for (let cons of ["apis-mount1", "apis-mount2", "apis-mount3"]){  ////Если выбрано одно из этих - отключить прямой привод
+            if(typeof full_conf.get("apis-mount")!="undefined" && full_conf.get("apis-mount")==cons){ ///- ОТКЛ прямой привод
+                $("label[for=straight-act]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
+                $("#straight-act").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ЧЕКБОКСОВ
+                document.getElementById("err_straight-act").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='${full_conf.get("apis-mount")}_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='${full_conf.get("apis-mount")}_err_cancel${num}'>${$("label[for=" + full_conf.get("apis-mount") + "]").text()}</label>`;
+                num+=1;
+            }
+        }
     }
     ///СКРЫТИЕ И ПОКАЗ SPECIAL
     if (full_conf.get("main_dev") == "pc-28" || full_conf.get("main_dev") == "pr-28"){
@@ -3723,6 +3776,12 @@ $(function (){
             $(this).siblings("input:checkbox").prop('checked', false);
             if (this.name=="max-static"){
                 MaxStaticChecked();
+                return;
+            }
+            if (this.name=="apis-mount" && $(this).prop("id")!="apis-mount0"){
+                $(this).closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+                $("#apis-cabel-length").prop("value", "");
+                disable_invalid_options();
                 return;
             }
             if (main_dev=="sg-25" && this.name=="output"){
@@ -5500,3 +5559,14 @@ function remove_pem_pn(){
     $("select#pem-1000-pn-select option[value=PN16]").prop("selected", true);
     disable_invalid_options();
 }
+$(function(){
+    $("#apis-cabel-length").on('change', function(){
+        let cabel_length = parseInt($(this).val());
+        if (!Number.isNaN(cabel_length) && cabel_length>=$(this).prop("min") && cabel_length<=$(this).prop("max")){
+            expand_next_div("apis-cabel-length");
+        }else{
+            $("#apis-cabel-length").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+        }
+        disable_invalid_options();
+    })
+})
