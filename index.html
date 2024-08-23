@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-08-22T17:21");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-08-23T10:45");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -293,11 +293,11 @@
 					</div>
 					<div class="option-to-select-list apis" id="apis-mount-select" style="display: none;">
 						<fieldset id="apis-mount-select-field" name="apis-mount-select-field">
-							<input type="checkbox" name="apis-mount" value="0" id="apis-mount0" class="custom-checkbox"><label for="apis-mount0">На приводе с встроенным резистивным датчиком положения</label><div id="err_apis-mount0" style="display:none;"></div>
-							<input type="checkbox" name="apis-mount" value="1" id="apis-mount1" class="custom-checkbox"><label for="apis-mount1">Вне привода с внешним резистивным датчиком положения (IP54)</label><div id="err_apis-mount1" style="display:none;"></div>
-							<input type="checkbox" name="apis-mount" value="2" id="apis-mount2" class="custom-checkbox"><label for="apis-mount2">Вне привода с внешним резистивным датчиком положения (IP67)</label><div id="err_apis-mount2" style="display:none;"></div>
-							<input type="checkbox" name="apis-mount" value="3" id="apis-mount3" class="custom-checkbox"><label for="apis-mount3">Вне привода с внешним магнитным датчиком положения (IP67)</label><div id="err_apis-mount3" style="display:none;"></div>
-							<input type="checkbox" name="apis-mount" value="4" id="apis-mount4" class="custom-checkbox"><label for="apis-mount4">Вне привода с внешним резистивным датчиком положения (IP65)</label><div id="err_apis-mount4" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="0" id="apis-mount0" class="custom-checkbox"><label for="apis-mount0">На приводе, с встроенным резистивным датчиком положения</label><div id="err_apis-mount0" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="1" id="apis-mount1" class="custom-checkbox"><label for="apis-mount1">Вне привода, с внешним резистивным датчиком положения (IP54)</label><div id="err_apis-mount1" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="2" id="apis-mount2" class="custom-checkbox"><label for="apis-mount2">Вне привода, с внешним резистивным датчиком положения (IP67)</label><div id="err_apis-mount2" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="3" id="apis-mount3" class="custom-checkbox"><label for="apis-mount3">Вне привода, с внешним магнитным датчиком положения (IP67)</label><div id="err_apis-mount3" style="display:none;"></div>
+							<input type="checkbox" name="apis-mount" value="4" id="apis-mount4" class="custom-checkbox"><label for="apis-mount4">Вне привода, с внешним резистивным датчиком положения (IP65)</label><div id="err_apis-mount4" style="display:none;"></div>
 							<div id="apis-cabel-length-div" style="display: none">
 								<label for="apis-cabel-length" style="margin-left: 1.6em; margin-top: 0.5em; display: inline-block">Длина кабеля, м</label>
 								<input type="number" step="1" name="apis-cabel-length" id="apis-cabel-length" min="1" max="15" placeholder="1...15" style="width: 3.5em" required onblur="this.value = parseInt(this.value)">

@@ -180,7 +180,11 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
     let code = $("#code").val().replace(/ /g, '');  /// С УДАЛЕНИЕМ ПРОБЕЛОВ
     document.getElementById("code").value = code;
     try{
-        code = code.split("/").filter(Boolean);
+        if (!code.startsWith("APIS-")){
+            code = code.split("/").filter(Boolean);
+        }else{
+            code = code.split("-").filter(Boolean);
+        }
     }catch (err){console.log(err);}
     for (let i=0; i<code.length; i++){
 
@@ -619,12 +623,26 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         let pem_ind_td = full_description.has("IP68") ? "" : "<br>Степень защиты корпуса преобразователя: IP67.";
         full_description.set([...full_description][0][0], full_description.get([...full_description][0][0]) + pem_ind_ip + pem_ind_td);
     }
+    if (code[0]=="APIS"){ /// СОСТАВЛЯЕМ ОПИСАНИЕ ДЛЯ APIS
+        full_description.set(code[1], "Для привода " + $("label[for=" + $("input[name=actuator][value=" + code[1].slice(0,1) + "]").prop("id") + "]").prop("innerHTML").toLowerCase() + ".<br>Для установки " + $("label[for=" + $("input[name=apis-mount][value=" + code[1].slice(-1) + "]").prop("id") + "]").prop("innerHTML").replace(/^\W/, c => c.toLowerCase()));
+        full_description.set(code[2], "Расстояние от позиционера до привода " + parseInt(code[2].slice(1,)).toString() + " м.");
+        let apis_ex_descr = code[3] =="RSt" ? "Общепромышленное исполнение." : code[3] =="REx" ? "Искробезопасное исполнение.<br><a href='ex_certs/apis_ex_cert.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>" : "";
+        full_description.set(code[3], apis_ex_descr);
+        full_description.set(code[4], "Входной сигнал: 4...20мА + HART.");
+        let apis_out = code[5]=="T00" ? "не предусмотрено." : code[5]=="T20" ? "4...20 мА." : "";
+        full_description.set(code[5], "Выходной сигнал: " + apis_out);
+        full_description.set(code[6], "Пневматические присоединения: " + $("label[for=" + $("input[name=apis-connection][value=" + code[6].slice(-1) + "]").prop("id") + "]").prop("innerHTML").replace(/^\W/, c => c.toLowerCase()));
+        full_description.set(code[7], "Манометры: " + $("label[for=" + $("input[name=apis-manometer][value=" + code[7].slice(-1) + "]").prop("id") + "]").prop("innerHTML").replace(/^\W/, c => c.toLowerCase()));
+        full_description.set(code[8], "Кабельные вводы: " + $("label[for=" + $("input[name=apis-cabel-entry][value=" + code[8].slice(-1) + "]").prop("id") + "]").prop("innerHTML").replace(/^\W/, c => c.toLowerCase()));
+        console.log(code[9].slice(-1));
+        full_description.set(code[9], $("label[for=" + $("input[name=apis-mount-kit][value=" + code[9].slice(-1) + "]").prop("id") + "]").prop("innerHTML").replace(/^\W/, c => c.toLowerCase()));
+    }
 
     //console.log(window["thermoresistor_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термосопротивлений по code_name
     //console.log(window["thermocouple_restr_lst"].values().toArray().map((val)=>val.get("code_name"))); /// получение массива термопар по code_name
     if (full_description.has("(+)")){full_description.delete("(+)")}
     if (full_description.has("(-)")){full_description.delete("(-)")}
-    if (full_description.has("Ex")){
+    if (full_description.has("Ex") || full_description.has("REx")){
         console.log("Замена описания на EX");
         console.log(full_description);
         if (!full_description.has("ALW") && typeof device_restr_lst.get([...full_description][0][0])!="undefined" && typeof device_restr_lst.get([...full_description][0][0]).get("ex_description")!="undefined"){
