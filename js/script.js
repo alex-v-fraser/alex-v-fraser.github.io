@@ -235,7 +235,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
             full_description.set(code[2], "Максимальное рабочее давление гильзы: " + code[2].match(/\d+(\,\d+)?/g)[0] + " МПа.");
             let conn_descr = code[3]=="-" ? "Стопорный винт." : code[3];
             let conn_descr2 = code[4]=="-" ? "Сварка." : code[4];
-            code[4] = (code[3]=="-" && code[4]=="-") ? "--" : code[4];
+            code[4] = code[3]==code[4] ? code[4] + " " : code[4];
             if (conn_descr2.startsWith("DN")){
                 conn_descr2 = "фланец " + conn_descr2.match(/[a-zA-Zа-яА-я]+/g)[0] + conn_descr2.match(/\d+(\,\d+)?/g)[0] + " " + conn_descr2.match(/[a-zA-Zа-яА-я]+/g)[1] + conn_descr2.match(/\d+(\,\d+)?/g)[1] + " тип " + conn_descr2.slice(-1,);
             }
@@ -244,7 +244,7 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }else{
             let conn_descr3 = code[2]=="-" ? "Стопорный винт." : code[2];
             let conn_descr4 = code[3]=="-" ? "Сварка." : code[3];
-            code[4] = (code[3]=="-" && code[4]=="-") ? "--" : code[4];
+            code[3] = code[2] == code[3] ? code[3] + " " : code[3];
             if (conn_descr3.startsWith("DN")){
                 conn_descr3 = "фланец " + conn_descr3.match(/[a-zA-Zа-яА-я]+/g)[0] + conn_descr3.match(/\d+(\,\d+)?/g)[0] + " " + conn_descr3.match(/[a-zA-Zа-яА-я]+/g)[1] + conn_descr3.match(/\d+(\,\d+)?/g)[1] + " тип " + conn_descr3.slice(-1,);
             }
