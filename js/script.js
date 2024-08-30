@@ -2814,10 +2814,21 @@ function disable_invalid_options(){
         }
 
         if (typeof full_conf.get("sensor_quantity")!="undefined" && full_conf.get("sensor_quantity")=="2"){//деактивация 4..20мА для 2-х сенсоров
-            $("label[for=4_20]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ ctr-ALW
-            $("#4_20").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ ctr-ALW
+            $("label[for=4_20]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#4_20").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
             document.getElementById("err_4_20").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_quantity")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorQuantity()'><label for='${full_conf.get("sensor_quantity")}_err_cancel${num}'>Количество сенсоров: 2.</label>`;
             num+=1;
+        }
+
+        if (typeof full_conf.get("sensor_wiring_tr")!="undefined" && full_conf.get("sensor_wiring_tr")=="4"){//деактивация 4..20мА для 4-х проводной схемы
+            $("label[for=4_20]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ
+            $("#4_20").prop('disabled', true);  //// ДЕАКТИВАЦИЯ НЕДОСТУПНЫХ
+            document.getElementById("err_4_20").innerHTML += `<input type='checkbox' name='alw_2sens_err_cancel' value='' id='${full_conf.get("sensor_wiring_tr")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='changeSensorWireTo3()'><label for='${full_conf.get("sensor_wiring_tr")}_err_cancel${num}'>4-х проводная схема (Изменить на 3-x?).</label>`;
+            num+=1;
+        }
+
+        if (typeof full_conf.get("output")!="undefined" && full_conf.get("output")=="4_20"){///ОТКЛ ДИАМЕТР 4-проводную для 4...20
+            $("select#sensor-wiring-tr option[value=4]").attr('disabled', 'disabled');
         }
 
         if (typeof full_conf.get("material")!="undefined" && full_conf.get("material")!="aisi316" && full_conf.get("material")!="inconel"){//деактивация ALW для НЕПОДХОДЯЩИХ МАТЕРИАЛОВ
@@ -5588,3 +5599,9 @@ $(function(){
         disable_invalid_options();
     })
 })
+
+function changeSensorWireTo3(){
+    console.log("Меняем схему на 3-х проводную");
+    $("select#sensor-wiring-tr option[value=3]").prop("selected", true);
+    disable_invalid_options();
+}
