@@ -188,8 +188,8 @@
     "cap-or-not": "direct",
     "begin_range_kpa": -101,
     "end_range_kpa": 71000,
-    "range": 1,
-    "range_c": 1,
+    "range": 0.001,
+    "range_c": 0.001,
     "max_temp": 120,
     "material": [
       "aisi316",
