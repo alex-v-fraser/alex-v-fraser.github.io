@@ -1902,7 +1902,7 @@ function disable_invalid_options(){
     min_range_abs = full_conf.get("output")=="4_20H" ? 10 : 40.0;   // мин ширина диапазона абс, кПа
     low_press_diff = -160;                         // начало диапазона перепад, кПа
     hi_press_diff = 2500;                           // конец диапазона перепад, кПа
-    min_range_diff = 1.6;                           // мин ширина диапазона перепад, кПа
+    min_range_diff = full_conf.get("main_dev")=='apr-2000' && full_conf.get("electrical")=='APCALW' ? 0.1 : full_conf.get("main_dev")=='apr-2000' && full_conf.get("electrical")!='APCALW' ? 0.4 : 1.6; // мин ширина диапазона перепад, кПа
     if (full_conf.get("main_dev")=='pc-28' || full_conf.get("main_dev")=='apc-2000'){
         document.getElementById("range_warning1").innerHTML = low_press.toLocaleString() + " ... " + hi_press.toLocaleString() + " кПа и минимальная ширина " + min_range + " кПа (избыточное давление).";
         document.getElementById("range_warning2").innerHTML = low_press_abs.toLocaleString() + " ... " + hi_press_abs.toLocaleString() + " кПа и минимальная ширина " + min_range_abs + " кПа (абсолютное давление).";
