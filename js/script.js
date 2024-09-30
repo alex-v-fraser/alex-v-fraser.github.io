@@ -2174,6 +2174,38 @@ function disable_invalid_options(){
         }
     }
 
+
+    if (full_conf.get("main_dev")=="apc-2000"){/// Для APC-2000 Проверка золото, G1/2, диапазона
+        console.log("Проверка золото, G1/2, диапазона");
+        if (typeof full_conf.get("material")!=="undefined" && full_conf.get("material")=="au" && typeof full_conf.get("range")!=="undefined" && (full_conf.get("begin_range_kpa")<0 || full_conf.get("end_range_kpa")<200)){ /// ВЫБРАНО ЗОЛОТО и ДИАПАЗОН - блок G1/2
+            $("label[for=G1_2]").addClass('disabled');  //// ДЕАКТИВАЦИЯ G1/2
+            $("#G1_2").prop('disabled', true);          //// ДЕАКТИВАЦИЯ G1/2
+            document.getElementById("err_G1_2").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='au_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='au_err_cancel${num}'>${$("label[for=au]").text()}</label>`;
+            num+=1;
+            document.getElementById("err_G1_2").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Для G1/2 + Au доступно от 0...200кПа до 0...100МПа.</label>`;
+            num+=1;
+        }
+        if (typeof full_conf.get("thread")!=="undefined" && full_conf.get("thread")=="G1_2" && typeof full_conf.get("range")!=="undefined" && (full_conf.get("begin_range_kpa")<0 || full_conf.get("end_range_kpa")<200)){ /// ВЫБРАНО G1/2 и ДИАПАЗОН - блок золото
+            $("label[for=au]").addClass('disabled');  //// ДЕАКТИВАЦИЯ ЗОЛОТО
+            $("#au").prop('disabled', true);          //// ДЕАКТИВАЦИЯ ЗОЛОТО
+            document.getElementById("err_au").innerHTML += `<input type='checkbox' name='err_cancel' value='' id='G1_2_err_cancel${num}' checked class='custom-checkbox err-checkbox'><label for='G1_2_err_cancel${num}'>${$("label[for=G1_2]").text()}</label>`;
+            num+=1;
+            document.getElementById("err_au").innerHTML += `<input type='checkbox' name='range_err_cancel' value='' id='${full_conf.get("range")}_err_cancel${num}' checked class='custom-checkbox err-checkbox' onclick='uncheckRange()'><label for='${full_conf.get("range")}_err_cancel${num}'>Выбранный диапазон. Для G1/2 + Au доступно от 0...200кПа до 0...100МПа.</label>`;
+            num+=1;
+        }
+        if(typeof full_conf.get("thread")!=="undefined" && full_conf.get("thread")=="G1_2" && typeof full_conf.get("material")!=="undefined" && full_conf.get("material")=="au"){   /// ВЫБРАНО ЗОЛОТО и G1/2 - ОГРАНИЧИТЬ ДИАПАЗОН
+            low_press = 0;
+            hi_press = 100000;
+            min_range = 200.1;
+            low_press_abs = 1000000000;
+            hi_press_abs = -1000000000;
+            min_range_abs = 1000000000;
+            document.getElementById("range_warning1").innerHTML = "от 0...200,1кПа до 0...100МПа (избыточное давление).";
+            document.getElementById("range_warning2").innerHTML = "Абсолютное давление недоступно для G1/2 + Au.";
+        }
+
+    }
+
     if (full_conf.get("main_dev")=="apr-2000" || full_conf.get("main_dev")=="pr-28"){   /// ПРОВЕРКА PR и APR
 
         $("input[name=thread]").each(function(){
