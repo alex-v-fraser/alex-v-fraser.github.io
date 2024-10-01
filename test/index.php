@@ -1,8 +1,6 @@
 <?php
 	require_once 'connect.php';
-    // include 'detdata.php';
-    // Определим собственный класс исключений для ошибок MySQL
-	class MySQL_Exception extends Exception {
+	class MySQL_Exception extends Exception {   // Определим собственный класс исключений для ошибок MySQL
 		public function __construct($message) {
 			parent::__construct($message);
 		}
@@ -14,7 +12,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Начал Изучать PHP и MySQL</title>
+<title>Специальные исполнения</title>
 <style>
 /* Стилизация таблиц */
 table { border-collapse:separate; border:none; border-spacing:0; margin:8px 12px 18px 6px; line-height:1.2em; margin-left:auto; margin-right:auto; overflow: auto }
@@ -37,26 +35,43 @@ tr:last-child td { border-bottom-width:1px }
         <?php endforeach ?> -->
 
         <?php
-            $table_name = "b_lists_field";
+            $table_name = "b_iblock_element";
+            $query = "SELECT `ID`, `NAME` FROM $table_name WHERE `IBLOCK_ID` = '61'";
+            $result = $db->query($query); /// Получаем соответствие имени элемента списка и его ID (NAME => ID)
+            if (!$result) throw new MySQL_Exception($db->error);
+            $elements = [];
+            while($row = $result->fetch_assoc()){
+                $elements[$row["ID"]] = $row["NAME"]; // получаем все строки в цикле по одной и записываем в массив
+            }
+
+            $table_name = "b_iblock_property";
+            $query = "SELECT `ID`, `NAME` FROM $table_name WHERE `IBLOCK_ID` = '61'";
+            $result = $db->query($query); /// Получаем соответствие имени поля и его ID (NAME => ID)
+            if (!$result) throw new MySQL_Exception($db->error);
+            $properties = [];
+            while($row = $result->fetch_assoc()){
+                $properties[$row["ID"]] = $row["NAME"]; // получаем все строки в цикле по одной и записываем в массив
+            }
+
             try {
-                $result = $db->query('SHOW TABLES');//Запрос к базе данных
-                if (!$result) throw new MySQL_Exception($db->error);//В случае неудачного запроса генерируем исключение
-                echo "<table><caption> $table_name </caption><tr>";
-                $result1 = $db->query("SELECT * FROM $table_name");// Получить названия столбцов
-                if (!$result1) throw new MySQL_Exception($db->error);
-                for($i = 0; $i < $db->field_count; $i++){
-                    $field_info = $result1->fetch_field();
-                    echo "<th>{$field_info->name}</th>";
+                $prop_nums = [823, 300, 320]; // 299, 302,
+                echo "<table><caption>СПЕЦИАЛЬНЫЕ ИСПОЛНЕНИЯ</caption><tr><th>№п/п</th><th>Наименование</th>";
+                foreach($prop_nums as $val){
+                    echo "<th>{$properties[$val]}</th>";
                 }
                 echo '</tr>';
-                while ($row1 = $result1->fetch_row()) {// Получить данные
-                    if ((int)($result1->fetch_row()[0])===61){
-                        echo '<tr>';
-                        foreach($row1 as $_column) {
-                            echo "<td>{$_column}</td>";
-                        }
-                        echo "</tr>";
+                $table_name = "b_iblock_element_property";
+                $num=1;
+                foreach($elements as $key => $value){
+                    echo "<tr><td>{$num}</td><td>{$value}</td>";
+                    foreach($prop_nums as $val) {
+                        $query = "SELECT `VALUE` FROM $table_name WHERE `IBLOCK_PROPERTY_ID` = $val AND `IBLOCK_ELEMENT_ID` = $key";
+                        $result = $db->query($query)->fetch_all(MYSQLI_ASSOC);
+                        $_column = ($result[0]["VALUE"]);
+                        echo "<td>{$_column}</td>";
                     }
+                    echo "</tr>";
+                    $num+=1;
                 }
                 echo '</table>';
             }
