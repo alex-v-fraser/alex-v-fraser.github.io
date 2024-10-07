@@ -5389,7 +5389,7 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
             }else{
                 $("select#sg-ptfe-type option[value=no-ptfe]").removeClass('disabled');
             }
-            if (parseInt($("#sg-env-temp").val())>80){///ПРИ температуре больше 80 показать доп кабель
+            if (parseInt($("#sg-env-temp").val())>80 && $("#sg-local-display").val()=="no"){///ПРИ температуре больше 80 и без индикации показать доп кабель
                 $("#sg-add-cabel-length-div").slideDown(300);
                 $("#sg-add-cabel-length").addClass("required");
             }else{
@@ -5453,51 +5453,62 @@ $(function(){ ////ПОКАЗЫВАЕМ ИЛИ СКРЫВАЕМ ВЫБОР КАБ
 })
 
 $(function(){
-    $("#sg-cabel-select-field, #range-select-field").change(function(){
+    $("#sg-cabel-select-field").change(function(){
         if (!Number.isNaN(parseInt($("#sg-cabel-length").val()))){/// УСТАНОВКА МАКСИМАЛЬНОЙ ДЛИНЫ PTFE оболочки равной длине кабеля
             let l_min = (parseInt($("#sg-env-temp").val())>80) ? parseInt($("#sg-cabel-length").val()) : $("#sg-ptfe-length").prop("min");
             let l_max = parseInt($("#sg-cabel-length").val());
             let p_holder = l_min + "..." + l_max;
             $("#sg-ptfe-length").prop('max', l_max).prop("placeholder", p_holder);
         }
-        let filled = true;
-        if ($("#sg-cabel-select-field").find("select option[value=not_selected]:selected").length!=0){
-            filled = false;
-        }
-        if ($("#sg-cabel-select-field").find("select option[class=disabled]:selected").length!=0){
-            filled = false;
-        }
-        $("#sg-cabel-select-field").find("input[class=required]").each(function(){
-            if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
-                filled = false;
-            }
-        });
-        if (filled==true){
-            if ($("#sg-cabel-select").is(":visible")){
-                expand_next_div("sg-env-temp");
-                disable_invalid_options();
-            }
-        }else{
-            $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-            disable_invalid_options();
-        }
+        check_sg_cabel_fill();
     })
 })
+
+function check_sg_cabel_fill(){ //ПРОВЕРКА ЗАПОЛНЕНИЯ КАБЕЛЕЙ ЗОНДА
+    let filled = true;
+    if ($("#sg-cabel-select-field").find("select option[value=not_selected]:selected").length!=0){
+        filled = false;
+    }
+    if ($("#sg-cabel-select-field").find("select option[class=disabled]:selected").length!=0){
+        filled = false;
+    }
+    $("#sg-cabel-select-field").find("input[class=required]").each(function(){
+        if (Number.isNaN(parseInt($(this).val())) || parseInt($(this).val())>$(this).prop("max") || parseInt($(this).val())<$(this).prop("min")){
+            filled = false;
+        }
+    });
+    if (filled==true){
+        if ($("#sg-cabel-select").is(":visible")){
+            expand_next_div("sg-env-temp");
+        }else{
+            $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("unselected").addClass("selected");
+        }
+    }else{
+        $("#sg-env-temp").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
+    }
+    disable_invalid_options();
+}
 
 $(function(){// ПОКАЗ СКРЫТИЕ ВЫБОРА ДИСПЛЕЯ ДЛЯ ЗОНДА SG
     $("#sg-local-display").change(function(){
         if ($(this).val()!="not_selected" && !$(this).find("option:selected").hasClass("disabled") && $("input[name=output]:checked").length>0){
             expand_next_div("sg-local-display");
-            disable_invalid_options();
         }else{
             $("#sg-local-display").closest("div.active-option-to-select-list").prev("div.option-to-select").find(".color-mark-field").removeClass("selected").addClass("unselected");
-            disable_invalid_options();
         }
         if ($(this).find("option:selected").hasClass("disabled")){
             $("#sg-local-display-error").show(300);
         }else{
             $("#sg-local-display-error").hide();
         }
+        if (parseInt($("#sg-env-temp").val())>80 && $("#sg-local-display").val()=="no"){///ПРИ температуре больше 80 и без индикации показать доп кабель
+            $("#sg-add-cabel-length-div").slideDown(300);
+            $("#sg-add-cabel-length").addClass("required");
+        }else{
+            $("#sg-add-cabel-length-div").slideUp(300);
+            $("#sg-add-cabel-length").prop("value", "").removeClass("required");
+        }
+        check_sg_cabel_fill();
     })
     $("input[name=output]").change(function(){
         if (main_dev=="sg-25" && $("#4_20").is(":checked")){
