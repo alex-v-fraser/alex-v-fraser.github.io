@@ -22,7 +22,7 @@
 
 
 
-		<script type="module">
+		<script type="module"> /// проверка новой версии на Github
 			import { Octokit, App } from "https://esm.sh/octokit";
 			const octokit = new Octokit({});
 			async function getChangedDate(owner, repo) {
@@ -37,7 +37,7 @@
 					},
 						(response, done) => {
 							// console.log("ДАТА РЕПОЗИТОРИЯ: ", response.headers["last-modified"]);
-							let lm = new Date("2024-10-02T11:53");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
+							let lm = new Date("2024-10-07T11:29");///////////ДАТА МОДИФИКАЦИИ ФАЙЛА
 							lm = Intl.DateTimeFormat('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow', timeZoneName: 'short' }).format(lm);
 							let cpr = document.getElementById("footer");
 							cpr.innerHTML = "&copy; 2024 - " + new Date().getFullYear() + " All Rights Reserved by Alex-V-Fraser.";
@@ -62,7 +62,7 @@
 					getChangedDate("alex-v-fraser", "alex-v-fraser.github.io");
 				})
 			})
-			</script>
+		</script>
 
 
 
@@ -1242,6 +1242,7 @@
 							<input type="checkbox" name="special" value="Lvk" id="spec_375" disabled class="custom-checkbox"><label for="spec_375" class="disabled">Сигнал обрыва цепи сенсора: <img src='images/checkbox-4.png' alt="alt" style='border:1px solid #000000; width: 0.9em; height: 0.9em'> <b>3,75мА</b> или <img src='images/checkbox-3.png' alt="alt" style='width: 0.9em; height: 0.9em'> <b>21,5мА</b></label><div id="err_spec_375"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="PTFE" id="spec_ptfe" disabled class="custom-checkbox"><label for="spec_ptfe" class="disabled"><b>PTFE</b> - покрытие погружной части гильзы политетрафторэтиленом (тефлон)</label><div id="err_spec_ptfe"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="Hastelloy" id="spec_sg_hastelloy" disabled class="custom-checkbox"><label for="spec_sg_hastelloy" class="disabled"><b>Hastelloy</b> - мембрана из сплава Hastelloy C276</label><div id="err_spec_sg_hastelloy"  style="display:none;"></div>
+							<input type="checkbox" name="special" value="-10...70C" id="spec_sg_1070" disabled class="custom-checkbox"><label for="spec_sg_1070" class="disabled"><b>-10...70°C</b> - расширенный диапазон термокомпенсации</label><div id="err_spec_sg_1070"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="SN" id="pem-sn" disabled class="custom-checkbox"><label for="pem-sn" class="disabled"><b>SN</b> - корпус из нержавеющей стали AISI304</label><div id="err_pem-sn"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="IP67" id="pem-ip67" disabled class="custom-checkbox"><label for="pem-ip67" class="disabled"><b>IP67</b> - степень защиты корпуса индикатора</label><div id="err_pem-ip67"  style="display:none;"></div>
 							<input type="checkbox" name="special" value="IP68" id="pem-ip68" disabled class="custom-checkbox"><label for="pem-ip68" class="disabled"><b>IP68</b> - степень защиты корпуса преобразователя</label><div id="err_pem-ip68"  style="display:none;"></div>

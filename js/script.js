@@ -187,7 +187,6 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
         }
     }catch (err){console.log(err);}
     for (let i=0; i<code.length; i++){
-
         if (typeof code[i+1]!='undefined'){
             if ((code[i].slice(-5)=="CG1.1" && code[i+1].slice(0,1)=="2") || (code[i].slice(-1)=="1" && (code[i+1].slice(0,4)=="2NPT" || code[i+1].slice(0,4)=="4NPT")) || (code[i].slice(-2)=="G1" && code[i]!="OG1" && (code[i+1].slice(0,1)=="2" || code[i+1].slice(0,1)=="4" || code[i+1].slice(0,1)=="8")) || (code[i].slice(-2)=="G3" && code[i]!="OG3" && code[i+1].slice(0,1)=="4") || (code[i]=="C7" && code[i+1]=="16") || (code[i].slice(-3)=="кгс" && code[i+1].startsWith("см2")) || ((code[i]=="LI-24G" || code[i]=="AT"|| code[i].startsWith("GI-22")) && code[i+1]=="Ex") || ((code[i].endsWith("м3") || code[i].endsWith("м³")) && code[i+1]=="ч")){
                 code.splice(i, 2, code[i] + "/" + code[i+1]);
@@ -665,6 +664,32 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(apr, ex_exd + "<br><a href='ex_certs/ct_ex_cert.pdf' target='_blank'><div>Сертификат соответствия ТР ТС 012/2011</div></a>");
             }
         }
+    }
+
+    if ([...full_description][0][0].startsWith("SG-25")){// Добавляем к описанию зондов температуру среды измерения
+        console.log("Добавляем к описанию зондов температуру среды измерения");
+        let sg_env_temp = "";
+        let o_p = "";
+        let hi_tmp = false;
+        let thermocomp = "";
+        for (i=0;i<full_description.size;i++){
+            if ([...full_description][i][0].startsWith("PTFE-L=")){
+                hi_tmp = true;
+                break;
+            }
+        }
+        sg_env_temp = hi_tmp == true ? "-30...80°C." : "-30...40°C.";
+        try {
+            o_p = [...full_description][0][0].split(".")[1];
+        } catch (error) {
+            console.log(error);
+        }
+
+        if (o_p == "Smart"){
+            thermocomp = "<br>Диапазон термокомпенсации: -25...80°С.";
+        }
+
+        full_description.set([...full_description][0][0], full_description.get([...full_description][0][0]) + "<br>Температура среды измерения: " + sg_env_temp + thermocomp + "<br><span style='color:red;'>ВНИМАНИЕ! Не допускать замерзания среды измерения вблизи зонда!</span>");
     }
 
     for (let i=0; i<=code.length; i++){
@@ -3529,7 +3554,7 @@ function disable_invalid_options(){
     }
     if (full_conf.get("main_dev") == "sg-25"){
         $("input[name=special]").each(function(){
-            if ($(this).prop('id')=="spec_sg_hastelloy"){
+            if ($(this).prop('id')=="spec_sg_hastelloy" || $(this).prop('id')=="spec_sg_1070"){
                 $("label[for="+$(this).prop('id')+"]").prop("style", "display:block");
             }else{
                 $("label[for="+$(this).prop('id')+"]").prop("style", "display:none");
@@ -3537,6 +3562,7 @@ function disable_invalid_options(){
         })
     }else{
         $("label[for=spec_sg_hastelloy]").prop("style", "display:none");
+        $("label[for=spec_sg_1070]").prop("style", "display:none");
     }
     if (full_conf.get("main_dev") == "pem-1000"){
         $("input[name=special]").each(function(){
@@ -3567,6 +3593,10 @@ function disable_invalid_options(){
     if (full_conf.get("material") == "hastelloy" || (full_conf.get("sg-type") =="sg-25" && full_conf.get("material") == "aisi316")){
         $("label[for=spec_sg_hastelloy]").addClass('disabled');
         $("#spec_sg_hastelloy").prop('checked', true).prop('disabled', true);
+    }
+    if (full_conf.get("output") != "4_20" || full_conf.get("sg-ptfe-type") != "with-ptfe"){
+        $("label[for=spec_sg_1070]").addClass('disabled');
+        $("#spec_sg_1070").prop('checked', false).prop('disabled', true);
     }
     if (full_conf.get("main_dev") != "pc-28" || typeof full_conf.get("range") == 'undefined' || full_conf.get("range") < 40 || $("#hi_load").is(":checked") || full_conf.get("output") == "4_20H" || full_conf.get("output") == "modbus" || typeof full_conf.get("output")=='undefined'){ //проверка 0,16
         $("label[for=0_16]").addClass('disabled');
