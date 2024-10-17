@@ -578,8 +578,14 @@ function addDescription() {  // СОЗДАЕМ ТАБЛИЦУ С ОПИСАНИ�
                 full_description.set(code[i], "Зонд с вынесенной электроникой для измерения уровня горячих сред с температурой до 100°С.");
             }
             if (code[0].startsWith("PEM-1000")){
-                if (["AISI316", "Hastelloy", "Tytan", "Tantal", "Титан", "Тантал"].some(word => code[i]==word)){
-                    full_description.set(code[i], "Материал электродов: " + code[i] + ".");
+                if (["316L", "Hastelloy", "Ti", "Ta"].some(word => code[i]==word)){
+                    var pem_mat = new Map([
+                        ["316L", 'AISI316L'],
+                        ["Hastelloy", 'Hastelloy C276'],
+                        ["Ti", 'Титан'],
+                        ["Ta", 'Тантал']
+                    ]);
+                    full_description.set(code[i], "Материал электродов: " + pem_mat.get(code[i]) + ".");
                 }
                 if (["Резина", "резина", "PTFE", "PFA"].some(word => code[i]==word)){
                     let pem_med_temp = new Map([
@@ -1767,13 +1773,13 @@ function get_pem_code_info(data){/// ПОЛУЧЕНИЕ КОДА РАСХОДО�
     let dn_pn = data.get("dn_pn");
     let connection = $("#" + data.get("pem-1000-connection")).val();
     let range = data.get("pem_begin_range") + "..." + data.get("pem_end_range") + "м³/ч";
-    let material = data.get("material")=="aisi316" ? data.get("material").toUpperCase() : data.get("material")[0].toUpperCase() + data.get("material").slice(1,);
+    let material = data.get("material")=="aisi316" ? "316L" : data.get("material")=="tytan" ? "Ti" : data.get("material")=="tantal" ? "Ta" : "Hastelloy";
     let futter = $("#" + data.get("pem-1000-futter")).val();
     let power = $("#" + data.get("pem-1000-power")).val();
     let cabel = data.has("pem_cabel_length") ? "/L=" + data.get("pem_cabel_length") + "м" : "";
     let special = "";
     $("input[name=special]").each(function() {/// ПЕРЕБИРАЕМ отмеченные SPECIAL, добавляем в код
-        if ($(this).is(":checked")){
+        if ($(this).is(":checked" && $(this).prop("id")!="spec_sg_hastelloy")){
             special += "/" + $(this).val();
         }
     })
@@ -3409,12 +3415,6 @@ function disable_invalid_options(){
                 }
             }
         }
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
 
         if (typeof full_conf.get("pem-1000-connection")!="undefined" && full_conf.get("pem-1000-connection")=="pem-flange"){/// ЕСЛИ НЕ ГИГИЕНА - ОТКЛ PFA
             $("label[for=futter-pfa]").addClass('disabled');     ////ПОМЕЧАЕМ СЕРЫМ НЕДОСТУПНЫЕ
